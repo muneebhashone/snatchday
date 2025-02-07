@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/carousel";
 
 import maintrophysection from "@/app/images/maintrophysection.png";
+import winnerAvatar from "@/app/images/avatarimage.svg";
 
-const     TournamentWinnerCardSlider = () => {
+const TournamentWinnerCardSlider = () => {
   const winners = [
     {
       heading: "December Tournament Winner",
@@ -18,46 +19,50 @@ const     TournamentWinnerCardSlider = () => {
         "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6) - (4710886785170)",
       price: "535.99",
       winnerName: "Sher Gut",
-      winnerImage: maintrophysection,
+      winnerImage: winnerAvatar,
     },
+
     {
       heading: "November Tournament Winner",
       title:
         "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6) - (4710886785170)",
       price: "535.99",
       winnerName: "Sher Gut",
-      winnerImage: maintrophysection,
+      winnerImage: winnerAvatar,
+
     },
     {
       heading: "October Tournament Winner",
       title:
         "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6) - (4710886785170)",
       price: "535.99",
-
       winnerName: "Sher Gut",
-      winnerImage: maintrophysection,
+      winnerImage: winnerAvatar,
+
     },
-    // Add more winners if needed
   ];
 
   return (
-    <Carousel className="relative" opts={{ loop: true }}>
-      <CarouselContent>
-        {winners.map((winner, index) => (
-          <CarouselItem key={index}>
-            <div className="relative">
-              {/* Trophy and Stars Background */}
-              <div className="w-full">
-                <Image
-                  src={maintrophysection}
-                  alt="Trophy"
-                  className=""
-                  priority
-                />
-              </div>
+    <div className="relative max-w-[1920px] mx-auto">
+      {/* Trophy and Stars Background */}
+      <div className="w-full h-full">
+        <Image
 
+          src={maintrophysection}
+          alt="Trophy"
+          className="object-contain"
+          priority
+        />
+      </div>
+
+
+      <Carousel className="absolute top-0 left-0 w-full" opts={{ loop: true }}>
+        <CarouselContent>
+
+          {winners.map((winner, index) => (
+            <CarouselItem key={index}>
               {/* Content */}
-              <div className="absolute top-0 left-0 z-10 w-full py-12 flex items-center">
+              <div className="py-12 flex items-center">
                 <div className="w-full max-w-8xl mx-auto px-4 py-10 md:px-6 lg:px-8">
                   <div className="md:max-w-3xl md:pl-8 lg:pl-32 py-4 md:py-6 lg:py-0">
                     <h3 className="text-3xl md:text-5xl lg:text-7xl font-bold text-white/90 mb-4 md:mb-6">
@@ -89,14 +94,14 @@ const     TournamentWinnerCardSlider = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
 
-      <CarouselPrevious className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/10 rounded-full border-0 text-white hover:bg-white/20 transition-colors" />
-      <CarouselNext className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/10 rounded-full border-0 text-white hover:bg-white/20 transition-colors" />
-    </Carousel>
+        <CarouselPrevious className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+        <CarouselNext className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+      </Carousel>
+    </div>
   );
 };
 

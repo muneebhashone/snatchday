@@ -2,11 +2,12 @@ import React from "react";
 import heroImage from "@/app/images/hero-bg.png";
 import Image from "next/image";
 import one from "@/app/images/one.svg";
-import two from "@/app/images/two.svg";
+import crown from "@/app/images/crown.png";
 import three from "@/app/images/three.svg";
 import four from "@/app/images/four.svg";
 import five from "@/app/images/five.svg";
 import six from "@/app/images/six.svg";
+
 import eight from "@/app/images/eight.svg";
 import nine from "@/app/images/nine.svg";
 import PrimaryHeading from "../PrimaryHeading";
@@ -16,7 +17,7 @@ import iphone from "@/app/images/iphone.png";
 const HeroSection = () => {
   const images = [
     { src: one, alt: "Featured product one" },
-    { src: two, alt: "Featured product two" },
+    { src: crown, alt: "Featured product two" },
     { src: three, alt: "Featured product three" },
     { src: four, alt: "Featured product four" },
     { src: five, alt: "Featured product five" },
