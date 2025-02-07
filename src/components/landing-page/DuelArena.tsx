@@ -14,45 +14,25 @@ import game3 from "@/app/images/game3.png";
 import game4 from "@/app/images/game4.png";
 import game5 from "@/app/images/game5.png";
 import supersale from "@/app/images/supersale.png";
-import blackfriday from "@/app/images/blackfriday.png";
+import TrainingCenter from "./TrainingCenter";
+
 const DuelArena = () => {
   const slides = [
     {
-
       title: "How To Play",
-      highlightText: "Duel Arena",
+
       description:
         "You can have exciting duels in the duel arena. To start or accept a duel, you need 25 snap points, which is worth 25 cents. There are no additional fees. VIP members are exempt from this fee (see VIP membership). A duel consists of two players.",
       subText:
         "Create a duel with a game you have the most experience with and set your own stake.",
     },
-  ];
+    {
+      title: "Choose Your Prize",
 
-  const trainingCards = [
-    {
-      icon: game1,
-      label: "Training 1",
-    },
-    {
-      icon: game2,
-      label: "Training 2",
-      notification: true,
-    },
-    {
-      icon: game3,
-      label: "Training 3",
-    },
-    {
-      icon: game4,
-      label: "Training 4",
-    },
-    {
-      icon: game5,
-      label: "Training 5",
-    },
-    {
-      icon: game1,
-      label: "Training 6",
+      description:
+        "You can have exciting duels in the duel arena. To start or accept a duel, you need 25 snap points, which is worth 25 cents. There are no additional fees. VIP members are exempt from this fee (see VIP membership). A duel consists of two players",
+      subText:
+        "Create a duel with a game you have the most experience with and set your own stake.",
     },
   ];
 
@@ -112,28 +92,26 @@ const DuelArena = () => {
       </div>
 
       <div className="container max-w-[1920px] mx-auto px-12 relative z-10">
+        <h2 className="text-6xl font-bold my-5 text-center">
+          How TO
+          <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-1">
+            ENTER
+          </span>
+        </h2>
         {/* Carousel Section */}
         <Carousel className="relative" opts={{ loop: true }}>
           <CarouselContent>
             {slides.map((slide, index) => (
               <CarouselItem key={index}>
                 <div className="text-center w-full h-full mx-auto max-w-6xl">
-                  <h2 className="text-5xl font-bold my-5">
-                    {slide.title}{" "}
-                    <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded-full">
-                      {slide.highlightText}
-                    </span>
-                  </h2>
-                  <p className="text-lg text-card-foreground mb-6 leading-relaxed">
+                  <h2 className="text-4xl font-bold my-5">{slide.title}</h2>
+
+                  <p className="text-xl text-card-foreground mb-6 leading-relaxed">
                     {slide.description}
                   </p>
-                  <p className="text-lg text-card-foreground mb-10">
+                  <p className="text-xl text-card-foreground mb-10">
                     {slide.subText}
                   </p>
-
-                  <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">
-                    Create a Duel
-                  </Button>
                 </div>
               </CarouselItem>
             ))}
@@ -141,9 +119,14 @@ const DuelArena = () => {
           <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-lg border-0 text-gray-700 hover:bg-gray-50" />
           <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-lg border-0 text-gray-700 hover:bg-gray-50" />
         </Carousel>
+        <div className="flex justify-center items-center gap-8 my-20">
+          <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">
+            Create a Duel
+          </Button>
+        </div>
 
         {/* Training Center Section */}
-        <div className="mt-20">
+        {/* <div className="mt-20">
           <h3 className="text-3xl font-bold text-center mb-12">
             Training Center
           </h3>
@@ -164,14 +147,15 @@ const DuelArena = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
+
+        <TrainingCenter />
         <div className="flex justify-center items-center gap-8 my-20">
-            <Image src={supersale} alt="supersale" width={894} height={462} />
-            <Image src={supersale} alt="supersale" width={894} height={462} />
+          <Image src={supersale} alt="supersale" width={894} height={462} />
+          <Image src={supersale} alt="supersale" width={894} height={462} />
         </div>
       </div>
     </section>
-
   );
 };
 

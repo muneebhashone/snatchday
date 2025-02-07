@@ -49,10 +49,11 @@ const ProductSection = () => {
         <div className="flex justify-between items-center mb-12">
           <h3 className="text-4xl font-bold flex items-center gap-3">
             Current{" "}
-            <span className="bg-primary text-white px-4 py-2 rounded-full">
+            <span className="bg-primary text-white px-4 py-2 rounded-lg">
               Offers
             </span>
           </h3>
+
 
           <button className="text-gray-600 hover:text-orange-500 font-medium">
             View All
