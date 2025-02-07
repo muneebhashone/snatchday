@@ -4,6 +4,7 @@ import tournament from "@/app/images/tournament.png";
 import mobiles from "@/app/images/mobiles.png";
 import bestoffer from "@/app/images/bestoffer.png";
 import bestlaptop from "@/app/images/bestlaptop.png";
+
 const BestOffers = () => {
   const offers = [
     {
@@ -14,7 +15,6 @@ const BestOffers = () => {
       image: mobiles,
       bgimage: tournament,
       buttonTextcolor: "#F37835",
-
     },
     {
       tag: "Best Offer",
@@ -27,13 +27,14 @@ const BestOffers = () => {
     },
   ];
 
-
   return (
-    <section className="container max-w-[1920px] mx-auto px-12 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {offers.map((offer, index) => (
-          <BestOfferCard key={index} {...offer} />
-        ))}
+    <section className="py-8 md:py-12 lg:py-16">
+      <div className="container max-w-[1920px] mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {offers.map((offer, index) => (
+            <BestOfferCard key={index} {...offer} />
+          ))}
+        </div>
       </div>
     </section>
   );

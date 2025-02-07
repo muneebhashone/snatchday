@@ -11,10 +11,6 @@ interface BestOfferCardProps {
   buttonTextcolor: string;
 }
 
-
-
-
-
 const BestOfferCard = ({
   tag,
   title,
@@ -25,65 +21,59 @@ const BestOfferCard = ({
   buttonTextcolor,
 }: BestOfferCardProps) => {
   return (
-    <div className="relative">
-
+    <div className="relative rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-300">
       {/* Background Image */}
-      <div className="top-0 left-0 w-full h-auto">
+      <div className="w-full h-full">
         <Image
           src={bgimage}
           alt="Background"
           width={892}
           height={500}
-          className="object-contain w-full h-auto"
-          
-
-
+          className="w-full h-auto object-cover min-h-[500px] md:min-h-[400px]"
+          priority
         />
-
       </div>
 
       {/* Content */}
+      <div className="absolute inset-0 p-4 md:p-6 lg:p-10 flex flex-col md:flex-row items-start md:items-center justify-between">
+        <div className="w-full md:w-1/2 space-y-3 md:space-y-4">
+          {/* Tag Badge */}
+          <span className="inline-flex items-center px-3 py-1.5 text-sm md:text-base rounded-full bg-white/20 text-white font-medium">
+            {tag}
+          </span>
 
-      <div className="absolute top-0 left-0 z-10 w-full h-full flex items-center justify-between px-10">
-        <div>
-        {/* Tag Badge */}
-        <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm bg-white/20 text-white font-medium mb-4">
+          {/* Title Section */}
+          <div className="space-y-1 md:space-y-2">
+            <h3 className="text-xl md:text-2xl lg:text-3xl text-white font-medium">
+              {title}
+            </h3>
+            <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+              {subtitle}
+            </p>
+          </div>
 
-          {tag}
-
-        </span>
-
-        {/* Title Section */}
-        <div className="space-y-1 mb-6">
-          <h3 className="text-2xl text-white font-medium">{title}</h3>
-          <p className="text-4xl font-bold text-white">{subtitle}</p>
+          {/* Button */}
+          <button
+            className={`bg-white px-4 md:px-6 py-2 rounded-full text-sm md:text-base font-medium hover:bg-white/90 transition-all`}
+            style={{ color: buttonTextcolor }}
+          >
+            {buttonText}
+          </button>
         </div>
 
-        {/* Button */}
-        <button className={`bg-white ${buttonTextcolor} px-6 py-2 rounded-full text-sm font-medium hover:bg-white/90 transition-all`}>
-          {buttonText}
-        </button>
-        </div>
-
-      
-
-
-      {/* Product Image */}
-      
-        <div>
-          <div>
+        {/* Product Image */}
+        <div className="w-full md:w-1/2 mt-4 md:mt-0">
+          <div className="flex justify-center md:justify-end">
             <Image
               src={image}
               alt="Product"
               width={280}
               height={180}
-              className="object-contain w-full h-full transform group-hover:scale-105 transition-transform duration-300"
+              className="w-[60%] md:w-full h-auto object-contain transform group-hover:scale-105 transition-transform duration-300"
             />
           </div>
-
         </div>
-        </div>
-      
+      </div>
     </div>
   );
 };

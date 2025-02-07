@@ -7,7 +7,6 @@ import three from "@/app/images/three.svg";
 import four from "@/app/images/four.svg";
 import five from "@/app/images/five.svg";
 import six from "@/app/images/six.svg";
-
 import eight from "@/app/images/eight.svg";
 import nine from "@/app/images/nine.svg";
 import PrimaryHeading from "../PrimaryHeading";
@@ -27,7 +26,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="min-h-[100vh] container max-w-[1920px] mx-auto w-full relative bg-white/80">
+    <section className="min-h-screen w-full relative bg-white/80 pt-20 lg:pt-40">
       {/* Background Image */}
       <Image
         src={heroImage}
@@ -35,9 +34,11 @@ const HeroSection = () => {
         width={1920}
         height={1080}
         priority
-        className="object-cover opacity-50"
+        className="object-cover opacity-50 absolute inset-0 w-full h-full"
       />
-      <div className="absolute top-0 left-0 right-0 bottom-0">
+
+      {/* Floating Images */}
+      <div className="absolute inset-0 pointer-events-none">
         <div className="relative w-full h-full">
           {images.map((image, index) => (
             <Image
@@ -48,47 +49,48 @@ const HeroSection = () => {
               height={63}
               className={`
                 transform hover:scale-105 transition-transform duration-300 
-                absolute animate-float cursor-pointer
+                absolute animate-float hidden md:block
                 ${getRandomPosition(index)}
               `}
             />
           ))}
         </div>
       </div>
-      <div className="absolute top-0 left-0 right-0 bottom-0">
-        <div className="relative grid grid-cols-2 gap-4 w-full h-full z-30 container max-w-8xl mx-auto">
-          <div className="content-center">
+
+      {/* Content */}
+      <div className="container max-w-[1600px] mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 items-center">
+          {/* Left Content */}
+          <div className="text-center lg:text-left pt-8 lg:pt-0">
             <PrimaryHeading
               highlightText="Discover"
               remainingText="the new way of "
               remainingHeading="Online Shopping"
             />
-            <p className="text-card-foreground text-lg mt-6">
+            <p className="text-card-foreground text-base lg:text-lg mt-4 lg:mt-6 max-w-xl mx-auto lg:mx-0">
               Unsere Vision für Snatch Day war lange Zeit in unseren Köpfen
               gereift, denn wir sind kein gewöhnlicher Onlineshop.
             </p>
-            <div className="mt-10">
+            <div className="mt-6 lg:mt-10">
               <GredientButton buttonText="Join Tournament" />
             </div>
           </div>
-          <div className="content-center">
-            <Image
-              src={iphone}
-              alt="hero-image"
-              width={500}
-              height={500}
-              style={{
-                width: "100%",
-                height: "auto",
-                objectFit: "cover",
-                objectPosition: "center",
-                marginLeft: "auto",
-              }}
-            />
+
+          {/* Right Content */}
+          <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
+            <div className="relative lg:w-full">
+              <Image
+                src={iphone}
+                alt="hero-image"
+                width={500}
+                height={500}
+                className="w-full h-auto object-cover"
+                priority
+              />
+            </div>
           </div>
         </div>
       </div>
-     
     </section>
   );
 };

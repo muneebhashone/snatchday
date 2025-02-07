@@ -39,7 +39,7 @@ const TestimonialsCards = () => {
       {features.map((feature, index) => (
         <div
           key={index}
-          className={`bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer`}
+          className={`bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer`}
         >
           <div className="flex items-center gap-4">
             <div className={`p-3 rounded-xl`}>

@@ -20,7 +20,7 @@ const ProductCard = ({
   isSale,
 }: ProductCardProps) => {
   return (
-    <div className="bg-white rounded-3xl border border-orange-200 p-6 relative group hover:shadow-lg transition-all duration-300">
+    <div className="bg-white rounded-3xl border border-gray-200 hover:border-primary p-6 relative group hover:shadow-lg transition-all duration-300">
       {/* VAT Badge */}
       <div className="absolute right-6 top-6 bg-gray-100 rounded-full px-3 py-1">
         <span className="text-sm text-gray-500">19% VAT</span>
