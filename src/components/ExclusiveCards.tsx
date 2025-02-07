@@ -130,7 +130,7 @@ const ExclusiveCards = () => {
                 card.isPopular ? "text-white" : "text-gray-900"
               }`}
             >
-              What's Included
+              Whats Included
             </h4>
             <ul className="space-y-3">
               {card.features.map((feature, featureIndex) => (

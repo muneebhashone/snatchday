@@ -4,7 +4,6 @@ import React from "react";
 import vipbg from "@/app/images/vipbg.png";
 import vipheroimage from "@/app/images/vipheroimage.png";
 import ExclusiveOffers from "@/components/ExclusiveOffers";
-import TestimonialsCards from "@/components/TestimonialsCards";
 import Testimonials from "@/components/landing-page/Testimonials";
 import RatingsSection from "@/components/landing-page/RatingsSection";
 
