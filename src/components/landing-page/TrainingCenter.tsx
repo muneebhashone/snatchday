@@ -41,11 +41,12 @@ const TrainingCenter = () => {
   return (
     <div className="mt-20">
       <h3 className="text-3xl font-bold text-center mb-12">Training Center</h3>
-      <div className="grid grid-cols-6 gap-12">
+      <div className="flex flex-wrap items-center justify-center lg:justify-around gap-8">
         {trainingCards.map((card, index) => (
           <div key={index} className="relative group cursor-pointer">
-            <div className="aspect-square rounded-full shadow-lg border border-gray-200 hover:border-primary flex items-center justify-center transition-transform transform group-hover:scale-105">
+            <div className="aspect-square rounded-full shadow-lg border w-full border-gray-200 hover:border-primary items-center justify-center transition-transform transform group-hover:scale-105">
               <Image
+              className="w-[80px] lg:w-[120px]"
                 src={card.icon}
                 alt={card.label}
                 width={122}

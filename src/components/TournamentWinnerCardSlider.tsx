@@ -29,7 +29,6 @@ const TournamentWinnerCardSlider = () => {
       price: "535.99",
       winnerName: "Sher Gut",
       winnerImage: winnerAvatar,
-
     },
     {
       heading: "October Tournament Winner",
@@ -38,42 +37,58 @@ const TournamentWinnerCardSlider = () => {
       price: "535.99",
       winnerName: "Sher Gut",
       winnerImage: winnerAvatar,
-
     },
   ];
 
   return (
     <div className="relative max-w-[1920px] mx-auto">
       {/* Trophy and Stars Background */}
-      <div className="w-full h-full">
+      <div className=" w-full h-full">
         <Image
-
           src={maintrophysection}
           alt="Trophy"
-          className="object-contain"
+          className="md:object-contain md:h-auto h-[200px]"
           priority
         />
       </div>
 
-
-      <Carousel className="absolute top-0 left-0 w-full" opts={{ loop: true }}>
+      <Carousel className="absolute -top-7 sm:-top-2 md:top-0 left-0 w-full" opts={{ loop: true }}>
         <CarouselContent>
-
           {winners.map((winner, index) => (
             <CarouselItem key={index}>
               {/* Content */}
-              <div className="py-12 flex items-center">
+              <div className="py-0 lg:py-12 flex items-center">
                 <div className="w-full max-w-8xl mx-auto px-4 py-10 md:px-6 lg:px-8">
                   <div className="md:max-w-3xl md:pl-8 lg:pl-32 py-4 md:py-6 lg:py-0">
-                    <h3 className="text-3xl md:text-5xl lg:text-7xl font-bold text-white/90 mb-4 md:mb-6">
+                    <h3 className="text-xl lg:text-5xl xl:text-7xl font-bold text-white/90 mb-2 md:mb-4 lg:mb-6">
                       {winner.heading}
                     </h3>
 
-                    <p className="text-base md:text-lg lg:text-xl text-white/90 leading-relaxed mb-4 md:mb-6">
+                    <p className="text-[12px] lg:text-lg xl:text-xl text-white/90 leading-relaxed mb-2 md:mb-4 lg:mb-6">
                       {winner.title}
                     </p>
 
-                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6">
+                    <div className="flex md:flex-col flex-row-reverse md:items-start items-center justify-between">
+                      <p className="text-xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 lg:mb-6">
+                        {winner.price}€
+                      </p>
+
+                      <div className="flex items-center gap-3 md:gap-4">
+                        <div className="w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border-4 md:border-8 border-[#FF6B3D]">
+                          <Image
+                            src={winner.winnerImage}
+                            alt={winner.winnerName}
+                            width={56}
+                            height={56}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <span className="text-white text-base md:text-lg font-medium">
+                          {winner.winnerName}
+                        </span>
+                      </div>
+                    </div>
+                    {/* <p className="text-xl lg:text-4xl xl:text-5xl font-bold text-white mb-4 lg:mb-6">
                       {winner.price}€
                     </p>
 
@@ -90,7 +105,7 @@ const TournamentWinnerCardSlider = () => {
                       <span className="text-white text-base md:text-lg font-medium">
                         {winner.winnerName}
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </div>

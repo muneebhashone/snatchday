@@ -92,7 +92,7 @@ const DuelArena = () => {
       </div>
 
       <div className="container max-w-[1920px] mx-auto px-12 relative z-10">
-        <h2 className="text-6xl font-bold my-5 text-center">
+        <h2 className="text-3xl md:text-6xl font-bold my-5 text-center">
           How TO
           <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-1">
             ENTER
@@ -104,12 +104,12 @@ const DuelArena = () => {
             {slides.map((slide, index) => (
               <CarouselItem key={index}>
                 <div className="text-center w-full h-full mx-auto max-w-6xl">
-                  <h2 className="text-4xl font-bold my-5">{slide.title}</h2>
+                  <h2 className="text-2xl md:text-4xl font-bold my-5">{slide.title}</h2>
 
-                  <p className="text-xl text-card-foreground mb-6 leading-relaxed">
+                  <p className="text-md md:text-xl text-card-foreground mb-6 leading-relaxed">
                     {slide.description}
                   </p>
-                  <p className="text-xl text-card-foreground mb-10">
+                  <p className="text-md md:text-xl text-card-foreground mb-10">
                     {slide.subText}
                   </p>
                 </div>
@@ -150,9 +150,11 @@ const DuelArena = () => {
         </div> */}
 
         <TrainingCenter />
-        <div className="flex justify-center items-center gap-8 my-20">
-          <Image src={supersale} alt="supersale" width={894} height={462} />
-          <Image src={supersale} alt="supersale" width={894} height={462} />
+        <div className="flex md:flex-row flex-col justify-center items-center gap-8 my-20">
+          {/* <Image className="xl:w-[930px] xl:h-[550px] md:w-[570px] md:h-[360px]" src={supersale} alt="supersale" width={894} height={462} /> */}
+          <Image className="w-[100%] md:w-[50%]" src={supersale} alt="supersale" width={894} height={462} />
+          <Image className="w-[100%] md:w-[50%]" src={supersale} alt="supersale" width={894} height={462} />
+          {/* <Image className="xl:w-[930px] xl:h-[550px] md:w-[570px] md:h-[360px]" src={supersale} alt="supersale" width={894} height={462} /> */}
         </div>
       </div>
     </section>

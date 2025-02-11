@@ -67,11 +67,12 @@ const pricingCards: PricingCard[] = [
 
 const ExclusiveCards = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
+    // <div className="grid grid-cols-1 md:grid-cols-2 items-center lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
+    <div className="flex flex-wrap justify-center lg:grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
       {pricingCards.map((card, index) => (
         <div
           key={index}
-          className={`relative rounded-3xl p-16 ${
+          className={`relative rounded-3xl p-16 w-full md:w-auto ${
             card.isPopular ? "bg-[#8D4CC4]" : "bg-white"
           } shadow-lg hover:scale-105 transition-transform duration-300`}
         >
