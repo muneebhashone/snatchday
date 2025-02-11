@@ -283,6 +283,7 @@ export const ProvenExpertIcon = () => {
 export const MsgIcon = () => {
   return (
     <svg
+    className="w-[45px] h-[45px] sm:w-auto sm:h-auto"
       width="68"
       height="68"
       viewBox="0 0 68 68"

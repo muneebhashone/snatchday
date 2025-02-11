@@ -45,7 +45,7 @@ const PromotionalBanners = ({
             {iconText}
           </span>
           <div className="space-y-2">
-            <h3 className="text-2xl font-medium">
+            <h3 className="text-lg md:text-2xl font-medium sm:bg-transparent bg-slate-200 bg-opacity-20 px-1 rounded-md">
               {title} <span className="font-bold">{boldText}</span>
             </h3>
           </div>

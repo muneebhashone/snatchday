@@ -20,7 +20,7 @@ const page = () => {
         <Testimonials />
         <RatingsSection />
       </div>
-    </ClientLayout>
+     </ClientLayout>
 
   );
 };

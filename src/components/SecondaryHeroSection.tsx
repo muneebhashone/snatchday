@@ -18,17 +18,24 @@ const SecondaryHeroSection = ({
   support?: boolean;
 }) => {
   return (
-    <div>
-      <div className="container mx-auto max-w-[1920px] relative pt-20">
+    <div className="">
+      {/* <div className="container mx-auto max-w-[1920px] relative pt-20"> */}
+      <div className="container mx-auto max-w-[1920px] relative">
         <Image
           src={bg}
           alt="hero"
           priority
-          className="w-full h-full object-cover"
+          // className="w-full h-full object-cover"
+          className={
+            title === "VIP Shop"
+              ? "w-full h-[700px] lg:h-[600px] xl:h-[600px] object-cover"
+              : "w-full h-[600px] md:h-[400px] lg:h-[600px]"
+          }
         />
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-start">
           <div className="container mx-auto px-4 grid grid-cols-2 gap-24">
             <div className="col-span-1 content-center">
+           
               {title === "VIP Shop" ? (
                 <>
                   <h4 className="text-white text-2xl font-bold mb-8">
@@ -40,10 +47,7 @@ const SecondaryHeroSection = ({
                     remainingHeading="VIP MEMBERS"
                     textColor="text-white"
                   />
-                  <p className="text-white text-xl font-bold mt-4">
-                    Take your chance to get a very special bargain.
-                  </p>
-               
+                  <p className="text-white text-xl font-bold mt-4">Take your chance to get a very special bargain.</p>
                   <Button
 
 
@@ -55,7 +59,7 @@ const SecondaryHeroSection = ({
                       border: "2px solid transparent",
                       borderRadius: "9999px",
                     }}
-                    className="mt-4 px-12 py-7 flex items-center justify-center"
+                    className="mt-4 px-7 md:px-12 py-5 md:py-7 flex items-center justify-center"
                   >
                     <Image
                       src={crown}
@@ -66,50 +70,29 @@ const SecondaryHeroSection = ({
                     />
                     Register
                   </Button>
-                  <p className="text-white text-xl mt-4">
-                    Complete your{" "}
-                    <span className="text-primary">ViP membership</span> now!
-                  </p>
+                  <p className="text-white text-xl mt-4">Complete your <span className="text-primary">ViP membership</span> now!</p>
                 </>
-              ) : (
-                <>
+              ):(
+            
                   <h1 className="text-white text-8xl font-bold">{title}</h1>
-                  <p className="text-white text-xl font-bold mt-4">
-                    {description}
-                  </p>
-                  {support ? (
-                  
-                  <div className="relative mt-12">
-                    <Input
-
-                      type="search"
-                      placeholder="Search products..."
-                      className="w-full px-5 h-[60px] rounded-full pr-10 border-gray-300 focus:border-primary text-foreground !ring-offset-0 !ring-0"
-                    />
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-primary text-white py-6 px-8"
-                    >
-                      Search
-                    </Button>
-                  </div>
                 
-                ):(<></>)}
-                </>
               )}
+
+
+
+
+
+
             </div>
             <div className="col-span-1 content-center">
-              {rightimage && (
-                <Image
-                  src={rightimage}
-                  height={350}
-                  width={450}
-                  alt="tournament"
-                  className="object-cover"
+              <Image
 
-                />
-              )}
+                src={rightimage}
+                height={400}
+                width={600}
+                alt="tournament"
+                className="object-cover"
+              />
             </div>
           </div>
         </div>
