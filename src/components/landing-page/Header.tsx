@@ -24,12 +24,12 @@ const menu = [
   {
     id: 3,
     name: "Duellarena",
-    link: "/duellarena",
+    link: "/duel-arena",
   },
   {
     id: 4,
     name: "Trainingscenter",
-    link: "/trainingscenter",
+    link: "/trainings-center",
   },
   {
     id: 5,

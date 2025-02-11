@@ -53,9 +53,7 @@ const TrainingCenter = () => {
                 height={122}
               />
             </div>
-            {card.notification && (
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#FF6B3D] rounded-full border-4 border-white" />
-            )}
+          
           </div>
         ))}
       </div>

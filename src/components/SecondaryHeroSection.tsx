@@ -3,14 +3,18 @@ import PrimaryHeading from "./PrimaryHeading";
 import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
 
+
 const SecondaryHeroSection = ({
   title,
   rightimage,
   bg,
+ 
 }: {
   title?: string;
-  rightimage: StaticImageData;
+  rightimage?: StaticImageData;
   bg: StaticImageData;
+  description?: string;
+  support?: boolean;
 }) => {
   return (
     <div className="">
@@ -27,9 +31,10 @@ const SecondaryHeroSection = ({
               : "w-full h-[600px] md:h-[400px] lg:h-[600px]"
           }
         />
-        <div className="absolute top-0 left-0 w-full h-full md:flex items-center justify-start mt-5 px-4 lg:pt-10">
-          <div className="container mx-auto px-4 flex flex-col-reverse gap-10 md:grid grid-cols-1 md:grid-cols-2 md:gap-24 ">
-            <div className="col-span-1 content-center md:flex-none flex flex-col md:items-start items-center">
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-start">
+          <div className="container mx-auto px-4 grid grid-cols-2 gap-24">
+            <div className="col-span-1 content-center">
+           
               {title === "VIP Shop" ? (
                 <>
                   <h4 className="text-white text-2xl font-bold mb-8">
@@ -41,10 +46,10 @@ const SecondaryHeroSection = ({
                     remainingHeading="VIP MEMBERS"
                     textColor="text-white"
                   />
-                  <p className="text-white text-lg md:text-xl font-bold mt-4">
-                    Take your chance to get a very special bargain.
-                  </p>
+                  <p className="text-white text-xl font-bold mt-4">Take your chance to get a very special bargain.</p>
                   <Button
+
+
                     style={{
                       background: `
                         linear-gradient(#330542, #330542) padding-box,
@@ -64,25 +69,30 @@ const SecondaryHeroSection = ({
                     />
                     Register
                   </Button>
-                  <p className="text-white text-md lg:text-xl mt-4">
-                    Complete your{" "}
-                    <span className="text-primary">ViP membership</span> now!
-                  </p>
+                  <p className="text-white text-xl mt-4">Complete your <span className="text-primary">ViP membership</span> now!</p>
                 </>
-              ) : (
-                <h1 className="text-white text-5xl lg:text-6xl xl:text-8xl font-bold mt-0 md:mt-28 lg:mt-44 xl:mt-52 text-center">
-                  {title}
-                </h1>
+              ):(
+            
+                  <h1 className="text-white text-8xl font-bold">{title}</h1>
+                
               )}
+
+
+
+
+
+
             </div>
-            <div className="col-span-1 content-center flex justify-center md:justify-end items-center mt-20 md:mt-0">
-              <Image
-                src={rightimage}
-                height={400}
-                width={600}
-                alt="tournament"
-                className=" md:w-full h-fit w-[400px]"
-              />
+            <div className="col-span-1 content-center">
+              {rightimage && (
+                <Image
+                  src={rightimage}
+                  height={400}
+                  width={600}
+                  alt="tournament"
+                  className="object-cover"
+                />
+              )}
             </div>
           </div>
         </div>
