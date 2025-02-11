@@ -2,14 +2,13 @@ import Image, { StaticImageData } from "next/image";
 import PrimaryHeading from "./PrimaryHeading";
 import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
-import { Input } from "./ui/input";
+
 
 const SecondaryHeroSection = ({
   title,
   rightimage,
   bg,
-  description,
-  support,
+ 
 }: {
   title?: string;
   rightimage?: StaticImageData;
@@ -85,14 +84,15 @@ const SecondaryHeroSection = ({
 
             </div>
             <div className="col-span-1 content-center">
-              <Image
-
-                src={rightimage}
-                height={400}
-                width={600}
-                alt="tournament"
-                className="object-cover"
-              />
+              {rightimage && (
+                <Image
+                  src={rightimage}
+                  height={400}
+                  width={600}
+                  alt="tournament"
+                  className="object-cover"
+                />
+              )}
             </div>
           </div>
         </div>
