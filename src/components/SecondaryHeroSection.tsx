@@ -3,12 +3,10 @@ import PrimaryHeading from "./PrimaryHeading";
 import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
 
-
 const SecondaryHeroSection = ({
   title,
   rightimage,
   bg,
- 
 }: {
   title?: string;
   rightimage?: StaticImageData;
@@ -18,25 +16,22 @@ const SecondaryHeroSection = ({
 }) => {
   return (
     <div className="">
-      {/* <div className="container mx-auto max-w-[1920px] relative pt-20"> */}
       <div className="container mx-auto max-w-[1920px] relative">
         <Image
           src={bg}
           alt="hero"
           priority
-          // className="w-full h-full object-cover"
           className={
             title === "VIP Shop"
               ? "w-full h-[700px] lg:h-[600px] xl:h-[600px] object-cover"
-              : "w-full h-[600px] md:h-[400px] lg:h-[600px]"
+              : "w-full h-[450px] lg:h-[600px] mx-auto"
           }
         />
-        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-start">
-          <div className="container mx-auto px-4 grid grid-cols-2 gap-24">
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-start pt-14">
+          <div className="container mx-auto px-4 flex flex-col-reverse gap-5 items-center lg:grid lg:grid-cols-2 lg:gap-24 lg:text-start">
             <div className="col-span-1 content-center">
-           
               {title === "VIP Shop" ? (
-                <>
+                <div className="flex flex-col items-center justify-center text-center">
                   <h4 className="text-white text-2xl font-bold mb-8">
                     VIP Shop
                   </h4>
@@ -46,10 +41,10 @@ const SecondaryHeroSection = ({
                     remainingHeading="VIP MEMBERS"
                     textColor="text-white"
                   />
-                  <p className="text-white text-xl font-bold mt-4">Take your chance to get a very special bargain.</p>
+                  <p className="text-white text-xl font-bold mt-4">
+                    Take your chance to get a very special bargain.
+                  </p>
                   <Button
-
-
                     style={{
                       background: `
                         linear-gradient(#330542, #330542) padding-box,
@@ -69,19 +64,16 @@ const SecondaryHeroSection = ({
                     />
                     Register
                   </Button>
-                  <p className="text-white text-xl mt-4">Complete your <span className="text-primary">ViP membership</span> now!</p>
-                </>
-              ):(
-            
-                  <h1 className="text-white text-8xl font-bold">{title}</h1>
-                
+                  <p className="text-white text-xl mt-4">
+                    Complete your{" "}
+                    <span className="text-primary">ViP membership</span> now!
+                  </p>
+                </div>
+              ) : (
+                <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-8xl font-bold capitalize">
+                  {title}
+                </h1>
               )}
-
-
-
-
-
-
             </div>
             <div className="col-span-1 content-center">
               {rightimage && (
@@ -90,7 +82,7 @@ const SecondaryHeroSection = ({
                   height={400}
                   width={600}
                   alt="tournament"
-                  className="object-cover"
+                  className="lg:object-cover lg:w-[350px] w-[300px]"
                 />
               )}
             </div>

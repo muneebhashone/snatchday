@@ -12,7 +12,7 @@ const CreateTicket = ({
 }) => {
   return (
     
-        <div className="flex items-center justify-start gap-6 shadow-xl py-12 px-16 rounded-lg hover:shadow-xl hover: border-2 hover:border-primary">
+        <div className=" flex flex-col lg:flex-row items-center justify-start gap-6 shadow-xl py-3 lg:py-12 px-8 lg:px-16 rounded-lg hover:shadow-xl hover: border-2 hover:border-primary">
           <Image src={image} alt="ticket" />
 
           <div>

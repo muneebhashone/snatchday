@@ -6,9 +6,9 @@ import SectionCenter from "@/components/SectionCenter";
 import GameCards from "@/components/GameCards";
 import FeaturedProductsCard from "@/components/FeaturedProductsCard";
 import graphiccard from "@/app/images/graphiccard.png";
+import trainingbg from "@/app/images/trainingBg.png";
+import trainingImage from "@/app/images/trainingImage.png";
 const page = () => {
-
-
   const displayProducts = [
     {
       title: "14 - AMD Ryzen 9 3 GHz - Win 11",
@@ -83,7 +83,11 @@ const page = () => {
   return (
     <ClientLayout>
       <main>
-        <SecondaryHeroSection title="Training Center" bg={trainingscenterbg} />
+        <SecondaryHeroSection
+          title="Training Center"
+          bg={trainingbg}
+          rightimage={trainingImage}
+        />
         <SectionCenter
           title="Training"
           titlebg="Center"
@@ -91,7 +95,7 @@ const page = () => {
         />
         <GameCards />
         <div className="px-0 md:px-6 pb-60">
-          <div className="text-6xl font-bold my-5 text-center capitalize">
+          <div className="text-3xl lg:text-6xl font-bold my-5 text-center capitalize">
             <h2>
               <span className=" bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-1">
                 highlights
@@ -108,7 +112,6 @@ const page = () => {
         </div>
       </main>
     </ClientLayout>
-
   );
 };
 
