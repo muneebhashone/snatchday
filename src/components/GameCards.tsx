@@ -100,19 +100,20 @@ const GameCards = () => {
   ];
 
   return (
-    <div className="px-20 pb-28">
+    <div className="px-5 lg:px-20 pb-28">
   
-      <div className="grid grid-cols-4 gap-12">
+      {/* <div className="grid grid-cols-4 gap-12"> */}
+      <div className="flex w-full flex-wrap items-center justify-center gap-1 lg:gap-4">
         {trainingCards.slice(0, visibleCards).map((card, index) => (
           <div
           key={index}
-          className="group px-20 py-14 shadow-2xl rounded-lg border border-gray-200 hover:border-primary hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)]"
+          className="group p-5 md:px-10 lg:px-16  md:py-7 lg:py-10 shadow-2xl rounded-lg border border-gray-200 hover:border-primary hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)]"
         >
-          <div className="aspect-square rounded-full h-64 w-64 shadow-lg border border-gray-200 flex items-center justify-center transition-transform transform group-hover:scale-105">
-            <Image src={card.icon} alt={card.label} width={141} height={141} />
+          <div className="aspect-square rounded-full h-28 lg:h-64 w-28 lg:w-64 shadow-lg border border-gray-200 flex items-center justify-center transition-transform transform group-hover:scale-105">
+            <Image className="w-[50px] h-[50px] md:w-[120px] lg:w-[140px] md:h-[120px] lg:h-[140px]" src={card.icon} alt={card.label} width={141} height={141} />
           </div>
-          <h3 className="text-center  font-semibold py-10">{card.label}</h3>
-          <Button className="w-full shadow-lg bg-white text-black rounded-full hover:gradient-primary py-6 hover:text-white">
+          <h3 className="text-center text-xs sm:text-l w-20gmd: font-semibold py-5 lg:py-10">{card.label}</h3>
+          <Button className="w-full text-xs sm:text-l w-20gmd: shadow-lg bg-white text-black rounded-full hover:gradient-primary py-6 hover:text-white">
             Zum Spiel
           </Button>
         </div>
@@ -121,9 +122,9 @@ const GameCards = () => {
     {visibleCards < trainingCards.length && (
       <Button 
         onClick={() => setVisibleCards(prev => Math.min(prev + 4, trainingCards.length))}
-        className="block mx-auto rounded-full w-32 h-32 bg-white shadow-lg my-10"
+        className="block mx-auto rounded-full w-24 md:w-32 h-24 md:h-32 bg-white shadow-lg my-10"
       >
-        <p className="text-black font-semibold">
+        <p className="text-xs md:text-lg text-black font-semibold">
           View More
         </p>
         <ChevronDown className="w-4 h-4 mx-auto text-black" />

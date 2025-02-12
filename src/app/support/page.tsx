@@ -22,7 +22,6 @@ const SupportPage = () => {
       image: ticket1,
       categorytext: "Category 01",
       categorytitle: "Orders",
-
     },
     {
       id: 2,
@@ -103,23 +102,23 @@ const SupportPage = () => {
         description="How can we help you?"
       />
       <div className="max-w-[1920px] mx-auto pt-20 pb-40 relative">
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 w-full h-[2700px] lg:h-full">
           <BubblesIcon className="absolute top-0 left-0" />
           <BubblesIcon1 className="absolute top-0 right-0" />
-          <BubblesIcon className="absolute bottom-0 left-0" />
-          <BubblesIcon1 className="absolute bottom-0 right-0" />
-          <BubblesIcon className="absolute top-1/2 left-0" />
-          <BubblesIcon1 className="absolute top-1/3 right-0" />
-          <BubblesIcon className="absolute bottom-1/4 left-0" />
-          <BubblesIcon1 className="absolute bottom-1/1 right-0" />
+          <BubblesIcon className=" absolute bottom-0 left-0" />
+          <BubblesIcon1 className=" absolute bottom-0 right-0" />
+          <BubblesIcon className="lg:block hidden absolute top-1/2 left-0" />
+          <BubblesIcon1 className="lg:block hidden absolute top-1/3 right-0" />
+          <BubblesIcon className="lg:block hiddenabsolute bottom-1/4 left-0" />
+          <BubblesIcon1 className="lg:block hidden absolute bottom-1/1 right-0" />
         </div>
-        <h2 className="text-6xl font-bold my-5 text-center mb-16">
+        <h2 className="text-2xl lg:text-6xl font-bold my-5 text-center mb-16">
           Create
           <span className="bg-primary text-white px-6 py-2 rounded-lg ml-1">
             Ticket
           </span>
         </h2>
-        <div className="grid grid-cols-2 gap-8 max-w-[1440px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1440px] mx-auto px-10">
           {ticketdata.map((item) => (
             <CreateTicket
               key={item.id}
@@ -130,18 +129,18 @@ const SupportPage = () => {
           ))}
         </div>
         <div className="max-w-[1440px] mx-auto py-20">
-          <h2 className="text-6xl font-bold my-5 text-center mb-16">
+          <h2 className="text-3xl lg:text-6xl font-bold my-5 text-center mb-16">
             Häufige
             <span className="bg-primary text-white px-6 py-2 rounded-lg ml-1">
               Fragen
             </span>
           </h2>
-          <div className="grid grid-cols-3 gap-8">
+          <div className="flex flex-wrap lg:grid grid-cols-3 gap-3 justify-center items-center lg:gap-8">
             {faqdata.map((item) => (
               <Button
                 key={item.id}
                 onClick={() => setSelectedFaq(item.id)}
-                className={`px-32 py-16 text-2xl font-bold border-2 border-gray-100 transition-all duration-300 ease-in-out ${
+                className={`px-10 w-max text-lg lg:w-max lg:px-32 py-16 lg:text-2xl font-bold border-2 border-gray-100 transition-all duration-300 ease-in-out ${
                   selectedFaq === item.id
                     ? "bg-primary text-white"
                     : "bg-white text-black hover:bg-primary hover:text-white hover:rounded-full"
@@ -149,7 +148,6 @@ const SupportPage = () => {
               >
                 {item.title}
               </Button>
-
             ))}
             <div className="bg-white col-span-3 flex justify-between items-center shadow-xl py-16 px-16 rounded-lg">
               <h3 className="text-2xl font-bold">OTHER QUESTIONS</h3>
@@ -160,7 +158,7 @@ const SupportPage = () => {
           </div>
         </div>
         <div className="max-w-[1440px] mx-auto py-20">
-          <h2 className="text-6xl font-bold my-5 text-center mb-16">
+          <h2 className="text-3xl lg:text-6xl font-bold my-5 text-center mb-16">
             Explanatory
             <span className="bg-primary text-white px-6 py-2 rounded-lg ml-1">
               Videos
