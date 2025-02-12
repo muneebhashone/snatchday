@@ -226,7 +226,7 @@ const FeaturedProducts = () => {
                 </button>
               ))}
               <Link
-                href="/all-products"
+                href="/product-listing"
                 className="hidden lg:flex text-[#FF6B3D] font-medium items-center whitespace-nowrap"
               >
                 View All

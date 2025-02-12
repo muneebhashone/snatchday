@@ -1,7 +1,12 @@
+"use client";
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "../ui/slider";
+import VisitTournament from "../VisitTournament";
 
 const ProductCategoryFilter = () => {
+  const [priceRange, setPriceRange] = React.useState([1000]);
+
   const filters = {
     "Laptop Type": [
       { name: "Gaming", count: 24 },
@@ -53,8 +58,13 @@ const ProductCategoryFilter = () => {
   };
 
   return (
-    <div className="space-y-6 h-[150vh] overflow-y-auto sticky top-32 pr-4">
+    <div className="space-y-6 h-[190vh] overflow-y-auto sticky top-32 pr-4 border border-gray-200 bg-white p-4 rounded-lg ">
       <h3 className="text-lg font-medium mb-4">Filters</h3>
+
+      {/* Price Range Filter */}
+ 
+
+      {/* Other Filters */}
       {Object.entries(filters).map(([category, items]) => (
         <div key={category} className="space-y-3">
           <h4 className="font-medium text-gray-900">{category}</h4>
@@ -79,6 +89,25 @@ const ProductCategoryFilter = () => {
           </div>
         </div>
       ))}
+           <div className="space-y-4">
+        <h4 className="font-medium text-gray-900">Price Range</h4>
+        <div className="space-y-4">
+          <Slider
+            defaultValue={[1000]}
+            max={100000}
+            min={1000}
+            step={1000}
+            value={priceRange}
+            onValueChange={setPriceRange}
+            className="w-full"
+          />
+          <div className="flex items-center justify-between text-sm text-gray-500">
+            <span>{priceRange[0].toFixed(3)}€</span>
+            <span>100.000€</span>
+          </div>
+        </div>
+      </div>
+      <VisitTournament title="January Tournament" date="January 30, 2025 at 3:00 p.m." />
     </div>
   );
 };

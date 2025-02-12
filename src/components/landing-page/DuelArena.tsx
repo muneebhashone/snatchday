@@ -19,20 +19,39 @@ import TrainingCenter from "./TrainingCenter";
 const DuelArena = () => {
   const slides = [
     {
-      title: "How To Play",
-
+      title: "Duel Arena",
       description:
         "You can have exciting duels in the duel arena. To start or accept a duel, you need 25 snap points, which is worth 25 cents. There are no additional fees. VIP members are exempt from this fee (see VIP membership). A duel consists of two players.",
       subText:
         "Create a duel with a game you have the most experience with and set your own stake.",
     },
     {
-      title: "Choose Your Prize",
-
+      subTitle: "Choose your prize",
       description:
-        "You can have exciting duels in the duel arena. To start or accept a duel, you need 25 snap points, which is worth 25 cents. There are no additional fees. VIP members are exempt from this fee (see VIP membership). A duel consists of two players",
-      subText:
-        "Create a duel with a game you have the most experience with and set your own stake.",
+        "The power is in your hands, chose from our number of exciting prizes that catch your eye the most.",
+      subText: "",
+      number: "01",
+    },
+    {
+      subTitle: "Choose your amount of tickets",
+      description:
+        "Chose how many tickets you would like to enter. The more tickets you select the more chance you have of winning.",
+      subText: "",
+      number: "02",
+    },
+    {
+      subTitle: "Answer the question",
+      description:
+        "Answer the question with the correct answer to be entered in the competition.",
+      subText: "",
+      number: "03",
+    },
+    {
+      subTitle: "Watch our live draw",
+      description:
+        "Channel into the live draw on our Facebook page as we reveal the winner of our competitions.",
+      subText: "",
+      number: "04",
     },
   ];
 
@@ -92,26 +111,41 @@ const DuelArena = () => {
       </div>
 
       <div className="container max-w-[1920px] mx-auto px-12 relative z-10">
-        <h2 className="text-3xl md:text-6xl font-bold my-5 text-center">
-          How TO
-          <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-1">
-            ENTER
-          </span>
-        </h2>
         {/* Carousel Section */}
         <Carousel className="relative" opts={{ loop: true }}>
           <CarouselContent>
             {slides.map((slide, index) => (
               <CarouselItem key={index}>
                 <div className="text-center w-full h-full mx-auto max-w-6xl">
-                  <h2 className="text-2xl md:text-4xl font-bold my-5">{slide.title}</h2>
+                  {index === 0 ? (
+                    <h2 className="text-3xl md:text-6xl font-bold mb-10 text-center">
+                      How TO Play
+                      <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded ml-1">
+                        {slide.title}
+                      </span>
+                    </h2>
+                  ) : (
+                    <div className="space-y-6">
+                      <h2 className="text-3xl md:text-6xl font-bold text-center">
+                        How To Enter
+                      </h2>
+                      <div className="flex items-center justify-center gap-4">
+                        <div className="inline-flex items-center justify-center border-2 border-[#FF6B3D] text-[#FF6B3D] font-bold text-xl px-4 py-2">
+                          {slide.number}
+                        </div>
+                        <h3 className="text-2xl font-bold">{slide.subTitle}</h3>
+                      </div>
+                    </div>
+                  )}
 
-                  <p className="text-md md:text-xl text-card-foreground mb-6 leading-relaxed">
+                  <p className="text-md md:text-xl text-card-foreground mt-5 mb-6 leading-relaxed">
                     {slide.description}
                   </p>
-                  <p className="text-md md:text-xl text-card-foreground mb-10">
-                    {slide.subText}
-                  </p>
+                  {slide.subText && (
+                    <p className="text-md md:text-xl text-card-foreground mb-10">
+                      {slide.subText}
+                    </p>
+                  )}
                 </div>
               </CarouselItem>
             ))}
@@ -152,8 +186,20 @@ const DuelArena = () => {
         <TrainingCenter />
         <div className="flex md:flex-row flex-col justify-center items-center gap-8 my-20">
           {/* <Image className="xl:w-[930px] xl:h-[550px] md:w-[570px] md:h-[360px]" src={supersale} alt="supersale" width={894} height={462} /> */}
-          <Image className="w-[100%] md:w-[50%]" src={supersale} alt="supersale" width={894} height={462} />
-          <Image className="w-[100%] md:w-[50%]" src={supersale} alt="supersale" width={894} height={462} />
+          <Image
+            className="w-[100%] md:w-[50%]"
+            src={supersale}
+            alt="supersale"
+            width={894}
+            height={462}
+          />
+          <Image
+            className="w-[100%] md:w-[50%]"
+            src={supersale}
+            alt="supersale"
+            width={894}
+            height={462}
+          />
           {/* <Image className="xl:w-[930px] xl:h-[550px] md:w-[570px] md:h-[360px]" src={supersale} alt="supersale" width={894} height={462} /> */}
         </div>
       </div>

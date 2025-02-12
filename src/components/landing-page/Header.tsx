@@ -3,12 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { User, Heart, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
 import MobileMenu from "@/components/MobileMenu";
+import Search from "@/components/Search";
 
 const menu = [
   {
@@ -83,30 +82,12 @@ const Header = () => {
               >
                 {items.name}
               </Link>
-              {/* <button className="flex items-center space-x-1 text-foreground">
-                    <ChevronDown className="h-4 w-4" />
-                  </button> */}
             </nav>
           );
         })}
 
         {/* Search Bar */}
-        <div className="hidden lg:flex items-center space-x-2 flex-1 max-w-md mx-8">
-          <div className="relative flex-1">
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="w-[455px] h-[48px] rounded-full pr-10 border-gray-300 focus:border-primary text-foreground !ring-offset-0 !ring-0"
-            />
-            <Button
-              variant="default"
-              size="sm"
-              className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-primary text-white py-3 px-4"
-            >
-              Search
-            </Button>
-          </div>
-        </div>
+        <Search />
 
         {/* Right Icons */}
         <div className="hidden lg:flex items-center space-x-6">

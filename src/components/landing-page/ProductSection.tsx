@@ -12,7 +12,6 @@ const ProductSection = () => {
       isNew: true,
       isSale: false,
     },
-
     {
       image: laptop,
       title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
@@ -21,7 +20,6 @@ const ProductSection = () => {
       isSale: true,
       isNew: false,
     },
-
     {
       image: laptop,
       title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
@@ -30,7 +28,6 @@ const ProductSection = () => {
       isNew: true,
       isSale: false,
     },
-
     {
       image: laptop,
       title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
@@ -39,7 +36,6 @@ const ProductSection = () => {
       isNew: true,
       isSale: false,
     },
-
   ];
 
   return (
@@ -53,7 +49,6 @@ const ProductSection = () => {
               Offers
             </span>
           </h3>
-
 
           <button className="text-gray-600 hover:text-orange-500 font-medium">
             View All
