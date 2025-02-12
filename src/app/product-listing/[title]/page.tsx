@@ -140,6 +140,7 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {nextTournaments.map((tournament, index) => (
             <NextTournamentCard
+              key={index}
               productImage={tournament.productImage}
               gameIcon={tournament.gameIcon}
               title={tournament.title}
