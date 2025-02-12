@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+
 import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { Label } from "./ui/label";
@@ -21,11 +21,11 @@ export function PromotionModal() {
       >
         <DialogTitle className="flex flex-col gap-7 items-center">
           <h1 className="text-white text-4xl ">
-            Competiton In{" "}
-            <span className="bg-[#FF6B3D] py-1 px-2 rounded-lg">"January"</span>
+            Competiton In
+            <span className="bg-[#FF6B3D] py-1 px-2 rounded-lg">January</span>
           </h1>
           <p className="text-md text-white bg-white bg-opacity-10 py-2 px-7 w-max rounded-2xl">
-            Participation costs <span>{"0.50€ / 50"}</span> snap points
+            Participation costs <span>0.50€ / 50</span> snap points
           </p>
         </DialogTitle>
       </DialogHeader>
@@ -39,7 +39,7 @@ export function PromotionModal() {
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-4">
             <p className="text-md">This month you can get the product</p>
-            <h1 className="text-7xl font-bold">Hisense 32A4BG - 80 cm (32`)</h1>
+            <h1 className="text-7xl font-bold">Hisense 32A4BG - 80 cm 32</h1>
             <p className="text-lg text-">
               The winner will be drawn on the 5th of each month at 6 p.m. You
               can find further information in the terms and conditions. The

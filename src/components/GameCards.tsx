@@ -9,7 +9,7 @@ import game4 from "@/app/images/game4.png";
 import game5 from "@/app/images/game5.png";
 
 import { Button } from "./ui/button";
-import { ArrowDown, ChevronDown } from "lucide-react";
+import { ArrowDown} from "lucide-react";
 
 const GameCards = () => {
 
