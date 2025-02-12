@@ -17,6 +17,8 @@ import React from "react";
 import { Separator } from "@/components/ui/separator";
 import Search from "@/components/Search";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Grid3x3, ListIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const ProductListingPage = () => {
 
@@ -196,7 +198,7 @@ const ProductListingPage = () => {
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-gray-500">Show</p>
                   <Select>
-                    <SelectTrigger className="w-[100px]">
+                    <SelectTrigger className="w-[100px] rounded-full">
                       <SelectValue placeholder="5" />
                     </SelectTrigger>
                     <SelectContent>
@@ -209,7 +211,7 @@ const ProductListingPage = () => {
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-gray-500">Sort by</p>
                   <Select>
-                    <SelectTrigger className="w-[100px]">
+                    <SelectTrigger className="w-[100px] rounded-full">
                       <SelectValue placeholder="Newest" />
                     </SelectTrigger>
                     <SelectContent>
@@ -217,6 +219,15 @@ const ProductListingPage = () => {
                       <SelectItem value="2">Newest</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button className="rounded-full bg-gray-100 text-gray-700">
+                    <ListIcon />
+                  </Button>
+                  <Button className="rounded-full bg-gray-100 text-gray-700">
+                  <Grid3x3 />
+                  </Button>
+
                 </div>
               </div>
             </div>

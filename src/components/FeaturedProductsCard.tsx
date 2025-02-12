@@ -28,8 +28,9 @@ const FeaturedProductsCard = ({
   return (
     <div className="flex flex-col justify-between bg-white rounded-2xl p-4 border border-gray-200 hover:border-primary relative group hover:shadow-lg transition-all duration-300">
       {/* VAT Badge */}
-      <div className="absolute right-4 top-4 bg-gray-100 rounded-full px-2 py-1">
-        <span className="text-xs text-gray-500">19% VAT</span>
+      <div className="absolute right-0 top-0 bg-gray-100 rounded-tr-2xl px-2 py-1">
+        <p className="text-xs text-gray-500">19%</p>
+        <p className="text-xs text-gray-500">VAT</p>
       </div>
 
       {/* Product Image */}
@@ -44,13 +45,13 @@ const FeaturedProductsCard = ({
       </div>
 
       {/* Product Info */}
-      <div className="space-y-1 md:space-y-2 h-max ">
+      <div className="space-y-1 md:space-y-2">
         {/* Title */}
         <p className="text-card-foreground text-md md:text-lg">{title}</p>
 
         {/* Rating */}
-        <div className="flex items-start justify-between gap-1">
-          <div className="flex text-primary items-center gap-1">
+        <div className="flex items-center justify-between">
+          <div className="flex text-primary items-center gap-1 text-2xl">
             {"★".repeat(rating)}{" "}
             <span className="text-xs text-gray-500">({reviews})</span>{" "}
           </div>
@@ -69,9 +70,9 @@ const FeaturedProductsCard = ({
 
         {/* Save Amount */}
       </div>
-      <div className="flex justify-between items-center mt-5 border-t border-gray-200 pt-5">
+      <div className="flex justify-between items-center border-t border-gray-200 pt-5">
         {discount && (
-          <div className="text-xs text-green-600">Save - {discount}</div>
+          <div className="text-green-600">Save - {discount}</div>
         )}
         {/* Badges */}
         <div className="">

@@ -9,8 +9,8 @@ const BestOffers = () => {
   const offers = [
     {
       tag: "Tournament",
-      title: "Mobile Competition",
-      subtitle: "Start at 24 Jan",
+      title: "Start at 24 Jan",
+      subtitle: "Mobile Competition",
       buttonText: "VIP-MITGLIED WERDEN",
       image: mobiles,
       bgimage: tournament,

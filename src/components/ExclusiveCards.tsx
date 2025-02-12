@@ -72,7 +72,7 @@ const ExclusiveCards = () => {
       {pricingCards.map((card, index) => (
         <div
           key={index}
-          className={`relative rounded-3xl p-16 w-full md:w-auto ${
+          className={`relative rounded-xl p-16 w-full md:w-auto ${
             card.isPopular ? "bg-[#8D4CC4]" : "bg-white"
           } shadow-lg hover:scale-105 transition-transform duration-300`}
         >

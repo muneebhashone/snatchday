@@ -7,8 +7,6 @@ interface PrimaryHeadingProps {
   textColor?: string;
 }
 
-
-
 const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
   highlightText,
   remainingText,
@@ -16,18 +14,16 @@ const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
   textColor,
 }) => {
   return (
-    <h1 className="text-2xl md:text-5xl font-bold">
-
-      <span className="bg-primary px-3 py-2 rounded-md text-white">{highlightText}</span>
+    <h1 className="text-2xl md:text-6xl font-extrabold">
+      <span className="bg-primary px-2 py-1 rounded-md text-white">
+        {highlightText}
+      </span>
 
       <span className={`text-heading ml-2 ${textColor}`}>{remainingText}</span>
-      <h1 className={`text-heading text-4xl md:text-7xl mt-3 ${textColor}`}>{remainingHeading}</h1>
+      <h1 className={`text-heading text-4xl md:text-8xl mt-3 ${textColor}`}>
+        {remainingHeading}
+      </h1>
     </h1>
-
-
-
-
-
   );
 };
 

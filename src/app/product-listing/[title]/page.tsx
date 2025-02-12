@@ -6,11 +6,23 @@ import graphiccard from "@/app/images/graphiccard.png";
 import NextTournamentCard from "@/components/NextTournamentCard";
 import FeaturedProductsCard from "@/components/FeaturedProductsCard";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
+import { Separator } from "@/components/ui/separator";
+import {
+  Breadcrumb,
+  BreadcrumbSeparator,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from "@/components/ui/breadcrumb";
+import laptop from "@/app/images/laptopv1.png";
+import laptop2 from "@/app/images/laptopv2.png";
+import detailimage from "@/app/images/detailimage.png"
 
 const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
   const productData = {
     title: decodeURIComponent(params.title).split("-").join(" "),
-    images: [graphiccard, graphiccard, graphiccard, graphiccard],
+    images: [detailimage, laptop, laptop2, detailimage],
     price: "201,65",
     rating: 5,
     reviews: 5,
@@ -29,7 +41,7 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
 
   const nextTournaments = [
     {
-      productImage: graphiccard,
+      productImage: laptop,
       gameIcon: graphiccard,
       title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
       rating: 5,
@@ -47,7 +59,7 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
       },
     },
     {
-      productImage: graphiccard,
+      productImage: laptop2,
       gameIcon: graphiccard,
       title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
       rating: 5,
@@ -126,9 +138,29 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
 
   return (
     <ClientLayout>
-      <ProductDetails {...productData} />
       <div className="py-20 max-w-[1920px] bg-[#F9F9F9] mx-auto px-8">
-        <div className="text-6xl font-bold text-center capitalize mb-10">
+        <Separator className="my-5" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/product-listing">
+                Product Listing
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Product Details</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <Separator className="my-5" />
+
+        <ProductDetails {...productData} />
+        <div className="text-6xl font-bold text-center capitalize my-10">
           <h2>
             <span className=" bg-[#FF6B3D] text-white px-6 py-2 rounded-lg">
               Next
@@ -156,26 +188,24 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
           ))}
         </div>
         <div className="px-0 md:px-6 py-20">
-        <div className="text-6xl font-bold text-center capitalize mb-10">
-          <h2>
-            <span className="bg-transparent">Similar</span>
-            <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-2">
-              Products
-            </span>
-
-          </h2>
-        </div>
+          <div className="text-6xl font-bold text-center capitalize mb-10">
+            <h2>
+              <span className="bg-transparent">Similar</span>
+              <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-2">
+                Products
+              </span>
+            </h2>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
-
             {displayProducts.map((product, index) => (
               <FeaturedProductsCard key={index} {...product} />
             ))}
           </div>
         </div>
       </div>
-        <div className="pb-60">
-          <TrainingCenter />
-        </div>
+      <div className="pb-60">
+        <TrainingCenter />
+      </div>
     </ClientLayout>
   );
 };

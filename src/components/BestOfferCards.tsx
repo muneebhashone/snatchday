@@ -36,9 +36,9 @@ const BestOfferCard = ({
 
       {/* Content */}
       <div className="absolute inset-0 p-4 md:p-6 lg:p-10 flex flex-col md:flex-row items-start md:items-center justify-between">
-        <div className="w-full md:w-1/2 space-y-3 md:space-y-4">
+        <div className="w-[40%] space-y-3 md:space-y-4">
           {/* Tag Badge */}
-          <span className="inline-flex items-center px-3 py-1.5 text-sm md:text-base rounded-full bg-white/20 text-white font-medium">
+          <span className="inline-flex items-center px-3 py-1.5 text-sm md:text-base border-2 border-white rounded text-white font-medium">
             {tag}
           </span>
 
@@ -47,9 +47,9 @@ const BestOfferCard = ({
             <h3 className="text-xl md:text-2xl lg:text-3xl text-white font-medium">
               {title}
             </h3>
-            <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
               {subtitle}
-            </p>
+            </h2>
           </div>
 
           {/* Button */}
@@ -62,14 +62,14 @@ const BestOfferCard = ({
         </div>
 
         {/* Product Image */}
-        <div className="w-full md:w-1/2 mt-4 md:mt-0">
+        <div className="w-[60%] mt-4 md:mt-0">
           <div className="flex justify-center md:justify-end">
             <Image
               src={image}
               alt="Product"
-              width={280}
-              height={180}
-              className="w-[60%] md:w-full h-auto object-contain transform group-hover:scale-105 transition-transform duration-300"
+              width={468}
+              height={300}
+              className="md:w-full h-auto object-contain transform group-hover:scale-105 transition-transform duration-300"
             />
           </div>
         </div>

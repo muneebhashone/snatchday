@@ -16,7 +16,7 @@ const page = () => {
         />
 
         <div className="container mx-auto max-w-[1920px] py-44 bg-[#F9F9F9] flex items-center justify-center text-center">
-          <h3 className="text-3xl font-bold">
+          <h3 className="text-3xl font-extrabold">
             No tournaments found in the next 24 HOURS
           </h3>
         </div>

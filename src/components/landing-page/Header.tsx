@@ -47,16 +47,16 @@ const Header = () => {
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
-      <div className="container max-w-[1920px] mx-auto px-4 h-20 flex items-center justify-between">
+      <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         {/* Logo Section */}
         <Link href="/" className="flex items-center space-x-2">
           <Image src={logo} alt="Logo" width={208} height={66} />
         </Link>
 
         {/* Desktop Hamburger - Only visible on desktop */}
-        <div className="hidden lg:flex h-9 w-9 bg-primary rounded-md items-center justify-center">
+        {/* <div className="hidden lg:flex h-9 w-9 bg-primary rounded-md items-center justify-center">
           <Hamburger />
-        </div>
+        </div> */}
 
         {/* Mobile Menu Button - Only visible on mobile */}
         <button
@@ -70,7 +70,7 @@ const Header = () => {
         {menu.map((items) => {
           return (
             <nav
-              className="hidden lg:flex items-center space-x-5"
+              className="hidden lg:flex items-center justify-between"
               key={items.id}
             >
               <div className="group relative">
@@ -78,7 +78,7 @@ const Header = () => {
               </div>
               <Link
                 href={items.link}
-                className="text-foreground hover:text-primary text-lg"
+                className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
               >
                 {items.name}
               </Link>

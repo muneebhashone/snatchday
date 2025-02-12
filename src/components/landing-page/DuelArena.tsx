@@ -14,6 +14,7 @@ import game3 from "@/app/images/game3.png";
 import game4 from "@/app/images/game4.png";
 import game5 from "@/app/images/game5.png";
 import supersale from "@/app/images/supersale.png";
+import supersale1 from "@/app/images/supersale1.png";
 import TrainingCenter from "./TrainingCenter";
 
 const DuelArena = () => {
@@ -95,7 +96,7 @@ const DuelArena = () => {
   ];
 
   return (
-    <section className="py-20 relative overflow-hidden">
+    <section className="relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute inset-0 w-full h-full">
         {floatingImages.map((image, index) => (
@@ -118,15 +119,15 @@ const DuelArena = () => {
               <CarouselItem key={index}>
                 <div className="text-center w-full h-full mx-auto max-w-6xl">
                   {index === 0 ? (
-                    <h2 className="text-3xl md:text-6xl font-bold mb-10 text-center">
-                      How TO Play
-                      <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded ml-1">
+                    <h2 className="text-3xl md:text-[48px] font-extrabold my-12 text-center">
+                      How To Play
+                      <span className="bg-primary text-white px-6 rounded-lg ml-2">
                         {slide.title}
                       </span>
                     </h2>
                   ) : (
                     <div className="space-y-6">
-                      <h2 className="text-3xl md:text-6xl font-bold text-center">
+                      <h2 className="text-3xl md:text-5xl font-bold text-center">
                         How To Enter
                       </h2>
                       <div className="flex items-center justify-center gap-4">
@@ -138,11 +139,11 @@ const DuelArena = () => {
                     </div>
                   )}
 
-                  <p className="text-md md:text-xl text-card-foreground mt-5 mb-6 leading-relaxed">
+                  <p className="text-md text-2xl text-card-foreground mt-5 mb-6 leading-relaxed">
                     {slide.description}
                   </p>
                   {slide.subText && (
-                    <p className="text-md md:text-xl text-card-foreground mb-10">
+                    <p className="text-md text-2xl text-card-foreground mb-10">
                       {slide.subText}
                     </p>
                   )}
@@ -153,7 +154,7 @@ const DuelArena = () => {
           <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-lg border-0 text-gray-700 hover:bg-gray-50" />
           <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-lg border-0 text-gray-700 hover:bg-gray-50" />
         </Carousel>
-        <div className="flex justify-center items-center gap-8 my-20">
+        <div className="flex justify-center items-center gap-8">
           <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">
             Create a Duel
           </Button>
@@ -195,7 +196,7 @@ const DuelArena = () => {
           />
           <Image
             className="w-[100%] md:w-[50%]"
-            src={supersale}
+            src={supersale1}
             alt="supersale"
             width={894}
             height={462}

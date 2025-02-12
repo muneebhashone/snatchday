@@ -21,15 +21,15 @@ const PermotionalSection = () => {
           mainbg="bg-[#FFF6F2]"
           discount={true}
         >
-          <div className="absolute top-10 right-0">
-            <div className="flex items-center justify-center bg-white text-foreground w-28 h-28 rounded-full text-sm absolute bottom-24 right-0 sm:left-0">
+          <div className="absolute top-8 right-10">
+            <div className="flex items-center justify-center bg-white text-foreground w-28 h-28 rounded-full text-sm absolute bottom-0 -left-10">
               <h3 className="text-center font-semibold">
                 UP TO <h1 className="text-primary font-bold text-2xl">20%</h1>{" "}
                 Off
               </h3>
             </div>
             <Image
-              className=""
+              className="w-full h-full object-contain"
               src={banner1}
               alt="banner"
               width={213}
@@ -116,7 +116,7 @@ const PermotionalSection = () => {
         <PromotionalBanners
           icon={<PercentageIcon />}
           mainbg="bg-[#ffc107]"
-          iconbg="bg-gray-500"
+          iconbg="bg-white"
           iconText="70% OFF"
           title="Biggest Sale of the Month with "
           boldText="70% Off"

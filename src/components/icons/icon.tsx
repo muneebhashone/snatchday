@@ -73,15 +73,10 @@ export const AppleIcon = () => {
 
 export const SnatchIcon = () => {
   return (
-    <svg
-      width="34"
-      height="29"
-      viewBox="0 0 34 29"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M-11 0H34L30.5 33H-11V0Z" fill="white" />
+    <svg width="45" height="33" viewBox="0 0 45 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0H45L41.5 33H0V0Z" fill="white"/>
     </svg>
+    
   );
 };
 

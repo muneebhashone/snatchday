@@ -11,18 +11,11 @@ import {
   TruckIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
+
 import { VatIcon } from "@/components/icons/icon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NextTournamentCard from "../NextTournamentCard";
+
+
 interface ProductDetailsProps {
   title: string;
   images: StaticImageData[];
@@ -49,25 +42,8 @@ const ProductDetails = ({
   const [selectedImage, setSelectedImage] = useState(0);
 
   return (
-    <div className="container max-w-[1920px] mx-auto px-4 ">
-      <Separator className="my-5" />
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/product-listing">{title}</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>{title}</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-      <Separator className="my-5" />
-
+    <div className="container max-w-[1920px] mx-auto px-4 relative">
+       
       <div className="bg-white rounded-3xl p-8 max-w-[1440px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Column - Product Images */}
@@ -206,7 +182,7 @@ const ProductDetails = ({
 
             {/* Shipping Method */}
             <div>
-              <p className="text-sm inline-flex items-center gap-1">
+              <p className="text-sm inline-flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
                 <span className="text-gray-600 flex items-center gap-1">
                   <TruckIcon color="#FF6B3D" /> Shipping method:
                 </span>{" "}
@@ -216,16 +192,16 @@ const ProductDetails = ({
 
             {/* Additional Actions */}
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1">
+              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1">
                 <GitCompareIcon color="#FF6B3D" /> Compare
               </button>
-              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1">
+              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1">
                 <ThumbsUpIcon color="#FF6B3D" /> Recommend Product
               </button>
-              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1">
+              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1">
                 <AlertCircleIcon color="#FF6B3D" /> Report a bug
               </button>
-              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1">
+              <button className="text-gray-600 hover:text-[#FF6B3D] text-sm flex items-center gap-1 bg-gray-100 rounded-full px-3 py-1">
                 <MessageCircleQuestionIcon color="#FF6B3D" /> Ask a Product
               </button>
             </div>
@@ -294,7 +270,6 @@ const ProductDetails = ({
           </TabsContent>
         </Tabs>
       </div>
-
     </div>
   );
 };

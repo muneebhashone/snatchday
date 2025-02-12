@@ -9,7 +9,7 @@ import game4 from "@/app/images/game4.png";
 import game5 from "@/app/images/game5.png";
 
 import { Button } from "./ui/button";
-import { ChevronDown } from "lucide-react";
+import { ArrowDown, ChevronDown } from "lucide-react";
 
 const GameCards = () => {
 
@@ -107,12 +107,12 @@ const GameCards = () => {
         {trainingCards.slice(0, visibleCards).map((card, index) => (
           <div
           key={index}
-          className="group p-5 md:px-10 lg:px-16  md:py-7 lg:py-10 shadow-2xl rounded-lg border border-gray-200 hover:border-primary hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)]"
+          className="group p-5 md:px-10 lg:px-16  md:py-7 lg:py-10 shadow-xl rounded-lg hover:border-primary hover:shadow-[0_20px_50px_rgba(8,_112,_184,_0.7)]"
         >
           <div className="aspect-square rounded-full h-28 lg:h-64 w-28 lg:w-64 shadow-lg border border-gray-200 flex items-center justify-center transition-transform transform group-hover:scale-105">
             <Image className="w-[50px] h-[50px] md:w-[120px] lg:w-[140px] md:h-[120px] lg:h-[140px]" src={card.icon} alt={card.label} width={141} height={141} />
           </div>
-          <h3 className="text-center text-xs sm:text-l w-20gmd: font-semibold py-5 lg:py-10">{card.label}</h3>
+          <h3 className="text-center text-2xl font-bold mt-10 mb-4">{card.label}</h3>
           <Button className="w-full text-xs sm:text-l w-20gmd: shadow-lg bg-white text-black rounded-full hover:gradient-primary py-6 hover:text-white">
             Zum Spiel
           </Button>
@@ -124,10 +124,10 @@ const GameCards = () => {
         onClick={() => setVisibleCards(prev => Math.min(prev + 4, trainingCards.length))}
         className="block mx-auto rounded-full w-24 md:w-32 h-24 md:h-32 bg-white shadow-lg my-10"
       >
-        <p className="text-xs md:text-lg text-black font-semibold">
+        <p className="text-xs md:text-lg text-card-foreground font-semibold">
           View More
         </p>
-        <ChevronDown className="w-4 h-4 mx-auto text-black" />
+        <ArrowDown className="w-4 h-4 mx-auto text-card-foreground" />
       </Button>
     )}
     </div>

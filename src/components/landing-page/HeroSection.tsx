@@ -27,7 +27,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="min-h-screen w-full relative bg-white/80 pt-20 lg:pt-40">
+    <section className="min-h-screen w-full relative bg-white pt-20 lg:pt-40">
       {/* Background Image */}
       <Image
         src={heroImage}
@@ -35,7 +35,7 @@ const HeroSection = () => {
         width={1920}
         height={1080}
         priority
-        className="object-cover opacity-50 absolute inset-0 w-full h-full"
+        className="object-cover opacity-90 absolute inset-0 w-full h-full grayscale"
       />
 
       {/* Floating Images */}
@@ -59,16 +59,16 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="container max-w-[1600px] mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 items-center">
+      <div className="container max-w-[1440px] mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-5 items-center">
           {/* Left Content */}
-          <div className="text-center lg:text-left pt-8 lg:pt-0">
+          <div className="text-center lg:text-left pt-8 lg:pt-0 col-span-3">
             <PrimaryHeading
               highlightText="Discover"
               remainingText="the new way of "
               remainingHeading="Online Shopping"
             />
-            <p className="text-card-foreground text-base lg:text-lg mt-4 lg:mt-6 max-w-xl mx-auto lg:mx-0">
+            <p className="text-card-foreground text-base lg:text-xl mt-4 lg:mt-6 max-w-xl mx-auto lg:mx-0">
               Unsere Vision für Snatch Day war lange Zeit in unseren Köpfen
               gereift, denn wir sind kein gewöhnlicher Onlineshop.
             </p>
@@ -78,18 +78,18 @@ const HeroSection = () => {
           </div>
 
           {/* Right Content */}
-          <div className="flex justify-center lg:justify-end mt-8 lg:mt-0">
-            <div className="relative lg:w-full">
-              <Image
-                src={iphone}
-                alt="hero-image"
-                width={500}
-                height={500}
-                className="w-full h-auto object-cover"
-                priority
-              />
-            </div>
+          {/* <div className="flex justify-center lg:justify-end mt-8 lg:mt-0"> */}
+          <div className="relative col-span-2">
+            <Image
+              src={iphone}
+              alt="hero-image"
+              width={510}
+              height={522}
+              className="w-full object-contain"
+              priority
+            />
           </div>
+          {/* </div> */}
         </div>
       </div>
     </section>

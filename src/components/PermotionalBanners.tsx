@@ -1,6 +1,7 @@
 import React from "react";
 
 import Link from "next/link";
+import { ArrowRightIcon } from "lucide-react";
 
 interface PromotionalBannersProps {
   icon: React.ReactNode;
@@ -15,7 +16,6 @@ interface PromotionalBannersProps {
   time?: { timer: string; timerText: string }[];
 }
 
-
 const PromotionalBanners = ({
   icon,
   iconbg,
@@ -28,66 +28,49 @@ const PromotionalBanners = ({
 }: PromotionalBannersProps) => {
   return (
     <div
-
-      className={`${mainbg} rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow`}
+      className={`${mainbg} rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-16 pl-10`}
     >
-      <div className="py-10 px-10">
-        <div className="space-y-4 max-w-[300px] relative z-10">
+      <div className="">
+        <div className="space-y-4 max-w-[40%] relative z-10">
           <div
-            className={`h-16 w-16 ${iconbg} rounded-full flex items-center justify-center`}
+            className={`h-20 w-20 ${iconbg} rounded-full flex items-center justify-center`}
           >
             {icon}
           </div>
 
           <span
-            className={`inline-flex items-center px-3 py-2 rounded-full text-sm ${iconbg} text-white`}
+            className={`inline-flex items-center px-3 py-2 rounded-full text-sm ${iconbg} ${
+              iconText === "70% OFF" ? "text-black" : "text-white"
+            }`}
           >
             {iconText}
           </span>
           <div className="space-y-2">
-            <h3 className="text-lg md:text-2xl font-medium sm:bg-transparent bg-slate-200 bg-opacity-20 px-1 rounded-md">
+            <h3 className="text-lg text-[#1C1B1D] md:text-2xl sm:bg-transparent bg-slate-200 bg-opacity-20 px-1 rounded-md">
               {title} <span className="font-bold">{boldText}</span>
             </h3>
           </div>
 
           <Link
             href="/deals"
-            className={`inline-flex items-center text-black hover:underline`}
+            className={`inline-flex items-center text-card-foreground text-xl`}
           >
             Explore More
-            <svg
-              className="w-4 h-4 ml-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <ArrowRightIcon className="w-4 h-4 ml-1" />
           </Link>
         </div>
-        <div className="flex items-center justify-start gap-4 relative z-10 mt-10">
-          {time?.map((item)=>{
-            return(
-          <div key={item.timer} className="text-center">
+        <div className="flex items-center justify-start gap-4 relative z-10 my-7">
+          {time?.map((item) => {
+            return (
+              <div key={item.timer} className="text-center">
+                <div className="text-3xl bg-[#CDB3FF] px-4 py-1">
+                  {item.timer}
+                </div>
 
-
-            <div className="text-3xl bg-[#CDB3FF] px-4 py-2">{item.timer}</div>
-
-
-
-            <p>{item.timerText}</p>
-          </div>
-
-
-            )
+                <p>{item.timerText}</p>
+              </div>
+            );
           })}
-          
-
         </div>
         {children}
       </div>

@@ -135,14 +135,14 @@ const SupportPage = () => {
               Fragen
             </span>
           </h2>
-          <div className="flex flex-wrap lg:grid grid-cols-3 gap-3 justify-center items-center lg:gap-8">
+          <div className="grid grid-cols-3 gap-3">
             {faqdata.map((item) => (
               <Button
                 key={item.id}
                 onClick={() => setSelectedFaq(item.id)}
-                className={`px-10 w-max text-lg lg:w-max lg:px-32 py-16 lg:text-2xl font-bold border-2 border-gray-100 transition-all duration-300 ease-in-out ${
+                className={`text-lg font-bold py-16 px-28 shadow-xl rounded-lg transition-all duration-300 ease-in-out ${
                   selectedFaq === item.id
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-white rounded-full"
                     : "bg-white text-black hover:bg-primary hover:text-white hover:rounded-full"
                 }`}
               >

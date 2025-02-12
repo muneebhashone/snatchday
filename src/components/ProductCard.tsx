@@ -34,8 +34,9 @@ const ProductCard = ({
   return (
     <div className="bg-white rounded-3xl border border-gray-200 hover:border-primary p-6 relative group hover:shadow-lg transition-all duration-300">
       {/* VAT Badge */}
-      <div className="absolute right-6 top-6 bg-gray-100 rounded-full px-3 py-1">
-        <span className="text-sm text-gray-500">19% VAT</span>
+      <div className="absolute right-0 top-0 bg-gray-100 rounded rounded-tr-3xl px-3 py-1">
+        <p className="text-sm text-gray-500">19%</p>
+        <p className="text-sm text-gray-500">VAT</p>
       </div>
 
       {/* Product Image */}
@@ -53,10 +54,10 @@ const ProductCard = ({
       <div className="space-y-4">
         {/* Title */}
         <div className="flex justify-between items-start gap-10">
-          <h3 className="text-lg font-medium text-gray-800 line-clamp-2">
+          <p className="text-xl text-foreground font-light line-clamp-2">
             {title}
-          </h3>
-          <button className="rounded-full p-2 hover:bg-gray-100 transition-colors">
+          </p>
+          <button className="rounded-full bg-[#F5F5F5] p-4 hover:bg-gray-100 transition-colors">
             <Heart className="w-6 h-6 text-gray-400 hover:text-orange-500" />
           </button>
         </div>
@@ -64,7 +65,7 @@ const ProductCard = ({
         {/* Rating */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <div className="flex text-orange-400">
+            <div className="flex text-orange-400 text-2xl">
               {"★".repeat(rating)}
               {"☆".repeat(5 - rating)}
             </div>
@@ -77,7 +78,7 @@ const ProductCard = ({
         <div className="pt-2 flex justify-between items-center">
           <button
             onClick={handleClick}
-            className="bg-gradient-to-r from-orange-400 to-purple-500 text-white py-3 px-8 rounded-full font-medium hover:opacity-90 transition-opacity"
+            className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
           >
             Add To Cart
           </button>

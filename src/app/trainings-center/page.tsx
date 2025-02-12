@@ -1,13 +1,13 @@
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
-import trainingscenterbg from "@/app/images/trainingscenterbg.png";
+
 import React from "react";
 import SectionCenter from "@/components/SectionCenter";
 import GameCards from "@/components/GameCards";
 import FeaturedProductsCard from "@/components/FeaturedProductsCard";
 import graphiccard from "@/app/images/graphiccard.png";
 import trainingbg from "@/app/images/trainingBg.png";
-import trainingImage from "@/app/images/trainingImage.png";
+import trainingbgc from "@/app/images/trainingbgc.png";
 const page = () => {
   const displayProducts = [
     {
@@ -86,7 +86,7 @@ const page = () => {
         <SecondaryHeroSection
           title="Training Center"
           bg={trainingbg}
-          rightimage={trainingImage}
+          rightimage={trainingbgc}
         />
         <SectionCenter
           title="Training"
@@ -95,9 +95,9 @@ const page = () => {
         />
         <GameCards />
         <div className="px-0 md:px-6 pb-60">
-          <div className="text-3xl lg:text-6xl font-bold my-5 text-center capitalize">
+          <div className="text-3xl lg:text-5xl font-extrabold my-5 text-center capitalize">
             <h2>
-              <span className=" bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-1">
+              <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg mr-1">
                 highlights
               </span>
 

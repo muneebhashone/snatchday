@@ -67,7 +67,7 @@ const ProductCategoryFilter = () => {
       {/* Other Filters */}
       {Object.entries(filters).map(([category, items]) => (
         <div key={category} className="space-y-3">
-          <h4 className="font-medium text-gray-900">{category}</h4>
+          <p className="font-medium text-gray-700">{category}</p>
           <div className="space-y-2">
             {items.map((item, index) => (
               <div
@@ -75,7 +75,7 @@ const ProductCategoryFilter = () => {
                 className="flex items-center justify-between space-x-2"
               >
                 <div className="flex items-center space-x-2">
-                  <Checkbox id={`${category}-${index}`} />
+                  <Checkbox id={`${category}-${index}`} className="border-gray-300 border-2" />
                   <label
                     htmlFor={`${category}-${index}`}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600"
@@ -90,7 +90,7 @@ const ProductCategoryFilter = () => {
         </div>
       ))}
            <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">Price Range</h4>
+        <p className="font-medium text-gray-700">Price Range</p>
         <div className="space-y-4">
           <Slider
             defaultValue={[1000]}

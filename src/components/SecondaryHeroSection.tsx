@@ -2,11 +2,14 @@ import Image, { StaticImageData } from "next/image";
 import PrimaryHeading from "./PrimaryHeading";
 import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
+import Search from "./Search";
 
 const SecondaryHeroSection = ({
   title,
   rightimage,
   bg,
+  description,
+  support,
 }: {
   title?: string;
   rightimage?: StaticImageData;
@@ -24,24 +27,24 @@ const SecondaryHeroSection = ({
           className={
             title === "VIP Shop"
               ? "w-full h-[700px] lg:h-[600px] xl:h-[600px] object-cover"
-              : "w-full h-[450px] lg:h-[600px] mx-auto"
+              : "w-full h-[700px] lg:h-[600px] xl:h-[600px] object-cover"
           }
         />
-        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-start pt-14">
-          <div className="container mx-auto px-4 flex flex-col-reverse gap-5 items-center lg:grid lg:grid-cols-2 lg:gap-24 lg:text-start">
-            <div className="col-span-1 content-center">
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pt-32 pb-10">
+          <div className="container mx-auto px-4 lg:grid lg:grid-cols-2 lg:text-start">
+            <div className="content-center">
               {title === "VIP Shop" ? (
-                <div className="flex flex-col items-center justify-center text-center">
-                  <h4 className="text-white text-2xl font-bold mb-8">
+                <div className="flex flex-col items-start justify-center">
+                  <h2 className="text-white text-2xl font-bold mb-8">
                     VIP Shop
-                  </h4>
+                  </h2>
                   <PrimaryHeading
                     highlightText="Exclusive"
                     remainingText="OFFERS FOR"
                     remainingHeading="VIP MEMBERS"
                     textColor="text-white"
                   />
-                  <p className="text-white text-xl font-bold mt-4">
+                  <p className="text-white text-2xl font-bold mt-4">
                     Take your chance to get a very special bargain.
                   </p>
                   <Button
@@ -50,17 +53,17 @@ const SecondaryHeroSection = ({
                         linear-gradient(#330542, #330542) padding-box,
                         linear-gradient(116.76deg, #E4BD83 13.91%, #9C6727 28.84%, #FDF6AE 32.04%, #A06B2A 50.53%, #FDF6AE 53.15%, #BD8D42 71.14%) border-box
                       `,
-                      border: "2px solid transparent",
+                      border: "8px solid transparent",
                       borderRadius: "9999px",
                     }}
-                    className="mt-4 px-7 md:px-12 py-5 md:py-7 flex items-center justify-center"
+                    className="mt-10 w-[280px] h-[83px] text-2xl font-bold flex items-center justify-center"
                   >
                     <Image
                       src={crown}
-                      width={20}
-                      height={20}
+                      width={36}
+                      height={36}
                       alt="crown"
-                      className="w-5 h-5"
+                      className=""
                     />
                     Register
                   </Button>
@@ -70,19 +73,29 @@ const SecondaryHeroSection = ({
                   </p>
                 </div>
               ) : (
-                <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-8xl font-bold capitalize">
+                <>
+                <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-7xl font-bold capitalize">
                   {title}
                 </h1>
+                {support && (
+                  <>
+                    <p className="text-white text-xl mt-4 mb-10">
+                      {description}
+                    </p>
+                    <Search />
+                  </>
+                )}
+                </>
               )}
             </div>
-            <div className="col-span-1 content-center">
+            <div className="col-span-1 mr-auto">
               {rightimage && (
                 <Image
                   src={rightimage}
-                  height={400}
-                  width={600}
+                  
                   alt="tournament"
-                  className="lg:object-cover lg:w-[350px] w-[300px]"
+                  className="w-full h-full object-cover max-h-[500px]"
+                
                 />
               )}
             </div>

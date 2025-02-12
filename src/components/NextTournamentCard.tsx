@@ -37,8 +37,8 @@ const NextTournamentCard = ({
   countdown,
 }: NextTournamentCardProps) => {
   return (
-    <div className="">
-      <div className="grid grid-cols-1 md:grid-cols-2 bg-white border border-gray-200 rounded-xl">
+    
+      <div className="grid grid-cols-1 md:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300">
         {/* Left Column - Product Image */}
         <div className="space-y-4 border-r border-gray-200 pt-10 px-10">
           <div className="flex items-end justify-center">
@@ -150,7 +150,7 @@ const NextTournamentCard = ({
           </div>
         </div>
       </div>
-    </div>
+   
   );
 };
 
