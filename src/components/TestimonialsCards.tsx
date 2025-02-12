@@ -39,13 +39,13 @@ const TestimonialsCards = () => {
       {features.map((feature, index) => (
         <div
           key={index}
-          className={`bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer`}
+          className={`bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer py-3 px-8`}
         >
           <div className="flex items-center gap-4">
             <div className={`p-3 rounded-xl`}>
               {feature.icon}
             </div>
-            <h3 className="text-lg font-medium text-gray-800">
+            <h3 className="text-lg font-semibold text-card-foreground">
               {feature.title}
             </h3>
           </div>

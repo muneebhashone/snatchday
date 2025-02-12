@@ -182,7 +182,7 @@ const Footer = () => {
       </div>
 
       {/* Bottom Footer */}
-      <div className="bg-[#333333] text-white py-4">
+      <div className="bg-[#333333] text-white py-4 text-center">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm">
             © 2017-2023{" "}
@@ -194,7 +194,7 @@ const Footer = () => {
               protected by copyright.
             </p>
           </div>
-          <div className="flex gap-4 mt-4 md:mt-0">
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-4 md:mt-0">
             {footerLinks.paymentMethods.map((method, index) => (
               <div
                 key={index}
