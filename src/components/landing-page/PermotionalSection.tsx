@@ -5,8 +5,7 @@ import Image from "next/image";
 import banner1 from "@/app/images/banner-iphone.png";
 import banner2 from "@/app/images/banner2.png";
 import percentage from "@/app/images/percentage.png";
-import { PromotionModal } from "../PromotionModal";
-import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+
 
 const PermotionalSection = () => {
   return (

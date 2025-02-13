@@ -20,8 +20,7 @@ import laptop2 from "@/app/images/laptopv2.png";
 import detailimage from "@/app/images/detailimage.png";
 import { TournamentCupIcon } from "@/components/icons/icon";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { PromotionModal } from "@/components/PromotionModal";
-import VisitTournament from "@/components/VisitTournament";
+
 import { VisitTournamentModal } from "@/components/VisitTournamentModal";
 import {
   Carousel,
@@ -32,7 +31,7 @@ import {
 } from "@/components/ui/carousel";
 import Loader from "@/components/Loader";
 
-const ProductContent = ({ params }: { params: { title: string } }) => {
+const ProductContent = () => {
   const productData = {
     title: `Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27) - 4710886045649`,
     images: [
@@ -237,9 +236,9 @@ const ProductContent = ({ params }: { params: { title: string } }) => {
             </div>
           </DialogTrigger>
           <VisitTournamentModal
-            closeModal={() => {
-              setopenModal(false);
-            }}
+            // closeModal={() => {
+            //   setopenModal(false);
+            // }}
             openModal={openModal}
             title="January Tournament"
             date="January 30, 2025 at 3:00 p.m."
@@ -329,10 +328,10 @@ const ProductContent = ({ params }: { params: { title: string } }) => {
   );
 };
 
-const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
+const ProductDetailsPage = () => {
   return (
     <Suspense fallback={<Loader />}>
-      <ProductContent params={params} />
+      <ProductContent />
     </Suspense>
   );
 };

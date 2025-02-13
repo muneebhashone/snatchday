@@ -2,7 +2,7 @@ import Image, { StaticImageData } from "next/image";
 import PrimaryHeading from "./PrimaryHeading";
 import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
-import Search from "./Search";
+
 import { Input } from "./ui/input";
 import { SearchIcon } from "lucide-react";
 

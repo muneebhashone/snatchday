@@ -1,15 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
-import {
-  AlertCircleIcon,
-  GitCompareIcon,
-  Heart,
-  MessageCircleQuestionIcon,
-  ShoppingCartIcon,
-  ThumbsUpIcon,
-  TruckIcon,
-} from "lucide-react";
+import { Heart, ShoppingCartIcon, TruckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { VatIcon } from "@/components/icons/icon";

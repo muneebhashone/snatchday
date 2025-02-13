@@ -46,7 +46,7 @@ const menu = [
 ];
 
 const Header = () => {
-  const [openModal, setOpenModal] = useState(false);
+  // const [openModal, setOpenModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -84,15 +84,15 @@ const Header = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      onClick={() => {
-                        setOpenModal(true);
-                      }}
+                      // onClick={() => {
+                      //   setOpenModal(true);
+                      // }}
                       className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
                     >
                       {items.name}
                     </button>
                   </DialogTrigger>
-                  <PromotionModal openModal={openModal} />
+                  <PromotionModal/>
                 </Dialog>
               ) : (
                 <Link

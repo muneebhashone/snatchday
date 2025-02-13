@@ -2,7 +2,7 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "../ui/slider";
-import VisitTournament from "../VisitTournament";
+
 
 const ProductCategoryFilter = () => {
   const [priceRange, setPriceRange] = React.useState([1000]);

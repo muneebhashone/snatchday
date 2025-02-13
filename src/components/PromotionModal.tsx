@@ -11,7 +11,7 @@ import { Label } from "./ui/label";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
-export function PromotionModal({ openModal }: { openModal?: boolean }) {
+export function PromotionModal() {
   const time = [
     {
       timer: "24",
