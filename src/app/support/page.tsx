@@ -117,9 +117,9 @@ const SupportPage = () => {
           <BubblesIcon className="lg:block hiddenabsolute bottom-1/4 left-0" />
           <BubblesIcon1 className="lg:block hidden absolute bottom-1/1 right-0" />
         </div>
-        <h2 className="text-2xl lg:text-6xl font-bold my-5 text-center mb-16">
+        <h2 className="text-2xl lg:text-[48px] font-extrabold my-5 text-center mb-16">
           Create
-          <span className="bg-primary text-white px-6 py-2 rounded-lg ml-1">
+          <span className="bg-primary text-white px-6 py-2 rounded-lg ml-2">
             Ticket
           </span>
         </h2>
@@ -134,9 +134,9 @@ const SupportPage = () => {
           ))}
         </div>
         <div className="max-w-[1200px] mx-auto py-20">
-          <h2 className="text-3xl lg:text-6xl font-bold my-5 text-center mb-16">
+          <h2 className="text-3xl lg:text-[48px] font-extrabold my-5 text-center mb-16">
             Häufige
-            <span className="bg-primary text-white px-6 py-2 rounded-lg ml-1">
+            <span className="bg-primary text-white px-6 py-2 rounded-lg ml-2">
               Fragen
             </span>
           </h2>
@@ -165,7 +165,7 @@ const SupportPage = () => {
           </div>
         </div>
         <div className="max-w-[1200px] mx-auto py-20">
-          <h2 className="text-3xl lg:text-6xl font-bold my-5 text-center mb-16">
+          <h2 className="text-3xl lg:text-[48px] font-bold my-5 text-center mb-16">
             Explanatory
             <span className="bg-primary text-white px-4 py-1 rounded-lg ml-2">
               Videos

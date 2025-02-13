@@ -95,7 +95,7 @@ const page = () => {
               Create a duel with a game you have the most experience with and
               set your own stake.
             </p>
-            <Button className="text-primary bg-white rounded-full py-5 mt-12 px-12 hover:bg-primary hover:text-white">
+            <Button className="text-primary bg-white text-lg rounded-full py-5 min-h-14 mt-12 px-12 hover:bg-primary hover:text-white drop-shadow-2xl shadow-2xl">
               Create a Duel
             </Button>
           </div>
@@ -104,13 +104,13 @@ const page = () => {
           <TrainingCenter />
         </div>
         <div className="px-0 md:px-6 pb-60 pt-32">
-          <div className="text-[48px] font-bold my-5 text-center capitalize">
+          <div className="text-[48px] font-extrabold my-5 text-center capitalize">
             <h2>
-              <span className=" bg-[#FF6B3D] text-white px-6 py-1 rounded-lg ml-1">
+              <span className=" bg-[#FF6B3D] text-white px-6 py-1 rounded-lg">
                 highlights
               </span>
 
-              <span className="text-foreground">of the week</span>
+              <span className="text-foreground ml-2">of the week</span>
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 mt-10">

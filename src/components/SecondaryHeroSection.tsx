@@ -3,6 +3,8 @@ import PrimaryHeading from "./PrimaryHeading";
 import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
 import Search from "./Search";
+import { Input } from "./ui/input";
+import { SearchIcon } from "lucide-react";
 
 const SecondaryHeroSection = ({
   title,
@@ -74,17 +76,31 @@ const SecondaryHeroSection = ({
                 </div>
               ) : (
                 <>
-                <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-7xl font-bold capitalize">
-                  {title}
-                </h1>
-                {support && (
-                  <>
-                    <p className="text-white text-xl mt-4 mb-10">
-                      {description}
-                    </p>
-                    <Search />
-                  </>
-                )}
+                  <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-7xl font-bold capitalize">
+                    {title}
+                  </h1>
+                  {support && (
+                    <>
+                      <p className="text-white text-xl mt-4 mb-10">
+                        {description}
+                      </p>
+                      <div className="relative">
+                        <Input
+                          type="search"
+                          placeholder="Search Duellarena, Turniere and more..."
+                          className="w-full min-w-[741px] h-[78px] rounded-full pr-10 pl-24 border-gray-300 focus:border-primary text-foreground !ring-offset-0 !ring-0"
+                        />
+                        <SearchIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-[#A5A5A5]" />
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary text-white h-[60px] w-[170px] hover:bg-primary"
+                        >
+                          Search
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -92,10 +108,8 @@ const SecondaryHeroSection = ({
               {rightimage && (
                 <Image
                   src={rightimage}
-                  
                   alt="tournament"
                   className="w-full h-full object-cover max-h-[500px]"
-                
                 />
               )}
             </div>
@@ -201,10 +215,10 @@ export default SecondaryHeroSection;
 //               {rightimage && (
 //                 <Image
 //                   src={rightimage}
-                  
+
 //                   alt="tournament"
 //                   className="w-full h-full object-cover max-h-[500px]"
-                
+
 //                 />
 //               )}
 //             </div>

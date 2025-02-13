@@ -12,7 +12,8 @@ body {
   }
 
   .gradient-primary {
-    background: linear-gradient(90deg, #f37835 0%, #8d4cc4 100%);
+    @apply bg-gradient-to-r from-[#FF6B3D] to-[#8D4CC4];
+    filter: drop-shadow(11px 9px 24px rgba(141, 76, 196, 0.5));
   }
 
   .text-gradient-primary {
@@ -279,4 +280,17 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
   scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

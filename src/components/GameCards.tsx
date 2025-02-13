@@ -97,6 +97,22 @@ const GameCards = () => {
       icon: game1,
       label: "Push It - TC",
     },
+    {
+      icon: game5,
+      label: "Reorder - TC",
+    },
+    {
+      icon: game1,
+      label: "Push It - TC",
+    },
+    {
+      icon: game5,
+      label: "Reorder - TC",
+    },
+    {
+      icon: game1,
+      label: "Push It - TC",
+    },
   ];
 
   return (

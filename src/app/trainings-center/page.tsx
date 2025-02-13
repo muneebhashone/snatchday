@@ -97,7 +97,7 @@ const page = () => {
         <div className="px-0 md:px-6 pb-60">
           <div className="text-3xl lg:text-5xl font-extrabold my-5 text-center capitalize">
             <h2>
-              <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg mr-1">
+              <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg mr-2">
                 highlights
               </span>
 

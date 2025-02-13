@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import ProductDetails from "@/components/products/ProductDetails";
 import graphiccard from "@/app/images/graphiccard.png";
@@ -23,11 +23,28 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PromotionModal } from "@/components/PromotionModal";
 import VisitTournament from "@/components/VisitTournament";
 import { VisitTournamentModal } from "@/components/VisitTournamentModal";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Loader from "@/components/Loader";
 
-const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
+const ProductContent = ({ params }: { params: { title: string } }) => {
   const productData = {
     title: `Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27) - 4710886045649`,
-    images: [detailimage, laptop, laptop2, detailimage,detailimage, laptop, laptop2, detailimage],
+    images: [
+      detailimage,
+      laptop,
+      laptop2,
+      detailimage,
+      detailimage,
+      laptop,
+      laptop2,
+      detailimage,
+    ],
     price: "201,65",
     rating: 5,
     reviews: 5,
@@ -45,6 +62,42 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
   };
 
   const nextTournaments = [
+    {
+      productImage: laptop,
+      gameIcon: graphiccard,
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      rating: 5,
+      reviews: 5,
+      gameName: "Push It",
+      duration: "3:00 minutes",
+      currentPrice: "2.50",
+      participationPoints: 250,
+      participationFee: "2.50",
+      countdown: {
+        hours: 20,
+        minutes: 48,
+        seconds: 37,
+        milliseconds: 19,
+      },
+    },
+    {
+      productImage: laptop2,
+      gameIcon: graphiccard,
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      rating: 5,
+      reviews: 5,
+      gameName: "Push It",
+      duration: "3:00 minutes",
+      currentPrice: "2.50",
+      participationPoints: 250,
+      participationFee: "2.50",
+      countdown: {
+        hours: 20,
+        minutes: 48,
+        seconds: 37,
+        milliseconds: 19,
+      },
+    },
     {
       productImage: laptop,
       gameIcon: graphiccard,
@@ -166,7 +219,32 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
   }
   return (
     <ClientLayout>
-      <div className="py-24 max-w-[1920px] mx-auto">
+      <div className="py-24 max-w-[1920px] mx-auto relative">
+        <Dialog>
+          <DialogTrigger asChild>
+            <div
+              onClick={() => {
+                setopenModal(true);
+              }}
+              className=" text-lg font-semibold cursor-pointer"
+            >
+              <div className="absolute -right-[85px] top-[55vh] rotate-90 flex flex-row items-center p-3 gap-2 rounded-b-3xl gradient-primary">
+                <h1 className="text-white -rotate-180">Visit Tournament</h1>
+                <div className="-rotate-90">
+                  <TournamentCupIcon />
+                </div>
+              </div>
+            </div>
+          </DialogTrigger>
+          <VisitTournamentModal
+            closeModal={() => {
+              setopenModal(false);
+            }}
+            openModal={openModal}
+            title="January Tournament"
+            date="January 30, 2025 at 3:00 p.m."
+          />
+        </Dialog>
         <Separator className="my-5" />
         <Breadcrumb className="px-0 md:px-6">
           <BreadcrumbList>
@@ -196,25 +274,36 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
 
             <span className="bg-transparent ml-2">Tournaments</span>
           </h2>
-      
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {nextTournaments.map((tournament, index) => (
-            <NextTournamentCard
-              key={index}
-              productImage={tournament.productImage}
-              gameIcon={tournament.gameIcon}
-              title={tournament.title}
-              rating={tournament.rating}
-              reviews={tournament.reviews}
-              gameName={tournament.gameName}
-              duration={tournament.duration}
-              currentPrice={tournament.currentPrice}
-              participationPoints={tournament.participationPoints}
-              participationFee={tournament.participationFee}
-              countdown={tournament.countdown}
-            />
-          ))}
-        </div>
+
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full relative"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {nextTournaments.map((tournament, index) => (
+                <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2">
+                  <NextTournamentCard
+                    productImage={tournament.productImage}
+                    gameIcon={tournament.gameIcon}
+                    title={tournament.title}
+                    rating={tournament.rating}
+                    reviews={tournament.reviews}
+                    gameName={tournament.gameName}
+                    duration={tournament.duration}
+                    currentPrice={tournament.currentPrice}
+                    participationPoints={tournament.participationPoints}
+                    participationFee={tournament.participationFee}
+                    countdown={tournament.countdown}
+                  />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-8" />
+            <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-8" />
+          </Carousel>
         </div>
         <div className="py-10 bg-[#F9F9F9]">
           <div className="text-6xl font-extrabold text-center capitalize mb-10">
@@ -237,6 +326,14 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
       </div>
     </ClientLayout>
     // </div>
+  );
+};
+
+const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
+  return (
+    <Suspense fallback={<Loader />}>
+      <ProductContent params={params} />
+    </Suspense>
   );
 };
 
