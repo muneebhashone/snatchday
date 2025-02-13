@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import ProductDetails from "@/components/products/ProductDetails";
 import graphiccard from "@/app/images/graphiccard.png";
@@ -17,7 +17,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import laptop from "@/app/images/laptopv1.png";
 import laptop2 from "@/app/images/laptopv2.png";
-import detailimage from "@/app/images/detailimage.png"
+import detailimage from "@/app/images/detailimage.png";
+import { TournamentCupIcon } from "@/components/icons/icon";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { PromotionModal } from "@/components/PromotionModal";
+import VisitTournament from "@/components/VisitTournament";
+import { VisitTournamentModal } from "@/components/VisitTournamentModal";
 
 const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
   const productData = {
@@ -146,7 +151,19 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
       oldPrice: "201,65",
     },
   ];
+  const [openModal, setopenModal] = useState(false);
 
+  // <div className="relative">
+  {
+    /* <div className="text-lg font-semibold absolute top-[60vh] right-0 mr-2">
+      <div className="-rotate-90 flex flex-row items-center p-3 gap-2 rounded-t-3xl gradient-primary">
+        <div className="rotate-90">
+          <TournamentCup />
+        </div>
+        <h1 className="text-white">Visit Tournament</h1>
+      </div>
+    </div> */
+  }
   return (
     <ClientLayout>
       <div className="py-24 max-w-[1920px] mx-auto">
@@ -219,6 +236,7 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
         <TrainingCenter />
       </div>
     </ClientLayout>
+    // </div>
   );
 };
 
