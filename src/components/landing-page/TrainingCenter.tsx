@@ -62,7 +62,7 @@ const trainingCards = [
 
 const TrainingCenter = () => {
   return (
-    <div className="px-12">
+    <div className="">
       <h2 className="text-3xl font-bold text-center mb-12">Training Center</h2>
       <Carousel
         opts={{
@@ -71,11 +71,11 @@ const TrainingCenter = () => {
         }}
         className="w-full"
       >
-        <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselContent className="">
           {trainingCards.map((card, index) => (
             <CarouselItem
               key={index}
-              className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/5"
+              className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/6"
             >
               <div className="relative group cursor-pointer">
                 <div className="rounded-full my-6 shadow-lg border h-[278px] w-[278px] border-gray-200 hover:border-primary flex items-center justify-center transition-transform transform group-hover:scale-105">
@@ -91,8 +91,8 @@ const TrainingCenter = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-6" />
-        <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-6" />
+        <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
+        <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
       </Carousel>
     </div>
   );

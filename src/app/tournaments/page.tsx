@@ -20,7 +20,7 @@ const page = () => {
             No tournaments found in the next 24 HOURS
           </h3>
         </div>
-        <div className="pb-60">
+        <div className="pb-60 pt-10">
           <TrainingCenter />
         </div>
       </div>

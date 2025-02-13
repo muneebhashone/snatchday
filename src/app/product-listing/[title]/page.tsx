@@ -267,7 +267,7 @@ const ProductContent = ({ params }: { params: { title: string } }) => {
 
         <ProductDetails {...productData} />
         <div className="bg-[#F9F9F9] container max-w-[1920px] mx-auto py-20 px-10">
-          <h2 className="text-6xl font-extrabold text-center capitalize mb-10">
+          <h2 className="text-[48px] font-extrabold text-center capitalize mb-10">
             <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg">
               Next
             </span>
@@ -306,7 +306,7 @@ const ProductContent = ({ params }: { params: { title: string } }) => {
           </Carousel>
         </div>
         <div className="py-10 bg-[#F9F9F9]">
-          <div className="text-6xl font-extrabold text-center capitalize mb-10">
+          <div className="text-[48px] font-extrabold text-center capitalize mb-10">
             <h2>
               <span className="bg-transparent">Similar</span>
               <span className="bg-[#FF6B3D] text-white px-4 py-1 rounded-lg ml-2">

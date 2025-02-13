@@ -13,7 +13,7 @@ body {
 
   .gradient-primary {
     @apply bg-gradient-to-r from-[#FF6B3D] to-[#8D4CC4];
-    filter: drop-shadow(11px 9px 24px rgba(141, 76, 196, 0.5));
+    filter: drop-shadow(11px 9px 12px rgba(141, 76, 196, 0.5));
   }
 
   .text-gradient-primary {

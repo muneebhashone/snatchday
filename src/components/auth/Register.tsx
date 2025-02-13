@@ -71,14 +71,14 @@ const Register = ({ onBack }: RegisterProps) => {
           <div className="mt-10">
             <div className="flex items-start space-x-3">
               <Checkbox id="newsletter" className="mt-1 rounded-full" />
-              <label htmlFor="newsletter" className="text-sm text-gray-600">
+              <label htmlFor="newsletter" className="text-foreground">
                 Yes, I would like to be informed about tournaments, special
                 offers and news and receive newsletters from Snatch Day
               </label>
             </div>
             <div className="flex items-start space-x-3 mt-2">
               <Checkbox id="terms" className="mt-1 rounded-full" />
-              <label htmlFor="terms" className="text-sm text-gray-600">
+              <label htmlFor="terms" className="text-foreground">
                 I agree to the{" "}
                 <Link href="#" className="text-[#FF6B3D] hover:underline">
                   privacy policy
@@ -92,7 +92,7 @@ const Register = ({ onBack }: RegisterProps) => {
           </div>
 
           {/* Register Button */}
-          <Button className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-8 py-5 px-11">
+          <Button className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-8 px-11">
             Register Your Account
           </Button>
 

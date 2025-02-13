@@ -100,7 +100,7 @@ const page = () => {
             </Button>
           </div>
         </div>
-        <div className="">
+        <div className="pt-10">
           <TrainingCenter />
         </div>
         <div className="px-0 md:px-6 pb-60 pt-32">

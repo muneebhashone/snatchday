@@ -189,7 +189,7 @@ const SupportPage = () => {
                   allowFullScreen
                 ></iframe>
                 <h2 className="text-3xl font-extrabold py-9">{item.title}</h2>
-                <Button className="bg-white text-foreground rounded-full text-sm px-6 py-6 hover:rounded-full drop-shadow-2xl">
+                <Button className="bg-white text-lg text-foreground rounded-full px-6 h-20 w-72 hover:rounded-full hover:border border-foreground drop-shadow-2xl">
                   Play Video
                 </Button>
               </div>
