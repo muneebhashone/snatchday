@@ -21,8 +21,8 @@ import detailimage from "@/app/images/detailimage.png"
 
 const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
   const productData = {
-    title: decodeURIComponent(params.title).split("-").join(" "),
-    images: [detailimage, laptop, laptop2, detailimage],
+    title: `Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27) - 4710886045649`,
+    images: [detailimage, laptop, laptop2, detailimage,detailimage, laptop, laptop2, detailimage],
     price: "201,65",
     rating: 5,
     reviews: 5,
@@ -134,13 +134,24 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
       category: "Computer",
       oldPrice: "201,65",
     },
+    {
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      price: "201,65",
+      rating: 5,
+      reviews: 5,
+      image: graphiccard,
+      isSale: true,
+      discount: "10%",
+      category: "Computer",
+      oldPrice: "201,65",
+    },
   ];
 
   return (
     <ClientLayout>
-      <div className="py-20 max-w-[1920px] bg-[#F9F9F9] mx-auto px-8">
+      <div className="py-24 max-w-[1920px] mx-auto">
         <Separator className="my-5" />
-        <Breadcrumb>
+        <Breadcrumb className="px-0 md:px-6">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
@@ -160,15 +171,15 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
         <Separator className="my-5" />
 
         <ProductDetails {...productData} />
-        <div className="text-6xl font-bold text-center capitalize my-10">
-          <h2>
-            <span className=" bg-[#FF6B3D] text-white px-6 py-2 rounded-lg">
+        <div className="bg-[#F9F9F9] container max-w-[1920px] mx-auto py-20 px-10">
+          <h2 className="text-6xl font-extrabold text-center capitalize mb-10">
+            <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg">
               Next
             </span>
 
             <span className="bg-transparent ml-2">Tournaments</span>
           </h2>
-        </div>
+      
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {nextTournaments.map((tournament, index) => (
             <NextTournamentCard
@@ -187,11 +198,12 @@ const ProductDetailsPage = ({ params }: { params: { title: string } }) => {
             />
           ))}
         </div>
-        <div className="px-0 md:px-6 py-20">
-          <div className="text-6xl font-bold text-center capitalize mb-10">
+        </div>
+        <div className="py-10 bg-[#F9F9F9]">
+          <div className="text-6xl font-extrabold text-center capitalize mb-10">
             <h2>
               <span className="bg-transparent">Similar</span>
-              <span className="bg-[#FF6B3D] text-white px-6 py-2 rounded-lg ml-2">
+              <span className="bg-[#FF6B3D] text-white px-4 py-1 rounded-lg ml-2">
                 Products
               </span>
             </h2>

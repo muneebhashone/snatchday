@@ -39,7 +39,7 @@ const trainingCards = [
 
 const TrainingCenter = () => {
   return (
-    <div className="mt-10">
+    <div className="">
       <h2 className="text-3xl font-bold text-center mb-12">Training Center</h2>
       <div className="flex flex-wrap items-center justify-center lg:justify-around">
         {trainingCards.map((card, index) => (

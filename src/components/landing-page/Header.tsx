@@ -8,6 +8,8 @@ import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
 import MobileMenu from "@/components/MobileMenu";
 import Search from "@/components/Search";
+import Login from "../auth/Login";
+
 
 const menu = [
   {
@@ -90,14 +92,14 @@ const Header = () => {
         <Search />
 
         {/* Right Icons */}
-        <div className="hidden lg:flex items-center space-x-6">
-          <button className="hover:text-primary text-[#888888]">
-            <User className="h-6 w-6" />
+        <div className="hidden lg:flex items-center justify-between gap-5">
+          <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
+            <Login />
           </button>
-          <button className="hover:text-primary text-[#888888]">
-            <Heart className="h-6 w-6" />
+          <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
+            <Heart className="h-6 w-6 " />
           </button>
-          <button className="hover:text-primary text-[#888888] relative">
+          <button className="hover:text-primary bg-transparent p-0 text-[#888888] relative">
             <ShoppingCart className="h-6 w-6" />
             <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               0

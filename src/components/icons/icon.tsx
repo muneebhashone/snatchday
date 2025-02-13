@@ -73,10 +73,15 @@ export const AppleIcon = () => {
 
 export const SnatchIcon = () => {
   return (
-    <svg width="45" height="33" viewBox="0 0 45 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 0H45L41.5 33H0V0Z" fill="white"/>
+    <svg
+      width="45"
+      height="33"
+      viewBox="0 0 45 33"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M0 0H45L41.5 33H0V0Z" fill="white" />
     </svg>
-    
   );
 };
 
@@ -426,6 +431,27 @@ export const VatIcon = () => {
           <rect width="20" height="20" fill="white" />
         </clipPath>
       </defs>
+    </svg>
+  );
+};
+
+export const FacebookIcon = () => {
+  return (
+    <svg
+      width="43"
+      height="43"
+      viewBox="0 0 43 43"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M7.30676 0H35.4506C39.4828 0 42.7574 3.29316 42.7574 7.34822V35.6518C42.7574 39.7068 39.4828 43 35.4506 43H7.30676C3.27458 43 0 39.7068 0 35.6518V7.34822C0 3.29316 3.27458 0 7.30676 0Z"
+        fill="#395398"
+      />
+      <path
+        d="M29.3419 42.9987V26.4889H34.8517L35.6782 20.0537H29.3419V15.9451C29.3419 14.0813 29.8553 12.8125 32.5132 12.8125H35.9005V7.06046C35.3151 6.98175 33.3052 6.80859 30.9636 6.80859C26.0799 6.80859 22.7364 9.80581 22.7364 15.3123V20.0568H17.2109V26.492H22.7364V43.0019H29.3419V42.9987Z"
+        fill="white"
+      />
     </svg>
   );
 };
