@@ -12,12 +12,12 @@ const CreateTicket = ({
 }) => {
   return (
     
-        <div className=" flex flex-col lg:flex-row items-center border-0 border-gray-100 justify-start gap-6 shadow-xl py-3 lg:py-12 px-5 lg:px-10 rounded-lg hover:shadow-xl hover:border hover:border-orange-500">
+        <div className=" flex flex-col lg:flex-row items-center bg-white justify-start gap-6 shadow-lg py-3 lg:py-12 px-5 lg:pl-16 rounded-xl hover:shadow-xl hover:border hover:border-orange-500">
           <Image src={image} alt="ticket" />
 
           <div>
             <p className="text-gray-500 text-xl">{categorytext}</p>
-            <h3 className="text-black text-2xl font-bold mt-3">
+            <h3 className="text-[#1C1B1D] text-3xl font-extrabold">
               {categorytitle}
             </h3>
 
