@@ -15,7 +15,6 @@ interface PromotionalBannersProps {
   time?: { timer: string; timerText: string }[];
 }
 
-
 const PromotionalBanners = ({
   icon,
   iconbg,
@@ -28,7 +27,6 @@ const PromotionalBanners = ({
 }: PromotionalBannersProps) => {
   return (
     <div
-
       className={`${mainbg} rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow`}
     >
       <div className="py-10 px-10">
@@ -71,23 +69,17 @@ const PromotionalBanners = ({
           </Link>
         </div>
         <div className="flex items-center justify-start gap-4 relative z-10 mt-10">
-          {time?.map((item)=>{
-            return(
-          <div key={item.timer} className="text-center">
+          {time?.map((item) => {
+            return (
+              <div key={item.timer} className="text-center">
+                <div className="text-3xl bg-[#CDB3FF] px-4 py-2">
+                  {item.timer}
+                </div>
 
-
-            <div className="text-3xl bg-[#CDB3FF] px-4 py-2">{item.timer}</div>
-
-
-
-            <p>{item.timerText}</p>
-          </div>
-
-
-            )
+                <p>{item.timerText}</p>
+              </div>
+            );
           })}
-          
-
         </div>
         {children}
       </div>

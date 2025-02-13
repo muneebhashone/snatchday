@@ -6,11 +6,12 @@ import banner1 from "@/app/images/banner-iphone.png";
 import banner2 from "@/app/images/banner2.png";
 import percentage from "@/app/images/percentage.png";
 import { PromotionModal } from "../PromotionModal";
-import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+// import { Dialog, DialogClose, DialogTrigger } from "@radix-ui/react-dialog";
 
 const PermotionalSection = () => {
   return (
-    <section className="container max-w-[1920px] mx-auto px-12 py-16">
+    <section className="container max-w-[1920px] mx-auto px-12 py-16 ">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <PromotionalBanners
           icon={<AppleIcon />}
