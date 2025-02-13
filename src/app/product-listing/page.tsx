@@ -16,13 +16,18 @@ import laptop from "@/app/images/laptop.png";
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import Search from "@/components/Search";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Grid3x3, ListIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import VisitTournament from "@/components/VisitTournament";
 
 const ProductListingPage = () => {
-
-  
   const products = [
     {
       image: laptop,
@@ -168,7 +173,7 @@ const ProductListingPage = () => {
 
   return (
     <ClientLayout>
-      <div className="container mx-auto max-w-[1920px] my-40 px-20">
+      <div className="container mx-auto max-w-[1920px] my-40 px-12">
         <Separator className="my-5" />
         <Breadcrumb>
           <BreadcrumbList>
@@ -182,14 +187,18 @@ const ProductListingPage = () => {
           </BreadcrumbList>
         </Breadcrumb>
         <Separator className="my-5" />
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           <div className="col-span-1">
             <div className="mb-4">
               <Search />
             </div>
             <ProductCategoryFilter />
+            <VisitTournament
+              title="January Tournament"
+              date="January 30, 2025 at 3:00 p.m."
+            />
           </div>
-          <div className="col-span-4">
+          <div className="col-span-3">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-4xl font-bold">Laptops</h1>
@@ -225,15 +234,14 @@ const ProductListingPage = () => {
                     <ListIcon />
                   </Button>
                   <Button className="rounded-full bg-gray-100 text-gray-700">
-                  <Grid3x3 />
+                    <Grid3x3 />
                   </Button>
-
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {products.map((product, index) => (
-                    <ProductCard key={index} {...product}  />
+                <ProductCard key={index} {...product} />
               ))}
             </div>
           </div>

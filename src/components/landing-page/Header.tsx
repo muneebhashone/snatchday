@@ -8,6 +8,8 @@ import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
 import MobileMenu from "@/components/MobileMenu";
 import Search from "@/components/Search";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import { PromotionModal } from "../PromotionModal";
 
 const menu = [
   {
@@ -43,6 +45,7 @@ const menu = [
 ];
 
 const Header = () => {
+  const [openModal, setOpenModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -76,12 +79,28 @@ const Header = () => {
               <div className="group relative">
                 {/* Dropdown can be added here */}
               </div>
-              <Link
-                href={items.link}
-                className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
-              >
-                {items.name}
-              </Link>
+              {items.name === "Gewinnspiel im Januar" ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button
+                      onClick={() => {
+                        setOpenModal(true);
+                      }}
+                      className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
+                    >
+                      {items.name}
+                    </button>
+                  </DialogTrigger>
+                  <PromotionModal openModal={openModal} />
+                </Dialog>
+              ) : (
+                <Link
+                  href={items.link}
+                  className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
+                >
+                  {items.name}
+                </Link>
+              )}
             </nav>
           );
         })}

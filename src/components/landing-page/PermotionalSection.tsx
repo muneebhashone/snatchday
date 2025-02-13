@@ -58,8 +58,7 @@ const PermotionalSection = () => {
           </div>
 
         </PromotionalBanners> */}
-        <Dialog>
-          <DialogTrigger asChild>
+        
             <PromotionalBanners
               time={[
                 { timer: "24", timerText: "Hours" },
@@ -83,9 +82,7 @@ const PermotionalSection = () => {
                 />
               </div>
             </PromotionalBanners>
-          </DialogTrigger>
-          <PromotionModal />
-        </Dialog>
+          
 
         {/* <PromotionalBanners 
           time={[
@@ -125,7 +122,6 @@ const PermotionalSection = () => {
           <div className="absolute top-0 right-0 opacity-90">
             <Image src={percentage.src} width={500} height={450} alt="banner" />
           </div>
-          <div />
         </PromotionalBanners>
       </div>
     </section>
