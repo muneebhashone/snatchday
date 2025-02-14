@@ -116,14 +116,14 @@ const GameCards = () => {
   ];
 
   return (
-    <div className="px-5 lg:px-20 pb-28">
+    <div className="px-10 pb-28">
   
       {/* <div className="grid grid-cols-4 gap-12"> */}
-      <div className="flex w-full flex-wrap items-center justify-center gap-1 lg:gap-4">
+      <div className="flex w-full flex-wrap items-center justify-between gap-5">
         {trainingCards.slice(0, visibleCards).map((card, index) => (
           <div
           key={index}
-          className="group p-5 md:px-10 lg:px-16  md:py-7 lg:py-10 shadow-xl rounded-lg hover:border-primary hover:shadow-[0_20px_24px_rgba(255,_107,_61,_0.7)]"
+          className="group p-5 md:px-10 lg:px-20 md:py-7 lg:py-20 shadow-xl rounded-lg hover:border-2 hover:border-primary"
         >
           <div className="aspect-square rounded-full h-28 lg:h-64 w-28 lg:w-64 shadow-lg border border-gray-200 flex items-center justify-center transition-transform transform group-hover:scale-105">
             <Image className="w-[50px] h-[50px] md:w-[120px] lg:w-[140px] md:h-[120px] lg:h-[140px]" src={card.icon} alt={card.label} width={141} height={141} />

@@ -236,9 +236,9 @@ const ProductContent = () => {
             </div>
           </DialogTrigger>
           <VisitTournamentModal
-            // closeModal={() => {
-            //   setopenModal(false);
-            // }}
+            closeModal={() => {
+              setopenModal(false);
+            }}
             openModal={openModal}
             title="January Tournament"
             date="January 30, 2025 at 3:00 p.m."

@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { StaticImageData } from "next/image";
 import { Separator } from "./ui/separator";
 import { Heart } from "lucide-react";
+import Link from "next/link";
 
 interface NextTournamentCardProps {
   productImage: StaticImageData;
@@ -149,7 +150,7 @@ const NextTournamentCard = ({
         <Separator className="my-4" />
         <div className="flex items-center justify-between">
           <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
-            Register Now
+            <Link href="/tournament-detail">Register Now</Link>
           </Button>
 
           <Button

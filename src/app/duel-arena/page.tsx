@@ -8,6 +8,14 @@ import TrainingCenter from "@/components/landing-page/TrainingCenter";
 import FeaturedProductsCard from "@/components/FeaturedProductsCard";
 import graphiccard from "@/app/images/graphiccard.png";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
 const page = () => {
   const displayProducts = [
     {
@@ -68,8 +76,44 @@ const page = () => {
       discount: "€99",
       category: "elektro",
     },
+
     {
-      title: "Galaxy S22 Ultra",
+      title: "ZOTAC GAMING GeForce RTX 3050 AMP - Grafikkarten",
+      price: "319,80",
+      oldPrice: "334,80",
+      rating: 5,
+      reviews: 5,
+      image: graphiccard,
+      isSale: false,
+      isNew: true,
+      discount: "€99",
+      category: "computer",
+    },
+    {
+      title: "SanDisk Extreme - Flash-Speicherkarte (microSDXC)",
+      price: "31,40",
+      oldPrice: "31,40",
+      rating: 5,
+      reviews: 5,
+      image: graphiccard,
+      isSale: true,
+      discount: "€99",
+      category: "computer",
+    },
+    {
+      title: "Razer Blade 14 - AMD Ryzen 9 6900HX / 3.3 GHz - Win 11",
+      price: "2.644",
+      oldPrice: "2.694",
+      rating: 5,
+      reviews: 5,
+      image: graphiccard,
+      isSale: false,
+      isNew: true,
+      discount: "€99",
+      category: "computer",
+    },
+    {
+      title: "Canon CLI-551 C/M/Y/BK Multipack - 4er-Pack - Schwarz",
       price: "52,44",
       oldPrice: "64,44",
       rating: 5,
@@ -77,7 +121,7 @@ const page = () => {
       image: graphiccard,
       isSale: true,
       discount: "€99",
-      category: "audio",
+      category: "elektro",
     },
   ];
   return (
@@ -103,20 +147,39 @@ const page = () => {
         <div className="pt-10">
           <TrainingCenter />
         </div>
-        <div className="px-0 md:px-6 pb-60 pt-32">
+        <div className="px-4 md:px-12 pb-60 pt-20 mt-20 bg-[#F9F9F9]">
           <div className="text-[48px] font-extrabold my-5 text-center capitalize">
             <h2>
-              <span className=" bg-[#FF6B3D] text-white px-6 py-1 rounded-lg">
+              <span className="bg-primary text-white px-6 py-1 rounded-lg">
                 highlights
               </span>
-
               <span className="text-foreground ml-2">of the week</span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 mt-10">
-            {displayProducts.map((product, index) => (
-              <FeaturedProductsCard key={index} {...product} />
-            ))}
+
+          <div className="max-w-[1920px] mx-auto mt-10">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+                skipSnaps: false,
+                slidesToScroll: 1,
+              }}
+              className="w-full relative"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {displayProducts.map((product, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6"
+                  >
+                    <FeaturedProductsCard {...product} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
+              <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
+            </Carousel>
           </div>
         </div>
       </main>

@@ -26,33 +26,26 @@ const DuelArena = () => {
       subText:
         "Create a duel with a game you have the most experience with and set your own stake.",
     },
+  ];
+
+  const howToEnterSteps = [
     {
       subTitle: "Choose your prize",
       description:
         "The power is in your hands, chose from our number of exciting prizes that catch your eye the most.",
-      subText: "",
       number: "01",
     },
     {
       subTitle: "Choose your amount of tickets",
       description:
         "Chose how many tickets you would like to enter. The more tickets you select the more chance you have of winning.",
-      subText: "",
       number: "02",
     },
     {
       subTitle: "Answer the question",
       description:
         "Answer the question with the correct answer to be entered in the competition.",
-      subText: "",
       number: "03",
-    },
-    {
-      subTitle: "Watch our live draw",
-      description:
-        "Channel into the live draw on our Facebook page as we reveal the winner of our competitions.",
-      subText: "",
-      number: "04",
     },
   ];
 
@@ -112,47 +105,62 @@ const DuelArena = () => {
       </div>
 
       <div className="container max-w-[1920px] mx-auto px-12 relative z-10">
-        {/* Carousel Section */}
-        <Carousel className="relative" opts={{ loop: true }}>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
           <CarouselContent>
-            {slides.map((slide, index) => (
-              <CarouselItem key={index}>
-                <div className="text-center w-full h-full mx-auto max-w-6xl">
-                  {index === 0 ? (
-                    <h2 className="text-3xl md:text-[48px] font-extrabold my-12 text-center">
-                      How To Play
-                      <span className="bg-primary text-white px-6 rounded-lg ml-2">
-                        {slide.title}
-                      </span>
-                    </h2>
-                  ) : (
-                    <div className="space-y-6">
-                      <h2 className="text-3xl md:text-5xl font-bold text-center">
-                        How To Enter
-                      </h2>
-                      <div className="flex items-center justify-center gap-4">
-                        <div className="inline-flex items-center justify-center border-2 border-[#FF6B3D] text-[#FF6B3D] font-bold text-xl px-4 py-2">
-                          {slide.number}
-                        </div>
-                        <h3 className="text-2xl font-bold">{slide.subTitle}</h3>
-                      </div>
-                    </div>
-                  )}
+            {/* First Slide - Duel Arena */}
+            <CarouselItem>
+              <div className="flex flex-col items-center justify-center text-center px-4 md:px-20">
+                <h2 className="text-[48px] font-extrabold mb-6">
+                  How to Play{" "}
+                  <span className="bg-primary text-white px-4 py-1 rounded-lg">
+                    Duel Arena
+                  </span>
+                </h2>
+                <p className="text-xl text-card-foreground max-w-4xl mb-8">
+                  {slides[0].description}
+                </p>
+                <p className="text-xl text-primary font-medium">
+                  {slides[0].subText}
+                </p>
+              </div>
+            </CarouselItem>
 
-                  <p className="text-md text-2xl text-card-foreground mt-5 mb-6 leading-relaxed">
-                    {slide.description}
-                  </p>
-                  {slide.subText && (
-                    <p className="text-md text-2xl text-card-foreground mb-10">
-                      {slide.subText}
-                    </p>
-                  )}
+            {/* Second Slide - How to Enter Grid */}
+            <CarouselItem>
+              <div className="px-4 md:px-20">
+                <h2 className="text-[48px] font-extrabold text-center mb-12">
+                  How to Enter{" "}
+                  <span className="bg-primary text-white px-4 py-1 rounded-lg">
+                    Duel Arena
+                  </span>
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {howToEnterSteps.map((step, index) => (
+                    <div
+                      key={index}
+                      className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                    >
+                      <div className="text-primary text-4xl font-bold mb-4">
+                        {step.number}
+                      </div>
+                      <h3 className="text-2xl font-bold mb-4">
+                        {step.subTitle}
+                      </h3>
+                      <p className="text-card-foreground">{step.description}</p>
+                    </div>
+                  ))}
                 </div>
-              </CarouselItem>
-            ))}
+              </div>
+            </CarouselItem>
           </CarouselContent>
-          <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 w-20 h-20 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary" />
-          <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 w-20 h-20 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary" />
+          <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
+          <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
         </Carousel>
         <div className="flex justify-center items-center gap-8 mb-10">
           <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">

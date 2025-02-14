@@ -6,8 +6,89 @@ import React from "react";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 import TournamentFilter from "@/components/tournaments/TournamentFilter";
 import { Button } from "@/components/ui/button";
+import NextTournamentCard from "@/components/NextTournamentCard";
+import laptop from "@/app/images/laptopv1.png";
+import laptop2 from "@/app/images/laptopv2.png";
+import graphiccard from "@/app/images/graphiccard.png";
+
 
 const page = () => {
+  const nextTournament = [
+    {
+      productImage: laptop,
+      gameIcon: graphiccard,
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      rating: 5,
+      reviews: 5,
+      gameName: "Push It",
+      duration: "3:00 minutes",
+      currentPrice: "2.50",
+      participationPoints: 250,
+      participationFee: "2.50",
+      countdown: {
+        hours: 20,
+        minutes: 48,
+        seconds: 37,
+        milliseconds: 19,
+      },
+    },
+    {
+      productImage: laptop2,
+      gameIcon: graphiccard,
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      rating: 5,
+      reviews: 5,
+      gameName: "Push It",
+      duration: "3:00 minutes",
+      currentPrice: "2.50",
+      participationPoints: 250,
+      participationFee: "2.50",
+      countdown: {
+        hours: 20,
+        minutes: 48,
+        seconds: 37,
+        milliseconds: 19,
+      },
+    },
+    {
+      productImage: laptop,
+      gameIcon: graphiccard,
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      rating: 5,
+      reviews: 5,
+      gameName: "Push It",
+      duration: "3:00 minutes",
+      currentPrice: "2.50",
+      participationPoints: 250,
+      participationFee: "2.50",
+      countdown: {
+        hours: 20,
+        minutes: 48,
+        seconds: 37,
+        milliseconds: 19,
+      },
+    },
+    {
+      productImage: laptop2,
+      gameIcon: graphiccard,
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      rating: 5,
+      reviews: 5,
+      gameName: "Push It",
+      duration: "3:00 minutes",
+      currentPrice: "2.50",
+      participationPoints: 250,
+      participationFee: "2.50",
+      countdown: {
+        hours: 20,
+        minutes: 48,
+        seconds: 37,
+        milliseconds: 19,
+      },
+    },
+  ]
+
+
   return (
     <ClientLayout>
       <div>
@@ -42,10 +123,20 @@ const page = () => {
           </div>
 
           {/* Tournament Content */}
-          <div className="bg-[#F9F9F9] py-20 rounded-3xl flex items-center justify-center text-center">
-            <h3 className="text-3xl font-extrabold">
+          <div className="py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 text-center">
+          <h2 className="text-[48px] font-extrabold text-center capitalize mb-10 col-span-2">
+            <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg">
+              Next
+            </span>
+
+            <span className="bg-transparent ml-2">Tournaments</span>
+          </h2>
+            {nextTournament.map((tournament, index) => (
+              <NextTournamentCard key={index} {...tournament} />
+            ))}
+            {/* <h3 className="text-3xl font-extrabold">
               No tournaments found in the next 24 HOURS
-            </h3>
+            </h3> */}
           </div>
         </div>
 
