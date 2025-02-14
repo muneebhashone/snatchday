@@ -1,5 +1,4 @@
 import { X } from "lucide-react";
-
 import { Button } from "./ui/button";
 import Link from "next/link";
 import bg from "@/app/images/visittournamentmodal.png";
@@ -18,8 +17,9 @@ export function VisitTournamentModal({
   const handleClose = () => {
     if (closeModal) {
       closeModal(false);
-    }
+    } 
   };
+  console.log(openModal);
 
   return (
     <div
