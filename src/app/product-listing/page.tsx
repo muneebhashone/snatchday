@@ -27,6 +27,7 @@ import { Grid3x3, ListIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import VisitTournament from "@/components/VisitTournament";
 
+
 const ProductListingPage = () => {
   const products = [
     {
@@ -189,7 +190,7 @@ const ProductListingPage = () => {
         <Separator className="my-5" />
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
           <div className="col-span-1">
-            <div className="mb-4">
+            <div className="mb-5 mt-4">
               <Search />
             </div>
             <ProductCategoryFilter />
@@ -201,7 +202,7 @@ const ProductListingPage = () => {
           <div className="col-span-3">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-[48px] font-extrabold">Laptops</h1>
+                <h1 className="text-[48px] font-extrabold mb-4">Laptops</h1>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
@@ -243,6 +244,39 @@ const ProductListingPage = () => {
               {products.map((product, index) => (
                 <ProductCard key={index} {...product} />
               ))}
+              <div className="mt-10 col-span-3 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  {[1, 2, 3].map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      className={`w-9 h-9 flex items-center justify-center rounded-sm ${
+                        pageNum === 1
+                          ? "text-gray-700 font-medium"
+                          : "text-gray-400 hover:text-gray-700"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                  <button className="w-20 h-9 flex items-center justify-center rounded-full bg-gray-100">
+                    <svg
+                      width="26"
+                      height="12"
+                      viewBox="0 0 26 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M1.63281 5.3C1.24621 5.3 0.932813 5.6134 0.932813 6C0.932812 6.3866 1.24621 6.7 1.63281 6.7L1.63281 5.3ZM24.8622 6.49498C25.1355 6.22161 25.1355 5.77839 24.8622 5.50503L20.4074 1.05025C20.134 0.776887 19.6908 0.776887 19.4174 1.05025C19.1441 1.32362 19.1441 1.76684 19.4174 2.0402L23.3772 6L19.4174 9.9598C19.1441 10.2332 19.1441 10.6764 19.4174 10.9497C19.6908 11.2231 20.134 11.2231 20.4074 10.9497L24.8622 6.49498ZM1.63281 6.7L24.3672 6.7L24.3672 5.3L1.63281 5.3L1.63281 6.7Z"
+                        fill="#A5A5A5"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div className="text-sm text-gray-500 mt-4">
+                  Showing 1 to 15 of 97 (7 pages)
+                </div>
+              </div>
             </div>
           </div>
         </div>

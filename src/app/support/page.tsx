@@ -1,7 +1,7 @@
 "use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
-import React, { useState } from "react";
+import React from "react";
 import supportbg from "@/app/images/supportbg.png";
 import supportimage from "@/app/images/supportrightimage.png";
 import CreateTicket from "@/components/CreateTicket";
@@ -150,10 +150,10 @@ const SupportPage = () => {
             ))}
           </div>
           <div className="bg-white flex flex-col md:flex-row justify-between items-center shadow-xl py-8 mt-8 md:py-16 px-8 md:px-16 rounded-lg gap-4">
-            <h3 className="text-xl md:text-2xl font-bold text-center md:text-left">
+            <h3 className="text-xl md:text-2xl font-extrabold text-center md:text-left">
               OTHER QUESTIONS
             </h3>
-            <Button className="gradient-primary text-white rounded-full text-xl font-bold px-6 min-h-16 hover:rounded-full w-full md:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
+            <Button className="gradient-primary text-white rounded-full text-xl font-bold px-6 min-h-16 hover:rounded-full w-[255px] shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
               Ask a question
             </Button>
           </div>
@@ -170,7 +170,7 @@ const SupportPage = () => {
             {videodata.map((item) => (
               <div
                 key={item.id}
-                className="bg-white shadow-xl py-16 px-16 text-center rounded-lg"
+                className="bg-white shadow-xl py-16 px-16 text-center rounded-lg hover:border-2 hover:border-primary"
               >
                 <iframe
                   className="rounded-lg"

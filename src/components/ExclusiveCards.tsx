@@ -16,6 +16,8 @@ interface PricingCard {
   features: PricingFeature[];
   buttonText: string;
   isPopular?: boolean;
+  bgcolor?: string;
+
 }
 
 const pricingCards: PricingCard[] = [
@@ -32,6 +34,7 @@ const pricingCards: PricingCard[] = [
       { text: "Up to 3 team members" },
     ],
     buttonText: "Get started",
+    bgcolor: "bg-gray-200",
   },
   {
     badge: "POPULAR",
@@ -48,6 +51,7 @@ const pricingCards: PricingCard[] = [
     ],
     buttonText: "Get started",
     isPopular: true,
+    bgcolor: "bg-white",
   },
   {
     icon: crown.src,
@@ -62,6 +66,7 @@ const pricingCards: PricingCard[] = [
       { text: "Up to 3 team members" },
     ],
     buttonText: "Get started",
+    bgcolor: "bg-[#F6E9E1]",
   },
 ];
 
@@ -86,8 +91,8 @@ const ExclusiveCards = () => {
           {/* Card Header */}
          
             <div className="flex items-center gap-3">
-              <div className={`flex items-center gap-3 p-5 rounded-lg ${card.isPopular ? "bg-white" : "bg-gray-200"}`}>
-              <Image src={card.icon} alt={card.title} width={24} height={24} className={`w-6 h-6 ${card.isPopular ? "grayscale-0" : "grayscale"}`} />
+                <div className={`flex items-center gap-3 p-5 rounded-xl ${card.bgcolor}`}>
+              <Image src={card.icon} alt={card.title} width={24} height={24} className={`w-6 h-6 ${card.title !== "Basic" ? "grayscale-0" : "grayscale"}`} />
               </div>
               <div>
               <p
