@@ -1,8 +1,5 @@
-import { DialogContent } from "@/components/ui/dialog";
-import VisitTournament from "./VisitTournament";
-import { DialogClose } from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import Image from "next/image";
+
 import { Button } from "./ui/button";
 import Link from "next/link";
 import bg from "@/app/images/visittournamentmodal.png";
@@ -18,6 +15,12 @@ export function VisitTournamentModal({
   title: string;
   date: string;
 }) {
+  const handleClose = () => {
+    if (closeModal) {
+      closeModal(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -27,16 +30,15 @@ export function VisitTournamentModal({
         width: "650px",
         position: "absolute",
         transform: "translateY(42%)",
+        transition: "transform 0.3s ease-in-out",
       }}
       className={`z-50 bg-fill rounded-3xl -right-5 ${
-        !openModal ? "hidden" : "block"
+        !openModal ? "hidden translate-x-full transition-transform duration-300 ease-in-out" : "block translate-x-0 transition-transform duration-300 ease-in-out"
       }`}
     >
       <div className="relative w-full h-full">
         <X
-          onClick={() => {
-            closeModal && closeModal(false);
-          }}
+          onClick={handleClose}
           className="text-white focus:outline-none w-9 h-9 absolute top-8 right-7 cursor-pointer"
         />
         <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-start py-6 px-8 pr-12 mt-12">
