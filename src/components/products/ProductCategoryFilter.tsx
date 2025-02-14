@@ -2,7 +2,7 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "../ui/slider";
-import VisitTournament from "../VisitTournament";
+
 
 const ProductCategoryFilter = () => {
   const [priceRange, setPriceRange] = React.useState([1000]);
@@ -58,15 +58,15 @@ const ProductCategoryFilter = () => {
   };
 
   return (
-    <div className="space-y-6 h-[190vh] overflow-y-auto sticky top-32 pr-4 border border-gray-200 bg-white p-4 rounded-lg ">
+    // <div className="space-y-6 h-[190vh] overflow-y-auto sticky top-32 pr-4 border border-gray-200 bg-white p-4 rounded-xl">
+    <div className="space-y-6 h-max top-32 pr-4 border border-gray-200 bg-white p-4 rounded-3xl">
       <h3 className="text-lg font-medium mb-4">Filters</h3>
 
       {/* Price Range Filter */}
- 
 
       {/* Other Filters */}
       {Object.entries(filters).map(([category, items]) => (
-        <div key={category} className="space-y-3">
+        <div key={category} className="space-y-3 ">
           <p className="font-medium text-gray-700">{category}</p>
           <div className="space-y-2">
             {items.map((item, index) => (
@@ -75,7 +75,10 @@ const ProductCategoryFilter = () => {
                 className="flex items-center justify-between space-x-2"
               >
                 <div className="flex items-center space-x-2">
-                  <Checkbox id={`${category}-${index}`} className="border-gray-300 border-2" />
+                  <Checkbox
+                    id={`${category}-${index}`}
+                    className="border-gray-300 border-2"
+                  />
                   <label
                     htmlFor={`${category}-${index}`}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600"
@@ -89,7 +92,7 @@ const ProductCategoryFilter = () => {
           </div>
         </div>
       ))}
-           <div className="space-y-4">
+      <div className="space-y-4">
         <p className="font-medium text-gray-700">Price Range</p>
         <div className="space-y-4">
           <Slider
@@ -107,7 +110,10 @@ const ProductCategoryFilter = () => {
           </div>
         </div>
       </div>
-      <VisitTournament title="January Tournament" date="January 30, 2025 at 3:00 p.m." />
+      {/* <VisitTournament
+        title="January Tournament"
+        date="January 30, 2025 at 3:00 p.m."
+      /> */}
     </div>
   );
 };

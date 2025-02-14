@@ -5,8 +5,7 @@ import Image from "next/image";
 import banner1 from "@/app/images/banner-iphone.png";
 import banner2 from "@/app/images/banner2.png";
 import percentage from "@/app/images/percentage.png";
-import { PromotionModal } from "../PromotionModal";
-import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+
 
 const PermotionalSection = () => {
   return (
@@ -22,9 +21,9 @@ const PermotionalSection = () => {
           discount={true}
         >
           <div className="absolute top-8 right-10">
-            <div className="flex items-center justify-center bg-white text-foreground w-28 h-28 rounded-full text-sm absolute bottom-0 -left-10">
-              <h3 className="text-center font-semibold">
-                UP TO <h1 className="text-primary font-bold text-2xl">20%</h1>{" "}
+            <div className="flex items-center justify-center text-center bg-white text-foreground w-28 h-28 rounded-full text-sm absolute bottom-0 -left-10">
+              <h3 className="text-center text-lg">
+                UP TO <h1 className="text-primary font-semibold text-[28px]">20%</h1>{" "}
                 Off
               </h3>
             </div>
@@ -58,8 +57,7 @@ const PermotionalSection = () => {
           </div>
 
         </PromotionalBanners> */}
-        <Dialog>
-          <DialogTrigger asChild>
+        
             <PromotionalBanners
               time={[
                 { timer: "24", timerText: "Hours" },
@@ -83,9 +81,7 @@ const PermotionalSection = () => {
                 />
               </div>
             </PromotionalBanners>
-          </DialogTrigger>
-          <PromotionModal />
-        </Dialog>
+          
 
         {/* <PromotionalBanners 
           time={[
@@ -125,7 +121,6 @@ const PermotionalSection = () => {
           <div className="absolute top-0 right-0 opacity-90">
             <Image src={percentage.src} width={500} height={450} alt="banner" />
           </div>
-          <div />
         </PromotionalBanners>
       </div>
     </section>

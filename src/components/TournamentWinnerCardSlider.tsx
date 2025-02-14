@@ -117,8 +117,8 @@ const TournamentWinnerCardSlider = () => {
           ))}
         </CarouselContent>
 
-        <CarouselPrevious className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
-        <CarouselNext className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+        <CarouselPrevious className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+        <CarouselNext className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
       </Carousel>
     </div>
   );

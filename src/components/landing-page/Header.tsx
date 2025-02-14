@@ -8,6 +8,9 @@ import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
 import MobileMenu from "@/components/MobileMenu";
 import Search from "@/components/Search";
+import Login from "../auth/Login";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { PromotionModal } from "@/components/PromotionModal";
 
 const menu = [
   {
@@ -43,6 +46,7 @@ const menu = [
 ];
 
 const Header = () => {
+  // const [openModal, setOpenModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -54,9 +58,9 @@ const Header = () => {
         </Link>
 
         {/* Desktop Hamburger - Only visible on desktop */}
-        {/* <div className="hidden lg:flex h-9 w-9 bg-primary rounded-md items-center justify-center">
+        <div className="hidden lg:flex h-9 w-9 bg-primary rounded-md items-center justify-center">
           <Hamburger />
-        </div> */}
+        </div>
 
         {/* Mobile Menu Button - Only visible on mobile */}
         <button
@@ -76,12 +80,28 @@ const Header = () => {
               <div className="group relative">
                 {/* Dropdown can be added here */}
               </div>
-              <Link
-                href={items.link}
-                className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
-              >
-                {items.name}
-              </Link>
+              {items.name === "Gewinnspiel im Januar" ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button
+                      // onClick={() => {
+                      //   setOpenModal(true);
+                      // }}
+                      className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
+                    >
+                      {items.name}
+                    </button>
+                  </DialogTrigger>
+                  <PromotionModal/>
+                </Dialog>
+              ) : (
+                <Link
+                  href={items.link}
+                  className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
+                >
+                  {items.name}
+                </Link>
+              )}
             </nav>
           );
         })}
@@ -90,14 +110,14 @@ const Header = () => {
         <Search />
 
         {/* Right Icons */}
-        <div className="hidden lg:flex items-center space-x-6">
-          <button className="hover:text-primary text-[#888888]">
-            <User className="h-6 w-6" />
+        <div className="hidden lg:flex items-center justify-between gap-5">
+          <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
+            <Login />
           </button>
-          <button className="hover:text-primary text-[#888888]">
-            <Heart className="h-6 w-6" />
+          <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
+            <Heart className="h-6 w-6 " />
           </button>
-          <button className="hover:text-primary text-[#888888] relative">
+          <button className="hover:text-primary bg-transparent p-0 text-[#888888] relative">
             <ShoppingCart className="h-6 w-6" />
             <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
               0

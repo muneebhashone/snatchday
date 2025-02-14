@@ -70,7 +70,7 @@ const SectionCenter = ({
       <div className="container max-w-[1440px] mx-auto px-12 relative z-10">
         <h2 className="text-3xl lg:text-4xl font-extrabold my-5 text-center">
           {title}
-          <span className="bg-[#FF6B3D] text-white px-4 py-1 rounded-lg ml-1">
+          <span className="bg-[#FF6B3D] text-white px-4 py-1 rounded-lg ml-2">
             {titlebg}
           </span>
         </h2>

@@ -1,6 +1,7 @@
 import React from "react";
 import ProductCard from "../ProductCard";
 import laptop from "@/app/images/laptop.png";
+import { ChevronRight } from "lucide-react";
 
 const ProductSection = () => {
   const products = [
@@ -50,8 +51,12 @@ const ProductSection = () => {
             </span>
           </h3>
 
-          <button className="text-gray-600 hover:text-orange-500 font-medium">
-            View All
+          <button className="text-gray-600 hover:text-orange-500 font-medium flex items-center gap-2">
+            <span>View All</span>
+            <span className="text-primary">
+              {" "}
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </span>
           </button>
         </div>
 

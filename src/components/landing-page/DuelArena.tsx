@@ -151,10 +151,10 @@ const DuelArena = () => {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-lg border-0 text-gray-700 hover:bg-gray-50" />
-          <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white shadow-lg border-0 text-gray-700 hover:bg-gray-50" />
+          <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2 w-20 h-20 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary" />
+          <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2 w-20 h-20 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary" />
         </Carousel>
-        <div className="flex justify-center items-center gap-8">
+        <div className="flex justify-center items-center gap-8 mb-10">
           <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">
             Create a Duel
           </Button>
