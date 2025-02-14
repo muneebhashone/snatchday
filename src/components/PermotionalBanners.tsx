@@ -31,7 +31,7 @@ const PromotionalBanners = ({
       className={`${mainbg} rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-16 pl-10`}
     >
       <div className="">
-        <div className="space-y-4 max-w-[40%] relative z-10">
+        <div className="max-w-[35%] relative z-10">
           <div
             className={`h-20 w-20 ${iconbg} rounded-full flex items-center justify-center`}
           >
@@ -39,13 +39,13 @@ const PromotionalBanners = ({
           </div>
 
           <span
-            className={`inline-flex items-center px-3 py-2 rounded-full text-sm ${iconbg} ${
+            className={`inline-flex items-center px-3 py-2 rounded-full mt-3 text-sm ${iconbg} ${
               iconText === "70% OFF" ? "text-black" : "text-white"
             }`}
           >
             {iconText}
           </span>
-          <div className="space-y-2">
+          <div className="mt-4">
             <h3 className="text-lg text-[#1C1B1D] md:text-2xl sm:bg-transparent bg-slate-200 bg-opacity-20 px-1 rounded-md">
               {title} <span className="font-bold">{boldText}</span>
             </h3>
@@ -53,7 +53,7 @@ const PromotionalBanners = ({
 
           <Link
             href="/deals"
-            className={`inline-flex items-center text-card-foreground text-xl`}
+            className={`inline-flex items-center text-card-foreground text-xl mt-4`}
           >
             Explore More
             <ArrowRightIcon className="w-4 h-4 ml-1" />

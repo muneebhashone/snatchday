@@ -14,6 +14,8 @@ import game2 from "@/app/images/game2.png";
 import game3 from "@/app/images/game3.png";
 import game4 from "@/app/images/game4.png";
 import game5 from "@/app/images/game5.png";
+import { BubblesIcon } from "../icons/icon";
+import { BubblesIcon1 } from "../icons/icon";
 
 // Define training cards data
 const trainingCards = [
@@ -62,8 +64,15 @@ const trainingCards = [
 
 const TrainingCenter = () => {
   return (
-    <div className="">
-      <h2 className="text-3xl font-bold text-center mb-12">Training Center</h2>
+    <div className="relative">
+       <div className="absolute w-full h-full">
+            <BubblesIcon className="absolute -top-10 left-10"/>
+            <BubblesIcon1 className="absolute -top-10 right-10"/>
+            <BubblesIcon className="absolute -bottom-20 left-40"/>
+            <BubblesIcon1 className="absolute -bottom-20 right-40"/>
+            
+        </div>
+      <h2 className="text-3xl font-bold text-center mb-6">Training Center</h2>
       <Carousel
         opts={{
           align: "start",
@@ -75,7 +84,7 @@ const TrainingCenter = () => {
           {trainingCards.map((card, index) => (
             <CarouselItem
               key={index}
-              className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/6"
+              className="md:basis-1/2 lg:basis-1/6"
             >
               <div className="relative group cursor-pointer">
                 <div className="rounded-full my-6 shadow-lg border h-[278px] w-[278px] border-gray-200 hover:border-primary flex items-center justify-center transition-transform transform group-hover:scale-105">
@@ -91,8 +100,8 @@ const TrainingCenter = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
-        <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
+        <CarouselPrevious className="w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
+        <CarouselNext className="w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
       </Carousel>
     </div>
   );

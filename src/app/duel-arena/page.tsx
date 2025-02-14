@@ -95,7 +95,7 @@ const page = () => {
               Create a duel with a game you have the most experience with and
               set your own stake.
             </p>
-            <Button className="text-primary bg-white text-lg rounded-full py-5 min-h-14 mt-12 px-12 hover:bg-primary hover:text-white drop-shadow-2xl shadow-2xl">
+            <Button className="text-primary bg-white text-lg rounded-full py-5 min-h-14 mt-12 px-12 hover:bg-primary hover:text-white drop-shadow-[0_20px_35px_rgba(255,255,255,0.5)] shadow-[0_12px_24px_rgba(255,255,255,0.5)]">
               Create a Duel
             </Button>
           </div>

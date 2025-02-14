@@ -21,9 +21,9 @@ const PermotionalSection = () => {
           discount={true}
         >
           <div className="absolute top-8 right-10">
-            <div className="flex items-center justify-center bg-white text-foreground w-28 h-28 rounded-full text-sm absolute bottom-0 -left-10">
-              <h3 className="text-center font-semibold">
-                UP TO <h1 className="text-primary font-bold text-2xl">20%</h1>{" "}
+            <div className="flex items-center justify-center text-center bg-white text-foreground w-28 h-28 rounded-full text-sm absolute bottom-0 -left-10">
+              <h3 className="text-center text-lg">
+                UP TO <h1 className="text-primary font-semibold text-[28px]">20%</h1>{" "}
                 Off
               </h3>
             </div>

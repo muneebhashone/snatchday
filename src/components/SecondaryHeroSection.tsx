@@ -28,7 +28,7 @@ const SecondaryHeroSection = ({
           priority
           className={
             title === "VIP Shop"
-              ? "w-full h-[700px] lg:h-[600px] xl:h-[600px] object-cover"
+              ? "w-full h-[700px] lg:h-[600px] xl:h-[650px] object-cover"
               : "w-full h-[700px] lg:h-[600px] xl:h-[600px] object-cover"
           }
         />
@@ -37,16 +37,16 @@ const SecondaryHeroSection = ({
             <div className="content-center">
               {title === "VIP Shop" ? (
                 <div className="flex flex-col items-start justify-center">
-                  <h2 className="text-white text-2xl font-bold mb-8">
+                  <h2 className="text-white text-2xl font-bold mb-8 mt-10">
                     VIP Shop
                   </h2>
                   <PrimaryHeading
                     highlightText="Exclusive"
-                    remainingText="OFFERS FOR"
-                    remainingHeading="VIP MEMBERS"
+                    remainingText="Offers For"
+                    remainingHeading="VIP Members"
                     textColor="text-white"
                   />
-                  <p className="text-white text-2xl font-bold mt-4">
+                  <p className="text-white text-2xl font-bold">
                     Take your chance to get a very special bargain.
                   </p>
                   <Button
@@ -58,7 +58,7 @@ const SecondaryHeroSection = ({
                       border: "8px solid transparent",
                       borderRadius: "9999px",
                     }}
-                    className="mt-10 w-[280px] h-[83px] text-2xl font-bold flex items-center justify-center"
+                    className="mt-7 w-[280px] h-[83px] text-2xl font-bold flex items-center justify-center"
                   >
                     <Image
                       src={crown}
@@ -76,25 +76,25 @@ const SecondaryHeroSection = ({
                 </div>
               ) : (
                 <>
-                  <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-7xl font-bold capitalize">
+                  <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-8xl font-bold capitalize">
                     {title}
                   </h1>
                   {support && (
                     <>
-                      <p className="text-white text-xl mt-4 mb-10">
+                      <p className="text-white text-xl mt-6 mb-14">
                         {description}
                       </p>
                       <div className="relative">
                         <Input
                           type="search"
                           placeholder="Search Duellarena, Turniere and more..."
-                          className="w-full min-w-[741px] h-[78px] rounded-full pr-10 pl-24 border-gray-300 focus:border-primary text-foreground !ring-offset-0 !ring-0"
+                          className="w-full min-w-[741px] font-normal h-[78px] rounded-full pr-10 pl-16 border-gray-300 focus:border-primary text-foreground !ring-offset-0 !ring-0"
                         />
                         <SearchIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-[#A5A5A5]" />
                         <Button
                           variant="default"
                           size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary text-white h-[60px] w-[170px] hover:bg-primary"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary text-white h-[60px] w-[132px] hover:bg-primary"
                         >
                           Search
                         </Button>

@@ -187,7 +187,7 @@ const ProductListingPage = () => {
           </BreadcrumbList>
         </Breadcrumb>
         <Separator className="my-5" />
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
           <div className="col-span-1">
             <div className="mb-4">
               <Search />
@@ -199,13 +199,13 @@ const ProductListingPage = () => {
             />
           </div>
           <div className="col-span-3">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold">Laptops</h1>
+                <h1 className="text-[48px] font-extrabold">Laptops</h1>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm text-gray-500">Show</p>
+                  <p className="text-foreground">Show</p>
                   <Select>
                     <SelectTrigger className="w-[100px] rounded-full">
                       <SelectValue placeholder="5" />
@@ -218,7 +218,7 @@ const ProductListingPage = () => {
                   </Select>
                 </div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm text-gray-500">Sort by</p>
+                  <p className="text-foreground">Sort by</p>
                   <Select>
                     <SelectTrigger className="w-[100px] rounded-full">
                       <SelectValue placeholder="Newest" />

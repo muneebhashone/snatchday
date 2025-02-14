@@ -68,55 +68,60 @@ const pricingCards: PricingCard[] = [
 const ExclusiveCards = () => {
   return (
     // <div className="grid grid-cols-1 md:grid-cols-2 items-center lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
-    <div className="flex flex-wrap justify-center lg:grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
+    <div className="lg:grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1440px] mx-auto">
       {pricingCards.map((card, index) => (
         <div
-          key={index}
+          key={index} 
           className={`relative rounded-xl p-16 w-full md:w-auto ${
             card.isPopular ? "bg-[#8D4CC4]" : "bg-white"
-          } shadow-lg hover:scale-105 transition-transform duration-300`}
+          } ${card.isPopular ? "mt-0" : "mt-20"} ${card.isPopular ? "mb-20" : "mb-0"} ${card.isPopular ? "shadow-none" : "shadow-lg"} hover:scale-105 transition-transform duration-300`}
         >
           {/* Popular Badge */}
           {card.badge && (
-            <span className="absolute -top-3 right-8 bg-[#FF6B3D] text-white text-sm px-4 py-1 rounded-full">
+            <span className="absolute top-5 right-5 bg-primary text-white text-sm px-4 py-1 rounded-full">
               {card.badge}
             </span>
           )}
 
           {/* Card Header */}
-          <div className="space-y-4">
+         
             <div className="flex items-center gap-3">
-              <Image src={card.icon} alt={card.title} width={24} height={24} />
+              <div className={`flex items-center gap-3 p-5 rounded-lg ${card.isPopular ? "bg-white" : "bg-gray-200"}`}>
+              <Image src={card.icon} alt={card.title} width={24} height={24} className={`w-6 h-6 ${card.isPopular ? "grayscale-0" : "grayscale"}`} />
+              </div>
+              <div>
+              <p
+                className={`text-lg ${
+                  card.isPopular ? "text-white" : "text-foreground"
+                }`}
+              >
+                {card.subtitle}
+              </p>
               <h3
-                className={`text-xl font-semibold ${
+                className={`text-xl font-extrabold ${
                   card.isPopular ? "text-white" : "text-gray-900"
                 }`}
               >
                 {card.title}
               </h3>
+              </div>
             </div>
-            <p
-              className={`text-sm ${
-                card.isPopular ? "text-white/80" : "text-gray-500"
-              }`}
-            >
-              {card.subtitle}
-            </p>
-          </div>
+            <p className={`mt-5 ${card.isPopular ? "text-white" : "text-foreground"}`}>Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit. </p>
+      
 
           {/* Pricing */}
-          <div className="mt-8">
+          <div className="mt-4">
             <div className="flex items-baseline">
               <span
-                className={`text-6xl font-bold ${
-                  card.isPopular ? "text-white" : "text-gray-900"
+                className={`text-[68px] font-extrabold ${
+                  card.isPopular ? "text-white" : "text-[#1C1B1D]"
                 }`}
               >
                 ${card.price}
               </span>
               <span
-                className={`ml-1 text-sm ${
-                  card.isPopular ? "text-white/80" : "text-gray-500"
+                className={`ml-1 text-lg ${
+                  card.isPopular ? "text-white/80" : "text-foreground"
                 }`}
               >
                 {card.period}
@@ -125,10 +130,10 @@ const ExclusiveCards = () => {
           </div>
 
           {/* Features */}
-          <div className="mt-8 space-y-4">
+          <div className="mt-3 space-y-4">
             <h4
-              className={`text-sm font-medium ${
-                card.isPopular ? "text-white" : "text-gray-900"
+              className={`text-lg font-extrabold ${
+                card.isPopular ? "text-white" : "text-[#1C1B1D]"
               }`}
             >
               Whats Included
@@ -137,7 +142,7 @@ const ExclusiveCards = () => {
               {card.features.map((feature, featureIndex) => (
                 <li key={featureIndex} className="flex items-center gap-3">
                   <svg
-                    className={`w-5 h-5 ${
+                    className={`w-6 h-6 ${
                       card.isPopular ? "text-white" : "text-[#8D4CC4]"
                     }`}
                     viewBox="0 0 20 20"
@@ -150,8 +155,8 @@ const ExclusiveCards = () => {
                     />
                   </svg>
                   <span
-                    className={`text-sm ${
-                      card.isPopular ? "text-white/80" : "text-gray-500"
+                    className={`text-lg ${
+                      card.isPopular ? "text-white/80" : "text-[#1C1B1D]"
                     }`}
                   >
                     {feature.text}
@@ -163,11 +168,11 @@ const ExclusiveCards = () => {
 
           {/* CTA Button */}
           <button
-            className={`w-full mt-8 px-4 py-3 rounded-full text-sm font-medium transition-colors
+            className={`w-full min-h-[68px] mt-8 px-4 py-3 rounded-full text-lg font-medium transition-colors
               ${
                 card.isPopular
                   ? "bg-white text-[#8D4CC4] hover:bg-gray-50"
-                  : "bg-gradient-to-r from-[#FF6B3D] to-[#8D4CC4] text-white hover:opacity-90"
+                  : "gradient-primary text-white hover:opacity-90"
               }
             `}
           >

@@ -15,12 +15,7 @@ import { Button } from "@/components/ui/button";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 
 const SupportPage = () => {
-  const [selectedFaq, setSelectedFaq] = useState<number | null>(null);
-
-  const handleFaqClick = (id: number) => {
-    setSelectedFaq(selectedFaq === id ? null : id);
-  };
-
+ 
   const ticketdata = [
     {
       id: 1,
@@ -106,17 +101,18 @@ const SupportPage = () => {
         support={true}
         description="How can we help you?"
       />
-      <div className="max-w-[1920px] mx-auto pt-20 pb-40 relative inset-1 bg-[#F9F9F9]">
-        <div className="absolute inset-0 w-full h-[2700px] lg:h-full">
-          <BubblesIcon className="absolute top-0 left-0" />
-          <BubblesIcon1 className="absolute top-0 right-0" />
-          <BubblesIcon className=" absolute bottom-0 left-0" />
-          <BubblesIcon1 className=" absolute bottom-0 right-0" />
-          <BubblesIcon className="lg:block hidden absolute top-1/2 left-0" />
-          <BubblesIcon1 className="lg:block hidden absolute top-1/3 right-0" />
-          <BubblesIcon className="lg:block hiddenabsolute bottom-1/4 left-0" />
-          <BubblesIcon1 className="lg:block hidden absolute bottom-1/1 right-0" />
+      <div className="max-w-[1920px] mx-auto pt-20 pb-40 relative bg-[#F9F9F9]">
+        <div className="absolute inset-0 w-full h-full">
+          <BubblesIcon className="absolute top-0 left-20" />
+          <BubblesIcon1 className="absolute top-0 right-20" />
+          <BubblesIcon className=" absolute bottom-0 left-20" />
+          <BubblesIcon1 className=" absolute bottom-0 right-20" />
+          <BubblesIcon className="lg:block hidden absolute top-1/2 left-20" />
+          <BubblesIcon1 className="lg:block hidden absolute top-1/3 right-20" />
+          <BubblesIcon className="lg:block hiddenabsolute bottom-1/4 left-20" />
+          <BubblesIcon1 className="lg:block hidden absolute bottom-1/1 right-20" />
         </div>
+        <div className="relative z-10">
         <h2 className="text-2xl lg:text-[48px] font-extrabold my-5 text-center mb-16">
           Create
           <span className="bg-primary text-white px-6 py-2 rounded-lg ml-2">
@@ -133,7 +129,8 @@ const SupportPage = () => {
             />
           ))}
         </div>
-        <div className="max-w-[1200px] mx-auto py-20">
+        </div>
+        <div className="max-w-[1200px] mx-auto py-20 relative z-10">
           <h2 className="text-3xl lg:text-[48px] font-extrabold my-5 text-center mb-16">
             Häufige
             <span className="bg-primary text-white px-6 py-2 rounded-lg ml-2">
@@ -142,29 +139,26 @@ const SupportPage = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
             {faqdata.map((item) => (
-              <h1
+              <div
                 key={item.id}
-                onClick={() => handleFaqClick(item.id)}
-                className={`w-full font-extrabold shadow-lg rounded-2xl px-8 py-6 transition-all duration-300 ease-in-out text-center bg-white text-2xl min-h-[167px] flex items-center justify-center cursor-pointer ${
-                  selectedFaq === item.id
-                    ? "bg-primary text-white rounded-full"
-                    : "bg-white text-[#1C1B1D] hover:bg-primary hover:text-white hover:rounded-full"
-                }`}
+                className="w-full font-extrabold shadow-lg rounded-2xl transition-all duration-300 ease-in-out px-8 py-6 text-center text-2xl min-h-[167px] flex items-center justify-center
+                bg-white text-[#1C1B1D] hover:bg-primary hover:text-white hover:rounded-full"
+            
               >
                 {item.title}
-              </h1>
+              </div>
             ))}
-            <div className="bg-white col-span-1 md:col-span-2 lg:col-span-3 flex flex-col md:flex-row justify-between items-center shadow-xl py-8 md:py-16 px-8 md:px-16 rounded-lg gap-4">
-              <h3 className="text-xl md:text-2xl font-bold text-center md:text-left">
-                OTHER QUESTIONS
-              </h3>
-              <Button className="gradient-primary text-white rounded-full text-xl font-bold px-6 min-h-16 hover:rounded-full w-full md:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
-                Ask a question
-              </Button>
-            </div>
+          </div>
+          <div className="bg-white flex flex-col md:flex-row justify-between items-center shadow-xl py-8 mt-8 md:py-16 px-8 md:px-16 rounded-lg gap-4">
+            <h3 className="text-xl md:text-2xl font-bold text-center md:text-left">
+              OTHER QUESTIONS
+            </h3>
+            <Button className="gradient-primary text-white rounded-full text-xl font-bold px-6 min-h-16 hover:rounded-full w-full md:w-auto shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
+              Ask a question
+            </Button>
           </div>
         </div>
-        <div className="max-w-[1200px] mx-auto py-20">
+        <div className="max-w-[1200px] mx-auto py-20 relative z-10">
           <h2 className="text-3xl lg:text-[48px] font-bold my-5 text-center mb-16">
             Explanatory
             <span className="bg-primary text-white px-4 py-1 rounded-lg ml-2">

@@ -4,7 +4,7 @@ import { BubblesIcon, BubblesIcon1 } from "./icons/icon";
 
 const ExclusiveOffers = () => {
   return (
-    <section className="mt-10 mb:mt-0 py-28 md:py-20 bg-gray-50 relative">
+    <section className="mt-10 mb:mt-0 py-28 md:py-20 relative">
         <div className="absolute inset-0 w-full h-full">
             <BubblesIcon className="absolute top-0 left-0"/>
             <BubblesIcon1 className="absolute top-0 right-0"/>

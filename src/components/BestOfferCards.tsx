@@ -38,13 +38,13 @@ const BestOfferCard = ({
       <div className="absolute inset-0 p-4 md:p-6 lg:p-10 flex flex-col md:flex-row items-start md:items-center justify-between">
         <div className="w-[40%] space-y-3 md:space-y-4">
           {/* Tag Badge */}
-          <span className="inline-flex items-center px-3 py-1.5 text-sm md:text-base border-2 border-white rounded text-white font-medium">
+          <h2 className="inline-flex items-center px-6 py-2 text-sm md:text-lg border border-white rounded-lg text-white font-extrabold">
             {tag}
-          </span>
+          </h2>
 
           {/* Title Section */}
-          <div className="space-y-1 md:space-y-2">
-            <h3 className="text-xl md:text-2xl lg:text-3xl text-white font-medium">
+          <div className="space-y-1 md:space-y-3">
+            <h3 className="text-xl md:text-2xl lg:text-[28px] text-white font-normal">
               {title}
             </h3>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">

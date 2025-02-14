@@ -15,11 +15,11 @@ const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
 }) => {
   return (
     <h1 className="text-2xl md:text-6xl font-extrabold">
-      <span className="bg-primary px-2 py-1 rounded-md text-white">
+      <span className="bg-primary px-4 rounded-md text-white">
         {highlightText}
       </span>
 
-      <span className={`text-heading ml-2 ${textColor}`}>{remainingText}</span>
+      <span className={`text-heading ml-3 ${textColor}`}>{remainingText}</span>
       <h1 className={`text-heading text-4xl md:text-8xl mt-3 ${textColor}`}>
         {remainingHeading}
       </h1>

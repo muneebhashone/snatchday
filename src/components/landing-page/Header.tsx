@@ -58,9 +58,9 @@ const Header = () => {
         </Link>
 
         {/* Desktop Hamburger - Only visible on desktop */}
-        {/* <div className="hidden lg:flex h-9 w-9 bg-primary rounded-md items-center justify-center">
+        <div className="hidden lg:flex h-9 w-9 bg-primary rounded-md items-center justify-center">
           <Hamburger />
-        </div> */}
+        </div>
 
         {/* Mobile Menu Button - Only visible on mobile */}
         <button

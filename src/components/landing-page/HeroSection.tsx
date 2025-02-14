@@ -59,10 +59,10 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="container max-w-[1440px] mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-5 items-center">
+      <div className="container max-w-[1600px] mx-auto relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-7 items-center">
           {/* Left Content */}
-          <div className="text-center lg:text-left pt-8 lg:pt-0 col-span-3">
+          <div className="text-center lg:text-left pt-8 lg:pt-0 col-span-4">
             <PrimaryHeading
               highlightText="Discover"
               remainingText="the new way of "
@@ -79,13 +79,13 @@ const HeroSection = () => {
 
           {/* Right Content */}
           {/* <div className="flex justify-center lg:justify-end mt-8 lg:mt-0"> */}
-          <div className="relative col-span-2">
+          <div className="relative col-span-3">
             <Image
               src={iphone}
               alt="hero-image"
               width={510}
               height={522}
-              className="w-full object-contain"
+              className="w-full object-cover"
               priority
             />
           </div>
