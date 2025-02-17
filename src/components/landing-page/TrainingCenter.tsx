@@ -66,10 +66,10 @@ const TrainingCenter = () => {
   return (
     <div className="relative">
        <div className="absolute w-full h-full">
-            <BubblesIcon className="absolute -top-10 left-10"/>
-            <BubblesIcon1 className="absolute -top-10 right-10"/>
-            <BubblesIcon className="absolute -bottom-20 left-40"/>
-            <BubblesIcon1 className="absolute -bottom-20 right-40"/>
+            <BubblesIcon className="absolute -top-10 -left-20 sm:left-10"/>
+            <BubblesIcon1 className="absolute -top-10 -right-32 sm:right-10"/>
+            <BubblesIcon className="absolute -bottom-20 -left-20 sm:left-40"/>
+            <BubblesIcon1 className="absolute -bottom-20 -right-20 sm:right-40"/>
             
         </div>
       <h2 className="text-3xl font-bold text-center mb-6">Training Center</h2>
@@ -100,8 +100,8 @@ const TrainingCenter = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
-        <CarouselNext className="w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
+        <CarouselPrevious className="w-14 sm:w-20 h-14 sm:h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-10" />
+        <CarouselNext className="w-14 sm:w-20 h-14 sm:h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-5" />
       </Carousel>
     </div>
   );

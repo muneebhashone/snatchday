@@ -7,10 +7,10 @@ import registersectionimage from "@/app/images/registersectionimage.png";
 const RegisterSection = () => {
   return (
     <section className="px-4 bg-[radial-gradient(ellipse_at_center,_#FDF9F7,_#F9F2EE)]">
-      <div className="container max-w-[1920px] ml-auto pt-10">
-        <div className="grid grid-cols-1 lg:grid-cols-9 items-center">
+      <div className="container max-w-[1920px] pt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-11 items-center">
           {/* Left Content */}
-          <div className="col-span-5 pl-20 py-28">
+          <div className="col-span-6 px-2 lg:pl-24 lg:py-16 lg:block flex flex-col items-center">
             <PrimaryHeading
               highlightText="Discover"
               remainingText="The New Way Of "
@@ -30,12 +30,13 @@ const RegisterSection = () => {
           </div>
 
           {/* Right Content - Image */}
-          <div className="col-span-4 w-full h-full">
+          <div className="col-span-5 w-full h-full">
            
               <Image
                 src={registersectionimage}
                 alt="Register section image"
-                className="w-full h-full object-cover"
+                // className="w-[910px] h-[695px] object-fill"
+                className="w-full h-full object-contain object-center 2xl:object-bottom"
                 priority
               />
            
