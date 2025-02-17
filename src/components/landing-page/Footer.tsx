@@ -69,7 +69,7 @@ const Footer = () => {
   return (
     <footer className="relative w-full">
       {/* Main Footer Content */}
-      <div className="gradient-primary text-white pb-20">
+      <div className="bg-gradient-to-r from-[#F37835] to-[#3B1678] text-white pb-20">
         <EarlyAccess />
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
@@ -184,9 +184,9 @@ const Footer = () => {
       {/* Bottom Footer */}
       <div className="bg-[#333333] text-white py-4 text-center">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-sm">
-            © 2017-2023{" "}
-            <Link href="/" className="hover:underline">
+          <div className="text-start">
+            © 2017-2025{" "}
+            <Link href="/" className="hover:underline text-primary">
               Snatch Day GmbH
             </Link>
             <p>

@@ -1,7 +1,7 @@
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
 import tournamenttrophy from "@/app/images/tournamenttrophy.png";
-import headerbg from "@/app/images/headerbg.png";
+
 import React from "react";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 import TournamentFilter from "@/components/tournaments/TournamentFilter";
@@ -10,6 +10,7 @@ import NextTournamentCard from "@/components/NextTournamentCard";
 import laptop from "@/app/images/laptopv1.png";
 import laptop2 from "@/app/images/laptopv2.png";
 import graphiccard from "@/app/images/graphiccard.png";
+import headerbg from "@/app/images/tournamentbg.png";
 
 
 const page = () => {
@@ -91,7 +92,7 @@ const page = () => {
 
   return (
     <ClientLayout>
-      <div>
+      <div className="mt-10">
         <SecondaryHeroSection
           title="Next tournaments"
           rightimage={tournamenttrophy}
@@ -123,14 +124,14 @@ const page = () => {
           </div>
 
           {/* Tournament Content */}
-          <div className="py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 text-center">
-          <h2 className="text-[48px] font-extrabold text-center capitalize mb-10 col-span-2">
+          <div className="py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+          {/* <h2 className="text-[48px] font-extrabold text-center capitalize mb-10 col-span-2">
             <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg">
               Next
             </span>
 
             <span className="bg-transparent ml-2">Tournaments</span>
-          </h2>
+          </h2> */}
             {nextTournament.map((tournament, index) => (
               <NextTournamentCard key={index} {...tournament} />
             ))}

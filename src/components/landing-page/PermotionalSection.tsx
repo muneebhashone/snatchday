@@ -10,7 +10,7 @@ import percentage from "@/app/images/percentage.png";
 const PermotionalSection = () => {
   return (
     <section className="container max-w-[1920px] mx-auto px-12 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
         <PromotionalBanners
           icon={<AppleIcon />}
           iconbg="bg-[#FF6B3D]"

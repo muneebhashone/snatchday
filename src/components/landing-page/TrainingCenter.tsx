@@ -72,7 +72,12 @@ const TrainingCenter = () => {
             <BubblesIcon1 className="absolute -bottom-20 right-40"/>
             
         </div>
-      <h2 className="text-3xl font-bold text-center mb-6">Training Center</h2>
+        <h3 className="text-[48px] font-extrabold flex items-center justify-center gap-3">
+            Training
+            <span className="bg-primary text-white px-4 rounded-lg">
+              Center
+            </span>
+          </h3>
       <Carousel
         opts={{
           align: "start",

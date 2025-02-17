@@ -47,6 +47,12 @@ const DuelArena = () => {
         "Answer the question with the correct answer to be entered in the competition.",
       number: "03",
     },
+    {
+      subTitle: "Answer the question",
+      description:
+        "Answer the question with the correct answer to be entered in the competition.",
+      number: "04",
+    },
   ];
 
   const floatingImages = [
@@ -89,7 +95,7 @@ const DuelArena = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="relative overflow-hidden bg-[#f5f5f5]">
       {/* Background Elements */}
       <div className="absolute inset-0 w-full h-full">
         {floatingImages.map((image, index) => (
@@ -115,19 +121,21 @@ const DuelArena = () => {
           <CarouselContent>
             {/* First Slide - Duel Arena */}
             <CarouselItem>
-              <div className="flex flex-col items-center justify-center text-center px-4 md:px-20">
+              <div className="grid grid-cols-1 content-center">
+                <div className="max-w-[1440px] mx-auto flex flex-col items-center justify-center mt-40">
                 <h2 className="text-[48px] font-extrabold mb-6">
                   How to Play{" "}
                   <span className="bg-primary text-white px-4 py-1 rounded-lg">
                     Duel Arena
                   </span>
                 </h2>
-                <p className="text-xl text-card-foreground max-w-4xl mb-8">
+                <p className="text-[24px] text-card-foreground mb-8">
                   {slides[0].description}
                 </p>
-                <p className="text-xl text-primary font-medium">
+                <p className="text-[24px] font-medium">
                   {slides[0].subText}
                 </p>
+                </div>
               </div>
             </CarouselItem>
 
@@ -140,7 +148,7 @@ const DuelArena = () => {
                     Duel Arena
                   </span>
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 max-w-[1440px] mx-auto gap-8">
                   {howToEnterSteps.map((step, index) => (
                     <div
                       key={index}
@@ -162,7 +170,7 @@ const DuelArena = () => {
           <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
           <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
         </Carousel>
-        <div className="flex justify-center items-center gap-8 mb-10">
+        <div className="flex justify-center items-center gap-8 my-10">
           <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">
             Create a Duel
           </Button>
@@ -191,8 +199,9 @@ const DuelArena = () => {
             ))}
           </div>
         </div> */}
-
-        <TrainingCenter />
+        <div className="mt-20">
+          <TrainingCenter />
+        </div>
         <div className="flex md:flex-row flex-col justify-center items-center gap-8 my-20">
           {/* <Image className="xl:w-[930px] xl:h-[550px] md:w-[570px] md:h-[360px]" src={supersale} alt="supersale" width={894} height={462} /> */}
           <Image

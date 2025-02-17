@@ -8,7 +8,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-import maintrophysection from "@/app/images/maintrophysection.png";
+import maintrophysection from "@/app/images/winnerbg.png";
 import winnerAvatar from "@/app/images/avatarimage.svg";
 
 const TournamentWinnerCardSlider = () => {
@@ -52,7 +52,7 @@ const TournamentWinnerCardSlider = () => {
         />
       </div>
 
-      <Carousel className="absolute -top-7 sm:-top-2 md:top-0 left-0 w-full" opts={{ loop: true }}>
+      <Carousel className="absolute -top-7 sm:-top-2 md:top-0 left-0" opts={{ loop: true }}>
         <CarouselContent>
           {winners.map((winner, index) => (
             <CarouselItem key={index}>
@@ -63,22 +63,22 @@ const TournamentWinnerCardSlider = () => {
                     <h3 className="text-xl lg:text-5xl xl:text-7xl font-extrabold text-white/90 mb-2">
                       {winner.heading}
                     </h3>
-                    <h3 className="text-xl lg:text-5xl xl:text-6xl font-extrabold text-white/90 mb-2 md:mb-4 lg:mb-6">
+                    <h3 className="text-xl lg:text-5xl xl:text-6xl font-extrabold text-white/90 mb-2 md:mb-4 lg:mb-7">
                       Tournament <span className="text-white bg-primary px-4 py-1 rounded">Winner</span>
                     </h3>
 
 
-                    <p className="text-2xl text-white/90 leading-relaxed mb-2 md:mb-4 lg:mb-6">
+                    <p className="text-[24px] text-white leading-relaxed mb-2 md:mb-4 lg:mb-7">
                       {winner.title}
                     </p>
 
                     <div className="flex md:flex-col flex-row-reverse md:items-start items-center justify-between">
-                      <p className="text-xl lg:text-4xl font-extrabold text-white mb-4 lg:mb-6">
+                      <p className="text-xl lg:text-[44px] font-extrabold text-white">
                         {winner.price}€
                       </p>
 
-                      <div className="flex items-center gap-3 md:gap-4">
-                        <div className="w-20 h-20 rounded-full overflow-hidden border-4 md:border-8 border-[#FF6B3D]">
+                      <div className="flex items-center gap-3 md:gap-4 mt-12">
+                        <div className="w-20 h-20 rounded-full overflow-hidden border-4 md:border-8 border-primary">
                           <Image
                             src={winner.winnerImage}
                             alt={winner.winnerName}
@@ -117,8 +117,8 @@ const TournamentWinnerCardSlider = () => {
           ))}
         </CarouselContent>
 
-        <CarouselPrevious className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
-        <CarouselNext className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+        <CarouselPrevious className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+        <CarouselNext className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 w-20 h-20 md:w-24 md:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
       </Carousel>
     </div>
   );

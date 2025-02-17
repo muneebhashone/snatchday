@@ -7,8 +7,28 @@ import FeaturedProductsCard from "@/components/FeaturedProductsCard";
 import graphiccard from "@/app/images/graphiccard.png";
 import trainingbg from "@/app/images/trainingBg.png";
 import trainingbgc from "@/app/images/trainingbgc.png";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+
 const page = () => {
   const displayProducts = [
+    {
+      title: "14 - AMD Ryzen 9 3 GHz - Win 11",
+      price: "2.644",
+      oldPrice: "2.694",
+      rating: 5,
+      reviews: 5,
+      image: graphiccard,
+      isSale: true,
+      isNew: false,
+      discount: "€99",
+      category: "computer",
+    },
     {
       title: "14 - AMD Ryzen 9 3 GHz - Win 11",
       price: "2.644",
@@ -81,7 +101,7 @@ const page = () => {
   ];
   return (
     <ClientLayout>
-      <main>
+      <main className="mt-10">
         <SecondaryHeroSection
           title="Training Center"
           bg={trainingbg}
@@ -103,10 +123,29 @@ const page = () => {
               <span className="bg-transparent">of the week</span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 mt-10">
-            {displayProducts.map((product, index) => (
-              <FeaturedProductsCard key={index} {...product} />
-            ))}
+          <div className="max-w-[1920px] mx-auto mt-10">
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+                skipSnaps: false,
+                slidesToScroll: 1,
+              }}
+              className="w-full relative"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {displayProducts.map((product, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6"
+                  >
+                    <FeaturedProductsCard {...product} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
+              <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
+            </Carousel>
           </div>
         </div>
       </main>

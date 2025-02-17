@@ -38,7 +38,7 @@ const EarlyAccess = () => {
               placeholder="Enter Email Address"
               className="w-full border text-lg border-primary rounded-lg h-16 pl-12 mt-5"
             />
-            <Button className="bg-white border border-primary absolute top-0 right-0 text-primary rounded-lg h-16 px-6 hover:bg-white hover:text-primary">
+            <Button className="bg-white border border-primary absolute top-0 right-0 text-primary rounded-lg w-16 h-16 hover:bg-white hover:text-primary">
               <SubscriptIcon />
             </Button>
           </div>

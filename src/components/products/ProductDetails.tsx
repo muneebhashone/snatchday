@@ -4,7 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import { Heart, ShoppingCartIcon, TruckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { VatIcon } from "@/components/icons/icon";
+import { BubblesIcon, BubblesIcon1, VatIcon } from "@/components/icons/icon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "../ui/separator";
 
@@ -34,8 +34,9 @@ const ProductDetails = ({
   const [selectedImage, setSelectedImage] = useState(0);
 
   return (
-    <div className="container max-w-[1600px] mx-auto relative">
-      <div className="rounded-3xl p-8">
+    <div className="container max-w-[1600px] mx-auto relative z-10">
+   
+      <div className="rounded-3xl p-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Column - Product Images */}
           <div className="space-y-4">
@@ -175,7 +176,7 @@ const ProductDetails = ({
             </div>
 
             {/* Shipping Method */}
-            <div className="mt-3">
+            <div className="mt-5">
               <p className="text-lg inline-flex items-center gap-1">
                 <span className="text-gray-600 flex items-center gap-1">
                   <TruckIcon className="text-primary" /> Shipping method:

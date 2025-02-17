@@ -300,7 +300,8 @@ export const MsgIcon = () => {
 
 export const SubscriptIcon = () => {
   return (
-    <svg
+    <svg 
+      
       width="32"
       height="30"
       viewBox="0 0 32 30"

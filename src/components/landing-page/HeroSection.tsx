@@ -13,6 +13,7 @@ import nine from "@/app/images/nine.svg";
 import PrimaryHeading from "../PrimaryHeading";
 import GredientButton from "../GredientButton";
 import iphone from "@/app/images/iphone.png";
+import PermotionalSection from "./PermotionalSection";
 
 const HeroSection = () => {
   const images = [
@@ -27,15 +28,15 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="min-h-screen w-full relative bg-white pt-20 lg:pt-40">
+    <section className="min-h-screen w-full relative bg-white pt-20 lg:mt-28">
       {/* Background Image */}
       <Image
         src={heroImage}
         alt="hero-image"
         width={1920}
-        height={1080}
+        height={969}
         priority
-        className="object-cover opacity-90 absolute inset-0 w-full h-full grayscale"
+        className="object-cover absolute inset-0 w-full h-[130vh] grayscale"
       />
 
       {/* Floating Images */}
@@ -92,6 +93,7 @@ const HeroSection = () => {
           {/* </div> */}
         </div>
       </div>
+      <PermotionalSection />
     </section>
   );
 };
@@ -99,14 +101,14 @@ const HeroSection = () => {
 // Helper function to get random positions
 const getRandomPosition = (index: number) => {
   const positions = [
-    "left-[10%] top-[20%]",
-    "right-[5%] top-[15%]",
-    "left-[40%] top-[60%]",
-    "left-[20%] top-[70%]",
-    "right-[30%] top-[40%]",
-    "left-[30%] top-[30%]",
-    "left-[60%] top-[70%]",
-    "right-[10%] top-[65%]",
+    "left-[5%] top-[30%]",
+    "right-[8%] top-[8%]",
+    "left-[40%] top-[40%]",
+    "left-[20%] top-[50%]",
+    "right-[55%] top-[10%]",
+    "left-[30%] top-[10%]",
+    "left-[50%] top-[50%]",
+    "left-[0%] top-[8%]",
   ];
   return positions[index % positions.length];
 };

@@ -11,6 +11,8 @@ import Search from "@/components/Search";
 import Login from "../auth/Login";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PromotionModal } from "@/components/PromotionModal";
+         
+import { usePathname } from "next/navigation";
 
 const menu = [
   {
@@ -46,6 +48,9 @@ const menu = [
 ];
 
 const Header = () => {
+
+  const pathname = usePathname();
+
   // const [openModal, setOpenModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -87,9 +92,10 @@ const Header = () => {
                       // onClick={() => {
                       //   setOpenModal(true);
                       // }}
-                      className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
+                      className={`flex hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link ? "text-primary" : "text-foreground"}`}
                     >
                       {items.name}
+                      <div className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"}`}></div>
                     </button>
                   </DialogTrigger>
                   <PromotionModal/>
@@ -97,9 +103,10 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className="text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2"
+                  className={`flex items-start text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link ? "text-primary" : "text-foreground"}`}
                 >
                   {items.name}
+                  <div className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"}`}></div>
                 </Link>
               )}
             </nav>

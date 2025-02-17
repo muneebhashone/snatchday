@@ -76,7 +76,7 @@ const SecondaryHeroSection = ({
                 </div>
               ) : (
                 <>
-                  <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-8xl font-bold capitalize">
+                  <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-[84px] font-bold capitalize">
                     {title}
                   </h1>
                   {support && (

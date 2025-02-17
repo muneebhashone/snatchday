@@ -43,7 +43,7 @@ const ProductSection = () => {
     <section className="py-10 bg-gray-50">
       <div className="container max-w-[1920px] mx-auto px-5 md:px-12">
         {/* Section Header */}
-        <div className="flex justify-between gap-2 items-center mb-12">
+        <div className="flex justify-between gap-2 items-center mb-12 mt-10">
           <h3 className="text-2xl md:text-[48px] font-extrabold flex items-center gap-3">
             Current{" "}
             <span className="bg-primary text-white px-2 md:px-4 py-1 md:py-3 rounded-lg">
