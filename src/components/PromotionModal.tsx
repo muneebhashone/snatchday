@@ -172,7 +172,11 @@ export function PromotionModal({ openModal }: { openModal?: boolean }) {
                     key={item.timer}
                     className="text-center flex flex-col items-center text-xs lg:text-lg"
                   >
-                    <div className="bg-opacity-50 text-md sm:w-max lg:text-4xl border px-2 lg:px-7 py-1 lg:py-2">
+                    <div
+                      className={`bg-opacity-50 text-md sm:w-max lg:text-4xl border px-2 lg:px-7 py-1 lg:py-2 mb-2 ${
+                        item.timerText === "Days" && "border-none shadow-[1px_3px_10px_#d1d5db]"
+                      }`}
+                    >
                       <h1 className="font-light">{item.timer}</h1>
                     </div>
 
