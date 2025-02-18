@@ -50,7 +50,7 @@ const FeaturedProductsCard = ({
         <p className="text-card-foreground text-md md:text-lg">{title}</p>
 
         {/* Rating */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-3">
           <div className="flex text-primary items-center gap-1 text-2xl">
             {"★".repeat(rating)}{" "}
             <span className="text-xs text-gray-500">({reviews})</span>{" "}
@@ -58,7 +58,7 @@ const FeaturedProductsCard = ({
           {/* <span className="text-xs text-gray-500">({reviews})</span> */}
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <p className="text-sm md:text-lg font-semibold">
+              <p className="text-lg font-semibold">
                 €{price}{" "}
                 <span className=" text-gray-400 line-through">€{oldPrice}</span>
               </p>

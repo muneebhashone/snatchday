@@ -10,7 +10,8 @@ import percentage from "@/app/images/percentage.png";
 const PermotionalSection = () => {
   return (
     <section className="container max-w-[1920px] mx-auto px-12 py-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"> */}
+      <div className="flex flex-wrap gap-6 justify-center">
         <PromotionalBanners
           icon={<AppleIcon />}
           iconbg="bg-[#FF6B3D]"
@@ -20,15 +21,15 @@ const PermotionalSection = () => {
           mainbg="bg-[#FFF6F2]"
           discount={true}
         >
-          <div className="absolute top-8 right-10">
-            <div className="flex items-center justify-center text-center bg-white text-foreground w-28 h-28 rounded-full text-sm absolute bottom-0 -left-10">
-              <h3 className="text-center text-lg">
-                UP TO <h1 className="text-primary font-semibold text-[28px]">20%</h1>{" "}
+          <div className="absolute top-8 right-[32%] sm:right-10">
+            <div className="flex items-center justify-center text-center bg-white text-foreground w-20 md:w-28 h-20 md:h-28 rounded-full text-sm absolute bottom-0 -left-10">
+              <h3 className="text-center text-md md:text-lg">
+                UP TO <h1 className="text-primary font-semibold text-[22px] md:text-[28px]">20%</h1>{" "}
                 Off
               </h3>
             </div>
             <Image
-              className="w-full h-full object-contain"
+              className="sm:w-full sm:h-full w-[120px] h-[220px]"
               src={banner1}
               alt="banner"
               width={213}
@@ -36,78 +37,31 @@ const PermotionalSection = () => {
             />
           </div>
         </PromotionalBanners>
-        {/* <PromotionalBanners
-          icon={<AppleIcon />}
-          iconbg="bg-[#FF6B3D]"
-          iconText="IPHONE"
-          title="Best Deal Online on "
-          boldText="IPHONE 15 SERIES."
-          mainbg="bg-[#FFF6F2]"
-          discount={true}
-        >
-          <div className="absolute top-10 right-0">
-            <Image className="w-40 h-64" src={banner1} alt="banner" width={213} height={379} />
-            <div className="flex items-center justify-center bg-white text-foreground w-16 sm:w-28 h-16 sm:h-28 rounded-full text-sm absolute bottom-24 left-0">
-              <h3 className="text-center font-semibold">
 
-                UP TO{" "}
-                <h1 className="text-primary font-bold text-2xl">20%</h1> Off
-              </h3>
-            </div>
-          </div>
-
-        </PromotionalBanners> */}
-        
-            <PromotionalBanners
-              time={[
-                { timer: "24", timerText: "Hours" },
-                { timer: "00", timerText: "Minutes" },
-                { timer: "00", timerText: "Seconds" },
-              ]}
-              icon={<SnatchIcon />}
-              mainbg="bg-[#E5D3FF]"
-              iconbg="bg-[#8D4CC4]"
-              iconText="Snatch Day"
-              title="New Offer Reveal with in after"
-              boldText="24 hours."
-              discount={false}
-            >
-              <div className="absolute top-10 right-0 cursor-pointer">
-                <Image
-                  src={banner2.src}
-                  width={400}
-                  height={379}
-                  alt="banner"
-                />
-              </div>
-            </PromotionalBanners>
-          
-
-        {/* <PromotionalBanners 
+        <PromotionalBanners
           time={[
             { timer: "24", timerText: "Hours" },
             { timer: "00", timerText: "Minutes" },
             { timer: "00", timerText: "Seconds" },
-            
           ]}
           icon={<SnatchIcon />}
           mainbg="bg-[#E5D3FF]"
           iconbg="bg-[#8D4CC4]"
           iconText="Snatch Day"
           title="New Offer Reveal with in after"
-
           boldText="24 hours."
-
           discount={false}
         >
-          <div className="absolute top-10 right-0">
-            <Image src={banner2.src} width={400} height={379} alt="banner" />
+          <div className="absolute -top-5 right-[22%] sm:top-10 sm:right-0 cursor-pointer">
+            <Image
+              className="sm:w-full sm:h-full w-[220px] h-[320px] object-contain"
+              src={banner2.src}
+              width={400}
+              height={379}
+              alt="banner"
+            />
           </div>
-          
-
-
-
-        </PromotionalBanners> */}
+        </PromotionalBanners>
 
         <PromotionalBanners
           icon={<PercentageIcon />}
@@ -118,8 +72,8 @@ const PermotionalSection = () => {
           boldText="70% Off"
           discount={false}
         >
-          <div className="absolute top-0 right-0 opacity-90">
-            <Image src={percentage.src} width={500} height={450} alt="banner" />
+          <div className="absolute top-10 sm:top-0 right-[25%] sm:right-0 opacity-90">
+            <Image className="" src={percentage.src} width={500} height={450} alt="banner" />
           </div>
         </PromotionalBanners>
       </div>

@@ -28,7 +28,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="min-h-screen w-full relative bg-white pt-20 lg:mt-28">
+    <section className="min-h-screen w-full relative bg-white pt-28 lg:pt-40 p-10">
       {/* Background Image */}
       <Image
         src={heroImage}
@@ -60,7 +60,7 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="container max-w-[1600px] mx-auto relative z-10">
+      <div className="container max-w-[1600px] mx-auto relative z-10 ">
         <div className="grid grid-cols-1 lg:grid-cols-7 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left pt-8 lg:pt-0 col-span-4">
@@ -73,20 +73,20 @@ const HeroSection = () => {
               Unsere Vision für Snatch Day war lange Zeit in unseren Köpfen
               gereift, denn wir sind kein gewöhnlicher Onlineshop.
             </p>
-            <div className="mt-6 lg:mt-10">
+            <div className="mt-6 lg:mt-10 lg:mb-0 mb-10 ">
               <GredientButton buttonText="Join Tournament" />
             </div>
           </div>
 
           {/* Right Content */}
           {/* <div className="flex justify-center lg:justify-end mt-8 lg:mt-0"> */}
-          <div className="relative col-span-3">
+          <div className=" flex items-center justify-center relative col-span-3">
             <Image
               src={iphone}
               alt="hero-image"
               width={510}
               height={522}
-              className="w-full object-cover"
+              className="lg:w-full lg:h-full object-cover"
               priority
             />
           </div>
