@@ -84,12 +84,12 @@ const TrainingCenter = () => {
           {trainingCards.map((card, index) => (
             <CarouselItem
               key={index}
-              className="md:basis-1/2 lg:basis-1/6"
+              className="basis-1/2 sm:basis-1/3 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 2xl:basis-1/6 flex items-center justify-center"
             >
               <div className="relative group cursor-pointer">
-                <div className="rounded-full my-6 shadow-lg border h-[278px] w-[278px] border-gray-200 hover:border-primary flex items-center justify-center transition-transform transform group-hover:scale-105">
+                <div className="rounded-full my-6 shadow-lg border h-[150px] md:h-[190px] w-[150px] xl:h-[278px] md:w-[190px] xl:w-[278px] border-gray-200 hover:border-primary flex  items-center justify-center transition-transform transform group-hover:scale-105">
                   <Image
-                    className="w-[80px] lg:w-[120px]"
+                    className="w-[67px] sm:w-[60px] h-[67px] sm:h-[60px] md:w-[100px] md:h-[100px] xl:w-[120px] xl:h-[120px]"
                     src={card.icon}
                     alt={card.label}
                     width={122}
@@ -100,8 +100,8 @@ const TrainingCenter = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="w-14 sm:w-20 h-14 sm:h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-10" />
-        <CarouselNext className="w-14 sm:w-20 h-14 sm:h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-5" />
+        <CarouselPrevious className="w-14 sm:w-20 h-14 sm:h-20 md:w-20 xl:w-24 md:h-20 xl:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-10" />
+        <CarouselNext className="w-14 sm:w-20 h-14 sm:h-20 md:w-20 xl:w-24 md:h-20 xl:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-10" />
       </Carousel>
     </div>
   );
