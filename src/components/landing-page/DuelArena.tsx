@@ -81,7 +81,6 @@ const DuelArena = () => {
       alt: "game5",
       className: "animate-float-5 absolute top-60 right-[20%]",
     },
-
     {
       src: game2,
       alt: "game2",
@@ -134,7 +133,6 @@ const DuelArena = () => {
                 <p className="text-[24px] font-medium">
                   {slides[0].subText}
                 </p>
-                </div>
               </div>
             </CarouselItem>
 
@@ -176,33 +174,10 @@ const DuelArena = () => {
         </div>
 
         {/* Training Center Section */}
-        {/* <div className="mt-20">
-          <h3 className="text-3xl font-bold text-center mb-12">
-            Training Center
-          </h3>
-          <div className="grid grid-cols-6 gap-12">
-            {trainingCards.map((card, index) => (
-              <div key={index} className="relative group cursor-pointer">
-                <div className="aspect-square rounded-full shadow-lg flex items-center justify-center transition-transform transform group-hover:scale-105">
-                  <Image
-                    src={card.icon}
-                    alt={card.label}
-                    width={122}
-                    height={122}
-                  />
-                </div>
-                {card.notification && (
-                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-[#FF6B3D] rounded-full border-4 border-white" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div> */}
         <div className="mt-20">
           <TrainingCenter />
         </div>
         <div className="flex md:flex-row flex-col justify-center items-center gap-8 my-20">
-          {/* <Image className="xl:w-[930px] xl:h-[550px] md:w-[570px] md:h-[360px]" src={supersale} alt="supersale" width={894} height={462} /> */}
           <Image
             className="w-[100%] md:w-[50%]"
             src={supersale}
@@ -217,7 +192,6 @@ const DuelArena = () => {
             width={894}
             height={462}
           />
-          {/* <Image className="xl:w-[930px] xl:h-[550px] md:w-[570px] md:h-[360px]" src={supersale} alt="supersale" width={894} height={462} /> */}
         </div>
       </div>
     </section>

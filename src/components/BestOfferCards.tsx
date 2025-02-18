@@ -37,7 +37,7 @@ const BestOfferCard = ({
 
       {/* Content */}
       <div className="inset-0 p-4 md:p-6 lg:p-10 flex flex-col md:flex-row items-center md:items-center justify-between">
-        <div className="md:w-[40%] space-y-3 md:space-y-4 md:mt-0 mt-2 md:block flex flex-col items-center text-center">
+        <div className="md:w-[40%] space-y-3 md:space-y-4 md:mt-0 mt-2 md:block flex flex-col items-start text-start">
           {/* Tag Badge */}
           <h2 className="inline-flex items-center px-6 py-2 text-sm md:text-lg border border-white rounded-lg text-white font-extrabold">
             {tag}
