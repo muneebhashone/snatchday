@@ -28,7 +28,7 @@ const PromotionalBanners = ({
 }: PromotionalBannersProps) => {
   return (
     <div
-      className={`${mainbg} w-[350px] sm:w-[550px] h-[500px] flex sm:items-center sm:text-start text-center items-end justify-center rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-16 pl-10 sm:pl-0 lg:pl-10`}
+      className={`${mainbg} w-[400px] sm:w-[550px] 2xl:w-[585px] h-[500px] flex sm:items-center sm:text-start text-center items-end justify-center rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-16 pl-2 sm:pl-0 lg:pl-10`}
     >
       <div className="">
         <div className="w-[90%] sm:max-w-[45%] lg:max-w-[35%] relative z-10">

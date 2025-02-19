@@ -103,10 +103,10 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`flex items-start text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link ? "text-primary" : "text-foreground"}`}
+                  className={`relative flex items-start text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link ? "text-primary" : "text-foreground"}`}
                 >
                   {items.name}
-                  <div className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"}`}></div>
+                  <div className={`absolute -right-[10px] top-2 w-[6px] h-[6px] bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"}`}></div>
                 </Link>
               )}
             </nav>

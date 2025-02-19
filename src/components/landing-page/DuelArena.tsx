@@ -94,7 +94,7 @@ const DuelArena = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[#f5f5f5]">
+    <section className="relative overflow-hidden ">
       {/* Background Elements */}
       <div className="absolute inset-0 w-full h-full">
         {floatingImages.map((image, index) => (
@@ -109,7 +109,7 @@ const DuelArena = () => {
         ))}
       </div>
 
-      <div className="container max-w-[1920px] mx-auto px-12 relative z-10 h-max">
+      <div className="container max-w-[1920px] mx-auto px-12 relative z-10 h-max lg:mt-10">
         <Carousel
           opts={{
             align: "start",
@@ -127,10 +127,10 @@ const DuelArena = () => {
                     Duel Arena
                   </span>
                 </h2>
-                <p className="text-[24px] text-card-foreground mb-8">
+                <p className="text-[16px] md:text-[24px] text-card-foreground mb-8">
                   {slides[0].description}
                 </p>
-                <p className="text-[24px] font-medium">
+                <p className="text-[16px] md:text-[24px] font-normal">
                   {slides[0].subText}
                 </p>
               </div>
@@ -145,7 +145,7 @@ const DuelArena = () => {
                     Duel Arena
                   </span>
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-8 ">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-8 ">
                   {howToEnterSteps.map((step, index) => (
                     <div
                       key={index}
@@ -165,7 +165,7 @@ const DuelArena = () => {
             </CarouselItem>
           </CarouselContent>
           <CarouselPrevious className="absolute sm:-left-4 lg:-left-8 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
-          <CarouselNext className="absolute sm:-right-4 lg:-right-8 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
+          <CarouselNext className="absolute sm:-right-4 lg:-right-2 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
         </Carousel>
         <div className="flex justify-center items-center gap-8 my-10">
           <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">

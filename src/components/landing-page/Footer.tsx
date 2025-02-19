@@ -67,14 +67,14 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative w-full">
+    <footer className="relative w-full ">
       {/* Main Footer Content */}
       <div className="bg-gradient-to-r from-[#F37835] to-[#3B1678] text-white pb-20">
         <EarlyAccess />
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-8">
             {/* Logo and Info Section */}
-            <div className="col-span-1">
+            <div className="col-span-2 sm:col-span-4 md:col-span-1">
               <Image
                 src={footerLogo}
                 alt="Snatch Logo"

@@ -80,7 +80,7 @@ const HeroSection = () => {
 
           {/* Right Content */}
           {/* <div className="flex justify-center lg:justify-end mt-8 lg:mt-0"> */}
-          <div className=" flex items-center justify-center relative col-span-3">
+          <div className="flex items-center justify-center relative col-span-3">
             <Image
               src={iphone}
               alt="hero-image"

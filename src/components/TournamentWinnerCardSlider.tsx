@@ -60,7 +60,7 @@ const TournamentWinnerCardSlider = () => {
               <div className="py-0 lg:py-12 flex items-center">
                 <div className="w-full max-w-7xl px-20 py-10 md:px-10 lg:px-8">
                   <div className="md:max-w-4xl md:pl-8 lg:pl-32 py-4 md:py-6 lg:py-0">
-                    <div className="flex md:flex-col items-start justify-start gap-2 ">
+                    <div className="flex flex-col items-center md:items-start justify-start md:gap-2 ">
                       <h3 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-extrabold text-white/90 mb-2">
                         {winner.heading}
                       </h3>
