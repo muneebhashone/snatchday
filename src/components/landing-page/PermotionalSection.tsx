@@ -9,7 +9,7 @@ import percentage from "@/app/images/percentage.png";
 
 const PermotionalSection = () => {
   return (
-    <section className="container max-w-[1920px] mx-auto px-12 py-16">
+    <section className="container max-w-[1920px] mx-auto  py-16">
       {/* <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"> */}
       <div className="flex flex-wrap gap-6 justify-center">
         <PromotionalBanners
@@ -21,7 +21,7 @@ const PermotionalSection = () => {
           mainbg="bg-[#FFF6F2]"
           discount={true}
         >
-          <div className="absolute top-8 right-[32%] sm:right-10">
+          <div className="absolute top-8 sm:top-20 lg:top-8 right-[25%] sm:right-10">
             <div className="flex items-center justify-center text-center bg-white text-foreground w-20 md:w-28 h-20 md:h-28 rounded-full text-sm absolute bottom-0 -left-10">
               <h3 className="text-center text-md md:text-lg">
                 UP TO <h1 className="text-primary font-semibold text-[22px] md:text-[28px]">20%</h1>{" "}
@@ -29,7 +29,7 @@ const PermotionalSection = () => {
               </h3>
             </div>
             <Image
-              className="sm:w-full sm:h-full w-[120px] h-[220px]"
+              className="sm:h-[320px] lg:w-[220px] sm:w-[180px] lg:h-[400px] w-[120px] h-[220px]"
               src={banner1}
               alt="banner"
               width={213}
@@ -52,9 +52,9 @@ const PermotionalSection = () => {
           boldText="24 hours."
           discount={false}
         >
-          <div className="absolute -top-5 right-[22%] sm:top-10 sm:right-0 cursor-pointer">
+          <div className="absolute -top-5 right-[20%] sm:top-16 sm:right-5 cursor-pointer">
             <Image
-              className="sm:w-full sm:h-full w-[220px] h-[320px] object-contain"
+              className="sm:h-[350px] lg:h-[350px] sm:w-[240px] lg:w-[350px] w-[220px] h-[250px] object-contain"
               src={banner2.src}
               width={400}
               height={379}
@@ -65,14 +65,14 @@ const PermotionalSection = () => {
 
         <PromotionalBanners
           icon={<PercentageIcon />}
-          mainbg="bg-[#ffc107]"
+          mainbg="bg-[#fdcc3f]"
           iconbg="bg-white"
           iconText="70% OFF"
           title="Biggest Sale of the Month with "
           boldText="70% Off"
           discount={false}
         >
-          <div className="absolute top-10 sm:top-0 right-[25%] sm:right-0 opacity-90">
+          <div className="absolute top-10 sm:top-0 right-[23%] sm:right-0 opacity-90">
             <Image className="" src={percentage.src} width={500} height={450} alt="banner" />
           </div>
         </PromotionalBanners>

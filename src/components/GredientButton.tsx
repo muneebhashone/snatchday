@@ -7,7 +7,7 @@ interface GredientButtonProps {
 
 const GredientButton: React.FC<GredientButtonProps> = ({ buttonText }) => {
   return (
-    <Button className="gradient-primary text-white text-xl py-8 rounded-full px-14">
+    <Button className="gradient-primary text-white text-lg xl:text-xl py-6 xl:py-8 rounded-full px-10 xl:px-14">
       {buttonText}
     </Button>
   );

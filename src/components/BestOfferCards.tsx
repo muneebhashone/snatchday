@@ -21,23 +21,10 @@ const BestOfferCard = ({
   buttonTextcolor,
 }: BestOfferCardProps) => {
   return (
-    // <div className="relative rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-300">
-    <div style={{ backgroundImage: `url(${bgimage.src})` }} className="bg-cover bg-center rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-300 lg:w-[850px] w-[500px] md:min-w-[600px] min-h-[320px] h-[450px] md:h-[420px] flex items-center justify-center">
-      {/* Background Image */}
-      {/* <div className="w-full h-full">
-        <Image
-          src={bgimage}
-          alt="Background"
-          width={892}
-          height={500}
-          className="w-full h-full object-cover "
-          priority
-        />
-      </div> */}
-
+    <div style={{ backgroundImage: `url(${bgimage.src})` }} className="bg-cover bg-center rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-300 lg:w-[880px] w-[500px] md:min-w-[600px] min-h-[320px] h-[450px] md:h-[420px] flex items-center justify-center">
       {/* Content */}
       <div className="inset-0 p-4 md:p-6 lg:p-10 flex flex-col md:flex-row items-center md:items-center justify-between">
-        <div className="md:w-[40%] space-y-3 md:space-y-4 md:mt-0 mt-2 md:block flex flex-col items-start text-start">
+        <div className="md:w-[40%] space-y-3 md:space-y-4 md:mt-0 mt-2 md:block flex flex-col items-center md:items-start text-center md:text-start">
           {/* Tag Badge */}
           <h2 className="inline-flex items-center px-6 py-2 text-sm md:text-lg border border-white rounded-lg text-white font-extrabold">
             {tag}

@@ -51,9 +51,9 @@ const FeaturedProductsCard = ({
 
         {/* Rating */}
         <div className="flex items-center justify-between gap-3">
-          <div className="flex text-primary items-center gap-1 text-2xl">
+          <div className="flex text-primary items-center gap-1 text-[21px]">
             {"★".repeat(rating)}{" "}
-            <span className="text-xs text-gray-500">({reviews})</span>{" "}
+            <span className="text-sm text-gray-500">({reviews})</span>{" "}
           </div>
           {/* <span className="text-xs text-gray-500">({reviews})</span> */}
           <div className="flex items-center justify-between">

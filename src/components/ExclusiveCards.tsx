@@ -73,13 +73,12 @@ const pricingCards: PricingCard[] = [
 const ExclusiveCards = () => {
   return (
     // <div className="grid grid-cols-1 md:grid-cols-2 items-center lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
-    <div className="lg:grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1440px] mx-auto">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1440px] mx-auto">
       {pricingCards.map((card, index) => (
         <div
-          key={index} 
-          className={`relative rounded-xl p-16 w-full md:w-auto ${
-            card.isPopular ? "bg-[#8D4CC4]" : "bg-white"
-          } ${card.isPopular ? "mt-0" : "mt-20"} ${card.isPopular ? "mb-20" : "mb-0"} ${card.isPopular ? "shadow-none" : "shadow-lg"} hover:scale-105 transition-transform duration-300`}
+          key={index}
+          className={`relative rounded-xl p-10 md:p-10 lg:p-8 lg:pt-16 xl:p-16 w-full md:w-auto ${card.isPopular ? "bg-[#8D4CC4]" : "bg-white"
+            } ${card.isPopular ? "mt-0" : "lg:mt-20"} ${card.isPopular ? "lg:mb-20" : "mb-0"} ${card.isPopular ? "shadow-none" : "shadow-[0px_0px_15px_#f1f1f1]"} hover:scale-105 transition-transform duration-300`}
         >
           {/* Popular Badge */}
           {card.badge && (
@@ -89,45 +88,41 @@ const ExclusiveCards = () => {
           )}
 
           {/* Card Header */}
-         
-            <div className="flex items-center gap-3">
-                <div className={`flex items-center gap-3 p-5 rounded-xl ${card.bgcolor}`}>
+
+          <div className="flex items-center gap-3">
+            <div className={`flex items-center gap-3 p-5 rounded-xl ${card.bgcolor}`}>
               <Image src={card.icon} alt={card.title} width={24} height={24} className={`w-6 h-6 ${card.title !== "Basic" ? "grayscale-0" : "grayscale"}`} />
-              </div>
-              <div>
+            </div>
+            <div>
               <p
-                className={`text-lg ${
-                  card.isPopular ? "text-white" : "text-foreground"
-                }`}
+                className={`text-lg ${card.isPopular ? "text-white" : "text-foreground"
+                  }`}
               >
                 {card.subtitle}
               </p>
               <h3
-                className={`text-xl font-extrabold ${
-                  card.isPopular ? "text-white" : "text-gray-900"
-                }`}
+                className={`text-xl font-extrabold ${card.isPopular ? "text-white" : "text-gray-900"
+                  }`}
               >
                 {card.title}
               </h3>
-              </div>
             </div>
-            <p className={`mt-5 ${card.isPopular ? "text-white" : "text-foreground"}`}>Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit. </p>
-      
+          </div>
+          <p className={`mt-5 ${card.isPopular ? "text-white" : "text-foreground"}`}>Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit. </p>
+
 
           {/* Pricing */}
-          <div className="mt-4">
+          <div className="lg:mt-4">
             <div className="flex items-baseline">
               <span
-                className={`text-[68px] font-extrabold ${
-                  card.isPopular ? "text-white" : "text-[#1C1B1D]"
-                }`}
+                className={`text-[50px] xl:text-[68px] font-extrabold ${card.isPopular ? "text-white" : "text-[#1C1B1D]"
+                  }`}
               >
                 ${card.price}
               </span>
               <span
-                className={`ml-1 text-lg ${
-                  card.isPopular ? "text-white/80" : "text-foreground"
-                }`}
+                className={`ml-1 text-md xl:text-lg ${card.isPopular ? "text-white/80" : "text-foreground"
+                  }`}
               >
                 {card.period}
               </span>
@@ -135,21 +130,19 @@ const ExclusiveCards = () => {
           </div>
 
           {/* Features */}
-          <div className="mt-3 space-y-4">
+          <div className="mt-3 space-y-2 lg:space-y-4">
             <h4
-              className={`text-lg font-extrabold ${
-                card.isPopular ? "text-white" : "text-[#1C1B1D]"
-              }`}
+              className={`text-lg font-extrabold ${card.isPopular ? "text-white" : "text-[#1C1B1D]"
+                }`}
             >
               Whats Included
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-1 lg:space-y-3">
               {card.features.map((feature, featureIndex) => (
                 <li key={featureIndex} className="flex items-center gap-3">
                   <svg
-                    className={`w-6 h-6 ${
-                      card.isPopular ? "text-white" : "text-[#8D4CC4]"
-                    }`}
+                    className={`w-6 h-6 ${card.isPopular ? "text-white" : "text-[#8D4CC4]"
+                      }`}
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -160,9 +153,8 @@ const ExclusiveCards = () => {
                     />
                   </svg>
                   <span
-                    className={`text-lg ${
-                      card.isPopular ? "text-white/80" : "text-[#1C1B1D]"
-                    }`}
+                    className={`text-sm sm:text-lg ${card.isPopular ? "text-white/80" : "text-[#1C1B1D]"
+                      }`}
                   >
                     {feature.text}
                   </span>
@@ -172,17 +164,16 @@ const ExclusiveCards = () => {
           </div>
 
           {/* CTA Button */}
-          <button
-            className={`w-full min-h-[68px] mt-8 px-4 py-3 rounded-full text-lg font-medium transition-colors
-              ${
-                card.isPopular
-                  ? "bg-white text-[#8D4CC4] hover:bg-gray-50"
-                  : "gradient-primary text-white hover:opacity-90"
+          <div className="w-full flex items-center sm:justify-center"><button
+            className={`w-max sm:w-[70%] lg:w-full min-h-[48px] lg:min-h-[68px] mt-5 lg:mt-8 px-14 py-4 lg:px-4 lg:py-3 rounded-full text-lg font-medium transition-colors
+              ${card.isPopular
+                ? "bg-white text-[#8D4CC4] hover:bg-gray-50"
+                : "gradient-primary text-white hover:opacity-90"
               }
             `}
           >
             {card.buttonText}
-          </button>
+          </button></div>
         </div>
       ))}
     </div>

@@ -22,14 +22,36 @@ body {
     background-clip: text;
     color: transparent;
   }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #FDF6AE, #A06B2A);
+  }
+
 }
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 1% 20%; /* #333132 */
+    --foreground: 0 1% 20%;
+    /* #333132 */
     --card: 0 0% 100%;
-    --card-foreground: 0, 0%, 27%, 100%; /* #444444 */
+    --card-foreground: 0, 0%, 27%, 100%;
+    /* #444444 */
     --popover: 0 0% 100%;
     --popover-foreground: 0 1% 20%; /* #333132 */
     --primary: 21, 89%, 58%, 100%; /* #F37835 for buttons */
@@ -51,16 +73,22 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --heading: 27 45% 11%; /* #2F190D for headings */
+    --heading: 27 45% 11%;
+    /* #2F190D for headings */
   }
+
   .dark {
     --background: 0 0% 3.9%;
-    --foreground: 0 1% 20%; /* #333132 */
+    --foreground: 0 1% 20%;
+    /* #333132 */
     --card: 0 0% 3.9%;
-    --card-foreground: 0 1% 20%; /* #333132 */
+    --card-foreground: 0 1% 20%;
+    /* #333132 */
     --popover: 0 0% 3.9%;
-    --popover-foreground: 0 1% 20%; /* #333132 */
-    --primary: 24 77% 58%; /* #F37835 for buttons */
+    --popover-foreground: 0 1% 20%;
+    /* #333132 */
+    --primary: 24 77% 58%;
+    /* #F37835 for buttons */
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
@@ -78,8 +106,10 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --heading: 27 45% 11%; /* #2F190D for headings */
+    --heading: 27 45% 11%;
+    /* #2F190D for headings */
   }
+
   h1,
   h2,
   h3,
@@ -95,6 +125,7 @@ body {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -104,9 +135,11 @@ body {
   0% {
     transform: translate(0, 0);
   }
+
   50% {
     transform: translate(10px, -10px);
   }
+
   100% {
     transform: translate(0, 0);
   }
@@ -117,11 +150,13 @@ body {
 }
 
 @keyframes twinkle {
+
   0%,
   100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.3;
     transform: scale(0.8);
@@ -138,10 +173,12 @@ body {
 }
 
 @keyframes bounce {
+
   0%,
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -155,15 +192,19 @@ body {
   0% {
     transform: translate(0, 0) rotate(0deg);
   }
+
   25% {
     transform: translate(20px, -20px) rotate(5deg);
   }
+
   50% {
     transform: translate(0, -40px) rotate(0deg);
   }
+
   75% {
     transform: translate(-20px, -20px) rotate(-5deg);
   }
+
   100% {
     transform: translate(0, 0) rotate(0deg);
   }
@@ -194,64 +235,80 @@ body {
 }
 
 @keyframes bubble-float-1 {
+
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
+
   25% {
     transform: translate(20px, -30px) scale(1.1);
   }
+
   50% {
     transform: translate(-15px, -50px) scale(0.9);
   }
+
   75% {
     transform: translate(-25px, -20px) scale(1.05);
   }
 }
 
 @keyframes bubble-float-2 {
+
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
+
   25% {
     transform: translate(-30px, -20px) scale(0.95);
   }
+
   50% {
     transform: translate(25px, -40px) scale(1.1);
   }
+
   75% {
     transform: translate(15px, -10px) scale(0.9);
   }
 }
 
 @keyframes bubble-float-3 {
+
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
+
   25% {
     transform: translate(25px, -40px) scale(1.05);
   }
+
   50% {
     transform: translate(-20px, -25px) scale(0.95);
   }
+
   75% {
     transform: translate(-15px, -35px) scale(1.1);
   }
 }
 
 @keyframes bubble-float-4 {
+
   0%,
   100% {
     transform: translate(0, 0) scale(1);
   }
+
   25% {
     transform: translate(-20px, -15px) scale(1.1);
   }
+
   50% {
     transform: translate(30px, -35px) scale(0.9);
   }
+
   75% {
     transform: translate(10px, -25px) scale(1.05);
   }
@@ -278,14 +335,17 @@ body {
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
-  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none;
+  /* Hide scrollbar for IE/Edge */
+  scrollbar-width: none;
+  /* Hide scrollbar for Firefox */
 }
 
 @keyframes spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

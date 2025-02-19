@@ -180,7 +180,7 @@ const Header = () => {
           <Image src={logo} alt="Logo" width={208} height={66} />
         </Link>
 
-        {/* Desktop Hamburger - Only visible on desktop */}
+        {/* {/ Desktop Hamburger - Only visible on desktop /} */}
         <div className="hidden lg:block relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -189,7 +189,7 @@ const Header = () => {
             <Hamburger />
           </button>
 
-          {/* Dropdown Menu */}
+          {/* {/ Dropdown Menu /} */}
           {isDropdownOpen && (
             <div className="absolute left-0 top-full mt-10 w-[300px] bg-white/90 backdrop-blur-sm rounded-lg shadow-lg py-2 z-50">
               {categories.map((category, index) => (
@@ -223,7 +223,7 @@ const Header = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button - Only visible on mobile */}
+        {/* {/ Mobile Menu Button - Only visible on mobile /} */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="lg:hidden h-9 w-9 bg-primary rounded-md flex items-center justify-center"
@@ -231,7 +231,7 @@ const Header = () => {
           <Hamburger />
         </button>
 
-        {/* Navigation */}
+        {/* {/ Navigation /} */}
         {menu.map((items) => {
           return (
             <nav
@@ -239,7 +239,7 @@ const Header = () => {
               key={items.id}
             >
               <div className="group relative">
-                {/* Dropdown can be added here */}
+                {/* {/ Dropdown can be added here /} */}
               </div>
               {items.name === "Gewinnspiel im Januar" ? (
                 <Dialog>
@@ -279,7 +279,7 @@ const Header = () => {
             </nav>
           );
         })}
-        {/* Date Time Bar */}
+        {/* {/ Date Time Bar /} */}
         <div className="bg-primary py-1 px-4 flex items-center justify-end text-sm text-white rounded-full">
           <div className="flex items-center gap-2">
             <span className="border-r pr-2">{formatDate(currentDateTime)}</span>
@@ -287,7 +287,7 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Search Dialog */}
+        {/* {/ Search Dialog /} */}
         <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>
           <DialogTrigger asChild>
             <Button
@@ -363,7 +363,7 @@ const Header = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Right Icons */}
+        {/* {/ Right Icons /} */}
         <div className="hidden lg:flex items-center justify-between gap-5">
           <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
             <Login />
@@ -383,7 +383,7 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Mobile Icons */}
+        {/* {/ Mobile Icons /} */}
         <div className="flex lg:hidden items-center space-x-4">
           <button className="hover:text-primary text-[#888888]">
             <User className="h-6 w-6" />
@@ -400,7 +400,7 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* {/ Mobile Menu /} */}
       <MobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}

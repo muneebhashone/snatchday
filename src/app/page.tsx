@@ -3,6 +3,7 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 import DuelArena from "@/components/landing-page/DuelArena";
 import FeaturedProducts from "@/components/landing-page/FeaturedProducts";
 import HeroSection from "@/components/landing-page/HeroSection";
+import PermotionalSection from "@/components/landing-page/PermotionalSection";
 
 import ProductSection from "@/components/landing-page/ProductSection";
 import RatingsSection from "@/components/landing-page/RatingsSection";
@@ -15,7 +16,6 @@ export default function Home() {
     <ClientLayout>
       <main>
         <HeroSection />
-        {/* <PermotionalSection /> */}
         <RegisterSection />
         <ProductSection />
         <BestOffers />

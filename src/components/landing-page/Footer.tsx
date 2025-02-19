@@ -68,7 +68,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative w-full">
+    <footer className="relative w-full ">
       {/* Main Footer Content */}
       <div className="bg-gradient-to-r from-[#F37835] to-[#3B1678] text-white pb-20 relative">
         {/* SVG Background Layer */}
