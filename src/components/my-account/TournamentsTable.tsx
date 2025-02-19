@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import laptop from "@/app/images/laptop.png";
 import iphone from "@/app/images/iphone.png";
 
@@ -20,7 +20,7 @@ interface Tournament {
   attempts: number;
   time: string;
   product: {
-    image: any;
+    image: StaticImageData;
     name: string;
   };
   originalPrice: string;
