@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 
 const SupportPage = () => {
- 
   const ticketdata = [
     {
       id: 1,
@@ -102,33 +101,37 @@ const SupportPage = () => {
         description="How can we help you?"
       />
       <div className="max-w-[1920px] mx-auto pt-20 pb-40 relative bg-[#F9F9F9]">
-        <div className="absolute inset-0 w-full h-full">
-          <BubblesIcon className="absolute top-0 left-20" />
-          <BubblesIcon1 className="absolute top-0 right-20" />
-          <BubblesIcon className=" absolute bottom-0 left-20" />
-          <BubblesIcon1 className=" absolute bottom-0 right-20" />
-          <BubblesIcon className="lg:block hidden absolute top-1/2 left-20" />
-          <BubblesIcon1 className="lg:block hidden absolute top-1/3 right-20" />
-          <BubblesIcon className="lg:block hiddenabsolute bottom-1/4 left-20" />
-          <BubblesIcon1 className="lg:block hidden absolute bottom-1/1 right-20" />
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <BubblesIcon className="absolute top-[10%] left-[5%] animate-bubble-1" />
+          <BubblesIcon1 className="absolute top-[15%] right-[15%] animate-bubble-2" />
+          <BubblesIcon className="absolute top-[25%] left-[25%] animate-bubble-3" />
+          <BubblesIcon1 className="absolute top-[35%] right-[35%] animate-bubble-4" />
+          <BubblesIcon className="absolute top-[45%] left-[45%] animate-bubble-1" />
+          <BubblesIcon1 className="absolute top-[55%] right-[10%] animate-bubble-2" />
+          <BubblesIcon className="absolute top-[65%] left-[15%] animate-bubble-3" />
+          <BubblesIcon1 className="absolute top-[75%] right-[25%] animate-bubble-4" />
+          <BubblesIcon className="absolute top-[85%] left-[35%] animate-bubble-1" />
+          <BubblesIcon1 className="absolute bottom-[5%] right-[45%] animate-bubble-2" />
+          <BubblesIcon className="absolute bottom-[15%] left-[55%] animate-bubble-3" />
+          <BubblesIcon1 className="absolute bottom-[25%] right-[65%] animate-bubble-4" />
         </div>
         <div className="relative z-10">
-        <h2 className="text-2xl lg:text-[48px] font-extrabold my-5 text-center mb-16">
-          Create
-          <span className="bg-primary text-white px-6 py-2 rounded-lg ml-2">
-            Ticket
-          </span>
-        </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1200px] mx-auto">
-          {ticketdata.map((item) => (
-            <CreateTicket
-              key={item.id}
-              image={item.image}
-              categorytext={item.categorytext}
-              categorytitle={item.categorytitle}
-            />
-          ))}
-        </div>
+          <h2 className="text-2xl lg:text-[48px] font-extrabold my-5 text-center mb-16">
+            Create
+            <span className="bg-primary text-white px-6 py-2 rounded-lg ml-2">
+              Ticket
+            </span>
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-[1200px] mx-auto">
+            {ticketdata.map((item) => (
+              <CreateTicket
+                key={item.id}
+                image={item.image}
+                categorytext={item.categorytext}
+                categorytitle={item.categorytitle}
+              />
+            ))}
+          </div>
         </div>
         <div className="max-w-[1200px] mx-auto py-20 relative z-10">
           <h2 className="text-3xl lg:text-[48px] font-extrabold my-5 text-center mb-16">
@@ -143,7 +146,6 @@ const SupportPage = () => {
                 key={item.id}
                 className="w-full font-extrabold shadow-lg rounded-2xl transition-all duration-300 ease-in-out px-8 py-6 text-center text-2xl min-h-[167px] flex items-center justify-center
                 bg-white text-[#1C1B1D] hover:bg-primary hover:text-white hover:rounded-full"
-            
               >
                 {item.title}
               </div>

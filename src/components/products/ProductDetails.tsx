@@ -4,7 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import { Heart, ShoppingCartIcon, TruckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { VatIcon } from "@/components/icons/icon";
+import { BubblesIcon, BubblesIcon1, VatIcon } from "@/components/icons/icon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "../ui/separator";
 
@@ -30,12 +30,22 @@ const ProductDetails = ({
   isNew = false,
   specifications,
 }: ProductDetailsProps) => {
-  const [quantity, setQuantity] = useState(4);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(4);
+
+  const handleIncrement = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const handleDecrement = () => {
+    if (quantity > 1) {
+      setQuantity((prev) => prev - 1);
+    }
+  };
 
   return (
-    <div className="container max-w-[1600px] mx-auto relative">
-      <div className="rounded-3xl p-8">
+    <div className="container max-w-[1600px] mx-auto relative z-10">
+      <div className="rounded-3xl p-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Column - Product Images */}
           <div className="space-y-4">
@@ -88,7 +98,7 @@ const ProductDetails = ({
 
             {/* Product Title */}
 
-            <h1 className="text-[48px] font-bold text-[#1C1B1D] leading-[56px] mt-4">
+            <h1 className="text-[48px] font-extrabold text-[#1C1B1D] leading-[56px] mt-4">
               {title}
             </h1>
 
@@ -103,58 +113,89 @@ const ProductDetails = ({
             {/* Price */}
 
             <div className="mt-3">
-              <h2 className="text-2xl text-primary font-extrabold">
+              <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
                 <span className="text-foreground">{price}</span>€
               </h2>
-              <span className="text-sm text-gray-500 flex items-center gap-1">
-                <VatIcon />{" "}
-                <span className="text-foreground">incl. 19% VAT</span>, plus
+              <span className="text-sm text-card-foreground flex items-center gap-1">
+                <VatIcon /> incl.
+                <span className="text-[#444444] font-bold">19% VAT</span>, plus
                 shipping costs
               </span>
             </div>
 
             {/* Availability */}
-            <div>
-              <p className="text-sm">
-                <span className="text-gray-600">Availability:</span> Order item
+            <div className="mt-3">
+              <p className="">
+                <span className="text-[#444444] font-bold">Availability:</span>{" "}
+                Order item
               </p>
             </div>
 
-            {/* Quantity Selector */}
-            <div className="flex items-center gap-2 mt-3">
-              <p className="mb-2 text-foreground">Quantity:</p>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                >
-                  -
-                </button>
+            <div className="flex items-center gap-3 mt-4">
+              <span className="text-[#444444] font-bold">Quantity:</span>
+              <div className="relative flex items-center">
                 <input
                   type="number"
                   value={quantity}
                   onChange={(e) =>
                     setQuantity(Math.max(1, parseInt(e.target.value) || 1))
                   }
-                  className="w-16 h-8 text-center border border-gray-300 rounded"
+                  className="w-[68px] h-[32px] pl-4 pr-8 text-base bg-white border border-[#E5E7EB] rounded-full focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:bg-gray-100"
-                >
-                  +
-                </button>
+                <div className="absolute right-0 top-0 bottom-0 w-8 flex flex-col border-l border-[#E5E7EB]">
+                  <button
+                    onClick={handleIncrement}
+                    className="flex-1 flex items-center justify-center hover:bg-gray-50 text-gray-600"
+                  >
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M2.5 7.5L6 4L9.5 7.5"
+                        stroke="#6B7280"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                  <div className="w-full h-[1px] bg-[#E5E7EB]"></div>
+                  <button
+                    onClick={handleDecrement}
+                    className="flex-1 flex items-center justify-center hover:bg-gray-50 text-gray-600"
+                  >
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9.5 4.5L6 8L2.5 4.5"
+                        stroke="#6B7280"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Discount Points */}
             <div className="mt-3">
-              <p className="text-xl mb-3">
+              <p className="text-lg mb-3 text-[#444444] font-bold">
                 <span className="text-[#3A672B] font-bold">10.00€ </span>
                 discount possible{" "}
                 <span className="text-primary cursor-help">?</span>
               </p>
-              <span className="bg-orange-100 text-primary rounded-full px-2 py-2">
+              <span className="bg-orange-100 text-primary rounded-full pl-3 pr-1 py-2">
                 With discount points only:{" "}
                 <span className="text-white bg-primary font-medium rounded-full px-2 py-1">
                   238.35€
@@ -175,9 +216,9 @@ const ProductDetails = ({
             </div>
 
             {/* Shipping Method */}
-            <div className="mt-3">
-              <p className="text-lg inline-flex items-center gap-1">
-                <span className="text-gray-600 flex items-center gap-1">
+            <div className="mt-5">
+              <p className="inline-flex items-center gap-1">
+                <span className="text-card-foreground font-bold flex items-center gap-1">
                   <TruckIcon className="text-primary" /> Shipping method:
                 </span>{" "}
                 <span className="text-foreground">Standard shipping</span>

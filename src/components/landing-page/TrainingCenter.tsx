@@ -66,13 +66,18 @@ const TrainingCenter = () => {
   return (
     <div className="relative">
        <div className="absolute w-full h-full">
-            <BubblesIcon className="absolute -top-10 left-10"/>
-            <BubblesIcon1 className="absolute -top-10 right-10"/>
-            <BubblesIcon className="absolute -bottom-20 left-40"/>
-            <BubblesIcon1 className="absolute -bottom-20 right-40"/>
+            <BubblesIcon className="absolute -top-10 -left-20 sm:left-10"/>
+            <BubblesIcon1 className="absolute -top-10 -right-32 sm:right-10"/>
+            <BubblesIcon className="absolute -bottom-20 -left-20 sm:left-40"/>
+            <BubblesIcon1 className="absolute -bottom-20 -right-20 sm:right-40"/>
             
         </div>
-      <h2 className="text-3xl font-bold text-center mb-6">Training Center</h2>
+        <h3 className=" text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-extrabold flex items-center justify-center gap-1 lg:gap-3">
+            Training
+            <span className="bg-primary text-white px-4 py-2 rounded-lg">
+              Center
+            </span>
+          </h3>
       <Carousel
         opts={{
           align: "start",
@@ -84,12 +89,12 @@ const TrainingCenter = () => {
           {trainingCards.map((card, index) => (
             <CarouselItem
               key={index}
-              className="md:basis-1/2 lg:basis-1/6"
+              className="basis-1/2 sm:basis-1/3 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 2xl:basis-1/6 flex items-center justify-center"
             >
               <div className="relative group cursor-pointer">
-                <div className="rounded-full my-6 shadow-lg border h-[278px] w-[278px] border-gray-200 hover:border-primary flex items-center justify-center transition-transform transform group-hover:scale-105">
+                <div className="rounded-full my-6 shadow-lg border h-[150px] md:h-[190px] w-[150px] xl:h-[278px] md:w-[190px] xl:w-[278px] border-gray-200 hover:border-primary flex  items-center justify-center transition-transform transform group-hover:scale-105">
                   <Image
-                    className="w-[80px] lg:w-[120px]"
+                    className="w-[67px] sm:w-[60px] h-[67px] sm:h-[60px] md:w-[100px] md:h-[100px] xl:w-[120px] xl:h-[120px]"
                     src={card.icon}
                     alt={card.label}
                     width={122}
@@ -100,8 +105,8 @@ const TrainingCenter = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
-        <CarouselNext className="w-20 h-20 md:w-24 md:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
+        <CarouselPrevious className="w-14 sm:w-20 h-14 sm:h-20 md:w-20 xl:w-24 md:h-20 xl:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-10" />
+        <CarouselNext className="w-14 sm:w-20 h-14 sm:h-20 md:w-20 xl:w-24 md:h-20 xl:h-24 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-10" />
       </Carousel>
     </div>
   );

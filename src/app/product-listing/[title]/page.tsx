@@ -18,7 +18,11 @@ import {
 import laptop from "@/app/images/laptopv1.png";
 import laptop2 from "@/app/images/laptopv2.png";
 import detailimage from "@/app/images/detailimage.png";
-import { TournamentCupIcon } from "@/components/icons/icon";
+import {
+  BubblesIcon1,
+  BubblesIcon,
+  TournamentCupIcon,
+} from "@/components/icons/icon";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 import { VisitTournamentModal } from "@/components/VisitTournamentModal";
@@ -202,6 +206,17 @@ const ProductContent = () => {
       category: "Computer",
       oldPrice: "201,65",
     },
+    {
+      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
+      price: "201,65",
+      rating: 5,
+      reviews: 5,
+      image: graphiccard,
+      isSale: true,
+      discount: "10%",
+      category: "Computer",
+      oldPrice: "201,65",
+    },
   ];
   const [openModal, setopenModal] = useState(false);
 
@@ -219,6 +234,13 @@ const ProductContent = () => {
   return (
     <ClientLayout>
       <div className="py-24 max-w-[1920px] mx-auto relative">
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <BubblesIcon className="absolute top-[10%] left-[0%] animate-bubble-1" />
+          <BubblesIcon1 className="absolute top-[10%] right-[0%] animate-bubble-2" />
+          <BubblesIcon className="absolute top-[25%] left-[15%] animate-bubble-3" />
+          <BubblesIcon1 className="absolute top-[35%] right-[0%] animate-bubble-4" />
+          <BubblesIcon className="absolute top-[45%] left-[0%] animate-bubble-1" />
+        </div>
         <Dialog>
           <DialogTrigger asChild>
             <div
@@ -313,11 +335,27 @@ const ProductContent = () => {
               </span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
-            {displayProducts.map((product, index) => (
-              <FeaturedProductsCard key={index} {...product} />
-            ))}
-          </div>
+
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-[1920px] mx-auto px-12"
+          >
+            <CarouselContent>
+              {displayProducts.map((product, index) => (
+                <CarouselItem
+                  key={index}
+                  className="md:basis-1/2 lg:basis-1/4 xl:basis-1/6"
+                >
+                  <FeaturedProductsCard {...product} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
+            <CarouselNext className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
+          </Carousel>
         </div>
       </div>
       <div className="pb-60">

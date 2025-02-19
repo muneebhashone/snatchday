@@ -17,9 +17,9 @@ export function VisitTournamentModal({
   const handleClose = () => {
     if (closeModal) {
       closeModal(false);
-    } 
+    }
   };
-  console.log(openModal);
+  console.log(closeModal);
 
   return (
     <div
@@ -33,7 +33,9 @@ export function VisitTournamentModal({
         transition: "transform 0.3s ease-in-out",
       }}
       className={`z-50 bg-fill rounded-3xl -right-5 ${
-        !openModal ? "hidden translate-x-full transition-transform duration-300 ease-in-out" : "block translate-x-0 transition-transform duration-300 ease-in-out"
+        !openModal
+          ? "hidden translate-x-full transition-transform duration-300 ease-in-out"
+          : "block translate-x-0 transition-transform duration-300 ease-in-out"
       }`}
     >
       <div className="relative w-full h-full">

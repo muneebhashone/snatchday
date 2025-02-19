@@ -13,6 +13,7 @@ import nine from "@/app/images/nine.svg";
 import PrimaryHeading from "../PrimaryHeading";
 import GredientButton from "../GredientButton";
 import iphone from "@/app/images/iphone.png";
+import PermotionalSection from "./PermotionalSection";
 
 const HeroSection = () => {
   const images = [
@@ -27,15 +28,15 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="min-h-screen w-full relative bg-white pt-20 lg:pt-40">
+    <section className="min-h-screen w-full relative bg-white pt-28 lg:pt-40 p-10">
       {/* Background Image */}
       <Image
         src={heroImage}
         alt="hero-image"
         width={1920}
-        height={1080}
+        height={969}
         priority
-        className="object-cover opacity-90 absolute inset-0 w-full h-full grayscale"
+        className="object-cover absolute inset-0 w-full h-[130vh] grayscale"
       />
 
       {/* Floating Images */}
@@ -59,7 +60,7 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="container max-w-[1600px] mx-auto relative z-10">
+      <div className="container max-w-[1600px] mx-auto relative z-10 ">
         <div className="grid grid-cols-1 lg:grid-cols-7 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left pt-8 lg:pt-0 col-span-4">
@@ -72,26 +73,27 @@ const HeroSection = () => {
               Unsere Vision für Snatch Day war lange Zeit in unseren Köpfen
               gereift, denn wir sind kein gewöhnlicher Onlineshop.
             </p>
-            <div className="mt-6 lg:mt-10">
+            <div className="mt-6 lg:mt-10 lg:mb-0 mb-10 ">
               <GredientButton buttonText="Join Tournament" />
             </div>
           </div>
 
           {/* Right Content */}
           {/* <div className="flex justify-center lg:justify-end mt-8 lg:mt-0"> */}
-          <div className="relative col-span-3">
+          <div className="flex items-center justify-center relative col-span-3">
             <Image
               src={iphone}
               alt="hero-image"
               width={510}
               height={522}
-              className="w-full object-cover"
+              className="lg:w-full lg:h-full object-cover"
               priority
             />
           </div>
           {/* </div> */}
         </div>
       </div>
+      <PermotionalSection />
     </section>
   );
 };
@@ -99,14 +101,14 @@ const HeroSection = () => {
 // Helper function to get random positions
 const getRandomPosition = (index: number) => {
   const positions = [
-    "left-[10%] top-[20%]",
-    "right-[5%] top-[15%]",
-    "left-[40%] top-[60%]",
-    "left-[20%] top-[70%]",
-    "right-[30%] top-[40%]",
-    "left-[30%] top-[30%]",
-    "left-[60%] top-[70%]",
-    "right-[10%] top-[65%]",
+    "left-[5%] top-[30%]",
+    "right-[8%] top-[8%]",
+    "left-[40%] top-[40%]",
+    "left-[20%] top-[50%]",
+    "right-[55%] top-[10%]",
+    "left-[30%] top-[10%]",
+    "left-[50%] top-[50%]",
+    "left-[0%] top-[8%]",
   ];
   return positions[index % positions.length];
 };

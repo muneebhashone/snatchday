@@ -54,7 +54,7 @@ const ProductCard = ({
       <div className="space-y-4">
         {/* Title */}
         <div className="flex justify-between items-start gap-10">
-          <p className="text-xl text-foreground font-light line-clamp-2">
+          <p className="text-xl text-card-foreground font-light line-clamp-2">
             {title}
           </p>
           <button className="rounded-full bg-[#F5F5F5] p-4 hover:bg-gray-100 transition-colors">
@@ -71,7 +71,7 @@ const ProductCard = ({
             </div>
             <span className="text-sm text-gray-500">({rating})</span>
           </div>
-          <span className="text-2xl font-semibold">{price}€</span>
+          <span className="text-2xl font-semibold text-card-foreground">{price}€</span>
         </div>
 
         {/* Add to Cart Button */}
@@ -86,7 +86,7 @@ const ProductCard = ({
           {/* Sale Badge */}
           {isSale && (
             <div>
-              <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm">
+              <span className="bg-orange-500 text-white px-4 py-1 rounded-full text-sm">
                 SALE
               </span>
             </div>
@@ -95,7 +95,7 @@ const ProductCard = ({
           {/* New Badge */}
           {isNew && (
             <div>
-              <span className="bg-[#8D4CC4] text-white px-3 py-1 rounded-full text-sm">
+              <span className="bg-[#8D4CC4] text-white px-4 py-1 rounded-full text-sm">
                 NEW
               </span>
             </div>
