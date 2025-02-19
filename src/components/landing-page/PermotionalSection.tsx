@@ -65,7 +65,7 @@ const PermotionalSection = () => {
 
         <PromotionalBanners
           icon={<PercentageIcon />}
-          mainbg="bg-[#ffc107]"
+          mainbg="bg-[#fdcc3f]"
           iconbg="bg-white"
           iconText="70% OFF"
           title="Biggest Sale of the Month with "

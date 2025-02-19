@@ -94,7 +94,7 @@ const SecondaryHeroSection = ({
                         <Button
                           variant="default"
                           size="sm"
-                          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary text-white h-[60px] w-[132px] hover:bg-primary"
+                          className="absolute right-0 top-1/2 -translate-y-1/2 rounded-full bg-primary text-white h-[60px] w-[132px] hover:bg-primary"
                         >
                           Search
                         </Button>

@@ -59,15 +59,15 @@ const ProductCategoryFilter = () => {
 
   return (
     // <div className="space-y-6 h-[190vh] overflow-y-auto sticky top-32 pr-4 border border-gray-200 bg-white p-4 rounded-xl">
-    <div className="space-y-6 h-max top-32 pr-4 border border-gray-200 bg-white p-4 rounded-3xl">
-      <h3 className="text-lg font-medium mb-4">Filters</h3>
+    <div className="space-y-6 h-max pl-9 pr-10 border border-gray-200 pt-8 bg-white rounded-3xl">
+      <p className="text-lg font-bold mb-4 text-card-foreground">Filters</p>
 
       {/* Price Range Filter */}
 
       {/* Other Filters */}
       {Object.entries(filters).map(([category, items]) => (
         <div key={category} className="space-y-3 ">
-          <p className="font-medium text-gray-700">{category}</p>
+          <p className="text-card-foreground font-medium text-lg">{category}</p>
           <div className="space-y-2">
             {items.map((item, index) => (
               <div
@@ -81,12 +81,12 @@ const ProductCategoryFilter = () => {
                   />
                   <label
                     htmlFor={`${category}-${index}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-600"
+                    className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-card-foreground"
                   >
                     {item.name}
                   </label>
                 </div>
-                <span className="text-sm text-gray-500">{item.count}</span>
+                <span className="text-card-foreground">{item.count}</span>
               </div>
             ))}
           </div>

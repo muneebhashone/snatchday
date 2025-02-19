@@ -65,10 +65,12 @@ const TournamentWinnerCardSlider = () => {
                         {winner.heading}
                       </h3>
                       <h3 className="text-xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-6xl font-extrabold text-white/90 mb-2 md:mb-4 lg:mb-6">
-                        Tournament <span className="text-white bg-primary px-4 py-1 rounded">Winner</span>
+                        Tournament{" "}
+                        <span className="text-white bg-primary px-4 py-1 rounded">
+                          Winner
+                        </span>
                       </h3>
                     </div>
-
 
                     <p className="bg-opacity-10 text-xs sm:text-lg w-[68%] md:w-[62%] lg:text-xl xl:text-2xl text-white/90 leading-1 mb-2 md:mb-4 lg:mb-6">
                       {winner.title}

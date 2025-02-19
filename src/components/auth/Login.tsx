@@ -8,15 +8,25 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, X } from "lucide-react";
+import { User, X, LogOut } from "lucide-react";
 import { FacebookIcon } from "../icons/icon";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
 import Register from "./Register";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Login = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  // Temporary state to simulate login status - replace with your auth logic
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [userName, setUserName] = useState("Percy Reed");
 
   const handleOpenRegister = () => {
     setIsLoginOpen(false);
@@ -28,8 +38,45 @@ const Login = () => {
     setIsLoginOpen(true);
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    // Add your logout logic here
+  };
+
   if (isRegisterOpen) {
     return <Register onBack={handleBackToLogin} />;
+  }
+
+  if (isLoggedIn) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+          <p className="text-lg font-medium text-card-foreground">{userName}</p>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-36 mt-6">
+          <Link href="/my-account/my-profile">
+            <DropdownMenuItem className="cursor-pointer">
+              <User className="mr-2 h-4 w-4" />
+              <Link href="/my-account/my-profile">
+                <p className="text-sm font-medium text-card-foreground">
+                  My Account
+                </p>
+              </Link>
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="cursor-pointer text-red-600"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <p className="text-sm font-medium text-card-foreground text-red-600">
+              Logout
+            </p>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   }
 
   return (

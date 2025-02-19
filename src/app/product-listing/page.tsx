@@ -191,7 +191,7 @@ const ProductListingPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
           <div className="col-span-1">
             <div className="mb-5 mt-4">
-              <Search />
+              <Search placeholder="Search product, category" />
             </div>
             <ProductCategoryFilter />
             <VisitTournament
@@ -206,7 +206,7 @@ const ProductListingPage = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <p className="text-foreground">Show</p>
+                  <p className="text-card-foreground font-medium">Show</p>
                   <Select>
                     <SelectTrigger className="w-[100px] rounded-full">
                       <SelectValue placeholder="5" />
@@ -219,9 +219,9 @@ const ProductListingPage = () => {
                   </Select>
                 </div>
                 <div className="flex items-center gap-2">
-                  <p className="text-foreground">Sort by</p>
+                  <p className="text-card-foreground font-medium">Sort by</p>
                   <Select>
-                    <SelectTrigger className="w-[100px] rounded-full">
+                    <SelectTrigger className="w-[250px] rounded-full">
                       <SelectValue placeholder="Newest" />
                     </SelectTrigger>
                     <SelectContent>
@@ -231,10 +231,10 @@ const ProductListingPage = () => {
                   </Select>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button className="rounded-full bg-gray-100 text-gray-700">
+                  <Button className="rounded-full bg-gray-100 text-gray-700 h-9 w-9">
                     <ListIcon />
                   </Button>
-                  <Button className="rounded-full bg-gray-100 text-gray-700">
+                  <Button className="rounded-full bg-primary text-white h-9 w-9">
                     <Grid3x3 />
                   </Button>
                 </div>

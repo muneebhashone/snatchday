@@ -86,7 +86,7 @@ const ProductCard = ({
           {/* Sale Badge */}
           {isSale && (
             <div>
-              <span className="bg-orange-500 text-white px-3 py-1 rounded-full text-sm">
+              <span className="bg-orange-500 text-white px-4 py-1 rounded-full text-sm">
                 SALE
               </span>
             </div>
@@ -95,7 +95,7 @@ const ProductCard = ({
           {/* New Badge */}
           {isNew && (
             <div>
-              <span className="bg-[#8D4CC4] text-white px-3 py-1 rounded-full text-sm">
+              <span className="bg-[#8D4CC4] text-white px-4 py-1 rounded-full text-sm">
                 NEW
               </span>
             </div>

@@ -31,7 +31,7 @@ const EarlyAccess = () => {
             Be the first to know about our new tournaments by subscribing to our
             newsletter.
           </p>
-          <div className="relative">
+          <div className="relative xl:max-w-[730px]">
             <Input
               placeholder="Enter Email Address"
               className="w-full border text-sm md:text-lg border-primary rounded-lg md:h-16 pl-4 md:pl-12 mt-5"

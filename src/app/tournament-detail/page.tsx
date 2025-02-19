@@ -292,7 +292,7 @@ const page = () => {
           <div className="px-4 md:px-12 pb-60 pt-20 mt-20 bg-[#F9F9F9]">
             <div className="text-[48px] font-extrabold my-5 text-center capitalize">
               <h2>
-                <span className="text-foreground mr-3s">Current</span>
+                <span className="text-foreground mr-3">Current</span>
                 <span className="bg-primary text-white px-6 py-1 rounded-lg">
                   Offers
                 </span>

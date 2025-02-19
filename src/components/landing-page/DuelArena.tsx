@@ -120,10 +120,10 @@ const DuelArena = () => {
           <CarouselContent className="">
             {/* First Slide - Duel Arena */}
             <CarouselItem className="min-h-max self-center">
-              <div className="flex flex-col items-center justify-center text-center px-4 md:px-20 h-max">
+              <div className="flex flex-col items-center justify-center text-center px-4 md:px-20 h-max max-w-[1440px] mx-auto">
                 <h2 className="flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
                   How to Play{" "}
-                  <span className="bg-primary text-white px-1 sm:px-4 py-2 rounded-lg">
+                  <span className="ml-3 bg-primary text-white px-1 sm:px-4 py-1 rounded-lg">
                     Duel Arena
                   </span>
                 </h2>
@@ -138,14 +138,14 @@ const DuelArena = () => {
 
             {/* Second Slide - How to Enter Grid */}
             <CarouselItem>
-              <div className="px-0 md:px-20 mb-10">
+              <div className="px-0 md:px-20 mb-10 max-w-[1440px] mx-auto">
                 <h2 className="flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
                   How to Enter{" "}
-                  <span className="bg-primary text-white px-1 sm:px-4 py-2 rounded-lg">
+                  <span className="ml-2 bg-primary text-white px-1 sm:px-4 rounded-lg">
                     Duel Arena
                   </span>
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 sm:gap-8 ">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-2 sm:gap-8 ">
                   {howToEnterSteps.map((step, index) => (
                     <div
                       key={index}

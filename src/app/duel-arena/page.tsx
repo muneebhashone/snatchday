@@ -144,7 +144,7 @@ const page = () => {
             </Button>
           </div>
         </div>
-        <div className="pt-10">
+        <div className="pt-20">
           <TrainingCenter />
         </div>
         <div className="px-4 md:px-12 pb-60 pt-20 mt-20 bg-[#F9F9F9]">

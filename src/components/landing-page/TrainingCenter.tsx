@@ -74,7 +74,7 @@ const TrainingCenter = () => {
         </div>
         <h3 className=" text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-extrabold flex items-center justify-center gap-1 lg:gap-3">
             Training
-            <span className="bg-primary text-white px-4 rounded-lg">
+            <span className="bg-primary text-white px-4 py-2 rounded-lg">
               Center
             </span>
           </h3>
