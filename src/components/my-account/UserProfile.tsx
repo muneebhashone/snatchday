@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { User } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

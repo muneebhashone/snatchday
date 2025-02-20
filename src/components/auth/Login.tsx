@@ -26,7 +26,7 @@ const Login = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   // Temporary state to simulate login status - replace with your auth logic
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userName, setUserName] = useState("Percy Reed");
+  const [userName] = useState("Percy Reed");
 
   const handleOpenRegister = () => {
     setIsLoginOpen(false);

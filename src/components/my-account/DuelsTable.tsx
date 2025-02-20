@@ -16,7 +16,7 @@ interface Duel {
   gameTitle: string;
   date: string;
   opponent: {
-    avatar: any;
+    avatar: string;
     round: number;
     attempts: number;
     time: string;
@@ -83,7 +83,7 @@ const DuelsTable = () => {
               <TableHead>Opinion</TableHead>
               <TableHead>Description / Date</TableHead>
               <TableHead>Opponent</TableHead>
-              <TableHead>opponent's result</TableHead>
+              <TableHead>opponents result</TableHead>
               <TableHead>your result</TableHead>
               <TableHead className="text-right">stake amount</TableHead>
               <TableHead className="text-center">status</TableHead>

@@ -4,7 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import { Heart, ShoppingCartIcon, TruckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import { BubblesIcon, BubblesIcon1, VatIcon } from "@/components/icons/icon";
+import { VatIcon } from "@/components/icons/icon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "../ui/separator";
 

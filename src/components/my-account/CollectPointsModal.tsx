@@ -44,12 +44,12 @@ const CollectPointsModal = () => {
         </Button>
       </DialogTrigger>
       <DialogContent className="p-0 ">
-        <DialogHeader className="bg-green-700 text-white p-8 rounded-t-lg relative">
+        <DialogHeader className="bg-green-700 text-white p-8 rounded-t-3xl relative">
           <DialogTitle className="text-2xl font-bold text-center">
             Collect additional points!
           </DialogTitle>
           <p className="text-center mt-2">
-            Click "Like", share our page on your profile or invite your friends!
+            Click Like share our page on your profile or invite your friends!
           </p>
           <DialogTrigger className="absolute right-4 top-4">
             <X className="h-6 w-6 text-white" />

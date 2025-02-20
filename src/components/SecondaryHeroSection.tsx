@@ -29,7 +29,7 @@ const SecondaryHeroSection = ({
           className={
             title === "VIP Shop"
               ? "w-full h-[700px] sm:h-[600px] xl:h-[650px] object-cover"
-              : "w-full h-[700px] lg:h-[600px] xl:h-[600px] object-cover"
+              : "w-full h-[350px] lg:h-[600px] xl:h-[600px] object-cover"
           }
         />
         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pt-32 pb-10">
@@ -76,7 +76,7 @@ const SecondaryHeroSection = ({
                 </div>
               ) : (
                 <>
-                  <h1 className="text-white text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-[84px] font-bold capitalize">
+                  <h1 className="text-white text-3xl lg:text-5xl mb-10 lg:mb-0 text-center lg:text-start lg:text-[84px] font-bold capitalize">
                     {title}
                   </h1>
                   {support && (

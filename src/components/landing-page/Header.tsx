@@ -173,7 +173,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
+    <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm overflow-hidden">
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         {/* {/ Logo Section /} */}
         <Link href="/" className="flex items-center space-x-2 border-r border-gray-200 pr-6">
