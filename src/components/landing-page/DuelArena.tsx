@@ -121,7 +121,7 @@ const DuelArena = () => {
             {/* First Slide - Duel Arena */}
             <CarouselItem className="min-h-max self-center">
               <div className="flex flex-col items-center justify-center text-center px-4 md:px-20 h-max max-w-[1440px] mx-auto">
-                <h2 className="flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
+                <h2 className="text-foreground flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
                   How to Play{" "}
                   <span className="ml-3 bg-primary text-white px-1 sm:px-4 py-1 rounded-lg">
                     Duel Arena
@@ -144,7 +144,7 @@ const DuelArena = () => {
             {/* Second Slide - How to Enter Grid */}
             <CarouselItem>
               <div className="px-0 md:px-20 mb-10 max-w-[1440px] mx-auto">
-                <h2 className="flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
+                <h2 className="text-foreground flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
                   How to Enter{" "}
                   <span className="ml-2 bg-primary text-white px-1 sm:px-4 rounded-lg">
                     Tournement
@@ -154,22 +154,22 @@ const DuelArena = () => {
                   {howToEnterSteps.map((step, index) => (
                     <div
                       key={index}
-                      className="bg-white p-4 lg:p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow "
+                      className="bg-white p-4 lg:py-8  lg:px-16 rounded-xl shadow-md hover:shadow-lg transition-shadow"
                     >
-                      <div className="text-primary text-2xl lg:text-4xl font-bold mb-4">
+                      <div className="text-primary text-2xl lg:text-3xl font-bold mb-4 border-2 border-primary w-max p-1">
                         {step.number}
                       </div>
-                      <h3 className="text-xl lg:text-2xl font-bold mb-4">
+                      <h3 className="text-xl lg:text-2xl font-bold mb-4 border-b mt-7 text-foreground">
                         {step.subTitle}
                       </h3>
-                      <p className="text-card-foreground text-sm sm:text-normal">{step.description}</p>
+                      <p className="text-card-foreground text-sm sm:text-lg w-[75%]">{step.description}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </CarouselItem>
           </CarouselContent>
-          <CarouselPrevious className="absolute sm:-left-4 lg:-left-8 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
+          <CarouselPrevious className="text-black absolute sm:-left-4 lg:-left-8 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 hover:bg-primary hover:text-white" />
           <CarouselNext className="absolute sm:-right-4 lg:-right-2 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
         </Carousel>
 

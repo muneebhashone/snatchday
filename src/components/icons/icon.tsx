@@ -300,14 +300,14 @@ export const MsgIcon = () => {
 export const PreviousCarousel = () => {
   return (
     <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path opacity="0.5" d="M10.5 1L1.5 10L10.5 19" stroke="#D5D5D5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path opacity={`1`} d="M10.5 1L1.5 10L10.5 19" stroke="#D5D5D5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
   );
 };
 export const NextCarousel = () => {
   return (
     <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path opacity="0.5" d="M1.5 1L10.5 10L1.5 19" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path opacity={`1`} d="M1.5 1L10.5 10L1.5 19" stroke="#D5D5D5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
     </svg>
   );
 };

@@ -88,6 +88,7 @@ const HeroSection = () => {
               height={545}
               className="lg:w-full lg:h-full object-cover"
               priority
+              unoptimized
             />
           </div>
           {/* </div> */}
