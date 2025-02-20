@@ -7,7 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import defaultAvatar from "@/app/images/avatarimage.svg";
 
 interface Duel {
@@ -16,7 +16,7 @@ interface Duel {
   gameTitle: string;
   date: string;
   opponent: {
-    avatar: string;
+    avatar: StaticImageData;
     round: number;
     attempts: number;
     time: string;
@@ -83,10 +83,10 @@ const DuelsTable = () => {
               <TableHead>Opinion</TableHead>
               <TableHead>Description / Date</TableHead>
               <TableHead>Opponent</TableHead>
-              <TableHead>opponents result</TableHead>
-              <TableHead>your result</TableHead>
-              <TableHead className="text-right">stake amount</TableHead>
-              <TableHead className="text-center">status</TableHead>
+              <TableHead>Opponents result</TableHead>
+              <TableHead>Your result</TableHead>
+              <TableHead className="text-right">Stake amount</TableHead>
+              <TableHead className="text-center">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
