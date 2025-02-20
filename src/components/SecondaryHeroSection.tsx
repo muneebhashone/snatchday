@@ -26,18 +26,19 @@ const SecondaryHeroSection = ({
           src={bg}
           alt="hero"
           priority
+          unoptimized
           className={
             title === "VIP Shop"
-              ? "w-full h-[700px] sm:h-[600px] xl:h-[650px] object-cover"
+              ? "w-full h-[700px] sm:h-[600px] xl:h-[680px] object-cover object-end"
               : "w-full h-[350px] lg:h-[600px] xl:h-[600px] object-cover"
           }
         />
-        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pt-32 pb-10">
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center mt-6 pb-10">
           <div className="lg:container text-center sm:text-start mx-auto px-0 sm:px-10 lg:px-10 flex flex-col-reverse sm:grid sm:grid-cols-2 lg:text-start">
             <div className="content-center">
               {title === "VIP Shop" ? (
                 <div className="flex flex-col items-center sm:items-start justify-center">
-                  <h2 className="text-white text-2xl font-bold mb-4 sm:mb-8 mt-4 sm:mt-10">
+                  <h2 className="text-white text-2xl font-bold mb-4 sm:mb-8 mt-8 sm:mt-10">
                     VIP Shop
                   </h2>
                   <PrimaryHeading
@@ -55,10 +56,10 @@ const SecondaryHeroSection = ({
                         linear-gradient(#330542, #330542) padding-box,
                         linear-gradient(116.76deg, #E4BD83 13.91%, #9C6727 28.84%, #FDF6AE 32.04%, #A06B2A 50.53%, #FDF6AE 53.15%, #BD8D42 71.14%) border-box
                       `,
-                      border: "8px solid transparent",
+                      border: "5px solid transparent",
                       borderRadius: "9999px",
                     }}
-                    className="mt-7 w-[220px] lg:w-[280px] h-[70px] lg:h-[83px] text-xl lg:text-2xl font-bold flex items-center justify-center"
+                    className="mt-7 w-[220px] lg:w-[312px] h-[70px] lg:h-[83px] text-xl lg:text-2xl font-bold flex items-center justify-center"
                   >
                     <Image
                       src={crown}

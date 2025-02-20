@@ -211,31 +211,9 @@ const page = () => {
   return (
     <ClientLayout>
       <main className="mb-56 overflow-hidden">
-        <div className="h-11 w-full mt-[115px] flex flex-col pb-1 text-sm">
-          <Separator className="mb-5" />
-          <Breadcrumb className="ml-10 pb-2 bg-white">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">
-                  Computer & Hardware Displays & Projectors
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>
-                  Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27`) -
-                  (4710886045649)
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <Separator className="" />
+        <div className="mt-[115px]">
+          <TournamentDetailHero />
         </div>
-        <TournamentDetailHero />
         <div
           style={{ backgroundImage: `url(${bg.src})` }}
           className="bg-cover bg-center bg-[##f9f9f9] relative py-16 pb-20 h-max border-b"

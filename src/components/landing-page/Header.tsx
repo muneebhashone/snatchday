@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart } from "lucide-react";
+import { User, Heart, ShoppingCart, ChevronDown } from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -245,13 +245,14 @@ const Header = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      className={`flex hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                      className={`flex items-center gap-2 hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
                         pathname === items.link
                           ? "text-primary"
                           : "text-foreground"
                       }`}
                     >
                       {items.name}
+                      <ChevronDown  className="text-primary w-5 h-5" />
                       <div
                         className={`w-2 h-2 bg-primary rounded-full ${
                           pathname === items.link ? "opacity-100" : "opacity-0"
@@ -264,13 +265,14 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`flex items-start text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                    pathname === items.link ? "text-primary" : "text-foreground"
+                  className={`relative flex items-center text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                    pathname === items.link ? "text-primary underline underline-offset-8 decoration-2" : "text-foreground"
                   }`}
                 >
                   {items.name}
+                  <ChevronDown  className={`${pathname === items.link && "hidden"} text-primary w-5 h-5`} />
                   <div
-                    className={`w-2 h-2 bg-primary rounded-full ${
+                    className={`absolute -right-3 top-0 w-2 h-2 bg-primary rounded-full ${
                       pathname === items.link ? "opacity-100" : "opacity-0"
                     }`}
                   ></div>

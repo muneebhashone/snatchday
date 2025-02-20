@@ -41,13 +41,13 @@ const TournamentWinnerCardSlider = () => {
   ];
 
   return (
-    <div className="flex items-center justify-center relative xl:h-[780px] md:h-[450px] h-[350px] max-w-[1920px] mx-auto">
+    <div className="flex items-center justify-center relative xl:h-[718px] md:h-[450px] h-[350px] max-w-[1920px] mx-auto">
       {/* Trophy and Stars Background */}
       <div className="absolute w-full h-full">
         <Image
           src={maintrophysection}
           alt="Trophy"
-          className="object-cover object-center xl:h-[780px] md:h-[450px] h-[350px]"
+          className="object-cover xl:object-contain object-center xl:h-[718px] md:h-[450px] h-[350px]"
           priority
         />
       </div>
@@ -58,13 +58,13 @@ const TournamentWinnerCardSlider = () => {
             <CarouselItem key={index}>
               {/* Content */}
               <div className="py-0 lg:py-12 flex items-center">
-                <div className="w-full max-w-7xl px-20 py-10 md:px-10 lg:px-8">
-                  <div className="md:max-w-4xl md:pl-8 lg:pl-32 py-4 md:py-6 lg:py-0">
+                <div className="w-full max-w-7xl px-20 py-10 md:px-10 lg:px-16">
+                  <div className="md:pl-8 lg:pl-32 py-4 md:py-6 lg:py-0">
                     <div className="flex flex-col items-center md:items-start justify-start md:gap-2 ">
-                      <h3 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-7xl font-extrabold text-white/90 mb-2">
+                      <h3 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[82px] font-extrabold text-white/90 mb-2">
                         {winner.heading}
                       </h3>
-                      <h3 className="text-xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-6xl font-extrabold text-white/90 mb-2 md:mb-4 lg:mb-6">
+                      <h3 className="text-xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-[64px] font-extrabold text-white/90 mb-2 md:mb-4 lg:mb-6">
                         Tournament{" "}
                         <span className="text-white bg-primary px-4 py-1 rounded">
                           Winner
@@ -72,13 +72,13 @@ const TournamentWinnerCardSlider = () => {
                       </h3>
                     </div>
 
-                    <p className="bg-opacity-10 text-xs sm:text-lg w-[68%] md:w-[62%] lg:text-xl xl:text-2xl text-white/90 leading-1 mb-2 md:mb-4 lg:mb-6">
+                    <p className="mt-4 text-xs sm:text-lg w-[68%] md:w-[62%] lg:text-xl xl:text-2xl text-white leading-1 mb-2 md:mb-4 lg:mb-6">
                       {winner.title}
                     </p>
 
                     {/* <div className="flex md:flex-col flex-row-reverse md:items-start items-center justify-end"> */}
                     <div className="flex flex-col items-start ">
-                      <p className="text-xl lg:text-4xl font-bold text-white mb-4 lg:mb-6">
+                      <p className="text-xl lg:text-4xl xl:text-[44px] font-bold text-white mb-4 lg:mb-6 xl:mb-10">
                         {winner.price}€
                       </p>
 
@@ -104,8 +104,8 @@ const TournamentWinnerCardSlider = () => {
           ))}
         </CarouselContent>
 
-        <CarouselPrevious className="absolute sm:shadow-none shadow-[0px_0px_20px_#f37835] left-3 md:left-4 top-[37%] md:top-1/2 -translate-y-1/2 w-10 sm:w-16 h-10 sm:h-16 lg:w-24 lg:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
-        <CarouselNext className="absolute sm:shadow-none shadow-[0px_0px_20px_#f37835] right-20 sm:right-[50%] md:right-4 top-[37%] md:top-1/2 -translate-y-1/2 w-10 sm:w-16 h-10 sm:h-16 lg:w-24 lg:h-24 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+        <CarouselPrevious className="absolute sm:shadow-none shadow-[0px_0px_20px_#f37835] left-3 md:left-[62px] top-[37%] md:top-1/2 -translate-y-1/2 w-10 sm:w-16 h-10 sm:h-16 lg:w-20 lg:h-20 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
+        <CarouselNext className="absolute sm:shadow-none shadow-[0px_0px_20px_#f37835] right-20 sm:right-[50%] md:right-20 top-[37%] md:top-1/2 -translate-y-1/2 w-10 sm:w-16 h-10 sm:h-16 lg:w-20 lg:h-20 bg-white/10 rounded-full border-0 text-white hover:bg-primary transition-colors" />
       </Carousel>
     </div>
   );

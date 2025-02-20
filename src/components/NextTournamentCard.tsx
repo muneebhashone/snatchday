@@ -41,7 +41,7 @@ const NextTournamentCard = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300">
       {/* Left Column - Product Image */}
-      <div className="border-r border-gray-200 pt-16 px-8">
+      <div className="relative border-r border-gray-200 pt-16 px-8">
         <div>
           <Image
             src={productImage}
@@ -51,89 +51,96 @@ const NextTournamentCard = ({
             objectFit="cover"
           />
         </div>
+        <Button className="flex items-center justify-center md:hidden absolute top-3 right-3 w-10 md:w-12 h-10 md:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
+          <Heart className="w-4 md:w-6 h-4 md:h-6 text-[#A5A5A5] " />
+        </Button>
 
         <div className="flex items-center justify-between mt-12">
           <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[30px] font-normal px-7">
+            <div className="border border-gray-200 text-[18px] md:text-[30px] font-normal px-3 md:px-7">
               {countdown.hours}
             </div>
-            <p className="text-xs">Hours</p>
+            <p className="text-xs hidden md:block">Hours</p>
+            <p className="md:hidden block text-xs">Hrs</p>
           </div>
           <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[30px] px-7">
+            <div className="border border-gray-200 text-[18px] md:text-[30px] font-normal px-3 md:px-7">
               {countdown.minutes}
             </div>
-            <p className="text-xs">Minutes</p>
+            <p className="text-xs hidden md:block">Minutes</p>
+            <p className="text-xs md:hidden block">Min</p>
           </div>
           <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[30px] px-7">
+            <div className="border border-gray-200 text-[18px] md:text-[30px] font-normal px-3 md:px-7">
               {countdown.seconds}
             </div>
-            <p className="text-xs">Seconds</p>
+            <p className="text-xs hidden md:block">Seconds</p>
+            <p className="text-xs md:hidden block">Sec</p>
           </div>
           <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[30px] px-7">
+            <div className="border border-gray-200 text-[18px] md:text-[30px] font-normal px-3 md:px-7">
               {countdown.milliseconds}
             </div>
-            <p className="text-xs">Mili Seconds</p>
+            <p className="text-xs hidden md:block">Mili Seconds</p>
+            <p className="text-xs md:hidden block">Mili Sec</p>
           </div>
         </div>
       </div>
 
       {/* Right Column - Tournament Info */}
 
-      <div className="pt-10 pb-12 px-7 relative">
-        <Button className="absolute top-5 right-5 w-12 h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
-          <Heart className="w-6 h-6 text-[#A5A5A5] " />
+      <div className="pt-5 md:pt-10 pb-12 px-5 sm:px-7 relative">
+        <Button className="md:block hidden absolute top-8 md:top-5 right-5 w-10 md:w-12 h-10 md:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
+          <Heart className="w-4 md:w-6 h-4 md:h-6 text-[#A5A5A5] " />
         </Button>
         {/* Tournament Badge */}
         <div className="mb-3">
-          <h2 className="text-card-foreground font-semibold">
+          <h2 className="text-card-foreground font-semibold text-xs sm:text-sm md:text-normal">
             Tournament ID :
             <span className="text-primary"> 1234567890</span>
           </h2>
         </div>
-        <div className="inline-block bg-primary text-white text-sm px-3 py-1 rounded-full">
+        <div className="inline-block bg-primary text-white text-xs md:text-sm px-2 sm:px-3 py-1 rounded-full ">
           Bargain or Discount Tournament
         </div>
 
         {/* Product Title */}
-        <p className="text-2xl font-semibold mt-2 text-[#2F190D]">{title}</p>
+        <p className="text-lg md:text-2xl font-semibold mt-2 text-[#2F190D]">{title}</p>
 
         {/* Rating */}
         <div className="flex items-center gap-1">
-          <div className="flex text-[#FF6B3D] text-2xl">
+          <div className="flex text-[#FF6B3D] text-lg md:text-2xl">
             {"★".repeat(rating)}
           </div>
           <span className="text-sm text-gray-500">({reviews})</span>
         </div>
 
         {/* Game Info */}
-        <div className="flex items-center justify-start gap-12 mt-5">
+        <div className="flex md:flex-row flex-col md:items-center justify-start gap-2 md:gap-12 mt-2 md:mt-5">
           <div className="flex items-center justify-start gap-2">
-            <div className="w-16 h-16 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
-            <Image src={gameIcon} alt="Game Icon" width={40} height={37} />
-          </div>
-          <div>
-            <div className="flex items-center gap-1">
-              <p className="text-lg font-bold">Game:</p>
-              <p className="text-primary text-lg font-bold">{gameName}</p>
+            <div className="w-12 md:w-16 h-12 md:h-16 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
+              <Image className="" src={gameIcon} alt="Game Icon" width={40} height={37} />
             </div>
-            <div className="flex items-center gap-1 text-card-foreground ">
-              <p className="text-sm">Duration:</p>
-              <p className="text-sm">{duration}</p>
+            <div>
+              <div className="flex items-center gap-1">
+                <p className="text-md md:text-lg font-bold">Game:</p>
+                <p className="text-primary text-md md:text-lg font-bold">{gameName}</p>
+              </div>
+              <div className="flex w-max items-center gap-1 text-card-foreground ">
+                <p className="text-sm">Duration:</p>
+                <p className="text-sm">{duration}</p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="">
-          <p className="text-lg"> Participants</p>
-          <p className="">0 To 200</p>
-        </div>
+          <div className="flex w-full justify-start md:flex-col md:gap-0 gap-3">
+            <p className="text-sm md:text-lg"> Participants</p>
+            <p className="text-sm md:text-normal">0 To 200</p>
+          </div>
         </div>
 
         <div className="flex items-center justify-between mt-5">
           {/* Price Info */}
-          <div>
+          {/* <div >
             <div className="flex items-center gap-1">
               <p className="text-card-foreground text-lg font-semibold">
                 Current price:
@@ -145,10 +152,10 @@ const NextTournamentCard = ({
             <p className="text-sm text-card-foreground">
               incl. 19% VAT, plus shipping costs
             </p>
-          </div>
+          </div> */}
 
           {/* Participation Fee */}
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <div>
               <p className="text-lg text-card-foreground font-normal">
                 Participation fee:
@@ -156,6 +163,36 @@ const NextTournamentCard = ({
               <p className="text-card-foreground font-normal">
                 {participationPoints} points / {participationFee}€
               </p>
+            </div>
+          </div>
+        </div> */}
+          <div className="flex md:flex-row flex-col justify-between w-full md:items-center gap-2">
+            {/* Price Info */}
+            <div >
+              <div className="flex items-center gap-1">
+                <p className="text-card-foreground text-lg font-semibold">
+                  Current price:
+                </p>
+                <p className="text-xl font-bold text-card-foreground">
+                  {currentPrice}€
+                </p>
+              </div>
+              <p className="text-xs md:text-sm text-card-foreground">
+                incl. 19% VAT, plus shipping costs
+              </p>
+            </div>
+
+            {/* Participation Fee */}
+            <div className="flex items-center justify-between">
+              {/* <div className=""> */}
+              <div className="flex md:flex-col gap-4 md:gap-0 md:justify-center">
+                <p className="text-sm md:text-lg text-card-foreground font-normal">
+                  Participation fee:
+                </p>
+                <p className="text-card-foreground font-normal text-sm md:text-normal">
+                  {participationPoints} points / {participationFee}€
+                </p>
+              </div>
             </div>
           </div>
         </div>

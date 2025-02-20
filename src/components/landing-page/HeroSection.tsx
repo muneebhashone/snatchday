@@ -28,7 +28,7 @@ const HeroSection = () => {
   ];
 
   return (
-    <section className="min-h-screen w-full relative bg-white pt-28 lg:pt-40 p-10">
+    <section className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10">
       {/* Background Image */}
       <Image
         src={heroImage}
@@ -80,12 +80,12 @@ const HeroSection = () => {
 
           {/* Right Content */}
           {/* <div className="flex justify-center lg:justify-end mt-8 lg:mt-0"> */}
-          <div className="flex items-center justify-center relative col-span-3">
+          <div className="flex xl:w-[826px] xl:h-[856px] relative col-span-3 lg:-ml-20">
             <Image
               src={iphone}
               alt="hero-image"
-              width={510}
-              height={522}
+              width={525}
+              height={545}
               className="lg:w-full lg:h-full object-cover"
               priority
             />
