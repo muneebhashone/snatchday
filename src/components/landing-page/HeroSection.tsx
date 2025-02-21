@@ -151,10 +151,10 @@ const HeroSection = () => {
       {/* Content */}
       <div className="container h-full mx-auto relative z-10">
         <Swiper
-          effect="fase"
+          effect="fade"
           grabCursor={true}
           pagination={{ clickable: true }}
-          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
           loop
           modules={[Navigation, Pagination, Autoplay, EffectFade]}
           className="h-full"
