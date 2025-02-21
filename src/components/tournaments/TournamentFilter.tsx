@@ -139,8 +139,8 @@ const TournamentFilter = () => {
         </div>
 
         {/* Filter Button */}
-        <div className="flex items-center justify-end">
-          <Button className="gradient-primary text-white rounded-full px-12 h-12 text-base font-medium hover:opacity-90">
+        <div className="flex items-center justify-center md:justify-end">
+          <Button className="gradient-primary text-white rounded-full px-10 sm:px-12 h-10 sm:h-12 text-base font-medium hover:opacity-90">
             FILTER
           </Button>
         </div>

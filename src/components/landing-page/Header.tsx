@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart } from "lucide-react";
+import { User, Heart, ShoppingCart, ChevronDown, Headphones, Monitor, Smartphone, Gamepad, Computer, LucideIcon } from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -15,83 +15,106 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchIcon, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import iphone from '@/app/images/iphone.png'
+import laptop1 from '@/app/images/laptop.png'
+import laptop2 from '@/app/images/laptopv2.png'
+import { StaticImageData } from "next/image";
 
-const categories = [
+type ICatogory = {
+  id: number,
+  name: string,
+  path: string,
+  icon: LucideIcon,
+  image: StaticImageData,
+  subcategories: ISub[]
+}
+
+type ISub = {
+  name: string,
+  path: string,
+  image: StaticImageData
+}
+
+const categoryData: ICatogory[] = [
   {
+    id: 1,
     name: "Audio, Video & HiFi",
-    items: [
-      "audio input/output devices",
-      "DVD/BluRay players/recorders/set-top boxes",
-      "hi-fi equipment",
-      "MP3/video player",
-    ],
+    path: "/audio-video-hifi",
+    icon: Headphones,
+    image: iphone,
+    subcategories: [
+      { name: "Home Theater Systems", path: "/category/home-theater", image: iphone },
+      { name: "Speakers", path: "/category/speakers", image: laptop1 },
+      { name: "Amplifiers", path: "/category/amplifiers", image: laptop2 },
+      { name: "Receivers", path: "/category/receivers", image: iphone },
+    ]
   },
   {
+    id: 2,
     name: "Computer & Hardware",
-    items: [],
+    path: "/computer-hardware",
+    icon: Monitor,
+    image: laptop1,
+    subcategories: [
+      { name: "Processors", path: "/category/processors", image: iphone },
+      { name: "Motherboards", path: "/category/motherboards", image: iphone },
+      { name: "Memory", path: "/category/memory", image: iphone },
+      { name: "Storage", path: "/category/storage", image: iphone },
+    ]
   },
   {
-    name: "Displays & Projectors",
-    items: [
-      "audio input/output devices",
-      "DVD/BluRay players/recorders/set-top boxes",
-      "hi-fi equipment",
-      "MP3/video player",
-    ],
-  },
-  {
-    name: "Electrical & Installation",
-    items: [],
-  },
-  {
-    name: "Entertainment & Gaming",
-    items: [],
-  },
-  {
-    name: "Photo & Video",
-    items: [],
-  },
-  {
+    id: 3,
     name: "Cell Phones & Communication",
-    items: [],
+    path: "/phones-communication",
+    icon: Smartphone,
+    image: laptop2,
+    subcategories: [
+      { name: "Smartphones", path: "/category/smartphones", image: iphone },
+      { name: "Phone Accessories", path: "/category/accessories", image: iphone },
+      { name: "Cases & Protection", path: "/category/cases", image: iphone },
+      { name: "Chargers & Cables", path: "/category/chargers", image: iphone },
+    ]
   },
   {
-    name: "House & Garden",
-    items: [],
+    id: 4,
+    name: "Entertainment & Gaming",
+    path: "/entertainment-gaming",
+    icon: Gamepad,
+    image: iphone,
+    subcategories: [
+      { name: "Gaming Consoles", path: "/category/consoles", image: iphone },
+      { name: "Video Games", path: "/category/games", image: iphone },
+      { name: "Gaming Accessories", path: "/category/accessories", image: iphone },
+      { name: "Virtual Reality", path: "/category/vr", image: iphone },
+    ]
   },
   {
-    name: "Notebook & Tablet",
-    items: [],
-  },
-  {
-    name: "PC components",
-    items: [],
-  },
-  {
-    name: "PC systems",
-    items: [],
-  },
-  {
-    name: "Service & Support",
-    items: [],
-  },
-  {
-    name: "software",
-    items: [],
-  },
-  {
-    name: "Games & Hobbies",
-    items: [],
-  },
-  {
-    name: "TV & Audio",
-    items: [],
-  },
-  {
-    name: "Accessories & Software",
-    items: [],
+    id: 5,
+    name: "PC Systems",
+    path: "/pc-systems",
+    icon: Computer,
+    image: laptop1,
+    subcategories: [
+      { name: "Desktop Computers", path: "/category/desktop", image: iphone },
+      { name: "Workstations", path: "/category/workstations", image: iphone },
+      { name: "All-in-One PCs", path: "/category/all-in-one", image: iphone },
+      { name: "Mini PCs", path: "/category/mini-pcs", image: iphone },
+    ]
   },
 ];
+
 
 const menu = [
   {
@@ -130,9 +153,16 @@ const Header = () => {
   const pathname = usePathname();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const [userPoints] = useState({
+    snapPoints: 4875,
+    discountPoints: 750,
+  });
+
+  const [categoryImage, setCategoryImage] = useState(categoryData[0].image);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -176,51 +206,82 @@ const Header = () => {
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         {/* Logo Section */}
-        <Link href="/" className="flex items-center space-x-2 border-r border-gray-200 pr-6">
-          <Image src={logo} alt="Logo" width={208} height={66} />
+        <Link
+          href="/"
+          className="flex items-center space-x-2 border-r border-gray-200 pr-6"
+        >
+          <Image src={logo} alt="Logo" width={208} height={66} unoptimized />
         </Link>
 
         {/* {/ Desktop Hamburger - Only visible on desktop /} */}
-        <div className="hidden lg:block relative">
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="h-9 w-9 bg-primary rounded-md flex items-center justify-center transition-colors"
-          >
-            <Hamburger />
-          </button>
+        <div className="hidden lg:block">
+          <NavigationMenu>
+            <NavigationMenuList className="">
+              <NavigationMenuItem className="">
+                <NavigationMenuTrigger className="bg-primary hover:bg-primary data-[state=open]:bg-primary">
+                  <Hamburger />
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-white border-t border-gray-100">
+                  <div className="max-w-[1920px] mx-auto p-8">
+                    <div className="grid grid-cols-12 gap-8 w-screen">
+                      {/* Categories List */}
+                      <div className="col-span-8">
+                        <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                          {categoryData.map((category) => {
+                            const Icon = category.icon;
+                            return (
+                              <div
+                                key={category.id}
+                                className="group"
+                              >
+                                <Link
+                                  href={category.path}
+                                  className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                >
+                                  <Icon className="w-4 h-4" />
+                                  {category.name}
+                                </Link>
+                                <ul className="space-y-2">
+                                  {category.subcategories.map((subcategory) => (
+                                    <li
+                                      key={subcategory.path}
+                                      onMouseEnter={() => setCategoryImage(subcategory.image)}
+                                    >
+                                      <Link
+                                        href={subcategory.path}
+                                        className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                      >
+                                        {subcategory.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
 
-          {/* {/ Dropdown Menu /} */}
-          {isDropdownOpen && (
-            <div className="absolute left-0 top-full mt-10 w-[300px] bg-white/90 backdrop-blur-sm rounded-lg shadow-lg py-2 z-50">
-              {categories.map((category, index) => (
-                <div key={index} className="group relative hover:bg-gray-50/80">
-                  <Link
-                    href="#"
-                    className="flex items-center justify-between px-4 py-2 text-lg text-card-foreground hover:text-primary"
-                  >
-                    {category.name}
-                    {category.items.length > 0 && (
-                      <span className="text-gray-400">›</span>
-                    )}
-                  </Link>
-
-                  {category.items.length > 0 && (
-                    <div className="hidden group-hover:block absolute left-full top-0 w-[300px] bg-white/90 backdrop-blur-sm rounded-lg shadow-lg py-2">
-                      {category.items.map((item, itemIndex) => (
-                        <Link
-                          key={itemIndex}
-                          href="#"
-                          className="block px-4 py-2 text-lg text-card-foreground hover:bg-gray-50/80 hover:text-primary"
-                        >
-                          {item}
-                        </Link>
-                      ))}
+                      {/* Category Image */}
+                      <div className="col-span-4">
+                        {categoryImage && (
+                          <div className="relative h-full w-full">
+                            <Image
+                              src={categoryImage}
+                              alt="Category preview"
+                              fill
+                              className="object-contain w-10 h-10"
+                              unoptimized
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
 
         {/* {/ Mobile Menu Button - Only visible on mobile /} */}
@@ -238,24 +299,20 @@ const Header = () => {
               className="hidden lg:flex items-center justify-between"
               key={items.id}
             >
-              <div className="group relative">
-                {/* {/ Dropdown can be added here /} */}
-              </div>
               {items.name === "Gewinnspiel im Januar" ? (
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      className={`flex hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                        pathname === items.link
-                          ? "text-primary"
-                          : "text-foreground"
-                      }`}
+                      className={`flex items-center gap-2 hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
+                        ? "text-primary"
+                        : "text-foreground"
+                        }`}
                     >
                       {items.name}
+                      <ChevronDown className="text-primary w-5 h-5" />
                       <div
-                        className={`w-2 h-2 bg-primary rounded-full ${
-                          pathname === items.link ? "opacity-100" : "opacity-0"
-                        }`}
+                        className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
+                          }`}
                       ></div>
                     </button>
                   </DialogTrigger>
@@ -264,15 +321,19 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`flex items-start text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                    pathname === items.link ? "text-primary" : "text-foreground"
-                  }`}
+                  className={`relative flex items-center text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
+                    ? "text-primary underline underline-offset-8 decoration-2"
+                    : "text-foreground"
+                    }`}
                 >
                   {items.name}
+                  <ChevronDown
+                    className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"
+                      }`}
+                  />
                   <div
-                    className={`w-2 h-2 bg-primary rounded-full ${
-                      pathname === items.link ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
+                      }`}
                   ></div>
                 </Link>
               )}
@@ -398,6 +459,47 @@ const Header = () => {
             </span>
           </button>
         </div>
+
+        {/* Replace the User Points Display with this new dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1 hover:text-primary bg-primary px-2 rounded-md py-1">
+            <div className="text-right">
+              <div className="flex items-center gap-2 text-white ">
+                <span className="font-medium ">My Points</span>
+                <ChevronDown className="h-4 w-4" />
+              </div>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-80 p-6 bg-white shadow-lg border-2 border-gray-100"
+            align="start"
+            sideOffset={42}
+          >
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Snap Points</span>
+                  <span className="text-primary font-bold">{userPoints.snapPoints}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Equivalent Value</span>
+                  <span className="text-primary font-medium">{userPoints.snapPoints / 100}€</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Discount Points</span>
+                  <span className="text-primary font-bold">{userPoints.discountPoints}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Equivalent Value</span>
+                  <span className="text-primary font-medium">{userPoints.discountPoints / 100}€</span>
+                </div>
+              </div>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* {/ Mobile Menu /} */}

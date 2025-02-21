@@ -2,15 +2,6 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 
 import TournamentDetailHero from "@/components/TournamentDetailHero";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import React from "react";
 import bg from "@/app/images/productDetailSecondSecBg.png";
@@ -211,31 +202,9 @@ const page = () => {
   return (
     <ClientLayout>
       <main className="mb-56 overflow-hidden">
-        <div className="h-11 w-full mt-[115px] flex flex-col pb-1 text-sm">
-          <Separator className="mb-5" />
-          <Breadcrumb className="ml-10 pb-2 bg-white">
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/">
-                  Computer & Hardware Displays & Projectors
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>
-                  Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27`) -
-                  (4710886045649)
-                </BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-          <Separator className="" />
+        <div className="mt-[115px]">
+          <TournamentDetailHero />
         </div>
-        <TournamentDetailHero />
         <div
           style={{ backgroundImage: `url(${bg.src})` }}
           className="bg-cover bg-center bg-[##f9f9f9] relative py-16 pb-20 h-max border-b"
@@ -313,7 +282,7 @@ const page = () => {
                   {displayProducts.map((product, index) => (
                     <CarouselItem
                       key={index}
-                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6"
+                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
                     >
                       <FeaturedProductsCard {...product} />
                     </CarouselItem>
@@ -325,7 +294,7 @@ const page = () => {
             </div>
           </div>
         </div>
-        <TrainingCenter />
+        <div className="p-20"><TrainingCenter /></div>
       </main>
     </ClientLayout>
   );

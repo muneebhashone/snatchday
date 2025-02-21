@@ -3,7 +3,6 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 import DuelArena from "@/components/landing-page/DuelArena";
 import FeaturedProducts from "@/components/landing-page/FeaturedProducts";
 import HeroSection from "@/components/landing-page/HeroSection";
-
 import ProductSection from "@/components/landing-page/ProductSection";
 import RatingsSection from "@/components/landing-page/RatingsSection";
 import RegisterSection from "@/components/landing-page/RegisterSection";

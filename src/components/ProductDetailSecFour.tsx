@@ -9,7 +9,6 @@ import rank2 from "@/app/images/rank2.png";
 import rank3 from "@/app/images/rank3.png";
 import rank from "@/app/images/rank.png";
 import winnerimg from '@/app/images/winnerimg.png'
-
 import {
   Carousel,
   CarouselContent,

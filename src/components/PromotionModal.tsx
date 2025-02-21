@@ -54,10 +54,10 @@ export function PromotionModal() {
             </p>
           </DialogTitle>
         </DialogHeader>
-        <div className="w-full overflow-y-auto scrollbar-hide">
+        <div className="w-full overflow-hidden">
           <div className="grid grid-cols-1 sm:grid-cols-2 pb-2 sm:pb-16 mx-auto gap-4">
             {/* Left side section */}
-            <div className="sm:w-max flex flex-col justify-between items-center py-28 border-r pr-10 pl-20">
+            <div className="sm:w-max flex flex-col justify-between items-center py-20 border-r pr-10 pl-20">
               <Image
                 className="xl:w-[580px] lg:w-[420px] md:w-[320px] sm:w-[250px] w-[180px] h-[350px]"
                 src={modalImage}
@@ -78,20 +78,20 @@ export function PromotionModal() {
               </div>
             </div>
             {/* Right side content */}
-            <div className="flex flex-col gap-3 md:gap-12 sm:items-start items-center pt-10 pr-16">
-              <div className="flex flex-col gap-7 sm:items-start justify-start">
-                <p className="text-xl">This month you can get the product</p>
-                <h1 className="text-[#1C1B1D] text-lg sm:text-3xl md:text-5xl lg:text-6xl font-extrabold">
+            <div className="flex flex-col gap-3 md:gap-7 sm:items-start items-center pt-10 pr-16">
+              <div className="flex flex-col gap-4 sm:items-start justify-start">
+                <p className="text-lg">This month you can get the product</p>
+                <h1 className="text-[#1C1B1D] text-lg sm:text-3xl md:text-5xl font-extrabold">
                   Hisense 32A4BG - 80 cm (32`)
                 </h1>
-                <p className="md:text-xl text-sm">
+                <p className="md:text-lg text-sm">
                   The winner will be drawn on the 5th of each month at 6 p.m.
                   You can find further information in the terms and conditions.
                   The closing date for entries is 5:55 p.m.
                 </p>
               </div>
-              <div className="flex flex-col gap-7 sm:w-max">
-                <p className="font-bold text-lg md:text-2xl">
+              <div className="flex flex-col gap-4 sm:w-max">
+                <p className="font-bold text-lg md:text-xl">
                   What is the capital of Germany?
                 </p>
                 <RadioGroup className="flex justify-between" defaultValue="i">
@@ -102,7 +102,7 @@ export function PromotionModal() {
                       id="r2"
                     />
                     <Label
-                      className="font-bold capitalize text-xl"
+                      className="font-bold capitalize text-lg"
                       htmlFor="r2"
                     >
                       berlin
@@ -111,7 +111,7 @@ export function PromotionModal() {
                   <div className="flex items-center space-x-3">
                     <RadioGroupItem value="paris" id="r1" />
                     <Label
-                      className="font-bold capitalize text-xl"
+                      className="font-bold capitalize text-lg"
                       htmlFor="r1"
                     >
                       paris

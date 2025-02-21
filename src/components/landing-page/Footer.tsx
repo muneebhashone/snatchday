@@ -22,7 +22,7 @@ const Footer = () => {
       { label: "About Us", href: "/about-us" },
       { label: "Jobs/Career", href: "/jobs" },
       { label: "Imprint", href: "/imprint" },
-      { label: "Terms And Conditions", href: "/terms" },
+      { label: "Terms And Conditions", href: "/terms-and-conditions" },
       { label: "Right Of Withdrawal", href: "/withdrawal" },
       { label: "Data Protection", href: "/data-protection" },
       { label: "Become A Partner", href: "/partner" },
