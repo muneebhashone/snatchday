@@ -64,7 +64,7 @@ const trainingCards = [
 
 const TrainingCenter = () => {
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative ">
       <div className="absolute w-full h-full">
         <BubblesIcon className="absolute -top-10 -left-20 sm:left-10" />
         <BubblesIcon1 className="absolute -top-10 -right-32 sm:right-10" />

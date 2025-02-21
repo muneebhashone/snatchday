@@ -15,83 +15,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchIcon, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-
-const categories = [
-  {
-    name: "Audio, Video & HiFi",
-    items: [
-      "audio input/output devices",
-      "DVD/BluRay players/recorders/set-top boxes",
-      "hi-fi equipment",
-      "MP3/video player",
-    ],
-  },
-  {
-    name: "Computer & Hardware",
-    items: [],
-  },
-  {
-    name: "Displays & Projectors",
-    items: [
-      "audio input/output devices",
-      "DVD/BluRay players/recorders/set-top boxes",
-      "hi-fi equipment",
-      "MP3/video player",
-    ],
-  },
-  {
-    name: "Electrical & Installation",
-    items: [],
-  },
-  {
-    name: "Entertainment & Gaming",
-    items: [],
-  },
-  {
-    name: "Photo & Video",
-    items: [],
-  },
-  {
-    name: "Cell Phones & Communication",
-    items: [],
-  },
-  {
-    name: "House & Garden",
-    items: [],
-  },
-  {
-    name: "Notebook & Tablet",
-    items: [],
-  },
-  {
-    name: "PC components",
-    items: [],
-  },
-  {
-    name: "PC systems",
-    items: [],
-  },
-  {
-    name: "Service & Support",
-    items: [],
-  },
-  {
-    name: "software",
-    items: [],
-  },
-  {
-    name: "Games & Hobbies",
-    items: [],
-  },
-  {
-    name: "TV & Audio",
-    items: [],
-  },
-  {
-    name: "Accessories & Software",
-    items: [],
-  },
-];
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@/components/ui/navigation-menu";
 
 const menu = [
   {
@@ -130,7 +63,7 @@ const Header = () => {
   const pathname = usePathname();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -173,54 +106,292 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm overflow-hidden">
+    <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         {/* Logo Section */}
-        <Link href="/" className="flex items-center space-x-2 border-r border-gray-200 pr-6">
-          <Image src={logo} alt="Logo" width={208} height={66} />
+        <Link
+          href="/"
+          className="flex items-center space-x-2 border-r border-gray-200 pr-6"
+        >
+          <Image src={logo} alt="Logo" width={208} height={66} unoptimized />
         </Link>
 
         {/* {/ Desktop Hamburger - Only visible on desktop /} */}
-        <div className="hidden lg:block relative">
-          <button
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="h-9 w-9 bg-primary rounded-md flex items-center justify-center transition-colors"
-          >
-            <Hamburger />
-          </button>
-
-          {/* {/ Dropdown Menu /} */}
-          {isDropdownOpen && (
-            <div className="absolute left-0 top-full mt-10 w-[300px] bg-white/90 backdrop-blur-sm rounded-lg shadow-lg py-2 z-50">
-              {categories.map((category, index) => (
-                <div key={index} className="group relative hover:bg-gray-50/80">
-                  <Link
-                    href="#"
-                    className="flex items-center justify-between px-4 py-2 text-lg text-card-foreground hover:text-primary"
-                  >
-                    {category.name}
-                    {category.items.length > 0 && (
-                      <span className="text-gray-400">›</span>
-                    )}
-                  </Link>
-
-                  {category.items.length > 0 && (
-                    <div className="hidden group-hover:block absolute left-full top-0 w-[300px] bg-white/90 backdrop-blur-sm rounded-lg shadow-lg py-2">
-                      {category.items.map((item, itemIndex) => (
-                        <Link
-                          key={itemIndex}
-                          href="#"
-                          className="block px-4 py-2 text-lg text-card-foreground hover:bg-gray-50/80 hover:text-primary"
-                        >
-                          {item}
-                        </Link>
-                      ))}
+        <div className="hidden lg:block">
+          <NavigationMenu>
+            <NavigationMenuList className="">
+              <NavigationMenuItem className="">
+                <NavigationMenuTrigger className="bg-primary hover:bg-primary data-[state=open]:bg-primary">
+                  <Hamburger />
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="bg-white">
+                  <div className="container mx-auto py-6">
+                    {/* Category Header */}
+                    <div className="flex items-center justify-between mb-8 px-4 w-screen">
+                      <h2 className="text-2xl font-bold text-gray-900">
+                        All Categories
+                      </h2>
+                      <Link
+                        href="/categories"
+                        className="text-primary hover:text-primary/80 flex items-center gap-2 font-medium"
+                      >
+                        View All Categories
+                        <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
+                      </Link>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+
+                    {/* Categories Grid */}
+                    <div className="grid grid-cols-5 gap-8 px-4">
+                      {/* Electronics & Computers */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
+                          Electronics & Computers
+                        </h3>
+                        <ul className="space-y-2">
+                          <li>
+                            <Link
+                              href="/category/laptops"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Laptops & Notebooks
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/desktop-pcs"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Desktop PCs
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/computer-components"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Computer Components
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/monitors"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Monitors
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/storage"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Storage Devices
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Gaming */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
+                          Gaming
+                        </h3>
+                        <ul className="space-y-2">
+                          <li>
+                            <Link
+                              href="/category/gaming-laptops"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Gaming Laptops
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/gaming-pcs"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Gaming PCs
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/consoles"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Gaming Consoles
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/gaming-accessories"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Gaming Accessories
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/gaming-chairs"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Gaming Chairs
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Mobile & Tablets */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
+                          Mobile & Tablets
+                        </h3>
+                        <ul className="space-y-2">
+                          <li>
+                            <Link
+                              href="/category/smartphones"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Smartphones
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/tablets"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Tablets
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/mobile-accessories"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Mobile Accessories
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/smartwatches"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Smartwatches
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/earbuds"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Earbuds & Headphones
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Accessories */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
+                          Accessories
+                        </h3>
+                        <ul className="space-y-2">
+                          <li>
+                            <Link
+                              href="/category/keyboards"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Keyboards
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/mice"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Mice & Mousepads
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/headsets"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Headsets
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/webcams"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Webcams
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/speakers"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Speakers
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* Software & Services */}
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
+                          Software & Services
+                        </h3>
+                        <ul className="space-y-2">
+                          <li>
+                            <Link
+                              href="/category/operating-systems"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Operating Systems
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/office-software"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Office Software
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/antivirus"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Antivirus & Security
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/vpn"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              VPN Services
+                            </Link>
+                          </li>
+                          <li>
+                            <Link
+                              href="/category/cloud-storage"
+                              className="text-gray-600 hover:text-primary"
+                            >
+                              Cloud Storage
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </div>
 
         {/* {/ Mobile Menu Button - Only visible on mobile /} */}
@@ -238,9 +409,6 @@ const Header = () => {
               className="hidden lg:flex items-center justify-between"
               key={items.id}
             >
-              <div className="group relative">
-                {/* {/ Dropdown can be added here /} */}
-              </div>
               {items.name === "Gewinnspiel im Januar" ? (
                 <Dialog>
                   <DialogTrigger asChild>
@@ -252,7 +420,7 @@ const Header = () => {
                       }`}
                     >
                       {items.name}
-                      <ChevronDown  className="text-primary w-5 h-5" />
+                      <ChevronDown className="text-primary w-5 h-5" />
                       <div
                         className={`w-2 h-2 bg-primary rounded-full ${
                           pathname === items.link ? "opacity-100" : "opacity-0"
@@ -266,13 +434,15 @@ const Header = () => {
                 <Link
                   href={items.link}
                   className={`relative flex items-center text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                    pathname === items.link ? "text-primary underline underline-offset-8 decoration-2" : "text-foreground"
+                    pathname === items.link
+                      ? "text-primary underline underline-offset-8 decoration-2"
+                      : "text-foreground"
                   }`}
                 >
                   {items.name}
-                  <ChevronDown  className={`${pathname === items.link && "hidden"} text-primary w-5 h-5`} />
+                  <ChevronDown className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"}`} />
                   <div
-                    className={`absolute -right-3 top-0 w-2 h-2 bg-primary rounded-full ${
+                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
                       pathname === items.link ? "opacity-100" : "opacity-0"
                     }`}
                   ></div>
