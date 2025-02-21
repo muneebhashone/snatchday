@@ -14,7 +14,7 @@ const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
   textColor,
 }) => {
   return (
-    <h1 className="lg:w-max xl:w-auto text-2xl md:text-4xl 2xl:text-6xl font-extrabold ">
+    <h1 className="lg:w-max xl:w-auto text-2xl md:text-4xl 2xl:text-6xl font-extrabold leading-3 md:leading">
       <span className="bg-primary px-4 rounded-md text-white">
         {highlightText}
       </span>

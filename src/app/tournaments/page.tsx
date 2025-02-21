@@ -124,20 +124,10 @@ const page = () => {
           </div>
 
           {/* Tournament Content */}
-          <div className="py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-          {/* <h2 className="text-[48px] font-extrabold text-center capitalize mb-10 col-span-2">
-            <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg">
-              Next
-            </span>
-
-            <span className="bg-transparent ml-2">Tournaments</span>
-          </h2> */}
+          <div className="py-5 sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
             {nextTournament.map((tournament, index) => (
               <NextTournamentCard key={index} {...tournament} />
             ))}
-            {/* <h3 className="text-3xl font-extrabold">
-              No tournaments found in the next 24 HOURS
-            </h3> */}
           </div>
         </div>
 
