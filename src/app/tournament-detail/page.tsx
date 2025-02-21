@@ -2,15 +2,6 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 
 import TournamentDetailHero from "@/components/TournamentDetailHero";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import React from "react";
 import bg from "@/app/images/productDetailSecondSecBg.png";

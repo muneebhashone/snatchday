@@ -11,7 +11,7 @@ import six from "@/app/images/six.svg";
 import iphone from "@/app/images/iphone.png";
 import PermotionalSection from "./PermotionalSection";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay, EffectCreative, EffectFade, EffectFlip, EffectCube } from "swiper/modules";
+import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";

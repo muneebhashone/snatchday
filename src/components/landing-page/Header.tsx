@@ -157,7 +157,7 @@ const Header = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const [userPoints, setUserPoints] = useState({
+  const [userPoints] = useState({
     snapPoints: 4875,
     discountPoints: 750,
   });
