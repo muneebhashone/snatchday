@@ -128,7 +128,7 @@ const HeroSection = () => {
           }}
           grabCursor={true}
           pagination={{ clickable: true }}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          autoplay={{ delay: 1000, disableOnInteraction: false }}
           loop
           modules={[Navigation, Pagination, Autoplay, EffectCreative]}
           className="h-full"
