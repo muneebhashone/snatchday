@@ -297,6 +297,22 @@ export const MsgIcon = () => {
     </svg>
   );
 };
+export const PreviousCarousel = () => {
+  return (
+    <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path opacity="0.5" d="M10.5 1L1.5 10L10.5 19" stroke="#D5D5D5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  );
+};
+export const NextCarousel = () => {
+  return (
+    <svg width="12" height="20" viewBox="0 0 12 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path opacity="0.5" d="M1.5 1L10.5 10L1.5 19" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  );
+};
+
+
 
 export const SubscriptIcon = () => {
   return (
@@ -1028,7 +1044,7 @@ export const DashboardIcon = ({ className = "" }: { className?: string }) => {
       />
     </svg>
   );
-}; 
+};
 
 
 export const AlertsIcon = ({ className = "" }: { className?: string }) => {
@@ -1050,7 +1066,7 @@ export const AlertsIcon = ({ className = "" }: { className?: string }) => {
       />
     </svg>
   );
-}; 
+};
 
 export const BidsIcon = ({ className = "" }: { className?: string }) => {
   return (
@@ -1071,7 +1087,7 @@ export const BidsIcon = ({ className = "" }: { className?: string }) => {
       />
     </svg>
   );
-}; 
+};
 
 export const FavoritesIcon = ({ className = "" }: { className?: string }) => {
   return (
@@ -1087,7 +1103,7 @@ export const FavoritesIcon = ({ className = "" }: { className?: string }) => {
       />
     </svg>
   );
-}; 
+};
 
 export const ProfileIcon = ({ className = "" }: { className?: string }) => {
   return (
@@ -1129,7 +1145,7 @@ export const ReferralsIcon = ({ className = "" }: { className?: string }) => {
       />
     </svg>
   );
-}; 
+};
 
 export const WinningBidsIcon = ({ className = "" }: { className?: string }) => {
   return (
@@ -1142,5 +1158,5 @@ export const WinningBidsIcon = ({ className = "" }: { className?: string }) => {
       <path d="M12 16L7 11L17 11L12 16Z" fill="currentColor" />
     </svg>
   );
-}; 
+};
 

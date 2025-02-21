@@ -134,6 +134,11 @@ const DuelArena = () => {
                   {slides[0].subText}
                 </p>
               </div>
+              <div className="flex justify-center items-center gap-8 my-10">
+                <Button className={`gradient-primary text-white px-14 py-7 rounded-full text-lg font-medium hover:opacity-90 transition-opacity `}>
+                  Create a Duel
+                </Button>
+              </div>
             </CarouselItem>
 
             {/* Second Slide - How to Enter Grid */}
@@ -142,7 +147,7 @@ const DuelArena = () => {
                 <h2 className="flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
                   How to Enter{" "}
                   <span className="ml-2 bg-primary text-white px-1 sm:px-4 rounded-lg">
-                    Duel Arena
+                    Tournement
                   </span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-2 sm:gap-8 ">
@@ -167,11 +172,6 @@ const DuelArena = () => {
           <CarouselPrevious className="absolute sm:-left-4 lg:-left-8 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
           <CarouselNext className="absolute sm:-right-4 lg:-right-2 top-1/2 sm:top-[59%] md:top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white" />
         </Carousel>
-        <div className="flex justify-center items-center gap-8 my-10">
-          <Button className="gradient-primary text-white px-8 py-6 rounded-full text-lg font-medium hover:opacity-90 transition-opacity">
-            Create a Duel
-          </Button>
-        </div>
 
         {/* Training Center Section */}
         <div className="mt-20">

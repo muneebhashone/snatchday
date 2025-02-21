@@ -46,7 +46,7 @@ const TournamentDetailHero = () => {
           <button className="py-[6px] bg-primary rounded-full px-5 text-white font-semibold w-max">
             Tournament ID: 1641
           </button>
-          <h1 className="text-6xl text-[#1C1B1D] font-extrabold leading-[70px]">
+          <h1 className="text-[48px] text-[#1C1B1D] font-extrabold leading-[70px]">
             Acer Aspire 3 A315-35 - Intel Pentium Silver N6000
           </h1>
           <p className="text-[24px]">
@@ -55,7 +55,7 @@ const TournamentDetailHero = () => {
             time: <span className="text-primary font-extrabold text-[25px]">18:21</span>
           </p>
           <div className="flex gap-5 w-max mt-7">
-            <div className="border border-primary p-2 rounded-full flex gap-3 items-center">
+            <div className=" p-2 rounded-full flex gap-3 items-center">
               <div className="bg-white shadow-[2px_2px_10px_#d1d5db] h-[98px] w-[98px] rounded-full flex items-center justify-center">
                 <Image className="object-contain" src={powerBlock} alt="" />
               </div>
@@ -81,16 +81,16 @@ const TournamentDetailHero = () => {
             </div>
           </div>
           <div className="flex gap-6 mt-3">
-            <p className="border border-primary rounded-full px-8 py-1 text-[21px] ">
+            <p className=" rounded-full px-8 py-1 text-[21px] ">
               Participation fee: <span className="text-primary">250</span>{" "}
               points / <span className="text-primary">2 .50€</span>
             </p>
-            <h3 className="border border-primary rounded-full px-8 py-1 text-[21px] font-extrabold">
+            <h3 className=" rounded-full px-8 py-1 text-[21px] font-extrabold">
               50<span className="text-primary">€</span> Gunstiger
             </h3>
           </div>
           <div className="flex gap-3 items-center justify-start">
-            <div className="border border-primary rounded-full w-max py-3 flex gap-5 my-7 px-2">
+            <div className=" rounded-full w-max py-3 flex gap-5 my-7 px-2">
               <div className=" flex flex-col border-r border-r-gray-300 px-5 text-[16px]">
                 <p>RRP:</p>
                 <p className="text-[21px]">
@@ -109,7 +109,7 @@ const TournamentDetailHero = () => {
                 <span className="text-primary text-[21px]">1</span>
               </div>
             </div>
-            <div className="border border-primary w-[300px] py-3 px-6 rounded-full flex items-center">
+            <div className=" w-[300px] py-3 px-6 rounded-full flex items-center">
               <p className="text-[18px] font-normal">
                 For each additional participant the price drops by{" "}
                 <span className="text-primary font-bold border-b-2 border-b-primary ">5.00€</span>{" "}

@@ -40,7 +40,7 @@ const ProductSection = () => {
   ];
 
   return (
-    <section className="py-10 bg-gray-50">
+    <section className="py-10">
       <div className="container max-w-[1920px] mx-auto px-5 md:px-12">
         {/* Section Header */}
         <div className="flex justify-between gap-2 items-center mb-12 mt-10">

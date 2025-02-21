@@ -18,6 +18,7 @@ const MyAccountLayout = ({ children }: { children: React.ReactNode }) => {
             src={tournament}
             alt="tournament"
             className="absolute top-0 left-0 w-full h-[400px] object-cover"
+            unoptimized
           />
 
           <AccountSidebar />
