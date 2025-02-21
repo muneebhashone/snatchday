@@ -96,7 +96,7 @@ const page = () => {
                 use of our services by the same user/internet connection owner.
                 Cookies are small text files that your internet browser saves on
                 your computer. They are used to optimize our website and our
-                offers. These are mostly so-called "session cookies" that are
+                offers. These are mostly so-called session cookies that are
                 deleted after the end of your visit.
               </p>
               <p className="text-lg">
@@ -232,8 +232,8 @@ const page = () => {
               <p className="text-lg">
                 We use Google Analytics, a web analysis service provided by
                 Google Inc., 1600 Amphitheatre Parkway, Mountain View, CA 94043
-                USA, hereinafter referred to as "Google". Google Analytics uses
-                so-called "cookies", text files that are stored on your computer
+                USA, hereinafter referred to as Google. Google Analytics uses
+                so-called cookies, text files that are stored on your computer
                 and enable an analysis of your use of the website.
               </p>
               <p className="text-lg">
@@ -254,7 +254,7 @@ const page = () => {
                 provide other services related to website activity and internet
                 usage. Google may also transfer this information to third
                 parties where required to do so by law, or where third parties
-                process the data on Google's behalf.
+                process the data on Googles behalf.
               </p>
               <p className="text-lg">
                 According to Google, under no circumstances will your IP address
@@ -283,9 +283,9 @@ const page = () => {
             <h2 className="text-2xl font-bold mb-4">reCAPTCHA</h2>
             <div className="space-y-4">
               <p className="text-lg">
-                To protect input forms on our website, we use the "reCAPTCHA"
+                To protect input forms on our website, we use the reCAPTCHA
                 service provided by Google Inc., 1600 Amphitheatre Parkway,
-                Mountain View, CA 94043 USA, hereinafter "Google". By using this
+                Mountain View, CA 94043 USA, hereinafter Google. By using this
                 service, it is possible to distinguish whether the corresponding
                 input is of human origin or has been misused by automated
                 machine processing.
@@ -294,9 +294,9 @@ const page = () => {
                 To the best of our knowledge, the referrer URL, the IP address,
                 the behavior of website visitors, information about the
                 operating system, browser and length of stay, cookies, display
-                instructions and scripts, the user's input behavior and mouse
-                movements in the area of ​​the "reCAPTCHA" checkbox are
-                transmitted to "Google".
+                instructions and scripts, the users input behavior and mouse
+                movements in the area of ​​the reCAPTCHA checkbox are
+                transmitted to Google.
               </p>
               <p className="text-lg">
                 Google uses the information obtained in this way, among other
@@ -305,16 +305,16 @@ const page = () => {
                 (e.g. house number and street name recognition).
               </p>
               <p className="text-lg">
-                The IP address transmitted as part of "reCAPTCHA" will not be
+                The IP address transmitted as part of reCAPTCHA will not be
                 merged with other data from Google, unless you are logged into
-                your Google account at the time you use the "reCAPTCHA" plug-in.
+                your Google account at the time you use the reCAPTCHA plug-in.
                 If you want to prevent this transmission and storage of data
-                about you and your behavior on our website by "Google", you must
-                log out of "Google" before you visit our site or use the
+                about you and your behavior on our website by Google, you must
+                log out of Google before you visit our site or use the
                 reCAPTCHA plug-in.
               </p>
               <p className="text-lg">
-                The use of the information obtained through the "reCAPTCHA"
+                The use of the information obtained through the reCAPTCHA
                 service is subject to the Google Terms of Use:
                 https://www.google.com/intl/de/policies/privacy/
               </p>
@@ -344,7 +344,7 @@ const page = () => {
                   time, facebook recognizes which specific page you are visiting
                   through the information collected by the component and assigns
                   this information to your personal account on facebook. If, for
-                  example, you click the "Like" button or make corresponding
+                  example, you click the Like button or make corresponding
                   comments, this information is sent to your personal user
                   account on facebook and saved there. In addition, the
                   information that you have visited our page is passed on to
@@ -354,7 +354,7 @@ const page = () => {
                 <p className="text-lg">
                   If you want to prevent Facebook from transmitting and storing
                   data about you and your behavior on our website, you must log
-                  out of Facebook before visiting our site. Facebook's privacy
+                  out of Facebook before visiting our site. Facebooks privacy
                   policy provides more information on this, in particular on the
                   collection and use of data by Facebook, your rights in this
                   regard, and the settings options for protecting your privacy:
@@ -379,7 +379,7 @@ const page = () => {
                   Inc., Amphitheatre Parkway, Mountain View, CA 94043, USA.
                 </p>
                 <p className="text-lg">
-                  We use the option "- enhanced data protection mode -" provided
+                  We use the option - enhanced data protection mode - provided
                   by YouTube.
                 </p>
                 <p className="text-lg">
@@ -388,7 +388,7 @@ const page = () => {
                   displayed on the website by communicating it to your browser.
                 </p>
                 <p className="text-lg">
-                  According to YouTube, in "- enhanced data protection mode -"
+                  According to YouTube, in - enhanced data protection mode -
                   only data is transmitted to the YouTube server, in particular
                   which of our websites you visited when you watch the video. If
                   you are logged in to YouTube at the same time, this
@@ -397,7 +397,7 @@ const page = () => {
                   visiting our website.
                 </p>
                 <p className="text-lg">
-                  Further information on YouTube's privacy policy is provided by
+                  Further information on YouTubes privacy policy is provided by
                   Google at the following link:
                   https://www.google.de/intl/de/policies/privacy/
                 </p>
@@ -409,11 +409,11 @@ const page = () => {
               <h3 className="text-xl font-semibold mb-3">Google+</h3>
               <div className="space-y-4">
                 <p className="text-lg">
-                  We use the "+1" button on our website provided by Google+, a
+                  We use the +1 button on our website provided by Google+, a
                   service provided by Google Inc., 1600 Amphitheatre Parkway,
                   Mountain View, CA 94043 USA, hereinafter referred to as
-                  "Google". Each time you access our website that is equipped
-                  with such a "+1" component, this component causes the browser
+                  Google. Each time you access our website that is equipped
+                  with such a +1 component, this component causes the browser
                   you are using to download a corresponding representation of
                   the component from Google.
                 </p>
@@ -421,11 +421,11 @@ const page = () => {
                   If you visit our site while logged in to Google, Google can
                   collect information about your Google account, the website you
                   recommend, your IP address and other browser-related
-                  information when you click the "+1" button.
+                  information when you click the +1 button.
                 </p>
                 <p className="text-lg">
-                  This means that your "+1" recommendation can be saved and made
-                  publicly available. Your Google "+1" recommendation can then
+                  This means that your +1 recommendation can be saved and made
+                  publicly available. Your Google +1 recommendation can then
                   be displayed as a reference together with your account name
                   and, if applicable, with your photo stored with Google in
                   Google services, such as in search results or in your Google
@@ -433,7 +433,7 @@ const page = () => {
                   on the Internet.
                 </p>
                 <p className="text-lg">
-                  You can find Google's privacy policy for the "+1" button with
+                  You can find Googles privacy policy for the +1 button with
                   all further information on the collection, transfer and use of
                   data by Google, your rights in this regard and your profile
                   setting options here:
@@ -448,7 +448,7 @@ const page = () => {
               <div className="space-y-4">
                 <p className="text-lg">
                   We use the Instagram service on our website. Instagram is a
-                  service of Instagram Inc. Through the integrated "Insta"
+                  service of Instagram Inc. Through the integrated Insta
                   button on our page, Instagram receives the information that
                   you have accessed the corresponding page of our website. If
                   you are logged in to Instagram, Instagram can assign this
@@ -456,7 +456,7 @@ const page = () => {
                   data.
                 </p>
                 <p className="text-lg">
-                  The data transmitted by clicking the "Insta" button is stored
+                  The data transmitted by clicking the Insta button is stored
                   by Instagram. You can find further information on the purpose
                   and scope of data collection, its processing and use, as well
                   as your related rights and setting options to protect your
@@ -520,7 +520,7 @@ const page = () => {
                   creditworthiness in relation to the order you have placed. You
                   can find out which credit agencies these are and which data
                   PayPal generally collects, processes, stores and passes on in
-                  PayPal's privacy policy at
+                  PayPals privacy policy at
                   https://www.paypal.com/de/webapps/mpp/ua/privacy-full
                 </p>
               </div>
@@ -597,14 +597,14 @@ const page = () => {
               <h3 className="text-xl font-semibold mb-3">Google AdWords</h3>
               <div className="space-y-4">
                 <p className="text-lg">
-                  We also use the Google advertising tool "Google Adwords" to
+                  We also use the Google advertising tool Google Adwords to
                   promote our website. As part of this, we use the analysis
-                  service "Conversion Tracking" from Google Inc., 1600
+                  service Conversion Tracking from Google Inc., 1600
                   Amphitheatre Parkway, Mountain View, CA 94043 USA, hereinafter
-                  "Google". If you have reached our website via a Google ad, a
+                  Google. If you have reached our website via a Google ad, a
                   cookie will be stored on your computer. Cookies are small text
                   files that your Internet browser stores on your computer.
-                  These so-called "conversion cookies" expire after 30 days and
+                  These so-called conversion cookies expire after 30 days and
                   are not used to personally identify you.
                 </p>
                 <p className="text-lg">
@@ -614,23 +614,23 @@ const page = () => {
                   been redirected to our site.
                 </p>
                 <p className="text-lg">
-                  The information obtained using "conversion cookies" is used by
+                  The information obtained using conversion cookies is used by
                   Google to create visit statistics for our website. These
                   statistics tell us the total number of users who clicked on
                   our advert and which pages of our website were subsequently
                   accessed by the respective user. However, we and other
-                  advertisers using "Google Adwords" do not receive any
+                  advertisers using Google Adwords do not receive any
                   information that could be used to personally identify users.
                 </p>
                 <p className="text-lg">
-                  You can prevent the installation of "conversion cookies" by
+                  You can prevent the installation of conversion cookies by
                   setting your browser accordingly, for example by using a
                   browser setting that generally deactivates the automatic
                   setting of cookies or specifically blocks only cookies from
-                  the domain "googleadservices.com".
+                  the domain googleadservices.com.
                 </p>
                 <p className="text-lg">
-                  You can find Google's privacy policy at the following link:
+                  You can find Googles privacy policy at the following link:
                   https://services.google.com/sitestats/de.html
                 </p>
               </div>
@@ -644,7 +644,7 @@ const page = () => {
                   We use Google AdSense on our website. Google AdSense is a
                   service provided by Google Inc., 1600 Amphitheatre Parkway,
                   Mountain View, CA 94043 USA, for integrating advertisements.
-                  Google AdSense uses so-called "cookies", i.e. text files that
+                  Google AdSense uses so-called cookies, i.e. text files that
                   are stored on your computer and enable an analysis of the use
                   of our website. Google AdSense also uses so-called web
                   beacons. These web beacons enable Google to evaluate

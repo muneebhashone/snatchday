@@ -2,15 +2,6 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 
 import TournamentDetailHero from "@/components/TournamentDetailHero";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import React from "react";
 import bg from "@/app/images/productDetailSecondSecBg.png";
@@ -291,7 +282,7 @@ const page = () => {
                   {displayProducts.map((product, index) => (
                     <CarouselItem
                       key={index}
-                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6"
+                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
                     >
                       <FeaturedProductsCard {...product} />
                     </CarouselItem>
@@ -303,7 +294,7 @@ const page = () => {
             </div>
           </div>
         </div>
-        <TrainingCenter />
+        <div className="p-20"><TrainingCenter /></div>
       </main>
     </ClientLayout>
   );

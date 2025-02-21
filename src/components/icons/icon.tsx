@@ -1179,11 +1179,7 @@ export const WinningBidsIcon = ({ className = "" }: { className?: string }) => {
   );
 };
 
-export const FeaturedStarIcon = ({
-  className = "",
-}: {
-  className?: string;
-}) => {
+export const FeaturedStarIcon = () => {
   return (
     <svg
       width="33"

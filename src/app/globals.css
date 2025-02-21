@@ -371,20 +371,27 @@ body {
   background-position: center;
   background-size: cover;
 }
+.swiper-wrapper {
+  transition-timing-function: linear !important;
+  transition-duration: 0ms !important;
+}
 
 .swiper-button-next,
 .swiper-button-prev {
   width: 50px !important;
   height: 50px !important;
-  background: rgba(255, 255, 255, 0.1);
+  /* background: rgba(255, 255, 255, 0.1); */
+  background: white;
   border-radius: 50%;
-  color: white !important;
+  /* color: white !important; */
+  color: rgb(184, 184, 184) !important;
   transition: all 0.3s ease;
 }
 
 .swiper-button-next:hover,
 .swiper-button-prev:hover {
-  background: var(--primary);
+  background: hsl(var(--primary)) !important;
+  color: white !important;
 }
 
 .swiper-button-next::after,
@@ -409,4 +416,15 @@ body {
 
 .swiper-fade .swiper-slide-active {
   opacity: 1 !important;
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

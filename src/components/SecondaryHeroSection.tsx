@@ -29,16 +29,16 @@ const SecondaryHeroSection = ({
           unoptimized
           className={
             title === "VIP Shop"
-              ? "w-full h-[700px] sm:h-[600px] xl:h-[680px] object-cover object-end"
+              ? "w-full h-[560px] sm:h-[600px] xl:h-[680px] object-cover object-end"
               : "w-full h-[350px] lg:h-[600px] xl:h-[600px] object-cover"
           }
         />
-        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center mt-6 pb-10">
-          <div className="lg:container text-center sm:text-start mx-auto px-0 sm:px-10 lg:px-10 flex flex-col-reverse sm:grid sm:grid-cols-2 lg:text-start">
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center mt-9 sm:mt-6 pb-10">
+          <div className="lg:container text-center sm:text-start mx-auto sm:px-10 lg:px-10 flex flex-col-reverse sm:grid sm:grid-cols-2 lg:text-start">
             <div className="content-center">
               {title === "VIP Shop" ? (
                 <div className="flex flex-col items-center sm:items-start justify-center">
-                  <h2 className="text-white text-2xl font-bold mb-4 sm:mb-8 mt-8 sm:mt-10">
+                  <h2 className="text-white text-2xl font-bold mb-2 sm:mb-8 mt-2 sm:mt-10">
                     VIP Shop
                   </h2>
                   <PrimaryHeading
@@ -47,7 +47,7 @@ const SecondaryHeroSection = ({
                     remainingHeading="VIP Members"
                     textColor="text-white"
                   />
-                  <p className="text-white mt-3 text-xl lg:text-2xl font-bold">
+                  <p className="text-white mt-3 text-[18px] lg:text-2xl font-normal">
                     Take your chance to get a very special bargain.
                   </p>
                   <Button
@@ -59,18 +59,18 @@ const SecondaryHeroSection = ({
                       border: "5px solid transparent",
                       borderRadius: "9999px",
                     }}
-                    className="mt-7 w-[220px] lg:w-[312px] h-[70px] lg:h-[83px] text-xl lg:text-2xl font-bold flex items-center justify-center"
+                    className="mt-4 lg:mt-7 w-[180px] sm:w-[220px] lg:w-[312px] h-[50px] sm:h-[70px] lg:h-[83px] text-xl lg:text-2xl font-bold flex items-center justify-center"
                   >
                     <Image
                       src={crown}
                       width={36}
                       height={36}
                       alt="crown"
-                      className="w-[28px] h-[28px]"
+                      className="w-[22px] sm:w-[28px] h-[22px] sm:h-[28px]"
                     />
                     Register
                   </Button>
-                  <p className="text-white text-lg lg:text-xl mt-4">
+                  <p className="text-white text-lg lg:text-xl lg:mt-4">
                     Complete your{" "}
                     <span className="text-primary">ViP membership</span> now!
                   </p>
@@ -110,7 +110,7 @@ const SecondaryHeroSection = ({
                 <Image
                   src={rightimage}
                   alt="tournament"
-                  className="w-full object-contain max-h-[180px] sm:max-h-[200px] lg:max-h-[260px] xl:max-h-[500px]"
+                  className={`w-full object-contain ${title === "VIP Shop" ? 'max-h-[120px] sm:max-h-[200px] lg:max-h-[260px] xl:max-h-[500px]' : 'max-h-[180px] sm:max-h-[200px] lg:max-h-[260px] xl:max-h-[500px]'}`}
                 />
               )}
             </div>
