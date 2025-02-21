@@ -354,7 +354,7 @@ const DuelArena = () => {
               <h2 className="text-foreground flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
                 How to Enter{" "}
                 <span className="ml-2 bg-primary text-white px-1 sm:px-4 rounded-lg">
-                  Tournement
+                  Tournament
                 </span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-2 sm:gap-8 ">
