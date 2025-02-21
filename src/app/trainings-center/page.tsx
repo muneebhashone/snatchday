@@ -137,7 +137,7 @@ const page = () => {
                 {displayProducts.map((product, index) => (
                   <CarouselItem
                     key={index}
-                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/6"
+                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
                   >
                     <FeaturedProductsCard {...product} />
                   </CarouselItem>

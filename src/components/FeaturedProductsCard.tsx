@@ -26,7 +26,7 @@ const FeaturedProductsCard = ({
   discount,
 }: FeaturedProductCardProps) => {
   return (
-    <div className="flex flex-col justify-between bg-white rounded-2xl p-4 border border-gray-200 hover:border-primary relative group hover:shadow-lg transition-all duration-300 min-w-[337px] min-h-[439px]">
+    <div className="flex flex-col justify-between bg-white rounded-2xl p-4 border border-gray-200 hover:border-primary relative group hover:shadow-lg transition-all duration-300 w-[337px] h-[439px]">
       {/* VAT Badge */}
       <div className="absolute right-0 top-0 bg-gray-100 rounded-tr-2xl px-2 py-1">
         <p className="text-xs text-gray-500">19%</p>

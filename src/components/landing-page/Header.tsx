@@ -440,7 +440,7 @@ const Header = () => {
                   }`}
                 >
                   {items.name}
-                  <ChevronDown className="text-primary w-5 h-5" />
+                  <ChevronDown className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"}`} />
                   <div
                     className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
                       pathname === items.link ? "opacity-100" : "opacity-0"

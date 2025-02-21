@@ -64,20 +64,20 @@ const trainingCards = [
 
 const TrainingCenter = () => {
   return (
-    <div className="relative">
-       <div className="absolute w-full h-full">
-            <BubblesIcon className="absolute -top-10 -left-20 sm:left-10"/>
-            <BubblesIcon1 className="absolute -top-10 -right-32 sm:right-10"/>
-            <BubblesIcon className="absolute -bottom-20 -left-20 sm:left-40"/>
-            <BubblesIcon1 className="absolute -bottom-20 -right-20 sm:right-40"/>
-            
-        </div>
-        <h3 className=" text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-extrabold flex items-center justify-center gap-1 lg:gap-3">
-            Training
-            <span className="bg-primary text-white px-4 py-2 rounded-lg">
-              Center
-            </span>
-          </h3>
+    <div className="relative overflow-hidden">
+      <div className="absolute w-full h-full">
+        <BubblesIcon className="absolute -top-10 -left-20 sm:left-10" />
+        <BubblesIcon1 className="absolute -top-10 -right-32 sm:right-10" />
+        <BubblesIcon className="absolute -bottom-20 -left-20 sm:left-40" />
+        <BubblesIcon1 className="absolute -bottom-20 -right-20 sm:right-40" />
+
+      </div>
+      <h3 className="text-foreground text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-extrabold flex items-center justify-center gap-1 lg:gap-3">
+        Training
+        <span className="bg-primary text-white px-4 py-2 rounded-lg">
+          Center
+        </span>
+      </h3>
       <Carousel
         opts={{
           align: "start",
