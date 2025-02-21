@@ -67,6 +67,12 @@ const Header = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
+  // State for user points
+  const [userPoints, setUserPoints] = useState({
+    snapPoints: 4875,
+    discountPoints: 750,
+  });
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -440,7 +446,11 @@ const Header = () => {
                   }`}
                 >
                   {items.name}
-                  <ChevronDown className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"}`} />
+                  <ChevronDown
+                    className={`w-5 h-5 ${
+                      pathname === items.link ? "text-white" : "text-primary"
+                    }`}
+                  />
                   <div
                     className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
                       pathname === items.link ? "opacity-100" : "opacity-0"
@@ -569,6 +579,22 @@ const Header = () => {
               0
             </span>
           </button>
+        </div>
+
+        {/* User Points Display */}
+        <div className="">
+          <div className="flex items-start">
+            <span className="text-primary font-bold">
+              Snap Points: {userPoints.snapPoints} /{" "}
+              {userPoints.snapPoints / 100}€
+            </span>
+          </div>
+          <div className="flex items-center">
+            <span className="text-primary font-bold">
+              Discount Points: {userPoints.discountPoints} /{" "}
+              {userPoints.discountPoints / 100}€
+            </span>
+          </div>
         </div>
       </div>
 

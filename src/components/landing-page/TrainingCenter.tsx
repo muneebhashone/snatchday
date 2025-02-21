@@ -60,11 +60,31 @@ const trainingCards = [
     icon: game1,
     label: "Training 6",
   },
+  {
+    icon: game1,
+    label: "Training 6",
+  },
+  {
+    icon: game3,
+    label: "Training 3",
+  },
+  {
+    icon: game4,
+    label: "Training 4",
+  },
+  {
+    icon: game5,
+    label: "Training 5",
+  },
+  {
+    icon: game1,
+    label: "Training 6",
+  },
 ];
 
 const TrainingCenter = () => {
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative">
       <div className="absolute w-full h-full">
         <BubblesIcon className="absolute -top-10 -left-20 sm:left-10" />
         <BubblesIcon1 className="absolute -top-10 -right-32 sm:right-10" />
@@ -79,9 +99,12 @@ const TrainingCenter = () => {
         </span>
       </h3>
       <Carousel
+       
         opts={{
           align: "start",
           loop: true,
+          duration: 10,
+          
         }}
         className="w-full"
       >

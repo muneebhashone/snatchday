@@ -184,6 +184,7 @@ const DuelArena = () => {
             alt="supersale"
             width={894}
             height={462}
+            unoptimized={true}
           />
           <Image
             className="w-[100%] md:w-[50%]"
@@ -191,6 +192,7 @@ const DuelArena = () => {
             alt="supersale"
             width={894}
             height={462}
+            unoptimized={true}
           />
         </div>
       </div>
