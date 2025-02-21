@@ -44,19 +44,6 @@ const FeaturedProducts = () => {
 
   const allProducts: ProductCategories = {
     all: [
-   
-      {
-        title: "ZOTAC GAMING GeForce RTX 3050 AMP - Grafikkarten",
-        price: "319,80",
-        oldPrice: "334,80",
-        rating: 5,
-        reviews: 5,
-        image: graphiccard,
-        isSale: false,
-        isNew: true,
-        discount: "€99",
-        category: "computer",
-      },
       {
         title: "SanDisk Extreme - Flash-Speicherkarte (microSDXC)",
         price: "31,40",

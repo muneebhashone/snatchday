@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart, ChevronDown } from "lucide-react";
+import { User, Heart, ShoppingCart, ChevronDown, Headphones, Monitor, Smartphone, Gamepad, Computer, LucideIcon } from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -18,13 +18,103 @@ import { usePathname } from "next/navigation";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import iphone from '@/app/images/iphone.png'
+import laptop1 from '@/app/images/laptop.png'
+import laptop2 from '@/app/images/laptopv2.png'
+import { StaticImageData } from "next/image";
+
+type ICatogory = {
+  id: number,
+  name: string,
+  path: string,
+  icon: LucideIcon,
+  image: StaticImageData,
+  subcategories: ISub[]
+}
+
+type ISub = {
+  name: string,
+  path: string,
+  image: StaticImageData
+}
+
+const categoryData: ICatogory[] = [
+  {
+    id: 1,
+    name: "Audio, Video & HiFi",
+    path: "/audio-video-hifi",
+    icon: Headphones,
+    image: iphone,
+    subcategories: [
+      { name: "Home Theater Systems", path: "/category/home-theater", image: iphone },
+      { name: "Speakers", path: "/category/speakers", image: laptop1 },
+      { name: "Amplifiers", path: "/category/amplifiers", image: laptop2 },
+      { name: "Receivers", path: "/category/receivers", image: iphone },
+    ]
+  },
+  {
+    id: 2,
+    name: "Computer & Hardware",
+    path: "/computer-hardware",
+    icon: Monitor,
+    image: laptop1,
+    subcategories: [
+      { name: "Processors", path: "/category/processors", image: iphone },
+      { name: "Motherboards", path: "/category/motherboards", image: iphone },
+      { name: "Memory", path: "/category/memory", image: iphone },
+      { name: "Storage", path: "/category/storage", image: iphone },
+    ]
+  },
+  {
+    id: 3,
+    name: "Cell Phones & Communication",
+    path: "/phones-communication",
+    icon: Smartphone,
+    image: laptop2,
+    subcategories: [
+      { name: "Smartphones", path: "/category/smartphones", image: iphone },
+      { name: "Phone Accessories", path: "/category/accessories", image: iphone },
+      { name: "Cases & Protection", path: "/category/cases", image: iphone },
+      { name: "Chargers & Cables", path: "/category/chargers", image: iphone },
+    ]
+  },
+  {
+    id: 4,
+    name: "Entertainment & Gaming",
+    path: "/entertainment-gaming",
+    icon: Gamepad,
+    image: iphone,
+    subcategories: [
+      { name: "Gaming Consoles", path: "/category/consoles", image: iphone },
+      { name: "Video Games", path: "/category/games", image: iphone },
+      { name: "Gaming Accessories", path: "/category/accessories", image: iphone },
+      { name: "Virtual Reality", path: "/category/vr", image: iphone },
+    ]
+  },
+  {
+    id: 5,
+    name: "PC Systems",
+    path: "/pc-systems",
+    icon: Computer,
+    image: laptop1,
+    subcategories: [
+      { name: "Desktop Computers", path: "/category/desktop", image: iphone },
+      { name: "Workstations", path: "/category/workstations", image: iphone },
+      { name: "All-in-One PCs", path: "/category/all-in-one", image: iphone },
+      { name: "Mini PCs", path: "/category/mini-pcs", image: iphone },
+    ]
+  },
+];
+
 
 const menu = [
   {
@@ -66,6 +156,13 @@ const Header = () => {
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const [userPoints, setUserPoints] = useState({
+    snapPoints: 4875,
+    discountPoints: 750,
+  });
+
+  const [categoryImage, setCategoryImage] = useState(categoryData[0].image);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -124,267 +221,60 @@ const Header = () => {
                 <NavigationMenuTrigger className="bg-primary hover:bg-primary data-[state=open]:bg-primary">
                   <Hamburger />
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-white">
-                  <div className="container mx-auto py-6">
-                    {/* Category Header */}
-                    <div className="flex items-center justify-between mb-8 px-4 w-screen">
-                      <h2 className="text-2xl font-bold text-gray-900">
-                        All Categories
-                      </h2>
-                      <Link
-                        href="/categories"
-                        className="text-primary hover:text-primary/80 flex items-center gap-2 font-medium"
-                      >
-                        View All Categories
-                        <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
-                      </Link>
-                    </div>
-
-                    {/* Categories Grid */}
-                    <div className="grid grid-cols-5 gap-8 px-4">
-                      {/* Electronics & Computers */}
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
-                          Electronics & Computers
-                        </h3>
-                        <ul className="space-y-2">
-                          <li>
-                            <Link
-                              href="/category/laptops"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Laptops & Notebooks
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/desktop-pcs"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Desktop PCs
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/computer-components"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Computer Components
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/monitors"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Monitors
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/storage"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Storage Devices
-                            </Link>
-                          </li>
-                        </ul>
+                <NavigationMenuContent className="bg-white border-t border-gray-100">
+                  <div className="max-w-[1920px] mx-auto p-8">
+                    <div className="grid grid-cols-12 gap-8 w-screen">
+                      {/* Categories List */}
+                      <div className="col-span-8">
+                        <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                          {categoryData.map((category) => {
+                            const Icon = category.icon;
+                            return (
+                              <div
+                                key={category.id}
+                                className="group"
+                              >
+                                <Link
+                                  href={category.path}
+                                  className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                >
+                                  <Icon className="w-4 h-4" />
+                                  {category.name}
+                                </Link>
+                                <ul className="space-y-2">
+                                  {category.subcategories.map((subcategory) => (
+                                    <li
+                                      key={subcategory.path}
+                                      onMouseEnter={() => setCategoryImage(subcategory.image)}
+                                    >
+                                      <Link
+                                        href={subcategory.path}
+                                        className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                      >
+                                        {subcategory.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
 
-                      {/* Gaming */}
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
-                          Gaming
-                        </h3>
-                        <ul className="space-y-2">
-                          <li>
-                            <Link
-                              href="/category/gaming-laptops"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Gaming Laptops
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/gaming-pcs"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Gaming PCs
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/consoles"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Gaming Consoles
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/gaming-accessories"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Gaming Accessories
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/gaming-chairs"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Gaming Chairs
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* Mobile & Tablets */}
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
-                          Mobile & Tablets
-                        </h3>
-                        <ul className="space-y-2">
-                          <li>
-                            <Link
-                              href="/category/smartphones"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Smartphones
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/tablets"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Tablets
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/mobile-accessories"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Mobile Accessories
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/smartwatches"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Smartwatches
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/earbuds"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Earbuds & Headphones
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* Accessories */}
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
-                          Accessories
-                        </h3>
-                        <ul className="space-y-2">
-                          <li>
-                            <Link
-                              href="/category/keyboards"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Keyboards
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/mice"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Mice & Mousepads
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/headsets"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Headsets
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/webcams"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Webcams
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/speakers"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Speakers
-                            </Link>
-                          </li>
-                        </ul>
-                      </div>
-
-                      {/* Software & Services */}
-                      <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-900 pb-2 border-b border-gray-200">
-                          Software & Services
-                        </h3>
-                        <ul className="space-y-2">
-                          <li>
-                            <Link
-                              href="/category/operating-systems"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Operating Systems
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/office-software"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Office Software
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/antivirus"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Antivirus & Security
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/vpn"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              VPN Services
-                            </Link>
-                          </li>
-                          <li>
-                            <Link
-                              href="/category/cloud-storage"
-                              className="text-gray-600 hover:text-primary"
-                            >
-                              Cloud Storage
-                            </Link>
-                          </li>
-                        </ul>
+                      {/* Category Image */}
+                      <div className="col-span-4">
+                        {categoryImage && (
+                          <div className="relative h-full w-full">
+                            <Image
+                              src={categoryImage}
+                              alt="Category preview"
+                              fill
+                              className="object-contain w-10 h-10"
+                              unoptimized
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -413,18 +303,16 @@ const Header = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      className={`flex items-center gap-2 hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                        pathname === items.link
-                          ? "text-primary"
-                          : "text-foreground"
-                      }`}
+                      className={`flex items-center gap-2 hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
+                        ? "text-primary"
+                        : "text-foreground"
+                        }`}
                     >
                       {items.name}
                       <ChevronDown className="text-primary w-5 h-5" />
                       <div
-                        className={`w-2 h-2 bg-primary rounded-full ${
-                          pathname === items.link ? "opacity-100" : "opacity-0"
-                        }`}
+                        className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
+                          }`}
                       ></div>
                     </button>
                   </DialogTrigger>
@@ -433,18 +321,19 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`relative flex items-center text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                    pathname === items.link
-                      ? "text-primary underline underline-offset-8 decoration-2"
-                      : "text-foreground"
-                  }`}
+                  className={`relative flex items-center text-foreground hover:text-primary text-lg hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
+                    ? "text-primary underline underline-offset-8 decoration-2"
+                    : "text-foreground"
+                    }`}
                 >
                   {items.name}
-                  <ChevronDown className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"}`} />
+                  <ChevronDown
+                    className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"
+                      }`}
+                  />
                   <div
-                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
-                      pathname === items.link ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
+                      }`}
                   ></div>
                 </Link>
               )}
@@ -570,6 +459,47 @@ const Header = () => {
             </span>
           </button>
         </div>
+
+        {/* Replace the User Points Display with this new dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-1 hover:text-primary bg-primary px-2 rounded-md py-1">
+            <div className="text-right">
+              <div className="flex items-center gap-2 text-white ">
+                <span className="font-medium ">My Points</span>
+                <ChevronDown className="h-4 w-4" />
+              </div>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-80 p-6 bg-white shadow-lg border-2 border-gray-100"
+            align="start"
+            sideOffset={42}
+          >
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Snap Points</span>
+                  <span className="text-primary font-bold">{userPoints.snapPoints}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Equivalent Value</span>
+                  <span className="text-primary font-medium">{userPoints.snapPoints / 100}€</span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Discount Points</span>
+                  <span className="text-primary font-bold">{userPoints.discountPoints}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-500">Equivalent Value</span>
+                  <span className="text-primary font-medium">{userPoints.discountPoints / 100}€</span>
+                </div>
+              </div>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* {/ Mobile Menu /} */}

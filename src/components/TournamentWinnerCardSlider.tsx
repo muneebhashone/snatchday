@@ -51,6 +51,7 @@ const TournamentWinnerCardSlider = () => {
           alt="Trophy"
           className="object-cover xl:object-contain object-center xl:h-[718px] md:h-[450px] h-[350px]"
           priority
+          unoptimized={true}
         />
       </div>
 

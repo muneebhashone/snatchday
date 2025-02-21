@@ -214,7 +214,7 @@ import TrainingCenter from "./TrainingCenter";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectCreative, Navigation, Pagination } from "swiper/modules";
 import 'swiper/css/effect-creative';
-
+import image from '@/app/images/traingame.png'
 const DuelArena = () => {
   const slides = [
     {
@@ -228,28 +228,32 @@ const DuelArena = () => {
 
   const howToEnterSteps = [
     {
-      subTitle: "Choose your prize",
+      subTitle: "choose tournament",
       description:
         "The power is in your hands, chose from our number of exciting prizes that catch your eye the most.",
       number: "01",
+      image: image,
     },
     {
-      subTitle: "Choose your amount of tickets",
+      subTitle: "train game",
       description:
         "Chose how many tickets you would like to enter. The more tickets you select the more chance you have of winning.",
       number: "02",
+      image: image,
     },
     {
-      subTitle: "Answer the question",
+      subTitle: "participate in tournament",
       description:
         "Answer the question with the correct answer to be entered in the competition.",
       number: "03",
+      image: image,
     },
     {
-      subTitle: "Answer the question",
+      subTitle: "win or redeem discount",
       description:
         "Answer the question with the correct answer to be entered in the competition.",
       number: "04",
+      image: image,
     },
   ];
 
@@ -361,15 +365,16 @@ const DuelArena = () => {
                 {howToEnterSteps.map((step, index) => (
                   <div
                     key={index}
-                    className="bg-white p-4 lg:py-8  lg:px-16 rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                    className="relative bg-white p-4 lg:py-8  lg:px-16 rounded-xl shadow-md hover:shadow-lg transition-shadow"
                   >
                     <div className="text-primary text-2xl lg:text-3xl font-bold mb-4 border-2 border-primary w-max p-1">
                       {step.number}
                     </div>
-                    <h3 className="text-xl lg:text-2xl font-bold mb-4 border-b mt-7 text-foreground">
+                    <h3 className="text-xl lg:text-2xl font-bold mb-4 border-b mt-7 text-foreground capitalize">
                       {step.subTitle}
                     </h3>
                     <p className="text-card-foreground text-sm sm:text-lg w-[75%]">{step.description}</p>
+                    <Image className="absolute top-0 right-0 w-40 h-40" src={step.image} alt={step.subTitle} />
                   </div>
                 ))}
               </div>
@@ -388,6 +393,7 @@ const DuelArena = () => {
             alt="supersale"
             width={894}
             height={462}
+            unoptimized={true}
           />
           <Image
             className="w-[100%] md:w-[50%]"
@@ -395,6 +401,7 @@ const DuelArena = () => {
             alt="supersale"
             width={894}
             height={462}
+            unoptimized={true}
           />
         </div>
       </div>
