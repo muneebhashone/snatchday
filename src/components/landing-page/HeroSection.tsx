@@ -8,7 +8,7 @@ import three from "@/app/images/three.svg";
 import four from "@/app/images/four.svg";
 import five from "@/app/images/five.svg";
 import six from "@/app/images/six.svg";
-import iphone from "@/app/images/iphone.png";
+import iphone from "@/app/images/iphone1.png";
 import PermotionalSection from "./PermotionalSection";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
@@ -18,9 +18,11 @@ import "swiper/css/pagination";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import graphiccard from "@/app/images/graphiccard.png";
+import laptop2 from "@/app/images/promoitonModalImage.png";
+import imgbottom from '@/app/images/imagebottom.png'
+import { LiveIcon } from "../icons/icon";
+import laptop from "@/app/images/detailimage.png";
 
-import laptop from "@/app/images/laptopv1.png";
-import laptop2 from "@/app/images/laptopv2.png";
 
 const tournaments = [
   {
@@ -44,11 +46,12 @@ const tournaments = [
     participationPoints: 250,
     currentPriceValue: 535.00,
     countdown: {
+      days: 19,
       hours: 20,
       minutes: 48,
       seconds: 37,
-      milliseconds: 19,
     },
+    status: 'pending'
   },
   {
     title: "Bargain or Discount Tournament",
@@ -71,11 +74,12 @@ const tournaments = [
     participationPoints: 250,
     currentPriceValue: 535.00,
     countdown: {
+      days: 21,
       hours: 20,
       minutes: 48,
       seconds: 37,
-      milliseconds: 19,
     },
+    status: "pending"
   },
   {
     title: "Bargain Tournament",
@@ -98,11 +102,12 @@ const tournaments = [
     participationPoints: 250,
     currentPriceValue: 535.00,
     countdown: {
+      days: 23,
       hours: 20,
       minutes: 48,
       seconds: 37,
-      milliseconds: 19,
     },
+    status: 'live'
   },
 ];
 
@@ -154,7 +159,7 @@ const HeroSection = () => {
           effect="fade"
           grabCursor={true}
           pagination={{ clickable: true }}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
           loop
           modules={[Navigation, Pagination, Autoplay, EffectFade]}
           className="h-full"
@@ -167,14 +172,19 @@ const HeroSection = () => {
                   <div className=" pt-5 xl:pt-10 pb-5 xl:pb-12 px-5 sm:px-7 relative">
 
                     {/* Tournament Badge */}
-                    <div className="mb-3">
-                      <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-lg">
+                    <div className="mb-3 flex items-center">
+                      <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-2xl">
                         Tournament ID :
                         <span className="text-primary"> 1234567890</span>
                       </h2>
                     </div>
-                    <div className="inline-block bg-primary text-white text-xs xl:text-xl px-2 sm:px-3 py-1 rounded-full ">
-                      {tournament.title}
+                    <div className="flex gap-2 items-center text-red-600">
+                      <div className="inline-block bg-primary text-white text-xs xl:text-xl px-2 sm:px-3 py-1 rounded-full ">
+                        {tournament.title}
+                      </div>
+                      <div className="flex items-center text-lg font-bold">
+                        {tournament.status === 'live' ? <div className="flex flex-col text-xs items-center justify-center leading-[3px]"><LiveIcon />Live</div> : <Image src={crown} alt="crown" width={40} height={40} />}
+                      </div>
                     </div>
 
                     {/* Product Title */}
@@ -211,7 +221,7 @@ const HeroSection = () => {
                             <p className="text-card-foreground text-2xl font-semibold">
                               Current price:
                             </p>
-                            <p className="text-2xl font-medium text-card-foreground">
+                            <p className="text-2xl font-medium text-primary">
                               {tournament.currentPriceValue}€
                             </p>
                           </div>
@@ -246,16 +256,26 @@ const HeroSection = () => {
                 {/* Right Content - Swiper Slider */}
                 <div className="col-span-3">
                   <div>
-                    <Image
-                      src={tournament.image}
-                      alt={tournament.alt}
-                      width={525}
-                      height={500}
-                      className="lg:w-full lg:h-[500px] object-contain"
-                      priority
-                      unoptimized
-                    />
+                    <div className="">
+                      <Image src={imgbottom} alt="" className="relative" />
+                      <Image
+                        src={tournament.image}
+                        alt={tournament.alt}
+                        width={525}
+                        height={500}
+                        className="lg:w-full lg:h-[400px] object-contain absolute top-44 left-[29%]"
+                        priority
+                        unoptimized
+                      />
+                    </div>
                     <div className="flex items-center justify-center 2xl:gap-1 gap-2 mt-3 xl:mt-12">
+                      <div className="text-center text-[#1C1B1D]">
+                        <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
+                          {tournament.countdown.days}
+                        </div>
+                        <p className="text-xs hidden xl:block">Days</p>
+                        <p className="xl:hidden block text-xs">Dys</p>
+                      </div>
                       <div className="text-center text-[#1C1B1D]">
                         <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
                           {tournament.countdown.hours}
@@ -276,13 +296,6 @@ const HeroSection = () => {
                         </div>
                         <p className="text-xs hidden xl:block">Seconds</p>
                         <p className="text-xs xl:hidden block">Sec</p>
-                      </div>
-                      <div className="text-center text-[#1C1B1D]">
-                        <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-                          {tournament.countdown.milliseconds}
-                        </div>
-                        <p className="text-xs hidden xl:block">Mili Seconds</p>
-                        <p className="text-xs xl:hidden block">Mili Sec</p>
                       </div>
                     </div>
                   </div>

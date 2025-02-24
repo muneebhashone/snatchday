@@ -138,7 +138,7 @@ const NextTournamentCard = ({
 
         {/* Rating */}
         <div className="flex items-center gap-1">
-          <div className="flex text-[#FF6B3D] text-lg xl:text-2xl">
+          <div className="flex text-primary text-lg xl:text-2xl">
             {"★".repeat(rating)}
           </div>
           <span className="text-sm text-gray-500">({reviews})</span>
@@ -178,7 +178,7 @@ const NextTournamentCard = ({
                 <p className="text-card-foreground text-lg font-semibold">
                   Current price:
                 </p>
-                <p className="text-xl font-bold text-card-foreground">
+                <p className="text-primary text-xl font-bold">
                   {currentPrice}€
                 </p>
               </div>

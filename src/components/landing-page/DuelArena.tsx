@@ -214,7 +214,10 @@ import TrainingCenter from "./TrainingCenter";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectCreative, Navigation, Pagination } from "swiper/modules";
 import 'swiper/css/effect-creative';
-import image from '@/app/images/traingame.png'
+import image2 from '@/app/images/traingame.png'
+import image from '@/app/images/choosetournament.png'
+import image3 from '@/app/images/participateintournament.png'
+import image4 from '@/app/images/win.png'
 const DuelArena = () => {
   const slides = [
     {
@@ -239,21 +242,21 @@ const DuelArena = () => {
       description:
         "Chose how many tickets you would like to enter. The more tickets you select the more chance you have of winning.",
       number: "02",
-      image: image,
+      image: image2,
     },
     {
       subTitle: "participate in tournament",
       description:
         "Answer the question with the correct answer to be entered in the competition.",
       number: "03",
-      image: image,
+      image: image3,
     },
     {
       subTitle: "win or redeem discount",
       description:
         "Answer the question with the correct answer to be entered in the competition.",
       number: "04",
-      image: image,
+      image: image4,
     },
   ];
 
@@ -374,7 +377,7 @@ const DuelArena = () => {
                       {step.subTitle}
                     </h3>
                     <p className="text-card-foreground text-sm sm:text-lg w-[75%]">{step.description}</p>
-                    <Image className="absolute top-0 right-0 w-40 h-40" src={step.image} alt={step.subTitle} />
+                    <Image unoptimized className="absolute top-0 right-0 w-40 h-40 object-contain object-center" src={step.image} alt={step.subTitle} />
                   </div>
                 ))}
               </div>

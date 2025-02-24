@@ -2,51 +2,58 @@ import React from "react";
 import Image, { StaticImageData } from "next/image";
 
 interface BestOfferCardProps {
-  tag: string;
-  title: string;
+  // tag: string;
+  // title: string;
   subtitle: string;
   buttonText: string;
   image: StaticImageData;
   bgimage: StaticImageData;
   buttonTextcolor: string;
+  price?: string;
+  children?: React.ReactNode
 }
 
 const BestOfferCard = ({
-  tag,
-  title,
+  // tag,
+  // title,
   subtitle,
   buttonText,
   image,
   bgimage,
   buttonTextcolor,
+  price,
+  children
 }: BestOfferCardProps) => {
   return (
     <div style={{ backgroundImage: `url(${bgimage.src})` }} className="bg-cover bg-center rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-300 lg:w-[880px] w-[500px] md:min-w-[600px] min-h-[320px] h-[450px] md:h-[420px] flex items-center justify-center">
       {/* Content */}
       <div className="inset-0 p-4 md:p-6 lg:p-10 flex flex-col md:flex-row items-center md:items-center justify-between">
-        <div className="md:w-[40%] space-y-3 md:space-y-4 md:mt-0 mt-2 md:block flex flex-col items-center md:items-start text-center md:text-start">
-          {/* Tag Badge */}
-          <h2 className="inline-flex items-center px-6 py-2 text-sm md:text-lg border border-white rounded-lg text-white font-extrabold">
+        <div className="md:w-[40%] space-y-3 md:space-y-5 md:mt-0 mt-2 md:block flex flex-col items-center md:items-start text-center md:text-start">
+          <div className="space-y-3">
+            {/* Tag Badge */}
+            {/* <h2 className="inline-flex items-center px-6 py-2 text-sm md:text-lg border border-white rounded-lg text-white font-extrabold">
             {tag}
-          </h2>
+          </h2> */}
 
-          {/* Title Section */}
-          <div className="space-y-1 md:space-y-3">
-            <h3 className="text-xl md:text-2xl lg:text-[28px] text-white font-normal">
+            {/* Title Section */}
+            <div className="space-y-1 md:space-y-3">
+              {/* <h3 className="text-xl md:text-2xl lg:text-[28px] text-white font-normal">
               {title}
-            </h3>
-            <h2 className="text-3xl md:text-3xl lg:text-4xl font-bold text-white">
-              {subtitle}
-            </h2>
+            </h3> */}
+              <h2 className="text-3xl md:text-3xl lg:text-4xl font-bold text-white">
+                {subtitle}
+              </h2>
+            </div>
+            <div className="text-white text-sm w-max">{children}</div>
+            {/* Button */}
+            <button
+              className={`w-max bg-white px-4 md:px-6 py-2 rounded-full text-sm md:text-base font-medium hover:bg-white/90 transition-all`}
+              style={{ color: buttonTextcolor }}
+            >
+              {buttonText}
+            </button>
           </div>
-
-          {/* Button */}
-          <button
-            className={`w-max bg-white px-4 md:px-6 py-2 rounded-full text-sm md:text-base font-medium hover:bg-white/90 transition-all`}
-            style={{ color: buttonTextcolor }}
-          >
-            {buttonText}
-          </button>
+          {price && <div className="text-white font-bold text-xl">Price: <span>{price}</span></div>}
         </div>
 
         {/* Product Image */}

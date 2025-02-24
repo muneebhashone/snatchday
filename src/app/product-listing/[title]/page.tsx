@@ -237,7 +237,7 @@ const ProductContent = () => {
         <div className="absolute inset-0 w-full h-full overflow-hidden">
           <BubblesIcon className="absolute top-[10%] left-[0%] animate-bubble-1" />
           <BubblesIcon1 className="absolute top-[10%] right-[0%] animate-bubble-2" />
-          <BubblesIcon className="absolute top-[25%] left-[15%] animate-bubble-3" />
+          {/* <BubblesIcon className="absolute top-[25%] left-[15%] animate-bubble-3" /> */}
           <BubblesIcon1 className="absolute top-[35%] right-[0%] animate-bubble-4" />
           <BubblesIcon className="absolute top-[45%] left-[0%] animate-bubble-1" />
         </div>
@@ -289,7 +289,7 @@ const ProductContent = () => {
         <ProductDetails {...productData} />
         <div className="bg-[#F9F9F9] container max-w-[1920px] mx-auto py-20 px-10">
           <h2 className="text-[48px] font-extrabold text-center capitalize mb-10">
-            <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg">
+            <span className=" bg-primary text-white px-4 py-1 rounded-lg">
               Next
             </span>
 
@@ -330,7 +330,7 @@ const ProductContent = () => {
           <div className="text-[48px] font-extrabold text-center capitalize mb-10">
             <h2>
               <span className="bg-transparent">Similar</span>
-              <span className="bg-[#FF6B3D] text-white px-4 py-1 rounded-lg ml-2">
+              <span className="bg-primary text-white px-4 py-1 rounded-lg ml-2">
                 Products
               </span>
             </h2>

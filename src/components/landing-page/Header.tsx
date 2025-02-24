@@ -205,13 +205,23 @@ const Header = () => {
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
-        {/* Logo Section */}
-        <Link
-          href="/"
-          className="flex items-center space-x-2 border-r border-gray-200 pr-6"
-        >
-          <Image src={logo} alt="Logo" width={208} height={66} unoptimized />
-        </Link>
+        <div className="border-r border-gray-200 ">
+          {/* Logo Section */}
+          <Link
+            href="/"
+            className="flex items-center space-x-2 pr-6"
+          >
+            <Image src={logo} alt="Logo" width={180} height={58} unoptimized />
+          </Link>
+
+          {/* {/ Date Time Bar /} */}
+          <div className="py-1 px-4 flex items-center justify-start text-xs text-foreground rounded-full">
+            <div className="flex items-center gap-2 font-medium">
+              <span className="border-r pr-2">{formatDate(currentDateTime)}</span>
+              <span>{formatTime(currentDateTime)}</span>
+            </div>
+          </div>
+        </div>
 
         {/* {/ Desktop Hamburger - Only visible on desktop /} */}
         <div className="hidden lg:block">
@@ -340,13 +350,6 @@ const Header = () => {
             </nav>
           );
         })}
-        {/* {/ Date Time Bar /} */}
-        <div className="bg-primary py-1 px-4 flex items-center justify-end text-sm text-white rounded-full">
-          <div className="flex items-center gap-2">
-            <span className="border-r pr-2">{formatDate(currentDateTime)}</span>
-            <span>{formatTime(currentDateTime)}</span>
-          </div>
-        </div>
 
         {/* {/ Search Dialog /} */}
         <Dialog open={isSearchOpen} onOpenChange={setIsSearchOpen}>

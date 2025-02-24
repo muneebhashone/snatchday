@@ -54,66 +54,71 @@ const TournamentDetailHero = () => {
             <span className="text-primary font-extrabold text-[25px]">01.02.2025 at 18:31.</span> Check-out
             time: <span className="text-primary font-extrabold text-[25px]">18:21</span>
           </p>
-          <div className="flex gap-5 w-max mt-7">
-            <div className=" p-2 rounded-full flex gap-3 items-center">
-              <div className="bg-white shadow-[2px_2px_10px_#d1d5db] h-[98px] w-[98px] rounded-full flex items-center justify-center">
-                <Image className="object-contain" src={powerBlock} alt="" />
+          <div className=" flex flex-col gap-2 border pl-2 w-max border-primary">
+            <div className="flex gap-5 w-max mt-7 ">
+              <div className=" p-2 rounded-full flex gap-3 items-center">
+                <div className="bg-white shadow-[2px_2px_10px_#d1d5db] h-[98px] w-[98px] rounded-full flex items-center justify-center">
+                  <Image className="object-contain" src={powerBlock} alt="" />
+                </div>
+                <div className="mr-14 flex flex-col justify-center">
+                  <h1 className="text-xl font-bold leading-7">Game</h1>
+                  <h1 className="text-3xl text-primary font-bold leading-7">PowerBlocks</h1>
+                  <p className="text-lg">Duration: 3:00 minutes</p>
+                </div>
               </div>
-              <div className="mr-14 flex flex-col justify-center">
-                <h1 className="text-xl font-bold leading-7">Game</h1>
-                <h1 className="text-3xl text-primary font-bold leading-7">PowerBlocks</h1>
-                <p className="text-lg">Duration: 3:00 minutes</p>
-              </div>
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="bg-primary py-3 px-10 text-center rounded-full text-white text-[24px] leading-8 shadow-[0px_4px_10px_#F37835] cursor-pointer">
-                <p>
-                  Aktueller Preis{" "}
-                  <h2 className="text-white text-[34px] font-extrabold">
-                    201,65€
-                  </h2>
-                </p>
-              </div>
-              <div className="flex gap-1">
-                <TaxIcon />
-                <p className="text-[14px]">incl. <span className="font-bold">19% VAT</span>, plus shipping costs</p>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-6 mt-3">
-            <p className=" rounded-full px-8 py-1 text-[21px] ">
-              Participation fee: <span className="text-primary">250</span>{" "}
-              points / <span className="text-primary">2 .50€</span>
-            </p>
-            <h3 className=" rounded-full px-8 py-1 text-[21px] font-extrabold">
-              50<span className="text-primary">€</span> Gunstiger
-            </h3>
-          </div>
-          <div className="flex gap-3 items-center justify-start">
-            <div className=" rounded-full w-max py-3 flex gap-5 my-7 px-2">
-              <div className=" flex flex-col border-r border-r-gray-300 px-5 text-[16px]">
-                <p>RRP:</p>
-                <p className="text-[21px]">
-                  535,00
-                  <span className="text-primary">€</span>
-                </p>
-              </div>
-              <div className=" flex flex-col border-r border-r-gray-300 px-5 ">
-                <p>Participants:</p>
-                <p className="text-[21px]">
-                  0 of <span className="text-primary">200</span>
-                </p>
-              </div>
-              <div className=" flex flex-col px-5">
-                <p className="w-max">Number of products:</p>
-                <span className="text-primary text-[21px]">1</span>
+              <div className="flex flex-col gap-2">
+                <div className="bg-primary py-3 px-10 text-center rounded-full text-white text-[24px] leading-8 shadow-[0px_4px_10px_#F37835] cursor-pointer">
+                  <p>
+                    Aktueller Preis{" "}
+                    <h2 className="text-white text-[34px] font-extrabold">
+                      201,65€
+                    </h2>
+                  </p>
+                </div>
+                <div className="flex gap-1">
+                  <TaxIcon />
+                  <p className="text-[14px]">incl. <span className="font-bold">19% VAT</span>, plus shipping costs</p>
+                </div>
               </div>
             </div>
-            <div className=" w-[300px] py-3 px-6 rounded-full flex items-center">
-              <p className="text-[18px] font-normal">
-                For each additional participant the price drops by{" "}
-                <span className="text-primary font-bold border-b-2 border-b-primary ">5.00€</span>{" "}
+            <div className="flex gap-6 mt-3">
+              <p className=" rounded-full px-8 py-1 text-[21px] underline underline-offset-8 decoration-gray-300 decoration-[3px]">
+                Participation fee: <span className="text-primary">250</span>{" "}
+                points / <span className="text-primary">2 .50€</span>
               </p>
+              {/* <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold">
+              50<span className="text-primary">€</span> Gunstiger
+            </h3> */}
+              <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold text-primary">
+                Already Saved: 50€
+              </h3>
+            </div>
+            <div className="flex gap-3 items-center justify-start">
+              <div className=" rounded-full w-max py-3 flex gap-5 my-7 px-2">
+                <div className=" flex flex-col border-r border-r-gray-300 px-5 text-[16px]">
+                  <p>RRP:</p>
+                  <p className="text-[21px]">
+                    535,00
+                    <span className="text-primary">€</span>
+                  </p>
+                </div>
+                <div className=" flex flex-col border-r border-r-gray-300 px-5 ">
+                  <p>Participants:</p>
+                  <p className="text-[21px]">
+                    0 of <span className="text-primary">200</span>
+                  </p>
+                </div>
+                <div className=" flex flex-col px-5">
+                  <p className="w-max">Number of products:</p>
+                  <span className="text-primary text-[21px]">1</span>
+                </div>
+              </div>
+              <div className=" w-[300px] py-3 px-6 rounded-full flex items-center">
+                <p className="text-[18px] font-normal">
+                  For each additional participant the price drops by{" "}
+                  <span className="text-primary font-bold border-b-2 border-b-primary ">5.00€</span>{" "}
+                </p>
+              </div>
             </div>
           </div>
           <div className="flex gap-3 items-start mt-5">
