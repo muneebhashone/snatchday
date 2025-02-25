@@ -13,8 +13,10 @@ import ticket5 from "@/app/images/ticket5.svg";
 import ticket6 from "@/app/images/ticket6.svg";
 import { Button } from "@/components/ui/button";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
+import { useRouter } from "next/navigation";
 
 const SupportPage = () => {
+  const router = useRouter();
   const ticketdata = [
     {
       id: 1,
@@ -142,13 +144,16 @@ const SupportPage = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
             {faqdata.map((item) => (
-              <div
+              <Button
+                onClick={() => {
+                  router.push(`/faq/${item.id}`);
+                }}
                 key={item.id}
                 className="w-full font-extrabold shadow-lg rounded-2xl transition-all duration-300 ease-in-out px-8 py-6 text-center text-2xl min-h-[167px] flex items-center justify-center
                 bg-white text-[#1C1B1D] hover:bg-primary hover:text-white hover:rounded-full"
               >
                 {item.title}
-              </div>
+              </Button>
             ))}
           </div>
           <div className="bg-white flex flex-col md:flex-row justify-between items-center shadow-xl py-8 mt-8 md:py-16 px-8 md:px-16 rounded-lg gap-4">

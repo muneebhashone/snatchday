@@ -101,7 +101,7 @@ const page = () => {
                 <Input
                   type="file"
                   multiple
-                  className="mt-4 bg-white text-gray-900 cursor-pointer file:cursor-pointer file:border-0 file:bg-gray-100 file:text-gray-600 file:px-4 file:py-2 hover:file:bg-gray-200"
+                  className="mt-4 h-13 bg-white text-gray-900 cursor-pointer file:cursor-pointer file:border-0 file:bg-gray-100 file:text-gray-600 file:px-4 file:py-2 hover:file:bg-gray-200"
                   accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
                 />
               </div>
