@@ -110,6 +110,7 @@ const Footer = () => {
                   alt="Snatch Logo"
                   width={150}
                   height={50}
+                  unoptimized
                 />
                 <p className="text-sm mt-4 text-white">
                   All prices include statutory VAT plus shipping costs and cash
@@ -200,6 +201,7 @@ const Footer = () => {
                           alt={service.alt}
                           width={62}
                           height={17}
+                          unoptimized
                         />
                       </div>
                     ))}
@@ -235,6 +237,7 @@ const Footer = () => {
                   alt={method.alt}
                   width={53}
                   height={22}
+                  unoptimized
                 />
               </div>
             ))}
