@@ -307,6 +307,37 @@ body {
   }
 }
 
+/* yaha se*/
+@keyframes bubble-float-5 {
+  0%, 
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+
+  20% {
+    transform: translate(-25px, -20px) scale(1.1) rotate(15deg);
+  }
+
+  40% {
+    transform: translate(35px, -40px) scale(0.95) rotate(-10deg);
+  }
+
+  60% {
+    transform: translate(-30px, -30px) scale(1.05) rotate(20deg);
+  }
+
+  80% {
+    transform: translate(20px, -15px) scale(1.02) rotate(-15deg);
+  }
+}
+
+.animate-bubble-5 {
+  animation: bubble-float-5 20s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+  will-change: transform;
+}
+
+/* yahatak */
+
 .animate-bubble-1 {
   animation: bubble-float-1 15s ease-in-out infinite;
 }
@@ -417,8 +448,6 @@ body {
 .swiper-fade .swiper-slide-active {
   opacity: 1 !important;
 }
-
-
 
 @layer base {
   * {

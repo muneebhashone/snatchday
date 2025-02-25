@@ -1,6 +1,8 @@
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import React from "react";
 import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 
 const page = () => {
   return (
@@ -9,7 +11,17 @@ const page = () => {
         <h1 className="text-4xl md:text-5xl font-bold text-center mb-16 mt-12">
           Imprint
         </h1>
-
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <BubblesIcon className="absolute top-[10%] left-[5%] animate-bubble-1" />
+          <BubblesIcon1 className="absolute top-[15%] right-[15%] animate-bubble-5" />
+          <BubblesIcon1 className="absolute top-[35%] right-[40%] animate-bubble-4" />
+          <BubblesIcon className="absolute top-[65%] left-[12%] animate-bubble-3" />
+          <BubblesIcon className="absolute top-[75%] left-[65%] animate-bubble-5" />
+          <BubblesIcon1 className="absolute -bottom-[5%] right-[95%] animate-bubble-2" />
+          <BubblesIcon className="absolute bottom-[40%] left-[85%] animate-bubble-3" />
+          <BubblesIcon1 className="absolute top-[40%] right-[90%] animate-bubble-4" />
+        </div>
+        <Separator />
         <div className="max-w-4xl mx-auto space-y-12 text-card-foreground">
           {/* Company Details */}
           <section className="space-y-4">
