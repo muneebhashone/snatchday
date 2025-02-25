@@ -113,7 +113,7 @@ const tournaments = [
 ];
 
 const HeroSection = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [, setActiveIndex] = useState(0);
   const [key, setKey] = useState(0);
 
   // Handle slide change
