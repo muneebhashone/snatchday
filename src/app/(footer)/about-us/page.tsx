@@ -1,29 +1,39 @@
 import ClientLayout from "@/components/landing-page/ClientLayout";
+import { Separator } from "@/components/ui/separator";
 import React from "react";
+import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 
 const page = () => {
   return (
     <ClientLayout>
-      <div className="container max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 pt-28 pb-32">
+      <div className="container max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 pt-28 pb-32 mb-10">
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <BubblesIcon className="absolute top-[10%] left-[5%] animate-bubble-1" />
+          <BubblesIcon1 className="absolute top-[15%] right-[15%] animate-bubble-2" />
+          <BubblesIcon1 className="absolute top-[35%] right-[5%] animate-bubble-4" />
+          <BubblesIcon className="absolute top-[65%] left-[12%] animate-bubble-3" />
+          <BubblesIcon className="absolute top-[85%] left-[80%] animate-bubble-1" />
+          <BubblesIcon1 className="absolute bottom-[5%] right-[95%] animate-bubble-2" />
+          <BubblesIcon className="absolute bottom-[25%] left-[85%] animate-bubble-3" />
+          <BubblesIcon1 className="absolute top-[40%] right-[85%] animate-bubble-4" />
+        </div>
         <h1 className="text-4xl md:text-5xl font-bold text-center mb-16 mt-12">
           About Us
         </h1>
+        <Separator className="mb-5" />
 
         <div className="max-w-5xl font-medium mx-auto space-y-8 text-card-foreground">
-          {/* Welcome Message */}
           <p className="text-lg">
             We warmly welcome you to Snatch Day, an exciting new start-up
             company. Snatch Day was founded in Berlin in August 2017 with the
             aim of offering you a unique shopping experience.
           </p>
 
-          {/* Vision Statement */}
           <p className="text-lg">
             Our vision for Snatch Day had been maturing in our minds for a long
             time because we are not an ordinary online shop.
           </p>
 
-          {/* Unique Selling Points */}
           <div className="space-y-6">
             <p className="text-lg">
               At Snatch Day you have the opportunity to purchase products at

@@ -39,7 +39,7 @@ const CollectPointsModal = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full bg-green-700 hover:bg-green-800 text-white rounded-full py-3">
+        <Button className="w-full bg-green-700 hover:bg-green-800 text-white rounded-full py-3 uppercase">
           Would you like to collect additional points?
         </Button>
       </DialogTrigger>

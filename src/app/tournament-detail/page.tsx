@@ -2,11 +2,10 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 
 import TournamentDetailHero from "@/components/TournamentDetailHero";
-import Image from "next/image";
+
 import React from "react";
 import bg from "@/app/images/productDetailSecondSecBg.png";
-import bg3 from "@/app/images/productDetailSecThreeBg.png";
-import ProductDetailSecFour from "@/components/ProductDetailSecFour";
+
 import ProductDetailTheorySec from "@/components/ProductDetailTheorySec";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import NextTournamentCard from "@/components/NextTournamentCard";
@@ -15,6 +14,11 @@ import laptop2 from "@/app/images/laptopv2.png";
 
 import graphiccard from "@/app/images/graphiccard.png";
 import FeaturedProductsCard from "@/components/FeaturedProductsCard";
+import Image from "next/image";
+import image2 from '@/app/images/traingame.png'
+import image from '@/app/images/choosetournament.png'
+import image3 from '@/app/images/participateintournament.png'
+import image4 from '@/app/images/win.png'
 
 const page = () => {
 
@@ -199,6 +203,40 @@ const page = () => {
       },
     },
   ];
+
+  const howToEnterSteps = [
+    {
+      subTitle: "choose tournament",
+      description:
+        "The power is in your hands, chose from our number of exciting prizes that catch your eye the most.",
+      number: "01",
+      image: image,
+    },
+    {
+      subTitle: "train game",
+      description:
+        "Chose how many tickets you would like to enter. The more tickets you select the more chance you have of winning.",
+      number: "02",
+      image: image2,
+    },
+    {
+      subTitle: "participate in tournament",
+      description:
+        "Answer the question with the correct answer to be entered in the competition.",
+      number: "03",
+      image: image3,
+    },
+    {
+      subTitle: "win or redeem discount",
+      description:
+        "Answer the question with the correct answer to be entered in the competition.",
+      number: "04",
+      image: image4,
+    },
+  ];
+
+
+  
   return (
     <ClientLayout>
       <main className="mb-56 overflow-hidden">
@@ -211,15 +249,42 @@ const page = () => {
         >
           <ProductDetailTheorySec />
         </div>
-        <div className="bg-cover bg-center relative h-[900px] w-[100%]">
+        {/* <div className="bg-cover bg-center relative h-[900px] w-[100%]">
           <Image
             className="absolute -top-[23px] right-0 z-[-1] w-[100%] object-contain"
             src={bg3}
             alt="bg3"
           />
           <ProductDetailSecFour />
-        </div>
-        <div className="container max-w-[1920px] mx-auto py-20 px-10">
+        </div> */}
+         <div className="px-0 md:px-20 m-20 max-w-[1600px] mx-auto">
+              <h2 className="text-foreground flex flex-wrap items-center justify-center text-[24px] sm:text-[30px] lg:text-[48px] font-bold lg:font-extrabold text-center mb-12 md:mt-0 mt-3">
+                How to Enter{" "}
+                <span className="ml-2 bg-primary text-white px-1 sm:px-4 rounded-lg">
+                  Tournament
+                </span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-2 sm:gap-8 ">
+                {howToEnterSteps.map((step, index) => (
+                  <div
+                    key={index}
+                    className="relative bg-white p-4 lg:py-8  lg:px-16 rounded-xl shadow-md hover:shadow-lg transition-shadow"
+                  >
+                    <div className="text-primary text-2xl lg:text-3xl font-bold mb-4 border-2 border-primary w-max p-1">
+                      {step.number}
+                    </div>
+                    <h3 className="text-xl lg:text-2xl font-bold mb-4 border-b mt-7 text-foreground capitalize">
+                      {step.subTitle}
+                    </h3>
+                    <p className="text-card-foreground text-sm sm:text-lg w-[75%]">{step.description}</p>
+                    <Image unoptimized className="absolute top-0 right-0 w-40 h-40 object-contain object-center" src={step.image} alt={step.subTitle} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+
+        <div className="container max-w-[1920px] mx-auto py-10 px-10">
           <h2 className="text-[48px] font-extrabold text-center capitalize mb-10">
             <span className="bg-transparent mr-4">Next</span>
             <span className=" bg-[#FF6B3D] text-white px-4 py-1 rounded-lg">
@@ -258,7 +323,7 @@ const page = () => {
           </Carousel>
         </div>
         <div>
-          <div className="px-4 md:px-12 pb-60 pt-20 mt-20 bg-[#F9F9F9]">
+          <div className="px-4 md:px-12 py-20 bg-[#F9F9F9]">
             <div className="text-[48px] font-extrabold my-5 text-center capitalize">
               <h2>
                 <span className="text-foreground mr-3">Current</span>

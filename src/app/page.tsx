@@ -18,6 +18,7 @@ export default function Home() {
         <ProductSection />
         <BestOffers />
         <FeaturedProducts />
+        {/* <MonthlyTournament /> */}
         <TournamentWinner />
         <DuelArena />
         <Testimonials />

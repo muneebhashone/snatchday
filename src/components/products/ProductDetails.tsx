@@ -4,9 +4,10 @@ import Image, { StaticImageData } from "next/image";
 import { Heart, ShoppingCartIcon, TruckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import {VatIcon } from "@/components/icons/icon";
+import { VatIcon } from "@/components/icons/icon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "../ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 interface ProductDetailsProps {
   title: string;
@@ -63,11 +64,10 @@ const ProductDetails = ({
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`rounded border p-2 cursor-pointer transition-all duration-300 ${
-                    selectedImage === index
-                      ? "border-primary ring-2 ring-primary ring-opacity-50"
-                      : "border-gray-200 hover:border-primary"
-                  }`}
+                  className={`rounded border p-2 cursor-pointer transition-all duration-300 ${selectedImage === index
+                    ? "border-primary ring-2 ring-primary ring-opacity-50"
+                    : "border-gray-200 hover:border-primary"
+                    }`}
                   onClick={() => setSelectedImage(index)}
                 >
                   <Image
@@ -140,7 +140,7 @@ const ProductDetails = ({
                   onChange={(e) =>
                     setQuantity(Math.max(1, parseInt(e.target.value) || 1))
                   }
-                  className="w-[68px] h-[32px] pl-4 pr-8 text-base bg-white border border-[#E5E7EB] rounded-full focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className="w-[70px] h-[40px] pl-4 pr-8 text-base bg-white border border-[#E5E7EB] rounded-full focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <div className="absolute right-0 top-0 bottom-0 w-8 flex flex-col border-l border-[#E5E7EB]">
                   <button
@@ -148,8 +148,8 @@ const ProductDetails = ({
                     className="flex-1 flex items-center justify-center hover:bg-gray-50 text-gray-600"
                   >
                     <svg
-                      width="12"
-                      height="12"
+                      width="18"
+                      height="18"
                       viewBox="0 0 12 12"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -169,8 +169,8 @@ const ProductDetails = ({
                     className="flex-1 flex items-center justify-center hover:bg-gray-50 text-gray-600"
                   >
                     <svg
-                      width="12"
-                      height="12"
+                      width="18"
+                      height="18"
                       viewBox="0 0 12 12"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
@@ -204,15 +204,25 @@ const ProductDetails = ({
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 mt-6">
+            <div className="flex gap-4 mt-6 items-center">
               <button className="gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full w-64 h-14 hover:opacity-90">
                 <ShoppingCartIcon size={28} className="mr-2" />
                 Add to Cart
               </button>
-              <button className="w-64 h-14 bg-white text-foreground shadow-xl flex items-center justify-center text-lg rounded-full hover:bg-gray-50">
-                <Heart size={28} className="mr-2" />
-                Add to Wishlist
+              <button className="w-64 h-14 bg-white text-card-foreground shadow-xl flex items-center justify-center text-lg rounded-full hover:bg-gray-50">
+                {/* <Heart size={28} className="mr-2" /> */}
+                Play For It
               </button>
+              <TooltipProvider>
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <Button className="bg-primary h-8 w-8 rounded-full text-[24px] text-white flex items-center justify-center" variant="outline">?</Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-gray-700 text-white text-center">
+                    <p className="w-48 h-max text-xs">Play for it here you have the ooportunity to vote for a product for which there is no tournament yet. If several users choose a product, a corresponding tournament will be created.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             {/* Shipping Method */}

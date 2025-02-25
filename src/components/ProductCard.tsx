@@ -71,7 +71,9 @@ const ProductCard = ({
             </div>
             <span className="text-sm text-gray-500">({rating})</span>
           </div>
-          <span className="text-2xl font-semibold text-card-foreground">{price}€</span>
+          <span className="text-2xl font-semibold text-card-foreground">
+            {price}€
+          </span>
         </div>
 
         {/* Add to Cart Button */}
