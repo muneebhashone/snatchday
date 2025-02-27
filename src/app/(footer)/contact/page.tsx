@@ -184,7 +184,9 @@ const Page = () => {
                     name="refrence"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Refrence</FormLabel>
+                        <FormLabel className="font-bold text-lg text-foreground">
+                          Refrence:
+                        </FormLabel>
                         <FormControl>
                           <Input
                             className="font-bold w-[500px]"
@@ -204,7 +206,7 @@ const Page = () => {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel className='font-bold text-lg text-foreground'>Name:</FormLabel>
                         <FormControl>
                           <Input
                             className="font-bold w-[500px]"
@@ -224,7 +226,7 @@ const Page = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel className='font-bold text-lg text-foreground'>Email:</FormLabel>
                         <FormControl>
                           <Input
                             className="font-bold w-[500px]"
@@ -244,7 +246,7 @@ const Page = () => {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone</FormLabel>
+                        <FormLabel className='font-bold text-lg text-foreground'>Phone:</FormLabel>
                         <FormControl>
                           <Input
                             className="font-bold w-[500px]"
@@ -264,7 +266,7 @@ const Page = () => {
                     name="news"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>News</FormLabel>
+                        <FormLabel className='font-bold text-lg text-foreground'>News:</FormLabel>
                         <FormControl>
                           <Input
                             className="font-bold w-[500px]"
@@ -282,7 +284,7 @@ const Page = () => {
                 </div>
                 <button
                   type="submit"
-                  className="mt-4 bg-primary text-white px-6 py-2 rounded font-bold"
+                  className="mt-4 bg-primary text-white px-8 text-lg py-2 rounded font-bold"
                 >
                   Submit
                 </button>
@@ -291,25 +293,25 @@ const Page = () => {
           </div>
           <div className="w-2/5">
             <div className="mt-10">
-              <h1 className="text-xl font-extrabold">CALL US</h1>
+              <h1 className="text-3xl font-extrabold">CALL US</h1>
               <div className="flex gap-3 items-center mt-2">
-                <PhoneCallIcon size={20} className="text-primary" />
+                <PhoneCallIcon size={25} className="text-primary" />
                 <div>
-                  <p className="font-medium">
+                  <p className="font-medium text-lg">
                     <span className="font-bold">Toll Free:</span> 0123-456-789
                   </p>
-                  <p className="font-medium">
+                  <p className="font-medium text-lg">
                     <span className="font-bold">Fax:</span> 0123-456-789
                   </p>
                 </div>
               </div>
             </div>
             <div className="mt-5">
-              <h1 className="text-xl font-extrabold">CONTACT US</h1>
+              <h1 className="text-3xl font-extrabold">CONTACT US</h1>
               <div className="flex gap-3 items-center mt-2">
-                <MailIcon size={20} className="text-primary" />
+                <MailIcon size={25} className="text-primary" />
                 <div>
-                  <a className="font-bold hover:text-primary cursor-pointer">
+                  <a className="font-bold hover:text-primary cursor-pointer text-lg">
                     <link rel="" href="#" />
                     info@snatchday.de
                   </a>
@@ -317,10 +319,10 @@ const Page = () => {
               </div>
             </div>
             <div className="mt-5">
-              <h1 className="text-xl font-extrabold">LOCATION</h1>
+              <h1 className="text-3xl font-extrabold">LOCATION</h1>
               <div className="flex gap-3 items-center mt-2 font-medium">
-                <LocateFixed size={20} className="text-primary" />
-                <p className="w-[260px]">
+                <LocateFixed size={25} className="text-primary" />
+                <p className="w-[260px] text-lg font-bold">
                   Snatch Day GmbH, Telramundweg 6 D-12167 Berlin
                 </p>
               </div>

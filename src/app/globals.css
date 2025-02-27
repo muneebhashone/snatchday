@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Ensure Tailwind CSS is properly configured in your project */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 body {
   font-family: var(--font-hanken-grotesk), sans-serif;
@@ -34,12 +35,49 @@ body {
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(36, 29, 29, 0.4);
     border-radius: 10px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(180deg, #fdf6ae, #a06b2a);
+  }
+  /* Custom Scrollbar2 */
+  .custom-scrollbar-2::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar-2::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar-2::-webkit-scrollbar-thumb {
+    background: rgba(36, 29, 29, 0.4);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar-2::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #fdf6ae, #a06b2a);
+  }
+
+  .horizontal-slider .example-thumb {
+    border-radius: 50%;
+    font-size: 0px;
+    border: 2px solid hsl(var(--primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 23px;
+    width: 23px;
+    background: white;
+    cursor: pointer;
+  }
+  .horizontal-slider .example-track-1 {
+    @apply bg-primary h-2 rounded-full;
+  }
+  .horizontal-slider .example-track-2 {
+    display: none;
   }
 }
 
@@ -309,7 +347,7 @@ body {
 
 /* yaha se*/
 @keyframes bubble-float-5 {
-  0%, 
+  0%,
   100% {
     transform: translate(0, 0) scale(1) rotate(0deg);
   }

@@ -15,6 +15,8 @@ import fot4 from "@/app/images/fot4.svg";
 import fot5 from "@/app/images/fot5.svg";
 import fot6 from "@/app/images/fot6.svg";
 import { FooterSvg1, FooterSvg2, FooterSvg4, FooterSvg3 } from "../icons/icon";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import CallBackServicesModal from "../CallBackServicesModal";
 
 const Footer = () => {
   const footerLinks = {
@@ -145,9 +147,20 @@ const Footer = () => {
                 <ul className="space-y-3">
                   {footerLinks.serviceCenter.map((link, index) => (
                     <li key={index} className="text-lg text-white">
-                      <Link href={link.href} className="hover:underline">
-                        {link.label}
-                      </Link>
+                      {link.label === "Callback Service" ? (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <button className="hover:underline">
+                              Callback Service
+                            </button>
+                          </DialogTrigger>
+                          <CallBackServicesModal />
+                        </Dialog>
+                      ) : (
+                        <Link href={link.href} className="hover:underline">
+                          {link.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
