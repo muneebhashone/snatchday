@@ -30,8 +30,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import { 
-  PlusCircle, 
-  Trash2, 
+
   Edit, 
   ChevronDown, 
   ChevronUp,
@@ -39,15 +38,7 @@ import {
   Plus,
   Delete,
 } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+
 import { 
   Dialog,
   DialogContent,
@@ -61,13 +52,13 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
+
   FormField,
   FormItem,
-  FormLabel,
+ 
   FormMessage,
 } from "@/components/ui/form"
-import { Label } from '@/components/ui/label'
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
