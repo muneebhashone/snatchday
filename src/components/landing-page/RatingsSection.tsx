@@ -14,14 +14,7 @@ const RatingsSection = () => {
         </div>
       </div>
     </div>
-    // <div className="bg-[#F6E9E1] py-28 lg:py-24 xl:py-28 px-8 lg:px-28 xl:px-40 mb-20 lg:mb-0">
-    //   <div className="lg:grid grid-cols-1 xl:grid-cols-2 xl:gap-10 flex items-center justify-center" >
-    //     <Image className="hidden lg:block lg:col-span-1 w-96 h-96 self-center justify-self-center" src={ratingsectionimage} alt="rating" />
-    //     <div className="content-center col-span-1 lg:col-span-1 px-10 self-center justify-self-center">
-    //       <RatingSlider />
-    //     </div>
-    //   </div>
-    // </div>
+
   );
 };
 

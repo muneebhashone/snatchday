@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import heroImage from "@/app/images/hero-bg.png";
 import Image from "next/image";
 import one from "@/app/images/one.svg";
@@ -22,7 +22,7 @@ import laptop2 from "@/app/images/promoitonModalImage.png";
 import imgbottom from "@/app/images/imagebottom.png";
 import { LiveIcon } from "../icons/icon";
 import laptop from "@/app/images/detailimage.png";
-import { motion, AnimatePresence } from "framer-motion"; // Corrected import from "motion/react" to "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"; 
 import { Swiper as SwiperType } from "swiper";
 
 const tournaments = [
@@ -68,7 +68,7 @@ const tournaments = [
     participants: "0 of 200",
     image: laptop,
     alt: "Laptop",
-    rating: 5, // Changed alt text to "Laptop" for clarity
+    rating: 5, 
     reviews: 123,
     gameIcon: graphiccard,
     gameName: "Push It",
@@ -95,7 +95,7 @@ const tournaments = [
     participationFee: "250 Snap Points / 2.50€",
     participants: "0 of 200",
     image: laptop2,
-    alt: "Laptop Promotion", // Changed alt text for clarity
+    alt: "Laptop Promotion", 
     rating: 5,
     reviews: 123,
     gameIcon: graphiccard,
@@ -115,6 +115,12 @@ const tournaments = [
 const HeroSection = () => {
   const [, setActiveIndex] = useState(0);
   const [key, setKey] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Set isLoaded to true after component mounts
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   // Handle slide change
   const handleSlideChange = (swiper: SwiperType) => {
@@ -133,46 +139,198 @@ const HeroSection = () => {
 
   // Text animation variants (from left)
   const textVariants = {
-    hidden: { opacity: 0, y: -100 },
+    hidden: { opacity: 0, y: -50 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 1,
-        type: "spring",
-        delay: 0.5,
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+        delay: 0.2,
       },
     },
   };
 
+  // Enhanced page entrance animation
+  const pageEntranceVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  // Staggered text animation for children elements
+  const staggerContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const staggerItemVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
+
+  const imageVariants = {
+    hidden: { y: 100, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.8,
+        ease: [0.6, -0.05, 0.01, 0.99],
+        delay: 0.4,
+      },
+    },
+  };
+
+  // Reveal animation for the product image
+  const revealVariants = {
+    hidden: { 
+      opacity: 0,
+      y: 50
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+        when: "beforeChildren",
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  // Grid cell reveal animation
+  const cellRevealVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.3
+      }
+    }
+  };
+
+  // Grid effect animation for images
+  const gridImageVariants = {
+    hidden: { 
+      opacity: 0,
+      scale: 0.8,
+      filter: "blur(10px)"
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+        delay: 0.6,
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  // Grid cells animation
+  const gridCellVariants = {
+    hidden: { opacity: 0, scale: 0 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+        ease: [0.43, 0.13, 0.23, 0.96]
+      }
+    }
+  };
+
+  // Simple fade-in animation for product image
+  const fadeInVariants = {
+    hidden: { 
+      y: -50,
+      opacity: 0,
+      scale: 0.95,
+      filter: "blur(8px)"
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.8,
+        ease: "easeOut"
+      }
+    }
+  };
+
   return (
-    <section className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10">
-      {/* Background Image */}
-      <Image
-        src={heroImage}
-        alt="hero-image"
-        width={1920}
-        height={969}
-        priority
-        className="object-cover absolute inset-0 w-full h-[130vh] grayscale"
-      />
+    <motion.section 
+      className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10"
+      initial="hidden"
+      animate={isLoaded ? "visible" : "hidden"}
+      variants={pageEntranceVariants}
+    >
+      {/* Background Image with animation */}
+      <motion.div
+        initial={{ opacity: 0, scale: 1.1 }}
+        animate={{ opacity: 0.8, scale: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
+        className="absolute inset-0"
+      >
+        <Image
+          src={heroImage}
+          alt="hero-image"
+          width={1920}
+          height={969}
+          priority
+          className="object-cover absolute inset-0 w-full h-[130vh] grayscale"
+        />
+      </motion.div>
 
       {/* Floating Images */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="relative w-full h-full">
           {images.map((image, index) => (
-            <Image
+            <motion.div
               key={index}
-              src={image.src}
-              alt={image.alt}
-              width={63}
-              height={63}
-              className={`
-                transform hover:scale-105 transition-transform duration-300 
-                absolute animate-float hidden md:block
-                ${getRandomPosition(index)}
-              `}
-            />
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ 
+                duration: 0.5, 
+                delay: 0.8 + (index * 0.1),
+                ease: [0.43, 0.13, 0.23, 0.96]
+              }}
+              className={`absolute ${getRandomPosition(index)}`}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt}
+                width={63}
+                height={63}
+                className="transform hover:scale-105 transition-transform duration-300 hidden md:block animate-float"
+              />
+            </motion.div>
           ))}
         </div>
       </div>
@@ -203,16 +361,22 @@ const HeroSection = () => {
                       className="pt-5 xl:pt-10 pb-5 xl:pb-12 px-5 sm:px-7 relative"
                       initial="hidden"
                       animate="visible"
-                      variants={textVariants}
+                      variants={staggerContainerVariants}
                     >
                       {/* Tournament Badge */}
-                      <div className="mb-3 flex items-center">
+                      <motion.div
+                        variants={staggerItemVariants}
+                        className="mb-3 flex items-center"
+                      >
                         <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-2xl">
                           Tournament ID :
                           <span className="text-primary"> 1234567890</span>
                         </h2>
-                      </div>
-                      <div className="flex gap-2 items-center text-red-600">
+                      </motion.div>
+                      <motion.div
+                        variants={staggerItemVariants}
+                        className="flex gap-2 items-center text-red-600"
+                      >
                         <div className="inline-block bg-primary text-white text-xs xl:text-xl px-2 sm:px-3 py-1 rounded-full ">
                           {tournament.title}
                         </div>
@@ -231,15 +395,21 @@ const HeroSection = () => {
                             />
                           )}
                         </div>
-                      </div>
+                      </motion.div>
 
                       {/* Product Title */}
-                      <p className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6">
+                      <motion.p
+                        variants={staggerItemVariants}
+                        className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6"
+                      >
                         {tournament.productName}
-                      </p>
+                      </motion.p>
 
                       {/* Game Info */}
-                      <div className="flex flex-col justify-center gap-2 mt-2 xl:mt-5">
+                      <motion.div
+                        variants={staggerItemVariants}
+                        className="flex flex-col justify-center gap-2 mt-2 xl:mt-5"
+                      >
                         <div className="flex items-center justify-start gap-2 w-max">
                           <div className="w-12 xl:w-24 h-12 xl:h-24 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
                             <Image
@@ -276,9 +446,12 @@ const HeroSection = () => {
                             {tournament.participants}
                           </p>
                         </div>
-                      </div>
+                      </motion.div>
 
-                      <div className="flex items-center justify-between mt-2">
+                      <motion.div
+                        variants={staggerItemVariants}
+                        className="flex items-center justify-between mt-2"
+                      >
                         <div className="flex flex-col w-full gap-2">
                           {/* Price Info */}
                           <div>
@@ -308,8 +481,11 @@ const HeroSection = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between">
+                      </motion.div>
+                      <motion.div
+                        variants={staggerItemVariants}
+                        className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between"
+                      >
                         <div className="flex items-center gap-2">
                           <Button className="mt-6 gradient-primary text-lg font-bold hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg w-[244px] h-[57px]">
                             <Link href="/tournament-detail">
@@ -317,30 +493,41 @@ const HeroSection = () => {
                             </Link>
                           </Button>
                         </div>
-                      </div>
+                      </motion.div>
                     </motion.div>
                   </AnimatePresence>
                 </div>
 
                 {/* Right Content - Product Image with Animation */}
-                <div className="col-span-3">
-                  <div className="">
+                <div className="col-span-3 relative">
+                  <div className="w-full">
                     <Image
                       src={imgbottom}
                       alt="Bottom Image"
-                      className="relative"
-                    />{" "}
-                    {/* Added alt text for accessibility */}
-                    <Image
-                      src={tournament.image}
-                      alt={tournament.alt}
-                      width={525}
-                      height={500}
-                      className="lg:w-full lg:h-[400px] object-contain absolute top-44 left-[29%]"
+                      className="w-full h-auto"
                       priority
-                      unoptimized
                     />
                   </div>
+                 
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={key}
+                      initial="hidden"
+                      animate="visible"
+                      variants={fadeInVariants}
+                      className="absolute top-20 left-[0%] w-full h-[400px]"
+                    >
+                      <Image
+                        src={tournament.image}
+                        alt={tournament.alt}
+                        width={525}
+                        height={500}
+                        className="w-full h-full object-contain"
+                        priority
+                        unoptimized
+                      />
+                    </motion.div>
+                  </AnimatePresence>
                   <div className="flex items-center justify-center 2xl:gap-1 gap-2 mt-3 xl:mt-12">
                     <div className="text-center text-[#1C1B1D]">
                       <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
@@ -378,7 +565,7 @@ const HeroSection = () => {
         </Swiper>
       </div>
       <PermotionalSection />
-    </section>
+    </motion.section>
   );
 };
 

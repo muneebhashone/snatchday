@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart, ChevronDown, Headphones, Monitor, Smartphone, Gamepad, Computer, LucideIcon } from "lucide-react";
+import { User, Heart, ShoppingCart, ChevronDown } from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -27,127 +27,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import iphone from '@/app/images/iphone.png'
-import laptop1 from '@/app/images/laptop.png'
-import laptop2 from '@/app/images/laptopv2.png'
-import { StaticImageData } from "next/image";
 
-type ICatogory = {
-  id: number,
-  name: string,
-  path: string,
-  icon: LucideIcon,
-  image: StaticImageData,
-  subcategories: ISub[]
-}
-
-type ISub = {
-  name: string,
-  path: string,
-  image: StaticImageData
-}
-
-const categoryData: ICatogory[] = [
-  {
-    id: 1,
-    name: "Audio, Video & HiFi",
-    path: "/audio-video-hifi",
-    icon: Headphones,
-    image: iphone,
-    subcategories: [
-      { name: "Home Theater Systems", path: "/category/home-theater", image: iphone },
-      { name: "Speakers", path: "/category/speakers", image: laptop1 },
-      { name: "Amplifiers", path: "/category/amplifiers", image: laptop2 },
-      { name: "Receivers", path: "/category/receivers", image: iphone },
-    ]
-  },
-  {
-    id: 2,
-    name: "Computer & Hardware",
-    path: "/computer-hardware",
-    icon: Monitor,
-    image: laptop1,
-    subcategories: [
-      { name: "Processors", path: "/category/processors", image: iphone },
-      { name: "Motherboards", path: "/category/motherboards", image: iphone },
-      { name: "Memory", path: "/category/memory", image: iphone },
-      { name: "Storage", path: "/category/storage", image: iphone },
-    ]
-  },
-  {
-    id: 3,
-    name: "Cell Phones & Communication",
-    path: "/phones-communication",
-    icon: Smartphone,
-    image: laptop2,
-    subcategories: [
-      { name: "Smartphones", path: "/category/smartphones", image: iphone },
-      { name: "Phone Accessories", path: "/category/accessories", image: iphone },
-      { name: "Cases & Protection", path: "/category/cases", image: iphone },
-      { name: "Chargers & Cables", path: "/category/chargers", image: iphone },
-    ]
-  },
-  {
-    id: 4,
-    name: "Entertainment & Gaming",
-    path: "/entertainment-gaming",
-    icon: Gamepad,
-    image: iphone,
-    subcategories: [
-      { name: "Gaming Consoles", path: "/category/consoles", image: iphone },
-      { name: "Video Games", path: "/category/games", image: iphone },
-      { name: "Gaming Accessories", path: "/category/accessories", image: iphone },
-      { name: "Virtual Reality", path: "/category/vr", image: iphone },
-    ]
-  },
-  {
-    id: 5,
-    name: "PC Systems",
-    path: "/pc-systems",
-    icon: Computer,
-    image: laptop1,
-    subcategories: [
-      { name: "Desktop Computers", path: "/category/desktop", image: iphone },
-      { name: "Workstations", path: "/category/workstations", image: iphone },
-      { name: "All-in-One PCs", path: "/category/all-in-one", image: iphone },
-      { name: "Mini PCs", path: "/category/mini-pcs", image: iphone },
-    ]
-  },
-];
-
-
-const menu = [
-  {
-    id: 1,
-    name: "VIP Shop",
-    link: "/vip-shop",
-  },
-  {
-    id: 2,
-    name: "Turniere",
-    link: "/tournaments",
-  },
-  {
-    id: 3,
-    name: "Duellarena",
-    link: "/duel-arena",
-  },
-  {
-    id: 4,
-    name: "Trainingscenter",
-    link: "/trainings-center",
-  },
-  {
-    id: 5,
-    name: "Gewinnspiel im Januar",
-    link: "/gewinnspiel-im-januar",
-  },
-  {
-    id: 6,
-    name: "Support",
-    link: "/support",
-  },
-];
+import { categoryData, menu } from "@/dummydata";
 
 const Header = () => {
   const pathname = usePathname();
