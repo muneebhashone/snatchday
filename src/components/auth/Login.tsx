@@ -20,13 +20,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useRegister } from "@/hooks/api";
 
 const Login = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   // Temporary state to simulate login status - replace with your auth logic
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName] = useState("Percy Reed");
+
+  const { mutate: register, isPending } = useRegister({
+     onSuccess: (data) => {
+      console.log(data,"success");
+     },
+     onError: (error) => {
+      console.log(error,"error");
+     }
+  });
+
+
 
   const handleOpenRegister = () => {
     setIsLoginOpen(false);
@@ -41,6 +53,9 @@ const Login = () => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     // Add your logout logic here
+  };
+  const handleRegister = () => {
+    register();
   };
 
   if (isRegisterOpen) {
@@ -150,6 +165,7 @@ const Login = () => {
             >
               Register Now
             </button>
+            <button onClick={handleRegister}>Register</button>
           </div>
         </div>
       </DialogContent>

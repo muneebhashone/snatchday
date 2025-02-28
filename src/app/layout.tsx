@@ -3,6 +3,7 @@ import { Hanken_Grotesk, Montserrat } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { Providers } from "./provider";
 
 const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
@@ -30,7 +31,9 @@ export default function RootLayout({
       <body
         className={`${hankenGrotesk.variable} ${montserrat.variable} antialiased`}
       >
-        <Suspense fallback={<Loading />}>{children}</Suspense>
+        <Providers>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </Providers>
       </body>
     </html>
   );
