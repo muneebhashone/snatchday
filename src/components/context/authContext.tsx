@@ -6,6 +6,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 interface User {
   id: string;
   name: string;
+  email: string;
   role: string;
 }
 
@@ -24,21 +25,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const user = localStorage.getItem("snatchday_user");
-    console.log(user, "user form auth context");
 
-    if (!user) {
-      setUser(null);
-      if (!window.location.pathname.includes('/admin/login')) {
-        router.push("/admin/login");
+    if (user) {
+      const userData = JSON.parse(user);
+      setUser(userData);
+      console.log(userData, "user data from auth context");
+      
+      if (userData.user.role === 'admin') {
+        if (window.location.pathname === '/admin/login' || window.location.pathname === '/') {
+          router.push("/admin");
+        }
       }
     } else {
-      setUser(JSON.parse(user));
-      if (window.location.pathname.includes('/admin/login')) {
-        router.push("/admin");
+      // No user logged in
+      if (window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/admin/login')) {
+        router.push("/admin/login");
       }
     }
     setLoading(false);
-  }, []);
+  }, [router]);
 
   return (
     <AuthContext.Provider value={{ user, loading, setUser }}>

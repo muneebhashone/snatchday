@@ -12,6 +12,7 @@ import {
 
 
 
+
 // Fetch all items
 export const useGetMyProfile = () => {
   return useQuery({
@@ -21,8 +22,10 @@ export const useGetMyProfile = () => {
 };
 
 export const useLogout = () => {
-  return useMutation({
-    mutationFn: logout,
+  const queryClient = useQueryClient();
+  return useQuery({
+    queryKey: ['logout'],
+    queryFn: logout,
   });
 };
 

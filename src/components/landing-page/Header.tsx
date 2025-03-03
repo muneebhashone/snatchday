@@ -88,8 +88,7 @@ const Header = () => {
     });
   };
 
-   const {data:myprofile,isLoading}=useGetMyProfile();
-   console.log(myprofile, "myprofile");
+  // const { data: myprofile, isLoading } = useGetMyProfile();
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">

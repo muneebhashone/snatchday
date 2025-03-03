@@ -33,24 +33,28 @@ DropdownMenu,
 } from '@/components/ui/dropdown-menu'
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/api"
+import axios from "axios"
 const AdminLayout = ({children}: {children: React.ReactNode}) => {
 
   const router = useRouter();
-  const { mutate: logout ,isPending} = useLogout();
+    // const { data: logout, isPending } = useLogout();
 
-  const handleLogout = async () => {
-    try {
-      await logout(undefined, {
-        onSuccess: () => {
-          localStorage.removeItem('snatchday_user');
-          router.push('/admin/login');
-        }
-      });
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  }
+  const handleLogout = () => {
+    // logout(undefined, {
+    //   onSuccess: () => {
+    //     localStorage.removeItem('snatchday_user');
+    //     router.push('/admin/login');
+    //   },
+    //   onError: (error) => {
+    //     console.error('Logout failed:', error);
+    //   }
+    // });
+  };
+
+
+
   return (
+    
     <SidebarProvider>
     <AppSidebar />
     <SidebarInset>
@@ -125,7 +129,7 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
               </DropdownMenuContent>
             </DropdownMenu>
             <Globe/>
-            <Button onClick={handleLogout}>Logout <LogOut className="h-4 w-4" /></Button>
+            <Button >   Logout <LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>
@@ -133,6 +137,7 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
         
         <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
         {children}
+
       </div>
     </SidebarInset>
   </SidebarProvider>

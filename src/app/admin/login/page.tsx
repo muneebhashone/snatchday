@@ -3,9 +3,12 @@
 import Loading from "@/app/loading";
 import { useAuth } from "@/components/context/authContext";
 import { LoginForm } from "@/components/login-form"
+import axios from "axios";
 
 export default function LoginPage() {
   const { loading } = useAuth();
+
+
 
   if (loading) {
     return <Loading />;
