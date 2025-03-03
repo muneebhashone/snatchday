@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useRegister } from "@/hooks/api";
+import { authApi } from "@/hooks/api";
 
 const Login = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -28,17 +28,17 @@ const Login = () => {
   // Temporary state to simulate login status - replace with your auth logic
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName] = useState("Percy Reed");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { mutate: register, isPending } = useRegister({
-     onSuccess: (data) => {
-      console.log(data,"success");
-     },
-     onError: (error) => {
-      console.log(error,"error");
-     }
-  });
-
-
+  // const { mutate: login, isPending } = authApi({
+  //   onSuccess: () => {
+  //     console.log("success login");
+  //   },
+  //   onError: () => {
+  //     console.log("error");
+  //   }
+  // });
 
   const handleOpenRegister = () => {
     setIsLoginOpen(false);
@@ -54,8 +54,16 @@ const Login = () => {
     setIsLoggedIn(false);
     // Add your logout logic here
   };
-  const handleRegister = () => {
-    register();
+
+  const handleLogin = () => {
+   
+    // login({
+    //   data: {
+    //     email: email as string,
+    //     password: password as string,
+    //   },
+    //   type: "login",
+    // });
   };
 
   if (isRegisterOpen) {
@@ -125,11 +133,13 @@ const Login = () => {
               type="email"
               placeholder="E-mail address"
               className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Input
               type="password"
               placeholder="Password"
               className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
@@ -141,8 +151,8 @@ const Login = () => {
           </div>
 
           {/* Login Button */}
-          <Button className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10">
-            Login to your account
+          <Button onClick={handleLogin}  className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10">
+            {/* {isPending ? "Logging in..." : "Login to your account"} */}
           </Button>
 
           {/* Social Login Divider */}
@@ -165,7 +175,7 @@ const Login = () => {
             >
               Register Now
             </button>
-            <button onClick={handleRegister}>Register</button>
+      
           </div>
         </div>
       </DialogContent>

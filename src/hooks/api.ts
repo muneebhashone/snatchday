@@ -2,17 +2,41 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   fetchItems,
   fetchItemById,
-  createItem,
+  authMutation,
   updateItem,
   deleteItem,
   filterItems,
+  getMyprofile,
 } from '../lib/api';
+
+
+
+// Fetch all items
+export const useGetMyProfile = () => {
+  return useQuery({
+    queryKey: ['myprofile'],
+    queryFn: getMyprofile,
+  });
+};
+
 
 // Fetch all items
 export const useGetItems = () => {
   return useQuery({
     queryKey: ['items'],
     queryFn: fetchItems,
+  });
+};
+
+// Create a new item
+export const authApi = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ data, type }: { data: { email: string; password: string } | { email: string; name: string; password: string }; type: string }) => authMutation(data, type),
+    onSuccess: (data: any) => {
+      console.log(data, "data login data from api hooks");
+      queryClient.invalidateQueries({ queryKey: ['login'] });
+    },
   });
 };
 
@@ -29,7 +53,7 @@ export const useGetItemById = (id: string) => {
 export const useRegister = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createItem,
+    mutationFn: ({data,type}: {data: any,type: string}) => authMutation(data,type),
     onSuccess: () => {
       // Invalidate the 'items' query to refetch data after creation
       queryClient.invalidateQueries({ queryKey: ['items'] });

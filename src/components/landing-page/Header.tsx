@@ -31,6 +31,7 @@ import iphone from '@/app/images/iphone.png'
 import laptop1 from '@/app/images/laptop.png'
 import laptop2 from '@/app/images/laptopv2.png'
 import { StaticImageData } from "next/image";
+import { useGetMyProfile } from "@/hooks/api";
 
 type ICatogory = {
   id: number,
@@ -201,6 +202,9 @@ const Header = () => {
       hour12: false,
     });
   };
+
+   const {data:myprofile,isLoading}=useGetMyProfile();
+   console.log(myprofile, "myprofile");
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">

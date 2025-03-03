@@ -5,17 +5,19 @@ export const fetchItems = async () => {
   return response.data;
 };
 
+export const getMyprofile = async () => {
+  const response = await axiosInstance.get('/auth/me');
+  return response.data;
+};
+
+
 export const fetchItemById = async (id: string) => {``
   const response = await axiosInstance.get(`/items/${id}`);
   return response.data;
 };
 
-export const createItem = async (data: any) => {
-  const response = await axiosInstance.post('/auth/register', {
-     email:"sk@gmail.com",
-     name:"sk",
-     password:"123456",
-  });
+export const authMutation = async (data: any,type: string) => {
+  const response = await axiosInstance.post(`/auth/${type}`, data);
   return response.data;
 };
 
