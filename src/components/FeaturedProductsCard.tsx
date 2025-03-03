@@ -12,6 +12,7 @@ interface FeaturedProductCardProps {
   isSale?: boolean;
   isNew?: boolean;
   discount: string;
+ 
 }
 
 const FeaturedProductsCard = ({
@@ -24,6 +25,7 @@ const FeaturedProductsCard = ({
   isSale,
   isNew,
   discount,
+
 }: FeaturedProductCardProps) => {
   return (
     <div className="flex flex-col justify-between bg-white rounded-2xl p-4 border border-gray-200 hover:border-primary relative group hover:shadow-lg transition-all duration-300 w-[337px] h-[439px]">
