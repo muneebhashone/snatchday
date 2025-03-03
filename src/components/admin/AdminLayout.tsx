@@ -1,3 +1,4 @@
+"use client"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -23,15 +24,32 @@ import {
   AlertCircle 
 } from "lucide-react"
 import { 
-  DropdownMenu,
+DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
+import { useRouter } from "next/navigation";
+import { useLogout } from "@/hooks/api"
 const AdminLayout = ({children}: {children: React.ReactNode}) => {
+
+  const router = useRouter();
+  const { mutate: logout ,isPending} = useLogout();
+
+  const handleLogout = async () => {
+    try {
+      await logout(undefined, {
+        onSuccess: () => {
+          localStorage.removeItem('snatchday_user');
+          router.push('/admin/login');
+        }
+      });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }
   return (
     <SidebarProvider>
     <AppSidebar />
@@ -107,7 +125,7 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
               </DropdownMenuContent>
             </DropdownMenu>
             <Globe/>
-            <Button>Logout <LogOut className="h-4 w-4" /></Button>
+            <Button onClick={handleLogout}>Logout <LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>

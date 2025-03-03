@@ -5,6 +5,8 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import { Providers } from "./provider";
 import { AuthProvider } from "@/components/context/authContext";
+import { UserContextProvider } from "@/context/userContext";
+
 const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
   variable: "--font-hanken-grotesk",
@@ -31,11 +33,13 @@ export default function RootLayout({
       <body
         className={`${hankenGrotesk.variable} ${montserrat.variable} antialiased`}
       >
-        <AuthProvider>
-          <Providers>
-            <Suspense fallback={<Loading />}>{children}</Suspense>
+        <UserContextProvider>
+          <AuthProvider>
+            <Providers>
+              <Suspense fallback={<Loading />}>{children}</Suspense>
           </Providers>
-        </AuthProvider>
+          </AuthProvider>
+        </UserContextProvider>
       </body>
     </html>
   );

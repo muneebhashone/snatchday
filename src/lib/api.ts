@@ -5,6 +5,11 @@ export const fetchItems = async () => {
   return response.data;
 };
 
+export const logout = async () => {
+  const response = await axiosInstance.post('/auth/logout');
+  return response.data;
+};
+
 export const getMyprofile = async () => {
   const response = await axiosInstance.get('/auth/me');
   return response.data;

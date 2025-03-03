@@ -7,6 +7,7 @@ import {
   deleteItem,
   filterItems,
   getMyprofile,
+  logout,
 } from '../lib/api';
 
 
@@ -16,6 +17,12 @@ export const useGetMyProfile = () => {
   return useQuery({
     queryKey: ['myprofile'],
     queryFn: getMyprofile,
+  });
+};
+
+export const useLogout = () => {
+  return useMutation({
+    mutationFn: logout,
   });
 };
 
