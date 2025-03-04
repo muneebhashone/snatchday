@@ -22,7 +22,7 @@ export const fetchItemById = async (id: string) => {``
 };
 
 export const authMutation = async (data: any,type: string) => {
-  const response = await axiosInstance.post(`https://snatch.3.135.13.79.nip.io/auth/${type}`, data);
+  const response = await axiosInstance.post(`auth/${type}`, data);
   return response.data;
 };
 
