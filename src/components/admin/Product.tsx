@@ -1,0 +1,229 @@
+"use client";
+
+import { useGetProducts, useGetCategories } from '@/hooks/api';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
+import { Edit, Trash } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useState } from 'react';
+
+interface FilterParams {
+  price?: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+}
+
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  stock: number;
+  images: string[];
+  categoryIds: string[];
+  type: 'NEW' | 'SALE';
+}
+
+interface Category {
+  _id: string;
+  name: string;
+  displayName: string;
+}
+
+export function Product() {
+  const [filters, setFilters] = useState<FilterParams>({
+    limit: '10',
+    offset: '0'
+  });
+
+  const { data: productsData, isLoading } = useGetProducts(filters);
+  const { data: categoriesData } = useGetCategories();
+  
+  
+  const products = productsData?.data?.products || [];
+  const categories = categoriesData?.data?.categories || [];
+
+  const handleFilterChange = (key: keyof FilterParams, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div className="container mx-auto py-10">
+      <div className="mb-6 grid grid-cols-4 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-2 block">Price Range</label>
+          <Input
+            placeholder="min,max (e.g., 10,100)"
+            value={filters.price}
+            onChange={(e) => handleFilterChange('price', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-2 block">Items per page</label>
+          <Input
+            type="number"
+            placeholder="Limit"
+            value={filters.limit}
+            onChange={(e) => handleFilterChange('limit', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-2 block">Page Offset</label>
+          <Input
+            type="number"
+            placeholder="Offset"
+            value={filters.offset}
+            onChange={(e) => handleFilterChange('offset', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-2 block">Sort By</label>
+          <Select
+            value={filters.sort_attr}
+            onValueChange={(value) => handleFilterChange('sort_attr', value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="price">Price</SelectItem>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="createdAt">Created Date</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="mb-6 grid grid-cols-4 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-2 block">Sort Order</label>
+          <Select
+            value={filters.sort}
+            onValueChange={(value) => handleFilterChange('sort', value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Sort order" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="asc">Ascending</SelectItem>
+              <SelectItem value="desc">Descending</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-2 block">Search by Name</label>
+          <Input
+            placeholder="Product name"
+            value={filters.name}
+            onChange={(e) => handleFilterChange('name', e.target.value)}
+          />
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-2 block">Category</label>
+          <Select
+            value={filters.category}
+            onValueChange={(value) => handleFilterChange('category', value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category: Category) => (
+                <SelectItem key={category._id} value={category._id}>
+                  {category.displayName || category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-2 block">Type</label>
+          <Select
+            value={filters.type}
+            onValueChange={(value) => handleFilterChange('type', value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="NEW">New</SelectItem>
+              <SelectItem value="SALE">Sale</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Image</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Stock</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {products.map((product: Product) => (
+              <TableRow key={product._id}>
+                <TableCell>
+                  {product.images && product.images[0] && (
+                    <div className="relative h-16 w-16">
+                      <img 
+                        src={product.images[0]} 
+                        alt={product.name} 
+                        className="rounded-md object-cover w-full h-full" 
+                      />
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell>{product.name}</TableCell>
+                <TableCell>{product.price}</TableCell>
+                <TableCell>{product.stock}</TableCell>
+                <TableCell>
+                 {product.categoryIds[0].displayName}
+                </TableCell>
+                <TableCell>{product.type}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="icon">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon">
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+} 

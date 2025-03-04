@@ -1,16 +1,12 @@
 import AdminLayout from '@/components/admin/AdminLayout'
-import Categories from '@/components/admin/Categories'
-
-
 import React from 'react'
+import Filter from '@/components/admin/Filter'
 
 const page = () => {
   return (
-  <AdminLayout>
-
-      <Categories/>
-  </AdminLayout>
-    
+    <AdminLayout>
+    <Filter />
+    </AdminLayout>
   )
 }
 

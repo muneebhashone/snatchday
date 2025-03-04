@@ -125,7 +125,7 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
               </DropdownMenuContent>
             </DropdownMenu>
             <Globe/>
-            <Button onClick={handleLogout}>Logout <LogOut className="h-4 w-4" /></Button>
+            <Button onClick={handleLogout}>{isPending ? "Logging out..." : "Logout"} <LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>
