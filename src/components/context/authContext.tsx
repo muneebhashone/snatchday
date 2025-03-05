@@ -38,7 +38,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } else {
       // No user logged in
-      if (window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/admin/login')) {
+      const allowedPaths = ['/forgot-password', '/otp',"/reset-password", '/admin/login']; 
+      if (!allowedPaths.includes(window.location.pathname) && window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/admin/login')) {
         router.push("/admin/login");
       }
     }

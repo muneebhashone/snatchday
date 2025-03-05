@@ -5,7 +5,7 @@ import { SalesChart } from './sales-chart'
 import { LatestActivity } from './latest-activity'
 import { LatestOrders } from './latest-orders'
 
-const Overview = () => {
+const OverviewPage = () => {
   return (
     <div className="space-y-8 p-8">
       <OverviewCards />
@@ -18,4 +18,4 @@ const Overview = () => {
   )
 }
 
-export default Overview
+export default OverviewPage

@@ -35,10 +35,12 @@ export const useGetMyProfile = () => {
 };
 
 export const useLogout = () => {
-  const queryClient = useQueryClient();
-  return useQuery({
-    queryKey: ['logout'],
-    queryFn: logout,
+    return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {},
+    onError: (error) => {
+      console.error('Logout failed:', error);
+    },
   });
 };
 

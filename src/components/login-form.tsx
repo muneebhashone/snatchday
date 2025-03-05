@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { authApi } from "@/hooks/api";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
@@ -23,7 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useUserContext } from "@/context/userContext";
-
+import Link from "next/link";
 // Form validation schema
 const loginFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -61,14 +62,18 @@ export function LoginForm({
       {
         onSuccess: ({ data }) => {
           setUserData(data);
+          toast.success("Login successful");
+
           router.push("/admin");
         },
         onError: (error) => {
           console.error("Login failed:", error);
+          toast.error("Login failed");
         },
       }
     );
   };
+ 
 
   return (
     <>
@@ -128,6 +133,9 @@ export function LoginForm({
                 </Button>
               </form>
             </Form>
+          <div className="flex justify-end my-2">
+            <Link href="/forgot-password" className="underline text-sm hover:text-orange-500">Forgot password</Link>
+          </div>  
           </CardContent>
         </Card>
       </div>

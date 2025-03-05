@@ -33,22 +33,22 @@ DropdownMenu,
 } from '@/components/ui/dropdown-menu'
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/api"
-import axios from "axios"
+
 const AdminLayout = ({children}: {children: React.ReactNode}) => {
 
   const router = useRouter();
-    // const { data: logout, isPending } = useLogout();
+    const { mutate: logout, isPending } = useLogout();
 
   const handleLogout = () => {
-    // logout(undefined, {
-    //   onSuccess: () => {
-    //     localStorage.removeItem('snatchday_user');
-    //     router.push('/admin/login');
-    //   },
-    //   onError: (error) => {
-    //     console.error('Logout failed:', error);
-    //   }
-    // });
+    logout(undefined, {
+      onSuccess: () => {
+        localStorage.removeItem('snatchday_user');
+        router.push('/admin/login');
+      },
+      onError: (error) => {
+        console.error('Logout failed:', error);
+      }
+    });
   };
 
 
@@ -129,8 +129,8 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
               </DropdownMenuContent>
             </DropdownMenu>
             <Globe/>
-            <Button >   Logout <LogOut className="h-4 w-4" /></Button>
-            {/* <Button onClick={handleLogout}>{isPending ? "Logging out..." : "Logout"} <LogOut className="h-4 w-4" /></Button> */}
+            {/* <Button >   Logout <LogOut className="h-4 w-4" /></Button> */}
+            <Button onClick={handleLogout}>{isPending ? "Logging out..." : "Logout"} <LogOut className="h-4 w-4" /></Button>
           </div>
         </div>
       </header>

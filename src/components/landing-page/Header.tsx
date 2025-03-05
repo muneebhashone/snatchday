@@ -27,11 +27,11 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import iphone from '@/app/images/iphone.png'
-import laptop1 from '@/app/images/laptop.png'
-import laptop2 from '@/app/images/laptopv2.png'
-import { StaticImageData } from "next/image";
-import { useGetMyProfile } from "@/hooks/api";
+// import iphone from '@/app/images/iphone.png'
+// import laptop1 from '@/app/images/laptop.png'
+// import laptop2 from '@/app/images/laptopv2.png'
+// import { StaticImageData } from "next/image";
+// import { useGetMyProfile } from "@/hooks/api";
 
 import { categoryData, menu } from "@/dummydata";
 
