@@ -3,14 +3,36 @@
 import Loading from "@/app/loading";
 import { useAuth } from "@/components/context/authContext";
 import { LoginForm } from "@/components/login-form"
-import axios from "axios";
+import { authApi } from "@/hooks/api";
 
 export default function LoginPage() {
   const { loading } = useAuth();
+  const { mutate: login, isPending } = authApi();
 
 
 
-  if (loading) {
+  // useEffect(()=>{
+  //   login(
+  //     {
+  //       data: {
+  //         email: "test@gmail.com",
+  //         password: "111111",
+  //       },
+  //       type: "login",
+  //     },
+  //     {
+  //       onSuccess: ({ data }) => {
+  //         console.log(data, "data from login page");
+  //         // setUserData(data);
+  //         // router.push("/admin");
+  //       },
+  //       onError: (error) => {
+  //         console.error("Login failed:", error);
+  //       },
+  //     }
+  //   );
+  // }, [])
+  if (isPending) {
     return <Loading />;
   }
 

@@ -8,6 +8,19 @@ import {
   filterItems,
   getMyprofile,
   logout,
+
+  createProduct,
+  getCategories,
+  createCategory,
+  updateCategory,
+  CategoryFormData,
+  deleteCategory,
+  createFilter,
+  getFilters,
+  deleteFilter,
+  updateFilter,
+  FilterFormData,
+  getProducts,
 } from '../lib/api';
 
 
@@ -103,3 +116,115 @@ export const useFilteredItems = (filters: Record<string, string>) => {
     enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
   });
 };
+
+
+// export const useProducts = () => {
+//   return useQuery({
+//     queryKey: ['products'],
+//     queryFn: products,
+//   });
+// };
+
+export const useCreateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useGetCategories = () => {
+  return useQuery({
+    queryKey: ['categories'],
+    queryFn: getCategories,
+  });
+};
+
+export const useCreateCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+  });
+};
+
+export const useUpdateCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: CategoryFormData }) => updateCategory(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+  });
+};
+
+export const useDeleteCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteCategory(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+    },
+  });
+};
+
+export const useCreateFilter = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createFilter,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['filters'] });
+    },
+  });
+};
+
+export const useGetFilters = () => {
+  return useQuery({
+    queryKey: ['filters'],
+    queryFn: getFilters,
+  });
+};
+
+export const useDeleteFilter = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteFilter(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['filters'] });
+    },
+  });
+};
+
+export const useUpdateFilter = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FilterFormData }) => updateFilter(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['filters'] });
+    },
+  });
+};
+
+interface ProductFilters {
+  price?: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+}
+
+export const useGetProducts = (filters?: ProductFilters) => {
+  return useQuery({
+    queryKey: ['products', filters],
+    queryFn: () => getProducts(filters),
+  });
+};
+
+
