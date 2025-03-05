@@ -21,6 +21,12 @@ import { Switch } from "@/components/ui/switch"
 import { useState } from "react"
 import Image from "next/image"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Category } from "@/types"
+
+
+
+
+
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -35,6 +41,7 @@ export default function CategoriesForm() {
   const [previewUrl, setPreviewUrl] = useState<string>("")
   const { mutate: createCategory, isPending } = useCreateCategory()
   const { data: getCategories } = useGetCategories()
+  const categories = getCategories?.data?.categories
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -102,8 +109,8 @@ export default function CategoriesForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">Create New Category</h2>
+    <div className="p-6">
+      {/* <h2 className="text-2xl font-bold mb-6">Create New Category</h2> */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -170,12 +177,12 @@ export default function CategoriesForm() {
                 <FormLabel>Parent Category ID</FormLabel>
                 <FormControl>
                   {/* <Input placeholder="Parent category ID (optional)" {...field} /> */}
-                  <Select>
+                  <Select onValueChange={field.onChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select parent category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {getCategories?.data.categories.map((category: any) => (
+                      {categories?.map((category: Category) => (
                         <SelectItem key={category._id} value={category._id}>
                           {category.name}
                         </SelectItem>
@@ -231,7 +238,7 @@ export default function CategoriesForm() {
           />
 
           <div className="flex justify-end">
-            <Button 
+            <Button className="hover:bg-primary"
               type="submit"
               disabled={isPending}
             >

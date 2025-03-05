@@ -71,7 +71,7 @@ const formSchema = z.object({
   sku: z.string().min(1, "SKU cannot be empty"),
   barcodeEAN: z.string().min(1, "Barcode EAN cannot be empty"),
   noStockMessage: z.string().min(1, "No stock message cannot be empty"),
-  relatedProducts: z.string().optional(),
+  relatedProducts: z.array(z.string()).optional(),
   requireShipping: z.boolean(),
   liscenseKey: z.string().min(1, "License key cannot be empty"),
 })
@@ -223,7 +223,7 @@ export default function ProductsForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6">Create New Product</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -569,26 +569,60 @@ export default function ProductsForm() {
               <FormItem>
                 <FormLabel>Related Products</FormLabel>
                 <FormControl>
-                  {/* <Input 
-                    placeholder="Enter product IDs (comma-separated)" 
-                    {...field} 
-                  /> */}
-
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select 
+                    onValueChange={(value) => {
+                      const currentValues = field.value || [];
+                      if (!currentValues.includes(value)) {
+                        field.onChange([...currentValues, value]);
+                      }
+                    }}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select related products" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {products?.map((product: any) => (
-                        <SelectItem key={product._id} value={product._id}>{product.name || product.displayName}</SelectItem>
+                      {products?.map((product) => (
+                        <SelectItem 
+                          key={product._id} 
+                          value={product._id}
+                          disabled={field.value?.includes(product._id)}
+                        >
+                          {product.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
+                {field.value?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {field.value.map((productId) => {
+                      const product = products?.find((p) => p._id === productId);
+                      return (
+                        <div
+                          key={productId}
+                          className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                        >
+                          <span className="text-sm">{product?.name}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
+                            onClick={() => {
+                              field.onChange(field.value.filter((id) => id !== productId));
+                            }}
+                          >
+                            ×
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
                 <FormDescription>
-                  Enter MongoDB IDs of related products, separated by commas. Leave empty if none.
+                  Select multiple products to relate to this product
                 </FormDescription>
                 <FormMessage />
               </FormItem>

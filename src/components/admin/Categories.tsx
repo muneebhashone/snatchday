@@ -9,12 +9,12 @@ import {
   TableRow 
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Delete, Trash } from 'lucide-react'
+import { Trash } from 'lucide-react'
 import { useDeleteCategory, useGetCategories } from '@/hooks/api'
 import { CreateCategoryDialog } from './CreateCategoryDialog'
 import { EditCategoryDialog } from './EditCategoryDialog'
 
-interface Category {
+interface CategoryType  {
   _id: string;
   name: string;
   description: string;
@@ -45,9 +45,9 @@ const Categories = () => {
         <h1 className="text-2xl font-semibold">Categories</h1>
         <div className='flex gap-2'>
           <CreateCategoryDialog />
-          <Button variant="ghost" size="icon" className="bg-red-500 text-white hover:bg-red-600 transition-colors">
+          {/* <Button variant="ghost" size="icon" className="bg-red-500 text-white hover:bg-red-600 transition-colors">
             <Delete className='w-4 h-4'/>
-          </Button>
+          </Button> */}
         </div>
       </div>
 
@@ -61,9 +61,9 @@ const Categories = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[40px]">
+                  {/* <TableHead className="w-[40px]">
                     <input type="checkbox" className="rounded border-gray-300" />
-                  </TableHead>
+                  </TableHead> */}
                   <TableHead>Name</TableHead>
                   <TableHead>Display Name</TableHead>
                   <TableHead>Description</TableHead>
@@ -73,11 +73,11 @@ const Categories = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {categories?.map((category: Category) => (
+                {categories?.map((category: CategoryType) => (
                   <TableRow key={category._id} className="hover:bg-gray-50">
-                    <TableCell>
+                    {/* <TableCell>
                       <input type="checkbox" className="rounded border-gray-300" />
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>{category.name}</TableCell>
                     <TableCell>{category.displayName}</TableCell>
                     <TableCell>{category.description}</TableCell>

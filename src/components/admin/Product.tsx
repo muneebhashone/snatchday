@@ -70,7 +70,7 @@ export function Product() {
   }
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="py-10">
       <div className="mb-6 grid grid-cols-4 gap-4">
         <div>
           <label className="text-sm font-medium mb-2 block">Price Range</label>

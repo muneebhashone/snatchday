@@ -1,44 +1,6 @@
 import axiosInstance from './axios';
+import { ProductFormData, CategoryFormData, FilterFormData, Category } from '@/types';
 
-export interface ProductFormData {
-  name: string;
-  description?: string;
-  company?: string;
-  images: File[];
-  colors?: string;
-  stock: number;
-  price: number;
-  discounts?: string;
-  attributes?: string;
-  categoryIds: string;
-  type?: 'NEW' | 'SALE';
-  isFeatured?: boolean;
-  metaTitle: string;
-  metaDescription?: string;
-  metaKeywords?: string;
-  article: string;
-  sku?: string;
-  barcodeEAN?: string;
-  noStockMessage?: string;
-  relatedProducts?: string;
-  requireShipping?: boolean;
-  liscenseKey?: string;
-}
-
-export interface CategoryFormData {
-  name: string;
-  description: string;
-  image: File;
-  parentCategoryId?: string;
-  shop: boolean;
-  above: boolean;
-}
-
-export interface FilterFormData {
-  name: string;
-  value: string[];
-  category: string;
-}
 
 export const fetchItems = async () => {
   const response = await axiosInstance.get('/items');
@@ -86,8 +48,8 @@ export const filterItems = async (filters: Record<string, string>) => {
 //   return response.data;
 // };
 
-export const createProduct = async (formData: FormData) => {
-  const response = await axiosInstance.post('/product/product', formData, {
+export const createProduct = async (formData:FormData) => {
+  const response = await axiosInstance.post<ProductFormData>('/product/product', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -101,7 +63,7 @@ export const createProduct = async (formData: FormData) => {
 // };
 
 export const createCategory = async (formData: FormData) => {
-  const response = await axiosInstance.post('/product/category', formData, {
+  const response = await axiosInstance.post<CategoryFormData>('/product/category', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -110,37 +72,37 @@ export const createCategory = async (formData: FormData) => {
 };
 
 export const getCategories = async () => {
-  const response = await axiosInstance.get('/product/category');
+  const response = await axiosInstance.get<Category[]>('/product/category');
   return response.data;
 };
 
 export const updateCategory = async (id: string, data: CategoryFormData) => {
-  const response = await axiosInstance.patch(`/product/category/${id}`, data);
+  const response = await axiosInstance.patch<CategoryFormData>(`/product/category/${id}`, data);
   return response.data;
 };
 
 export const deleteCategory = async (id: string) => {
-  const response = await axiosInstance.delete(`/product/category/${id}`);
+  const response = await axiosInstance.delete<CategoryFormData>(`/product/category/${id}`);
   return response.data;
 };
 
 export const createFilter = async (formData: FilterFormData) => {
-  const response = await axiosInstance.post('/product/filter', formData);
+  const response = await axiosInstance.post<FilterFormData>('/product/filter', formData);
   return response.data;
 };
 
 export const getFilters = async () => {
-  const response = await axiosInstance.get('/product/filter');
+  const response = await axiosInstance.get<FilterFormData[]>('/product/filter');
   return response.data;
 };
 
 export const deleteFilter = async (id: string) => {
-  const response = await axiosInstance.delete(`/product/filter/${id}`);
+  const response = await axiosInstance.delete<FilterFormData>(`/product/filter/${id}`);
   return response.data;
 };
 
 export const updateFilter = async (id: string, data: FilterFormData) => {
-  const response = await axiosInstance.patch(`/product/filter/${id}`, data);
+  const response = await axiosInstance.patch<FilterFormData>(`/product/filter/${id}`, data);
   return response.data;
 };
 
@@ -154,7 +116,7 @@ export const getProducts = async (params?: {
   category?: string;
   type?: string;
 }) => {
-  const response = await axiosInstance.get('/product/product', {
+  const response = await axiosInstance.get<ProductFormData[]>('/product/product', {
     params,
   });
   return response.data;
