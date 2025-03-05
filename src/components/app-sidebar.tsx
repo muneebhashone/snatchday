@@ -21,7 +21,8 @@ import {
   Filter,
   ChevronDown,
   Plus,
-  List
+  List,
+  Newspaper
 } from "lucide-react"
 import {
   Collapsible,
@@ -61,6 +62,11 @@ const navItems = [
     title: "Filters",
     url: "/admin/filters",
     icon: <Filter className="h-4 w-4" />,
+  },
+  {
+    title: "Newsletter",
+    url: "/admin/newsletter",
+    icon: <Newspaper className="h-4 w-4" />,
   },
   {
     title: "Orders",
