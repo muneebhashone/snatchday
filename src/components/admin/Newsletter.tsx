@@ -1,27 +1,17 @@
-'use client';
+"use client";
 
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Trash } from 'lucide-react'
-import { useDeleteFilter, useGetFilters, useGetCategories, useGetNewsletters } from '@/hooks/api'
-import { CreateFilterDialog } from './CreateFilterDialog'
-import { EditFilterDialog } from './EditFilterDialog'
-import { toast } from 'sonner'
-import { useState } from 'react'
-
-
-
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useGetNewsletters } from "@/hooks/api";
+import { NewsletterTypes } from "@/types";
 
 const Newsletter = () => {
-  // Fetch newsletters using the hook
   const { data: newsletters, isLoading, isError } = useGetNewsletters();
   return (
     <div className="p-6">
@@ -30,7 +20,9 @@ const Newsletter = () => {
         {isLoading ? (
           <div className="p-8 text-center">Loading newsletters...</div>
         ) : isError ? (
-          <div className="p-8 text-center text-red-500">Error loading newsletters</div>
+          <div className="p-8 text-center text-red-500">
+            Error loading newsletters
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <Table>
@@ -42,16 +34,22 @@ const Newsletter = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {newsletters?.data?.map((newsletter) => (
+                {newsletters?.data?.map((newsletter: NewsletterTypes) => (
                   <TableRow key={newsletter._id}>
                     <TableCell>{newsletter.name || "N/A"}</TableCell>
                     <TableCell>{newsletter.email || "N/A"}</TableCell>
-                    <TableCell>{new Date(newsletter.subscribedAt).toLocaleDateString() || "N/A"}</TableCell>
+                    <TableCell>
+                      {new Date(newsletter.subscribedAt).toLocaleDateString() ||
+                        "N/A"}
+                    </TableCell>
                   </TableRow>
                 ))}
-                {!newsletters?.length && (
+                {newsletters?.data?.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center py-8 text-gray-500">
+                    <TableCell
+                      colSpan={3}
+                      className="text-center py-8 text-gray-500"
+                    >
                       No newsletters found
                     </TableCell>
                   </TableRow>
@@ -63,6 +61,6 @@ const Newsletter = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Newsletter
+export default Newsletter;

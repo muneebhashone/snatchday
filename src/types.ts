@@ -53,5 +53,6 @@ export interface ProductFormData {
     name: string;
     email: string;
     subscribedAt: string;
+    data?: NewsletterTypes[];
   }
 
