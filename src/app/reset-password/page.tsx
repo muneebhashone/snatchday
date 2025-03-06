@@ -1,92 +1,163 @@
 "use client";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+// import Link from "next/link";
 import Image from "next/image";
-import logo from "@/app/images/logo.png";
 import { z } from "zod";
+import logo from "@/app/images/logo.png";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-const schema = z.object({
-    password: z.string().min(6, "Password must be at least 6 characters").nonempty("Password is required"),
-    confirmPassword: z.string().min(6, "Confirm Password must be at least 6 characters").nonempty("Confirm Password is required"),
-}).refine(data => data.password === data.confirmPassword, {
-    message: "Passwords must match",
-    path: ["confirmPassword"], // path of the error message
-});
-
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useResetPassword } from "@/hooks/api";
+import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
 export default function ResetPassword() {
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        resolver: zodResolver(schema),
-    });
+//   const router = useRouter();   
+    const searchParams = useSearchParams();  
+    const email = searchParams.get("email");
 
-    const onSubmit = (data: z.infer<typeof schema>) => {
-        console.log(data);
-    };
+    const {mutate: resetPassword,isPending} = useResetPassword();
 
-    return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 py-12 px-4 dark:bg-gray-950">
-            <div className="mx-auto w-full max-w-md space-y-6">
-                <div className="flex flex-col items-center">
-                    <Image
-                        src={logo}
-                        alt="Logo"
-                        width={200}
-                        height={70}
-                        className="mb-4"
-                    />
-                    <h1 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
-                        Reset your password
-                    </h1>
-                    <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-                        Enter a new password to reset your account.
-                    </p>
-                </div>
-                <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} method="POST">
-                    <div>
-                        <Label htmlFor="password" className="sr-only">
-                            New password
-                        </Label>
-                        <Input
-                            id="password"
-                            {...register("password")}
-                            type="password"
-                            autoComplete="new-password"
-                            required
-                            placeholder="New password"
-                        />
-                        {errors.password && <p className="text-red-500">{errors.password.message}</p>}
-                    </div>
-                    <div>
-                        <Label htmlFor="confirmPassword" className="sr-only">
-                            Confirm password
-                        </Label>
-                        <Input
-                            id="confirmPassword"
-                            {...register("confirmPassword")}
-                            type="password"
-                            autoComplete="new-password"
-                            required
-                            placeholder="Confirm password"
-                        />
-                        {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
-                    </div>
-                    <Button type="submit" className="w-full capitalize">
-                        submit
-                    </Button>
-                </form>
-                <div className="flex justify-center">
-                    <Link
-                        href="/admin/login"
-                        className="text-sm underline hover:text-orange-500 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                        prefetch={false}
-                    >
-                        Back to login
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
+  const FormSchema = z.object({
+    pin: z.string().min(6, {
+      message: "Your one-time password must be 6 characters.",
+    }),
+    password: z.string().min(6, {
+      message: "Your password must be 6 characters.",
+    }),
+  });
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log(data, "otp form data");
+    resetPassword({
+        email: email as string,
+        password: data.password,
+        passwordResetToken: data.pin as string,
+    },{
+        onSuccess: (data) => {
+            toast.success("Password reset successfully");
+            console.log(data, "data from hooks");
+        },
+        onError: (error) => {
+            toast.error("Password reset failed");
+            console.log(error, "error from hooks");
+        },
+    })
+  }
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      pin: "",
+    },
+  });
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 py-12 px-4 dark:bg-gray-950">
+      <div className="mx-auto w-full max-w-md space-y-6">
+        <Card className="p-6">
+          <div className="flex flex-col items-center">
+            <Image
+              src={logo}
+              alt="Logo"
+              width={200}
+              height={70}
+              className="mb-4"
+            />
+            <h1 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-50">
+                Reset Password
+            </h1>
+            <p className="mt-2 text-center text-sm text-gray-600 mb-4 dark:text-gray-400">
+              Enter the OTP code sent to your email address and new password to reset your password
+            </p>
+          </div>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="w-full flex flex-col gap-6"
+            >
+              <FormField
+                control={form.control}
+                name="pin"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-medium text-center ">
+                      OTP Code
+                    </FormLabel>
+                    <FormControl>
+                      <InputOTP
+                        maxLength={6}
+                        {...field}
+                        className="w-full text-center text-6xl "
+                      >
+                        <InputOTPGroup>
+                          <InputOTPSlot
+                            className="w-12 h-12 border-2 border-orange-300 focus:outline-none"
+                            index={0}
+                          />
+                          <InputOTPSlot
+                            className="w-12 h-12 border-2 border-orange-300 focus:outline-none"
+                            index={1}
+                          />
+                          <InputOTPSlot
+                            className="w-12 h-12 border-2 border-orange-300 focus:outline-none"
+                            index={2}
+                          />
+                          <InputOTPSlot
+                            className="w-12 h-12 border-2 border-orange-300 focus:outline-none"
+                            index={3}
+                          />
+                          <InputOTPSlot
+                            className="w-12 h-12 border-2 border-orange-300 focus:outline-none"
+                            index={4}
+                          />
+                          <InputOTPSlot
+                            className="w-12 h-12 border-2 border-orange-300 focus:outline-none"
+                            index={5}
+                          />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-medium text-center ">
+                      {" "}
+                      New Password
+                    </FormLabel>
+                    <FormControl>
+                      <Input className="w-full" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Submitting..." : "Submit"}
+              </Button>
+            </form>
+          </Form>
+        </Card>
+      </div>
+    </div>
+  );
 }

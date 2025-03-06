@@ -56,3 +56,10 @@ export interface ProductFormData {
     data?: NewsletterTypes[];
   }
 
+export interface ResetPasswordTypes {
+  email: string;
+  password: string;
+  passwordResetToken: string;
+}
+
+

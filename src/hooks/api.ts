@@ -13,16 +13,18 @@ import {
   getCategories,
   createCategory,
   updateCategory,
-  CategoryFormData,
   deleteCategory,
   createFilter,
   getFilters,
   deleteFilter,
   updateFilter,
-  FilterFormData,
   getProducts,
   getNewsletters,
+  forgetPassword,
+  resetPassword,
 } from '../lib/api';
+
+import { CategoryFormData, FilterFormData, ResetPasswordTypes } from '@/types';
 
 
 
@@ -244,4 +246,30 @@ export const useGetNewsletters = (filters?: NewsletterFilters) => {
     queryFn: () => getNewsletters(filters),
   });
 };
+
+export const useForgetPassword = () => {
+  return useMutation({
+    mutationFn: (email: string) => forgetPassword(email),
+    onSuccess: (data) => {
+      console.log(data,"data from hooks");
+    },
+    onError: (error) => {
+      console.log(error,"error from hooks");
+    },
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: (data: ResetPasswordTypes) => resetPassword(data),
+    onSuccess: (data) => {
+      console.log(data,"data from hooks");
+    },
+    onError: (error) => {
+      console.log(error,"error from hooks");
+    },
+  });
+};
+
+
 

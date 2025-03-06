@@ -8,6 +8,9 @@ import logo from "@/app/images/logo.png";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForgetPassword } from "@/hooks/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   email: z.string().email("Invalid email address").nonempty("Email is required"),
@@ -17,9 +20,20 @@ export default function ForgotPassword() {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
   });
+  const { mutate: forgetPassword, isPending } = useForgetPassword();
+  const router = useRouter();
+  
 
   const onSubmit = (data: z.infer<typeof schema>) => {
-    console.log(data);
+    forgetPassword(data.email as string,{
+      onSuccess: () => {
+        toast.success("Email sent successfully");
+        router.push(`/reset-password?email=${data.email}`);
+      },
+      onError: (error) => {
+        toast.error("Email not found");
+      },
+    });
   };
 
   return (
@@ -56,8 +70,8 @@ export default function ForgotPassword() {
             />
             {errors.email && <p className="text-red-500">{errors.email.message}</p>}
           </div>
-          <Button type="submit"  className="w-full capitalize">
-            submit  
+          <Button type="submit" disabled={isPending} className="w-full capitalize">
+            {isPending ? "Sending..." : "Submit"}
           </Button>
         </form>
         <div className="flex justify-center">

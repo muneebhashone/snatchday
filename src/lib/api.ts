@@ -1,5 +1,5 @@
 import axiosInstance from './axios';
-import { ProductFormData, CategoryFormData, FilterFormData, Category, NewsletterTypes } from '@/types';
+import { ProductFormData, CategoryFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes } from '@/types';
 
 
 export const fetchItems = async () => {
@@ -134,4 +134,16 @@ export const getNewsletters = async (params?: {
   });
   return response.data;
 };
+
+
+export const forgetPassword = async (email: string) => {
+  const response = await axiosInstance.post('/auth/forgotPassword', { email });
+  return response.data;
+};
+
+export const resetPassword = async (data: ResetPasswordTypes)  => {
+  const response = await axiosInstance.put('/auth/resetPassword', data);
+  return response.data;
+};
+
 
