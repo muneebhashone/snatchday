@@ -25,15 +25,18 @@ import {
 } from '../lib/api';
 
 import { CategoryFormData, FilterFormData, ResetPasswordTypes } from '@/types';
-
+import { useUserContext } from '@/context/userContext';
 
 
 
 // Fetch all items
 export const useGetMyProfile = () => {
+  const { user } = useUserContext();
+
   return useQuery({
     queryKey: ['myprofile'],
     queryFn: getMyprofile,
+    enabled: Boolean(user),
   });
 };
 

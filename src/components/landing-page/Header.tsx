@@ -27,6 +27,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useGetMyProfile } from "@/hooks/api";
+import { useUserContext } from "@/context/userContext";
 // import iphone from '@/app/images/iphone.png'
 // import laptop1 from '@/app/images/laptop.png'
 // import laptop2 from '@/app/images/laptopv2.png'
@@ -37,6 +39,7 @@ import { categoryData, menu } from "@/dummydata";
 
 const Header = () => {
   const pathname = usePathname();
+  const {user}=useUserContext()
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -49,6 +52,8 @@ const Header = () => {
   });
 
   const [categoryImage, setCategoryImage] = useState(categoryData[0].image);
+
+  const { data: myprofile } = useGetMyProfile();
 
   useEffect(() => {
     const timer = setInterval(() => {

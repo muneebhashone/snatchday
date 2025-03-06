@@ -12,17 +12,54 @@ import { FacebookIcon } from "../icons/icon";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "../ui/separator";
-
+import { z } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { authApi } from "@/hooks/api";
+import { toast } from "sonner";
 interface RegisterProps {
   onBack: () => void;
 }
 
+const registerSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Confirm Password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"], // Path to the error
+  });
+
 const Register = ({ onBack }: RegisterProps) => {
   const [isOpen, setIsOpen] = useState(true);
+
+  // Initialize useForm with zodResolver
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: zodResolver(registerSchema), // Use Zod schema for validation
+  });
+
+  const {mutate:register, isPending}=authApi()
+
 
   const handleClose = () => {
     setIsOpen(false);
     onBack();
+  };
+
+  const onSubmit = (data: z.infer<typeof registerSchema>) => {
+    const {name,email,password}=data
+    register({data:{name,email,password},type:"register"},{
+      onSuccess:({data})=>{
+        toast.success("Registration successful")
+        handleClose()
+      },
+      onError:(error:any)=>{
+        toast.error(error.response.data.message)
+      },
+    })
   };
 
   return (
@@ -44,58 +81,95 @@ const Register = ({ onBack }: RegisterProps) => {
 
         <div className="mt-5 px-24 pb-16">
           {/* Form Inputs */}
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              type="text"
-              placeholder="User Name"
-              className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-            />
-            <Input
-              type="email"
-              placeholder="E-Mail Address"
-              className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-            />
-            <Input
-              type="password"
-              placeholder="Password"
-              className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-            />
-            <Input
-              type="password"
-              placeholder="Repeat Password"
-              className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-            />
-          </div>
-
-          {/* Terms and Newsletter Checkbox */}
-          <div className="mt-10">
-            <div className="flex items-start space-x-3">
-              <Checkbox id="newsletter" className="mt-1 rounded-full" />
-              <label htmlFor="newsletter" className="text-foreground">
-                Yes, I would like to be informed about tournaments, special
-                offers and news and receive newsletters from Snatch Day
-              </label>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid grid-cols-2 gap-4">
+              <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="text"
+                    placeholder="User Name"
+                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                  />
+                )}
+              />
+              {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="email"
+                    placeholder="E-Mail Address"
+                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                  />
+                )}
+              />
+              {errors.email && <span className="text-red-500">{errors.email.message}</span>}
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="password"
+                    placeholder="Password"
+                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                  />
+                )}
+              />
+              {errors.password && <span className="text-red-500">{errors.password.message}</span>}
+              <Controller
+                name="confirmPassword"
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    type="password"
+                    placeholder="Repeat Password"
+                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                  />
+                )}
+              />
+              {errors.confirmPassword && <span className="text-red-500">{errors.confirmPassword.message}</span>}
             </div>
-            <div className="flex items-start space-x-3 mt-2">
-              <Checkbox id="terms" className="mt-1 rounded-full" />
-              <label htmlFor="terms" className="text-foreground">
-                I agree to the{" "}
-                <Link href="#" className="text-[#FF6B3D] hover:underline">
-                  privacy policy
-                </Link>{" "}
-                and the{" "}
-                <Link href="#" className="text-[#FF6B3D] hover:underline">
-                  terms and conditions
-                </Link>
-              </label>
+
+            {/* Terms and Newsletter Checkbox */}
+            <div className="mt-10">
+              <div className="flex items-start space-x-3">
+                <Checkbox id="newsletter" className="mt-1 rounded-full" />
+                <label htmlFor="newsletter" className="text-foreground">
+                  Yes, I would like to be informed about tournaments, special
+                  offers and news and receive newsletters from Snatch Day
+                </label>
+              </div>
+              <div className="flex items-start space-x-3 mt-2">
+                <Checkbox id="terms" className="mt-1 rounded-full" />
+                <label htmlFor="terms" className="text-foreground">
+                  I agree to the{" "}
+                  <Link href="#" className="text-[#FF6B3D] hover:underline">
+                    privacy policy
+                  </Link>{" "}
+                  and the{" "}
+                  <Link href="#" className="text-[#FF6B3D] hover:underline">
+                    terms and conditions
+                  </Link>
+                </label>
+              </div>
             </div>
-          </div>
 
-          {/* Register Button */}
-          <Button className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-8 px-11">
-            Register Your Account
-          </Button>
-
+            {/* Register Button */}
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-8 px-11"
+            >
+              {isPending ? "Registering..." : "Register Your Account"}
+            </Button>
+          </form>
           <Separator className="mt-16 mb-6" />
 
           {/* Social Register */}
