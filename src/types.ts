@@ -47,3 +47,11 @@ export interface ProductFormData {
     shop: boolean;
     above: boolean;
   }
+
+  export interface NewsletterTypes {
+    _id: string;
+    name: string;
+    email: string;
+    subscribedAt: string;
+  }
+

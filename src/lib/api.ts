@@ -1,5 +1,5 @@
 import axiosInstance from './axios';
-import { ProductFormData, CategoryFormData, FilterFormData, Category } from '@/types';
+import { ProductFormData, CategoryFormData, FilterFormData, Category, NewsletterTypes } from '@/types';
 
 
 export const fetchItems = async () => {
@@ -123,4 +123,15 @@ export const getProducts = async (params?: {
 };
 
 
+export const getNewsletters = async (params?: {
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+}) => {
+  const response = await axiosInstance.get<NewsletterTypes>('/newsletter/subscribers', {
+    params,
+  });
+  return response.data;
+};
 

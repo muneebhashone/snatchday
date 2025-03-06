@@ -44,7 +44,7 @@ export function LoginForm({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "admin@ah2k.dev",
-      password: "Password@123",
+      password: "Snatchday@123",
     },
   });
 

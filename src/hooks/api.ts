@@ -21,6 +21,7 @@ import {
   updateFilter,
   FilterFormData,
   getProducts,
+  getNewsletters,
 } from '../lib/api';
 
 
@@ -222,6 +223,14 @@ interface ProductFilters {
   type?: string;
 }
 
+interface NewsletterFilters {
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+}
+
+
 export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
     queryKey: ['products', filters],
@@ -229,4 +238,10 @@ export const useGetProducts = (filters?: ProductFilters) => {
   });
 };
 
+export const useGetNewsletters = (filters?: NewsletterFilters) => {
+  return useQuery({
+    queryKey: ['newsletters', filters],
+    queryFn: () => getNewsletters(filters),
+  });
+};
 
