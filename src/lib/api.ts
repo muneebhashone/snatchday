@@ -209,3 +209,16 @@ export const manageTournament = async (data: TournamentFormData) => {
   );
   return response.data;
 };
+
+export const getFilterById = async (id: string) => {
+  const response = await axiosInstance.get(`/product/filter/${id}`);
+  return response.data;
+};
+
+export const subscribeNewsletter = async (email: string) => {
+  const response = await axiosInstance.post('/newsletter/subscribe', { email });
+  return response.data;
+};
+
+
+

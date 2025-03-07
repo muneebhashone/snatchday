@@ -8,7 +8,7 @@ import {
   filterItems,
   getMyprofile,
   logout,
-
+  subscribeNewsletter,
   createProduct,
   getCategories,
   createCategory,
@@ -26,6 +26,7 @@ import {
   createTournament,
   getTournaments,
   manageTournament,
+  getFilterById,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 
@@ -287,5 +288,22 @@ export const useResetPassword = () => {
   });
 };
 
+export const useGetFilterById = (id: string) => {
+  return useQuery({
+    queryKey: ['filter', id],
+    queryFn: () => getFilterById(id),
+    enabled: !!id,
+  });
+};
 
 
+
+export const useSubscribeNewsletter = () => {
+  return useMutation({
+    mutationFn: (email: string) => subscribeNewsletter(email),
+    onSuccess: () => {
+    },
+    onError: (error) => {
+    },
+  });
+};

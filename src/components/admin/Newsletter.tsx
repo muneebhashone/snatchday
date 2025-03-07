@@ -31,15 +31,19 @@ const Newsletter = () => {
                   <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
                   <TableHead>Subscribed At</TableHead>
+                  <TableHead>Created At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {newsletters?.data?.map((newsletter: NewsletterTypes) => (
                   <TableRow key={newsletter._id}>
-                    <TableCell>{newsletter.name || "N/A"}</TableCell>
                     <TableCell>{newsletter.email || "N/A"}</TableCell>
                     <TableCell>
                       {new Date(newsletter.subscribedAt).toLocaleDateString() ||
+                        "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(newsletter.createdAt).toLocaleDateString() ||
                         "N/A"}
                     </TableCell>
                   </TableRow>

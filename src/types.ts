@@ -53,6 +53,7 @@ export interface ProductFormData {
     name: string;
     email: string;
     subscribedAt: string;
+    createdAt: string;
     data?: NewsletterTypes[];
   }
 
