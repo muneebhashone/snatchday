@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart, ChevronDown } from "lucide-react";
+import { User, Heart, ShoppingCart, ChevronDown, Loader2 } from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -27,7 +27,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useGetMyProfile } from "@/hooks/api";
+import { useGetCategories, useGetMyProfile } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 // import iphone from '@/app/images/iphone.png'
 // import laptop1 from '@/app/images/laptop.png'
@@ -36,10 +36,20 @@ import { useUserContext } from "@/context/userContext";
 // import { useGetMyProfile } from "@/hooks/api";
 
 import { categoryData, menu } from "@/dummydata";
+import { Category } from "@/types";
+import Loader from "../Loader";
+
+// Define the Category interface
+
+// Define the SubCategory interface
+interface SubCategory {
+  name: string;
+  image: string;
+}
 
 const Header = () => {
   const pathname = usePathname();
-  const {user}=useUserContext()
+  const { user } = useUserContext();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -51,9 +61,11 @@ const Header = () => {
     discountPoints: 750,
   });
 
-  const [categoryImage, setCategoryImage] = useState(categoryData[0].image);
+  const { data, isLoading } = useGetCategories();
+  console.log(data,"data")
+  const [categoryImage, setCategoryImage] = useState("");
 
-  const { data: myprofile } = useGetMyProfile();
+  // const { data: myprofile } = useGetMyProfile();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -100,17 +112,16 @@ const Header = () => {
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}
-          <Link
-            href="/"
-            className="flex items-center space-x-2 pr-6"
-          >
+          <Link href="/" className="flex items-center space-x-2 pr-6">
             <Image src={logo} alt="Logo" width={180} height={58} unoptimized />
           </Link>
 
           {/* {/ Date Time Bar /} */}
           <div className="py-1 px-4 flex items-center justify-start text-xs text-foreground rounded-full">
             <div className="flex items-center gap-2 font-medium">
-              <span className="border-r pr-2">{formatDate(currentDateTime)}</span>
+              <span className="border-r pr-2">
+                {formatDate(currentDateTime)}
+              </span>
               <span>{formatTime(currentDateTime)}</span>
             </div>
           </div>
@@ -122,66 +133,84 @@ const Header = () => {
             <NavigationMenuList className="">
               <NavigationMenuItem className="">
                 <NavigationMenuTrigger className="bg-primary hover:bg-primary data-[state=open]:bg-primary">
+                    {isLoading ? <Loader2  className="w-4 h-4 animate-spin" /> : (
                   <Hamburger />
+                )}
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-white border-t border-gray-100">
-                  <div className="max-w-[1920px] mx-auto p-8">
-                    <div className="grid grid-cols-12 gap-8 w-screen">
-                      {/* Categories List */}
-                      <div className="col-span-8">
-                        <div className="grid grid-cols-3 gap-x-8 gap-y-6">
-                          {categoryData.map((category) => {
-                            const Icon = category.icon;
-                            return (
-                              <div
-                                key={category.id}
-                                className="group"
-                              >
-                                <Link
-                                  href={category.path}
-                                  className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
-                                >
-                                  <Icon className="w-4 h-4" />
-                                  {category.name}
-                                </Link>
-                                <ul className="space-y-2">
-                                  {category.subcategories.map((subcategory) => (
-                                    <li
-                                      key={subcategory.path}
-                                      onMouseEnter={() => setCategoryImage(subcategory.image)}
-                                    >
-                                      <Link
-                                        href={subcategory.path}
-                                        className="text-gray-500 hover:text-primary transition-colors block text-sm"
-                                      >
-                                        {subcategory.name}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Category Image */}
-                      <div className="col-span-4">
-                        {categoryImage && (
-                          <div className="relative h-full w-full">
-                            <Image
-                              src={categoryImage}
-                              alt="Category preview"
-                              fill
-                              className="object-contain w-10 h-10"
-                              unoptimized
-                            />
+            
+                  <NavigationMenuContent className="border-t border-gray-100">
+                    <div className="max-w-[1920px] mx-auto p-8">
+                      <div className="grid grid-cols-12 gap-8 w-screen">
+                        {/* Categories List */}
+                        {isLoading ? (
+                          <div className="flex justify-center items-center h-full w-full">
+                            <span className="text-lg font-medium"><Loader2  className="w-4 h-4 animate-spin" /></span>
                           </div>
+                        ) : (
+                           <>
+                           <div className="col-span-8">
+                           <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                             {data?.data?.categories
+                               ?.filter((category: Category) => !category.above)
+                               .map((category: Category) => {
+                                 // const Icon = category.icon;
+                                 return (
+                                   <div key={category._id} className="group">
+                                     <Link
+                                       href={`/product-listing?category=${category._id}`}
+                                       className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                     >
+                                       {/* <Icon className="w-4 h-4" /> */}
+                                       {category.name}
+                                     </Link>
+                                     <ul className="space-y-2">
+                                       {category.subCategories.map(
+                                         (subcategory: SubCategory, index) => (
+                                           <li
+                                             key={index}
+                                             onMouseEnter={() =>
+                                               setCategoryImage(
+                                                 subcategory.image
+                                               )
+                                             }
+                                           >
+                                             <Link
+                                               href={`/product-listing?category=${subcategory._id}`}
+                                               className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                             >
+                                               {subcategory?.name || "N/A"}
+                                             </Link>
+                                           </li>
+                                         )
+                                       )}
+                                     </ul>
+                                   </div>
+                                 );
+                               })}
+                           </div>
+                         </div>
+ 
+                         {/* Category Image */}
+                         <div className="col-span-4">
+                           {categoryImage && (
+                             <div className="relative h-full w-full">
+                               <Image
+                                 src={categoryImage}
+                                 alt="Category preview"
+                                 fill
+                                 className="object-contain w-10 h-10"
+                                 unoptimized
+                               />
+                             </div>
+                           )}
+                         </div>
+                           </>
                         )}
+                       
                       </div>
                     </div>
-                  </div>
-                </NavigationMenuContent>
+                  </NavigationMenuContent>
+                
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -206,16 +235,18 @@ const Header = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
-                        ? "text-primary"
-                        : "text-foreground"
-                        }`}
+                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                        pathname === items.link
+                          ? "text-primary"
+                          : "text-foreground"
+                      }`}
                     >
                       {items.name}
                       <ChevronDown className="text-primary w-5 h-5" />
                       <div
-                        className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
-                          }`}
+                        className={`w-2 h-2 bg-primary rounded-full ${
+                          pathname === items.link ? "opacity-100" : "opacity-0"
+                        }`}
                       ></div>
                     </button>
                   </DialogTrigger>
@@ -224,19 +255,22 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
-                    ? "text-primary underline underline-offset-8 decoration-2"
-                    : "text-foreground"
-                    }`}
+                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                    pathname === items.link
+                      ? "text-primary underline underline-offset-8 decoration-2"
+                      : "text-foreground"
+                  }`}
                 >
                   {items.name}
                   <ChevronDown
-                    className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"
-                      }`}
+                    className={`w-5 h-5 ${
+                      pathname === items.link ? "text-white" : "text-primary"
+                    }`}
                   />
                   <div
-                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
-                      }`}
+                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
+                      pathname === items.link ? "opacity-100" : "opacity-0"
+                    }`}
                   ></div>
                 </Link>
               )}
@@ -375,22 +409,30 @@ const Header = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Snap Points</span>
-                  <span className="text-primary font-bold">{userPoints.snapPoints}</span>
+                  <span className="text-primary font-bold">
+                    {userPoints.snapPoints}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">Equivalent Value</span>
-                  <span className="text-primary font-medium">{userPoints.snapPoints / 100}€</span>
+                  <span className="text-primary font-medium">
+                    {userPoints.snapPoints / 100}€
+                  </span>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Discount Points</span>
-                  <span className="text-primary font-bold">{userPoints.discountPoints}</span>
+                  <span className="text-primary font-bold">
+                    {userPoints.discountPoints}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">Equivalent Value</span>
-                  <span className="text-primary font-medium">{userPoints.discountPoints / 100}€</span>
+                  <span className="text-primary font-medium">
+                    {userPoints.discountPoints / 100}€
+                  </span>
                 </div>
               </div>
             </div>

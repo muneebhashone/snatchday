@@ -22,6 +22,7 @@ import {
   getNewsletters,
   forgetPassword,
   resetPassword,
+  getCategoryById,
 } from '../lib/api';
 
 import { CategoryFormData, FilterFormData, ResetPasswordTypes } from '@/types';
@@ -147,6 +148,14 @@ export const useGetCategories = () => {
   return useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
+  });
+};
+
+export const useGetCategoryById = (id: string) => {
+  return useQuery({
+    queryKey: ['category', id],
+    queryFn: () => getCategoryById(id),
+    enabled: !!id,
   });
 };
 

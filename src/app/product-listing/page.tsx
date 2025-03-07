@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import laptop from "@/app/images/laptop.png";
 
-import React from "react";
+import React, { useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import Search from "@/components/Search";
 import {
@@ -23,12 +23,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Grid3x3, ListIcon } from "lucide-react";
+import { Grid3x3, ListIcon, LoaderIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import VisitTournament from "@/components/VisitTournament";
+import { useSearchParams } from "next/navigation";
+import { useGetCategoryById, useGetProducts } from "@/hooks/api";
 
+
+
+interface FilterParams {
+  price?: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+}
 
 const ProductListingPage = () => {
+
+
+  const searchParams = useSearchParams()
+  const category = searchParams.get("category")
+ 
+
+  const [filters, setFilters] = useState<FilterParams>({
+    limit: '10',
+    offset: '0',
+    category: category as string,
+  });
+ 
+  const {data:productsData, isLoading} = useGetProducts(filters)
+
+  const {data:categoryData} = useGetCategoryById(category as string)
+  console.log(categoryData,"categoryData")
+  console.log(productsData,"productsData")
+    
+
   const products = [
     {
       image: laptop,
@@ -172,6 +205,10 @@ const ProductListingPage = () => {
     },
   ];
 
+  const productFilters = productsData?.data?.products || [];
+  const allFilters = productFilters.flatMap((product) => product.categoryIds);
+  const uniqueFilters = Array.from(new Set(allFilters.map(filter => filter?.filters)));
+   
   return (
     <ClientLayout>
       <div className="container mx-auto max-w-[1920px] my-40 px-12">
@@ -193,7 +230,7 @@ const ProductListingPage = () => {
             <div className="mb-5 mt-4">
               <Search placeholder="Search product, category" />
             </div>
-            <ProductCategoryFilter />
+            <ProductCategoryFilter filters={uniqueFilters.flat()} />
             <VisitTournament
               title="January Tournament"
               date="January 30, 2025 at 3:00 p.m."
@@ -202,7 +239,7 @@ const ProductListingPage = () => {
           <div className="col-span-3">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-[48px] font-extrabold mb-4">Laptops</h1>
+                <h1 className="text-[20px] font-semibold mb-4">{categoryData?.data?.displayName}</h1>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
@@ -241,10 +278,16 @@ const ProductListingPage = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((product, index) => (
-                <ProductCard key={index} {...product} />
-              ))}
-              <div className="mt-10 col-span-3 flex items-center justify-between">
+              {isLoading  ? (
+                <div className="flex items-center justify-center h-screen col-span-3">
+                  <LoaderIcon className="animate-spin size-10" />
+                </div>
+              ) : (
+                <>
+                {productsData?.data?.products?.map((product, index) => (
+                  <ProductCard key={index} {...product} />
+                ))}
+                <div className="mt-10 col-span-3 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   {[1, 2, 3].map((pageNum) => (
                     <button
@@ -277,6 +320,9 @@ const ProductListingPage = () => {
                   Showing 1 to 15 of 97 (7 pages)
                 </div>
               </div>
+              </>
+              )}
+             
             </div>
           </div>
         </div>

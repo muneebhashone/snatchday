@@ -63,16 +63,17 @@ export const createProduct = async (formData:FormData) => {
 // };
 
 export const createCategory = async (formData: FormData) => {
-  const response = await axiosInstance.post<CategoryFormData>('/product/category', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+  const response = await axiosInstance.post<CategoryFormData>('/product/category', formData)
   return response.data;
 };
 
 export const getCategories = async () => {
   const response = await axiosInstance.get<Category[]>('/product/category');
+  return response.data;
+};
+
+export const getCategoryById = async (id: string) => {
+  const response = await axiosInstance.get<Category>(`/product/category/${id}`);
   return response.data;
 };
 

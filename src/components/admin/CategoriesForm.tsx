@@ -86,7 +86,6 @@ export default function CategoriesForm() {
           formData.append(key, value.toString())
         }
       })
-
       createCategory(formData, {
         onSuccess: () => {
           toast.success("Category created successfully")

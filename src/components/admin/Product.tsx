@@ -52,6 +52,7 @@ export function Product() {
   const [filters, setFilters] = useState<FilterParams>({
     limit: '10',
     offset: '0'
+    
   });
 
   const { data: productsData, isLoading } = useGetProducts(filters);

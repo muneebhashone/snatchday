@@ -5,23 +5,63 @@ import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
-  image: StaticImageData;
+  images: string[];
   title: string;
   price: string;
   rating: number;
   isNew?: boolean;
   isSale?: boolean;
+  article: string;
+  attributes: Record<string, unknown>;
+  barcodeEAN: string;
+  categoryIds: Array<Record<string, unknown>>;
+  colors: string[];
+  company: string;
+  createdAt: string;
+  discounts: string[];
+  description: string;
+  discounts: Array<Record<string, unknown>>;
+  images: string[];
+  isActive: boolean;
+  isFeatured: boolean;
+  liscenseKey: string;
+  metaDescription: string;
+  metaKeywords: string;
+  metaTitle: string;
+  name: string;
+  noStockMessage: string;
+  relatedProducts: string[];
+  requireShipping: boolean;
+  sku: string;
+  stock: number;
+  type: string;
 }
 
+const roundToTwoDecimals = (value: number): number => {
+  return Math.round((value + Number.EPSILON) * 100) / 100;
+};
+
 const ProductCard = ({
-  image,
+  images,
   title,
   price,
   rating,
   isNew,
   isSale,
+  metaTitle,
+  article,
+  attributes,
+  discounts,
+  barcodeEAN,
+  categoryIds,
+  colors,
+  company,
+  createdAt,
+  
 }: ProductCardProps) => {
   const router = useRouter();
+
+  console.log(images,"image")
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -30,6 +70,8 @@ const ProductCard = ({
     );
     router.push(`/product-listing/${urlTitle}`);
   };
+
+
 
   return (
     <div className="bg-white rounded-3xl border border-gray-200 hover:border-primary p-6 relative group hover:shadow-lg transition-all duration-300">
@@ -41,21 +83,23 @@ const ProductCard = ({
 
       {/* Product Image */}
       <div className="mb-6 pt-4">
-        <Image
-          src={image}
-          alt={title}
-          width={300}
-          height={200}
+        {images?.length > 0 && (
+          <Image
+            src={images[0]}
+            alt={title}
+            width={300}
+            height={200}
           className="w-full h-[200px] object-contain group-hover:scale-105 transition-transform duration-300"
         />
+        )}
       </div>
 
       {/* Product Info */}
       <div className="space-y-4">
         {/* Title */}
         <div className="flex justify-between items-start gap-10">
-          <p className="text-xl text-card-foreground font-light line-clamp-2">
-            {title}
+          <p className="text-xl text-card-foreground font-light line-clamp-1 overflow-hidden text-ellipsis">
+            {metaTitle}
           </p>
           <button className="rounded-full bg-[#F5F5F5] p-4 hover:bg-gray-100 transition-colors">
             <Heart className="w-6 h-6 text-gray-400 hover:text-orange-500" />
@@ -66,14 +110,19 @@ const ProductCard = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <div className="flex text-orange-400 text-2xl">
-              {"★".repeat(rating)}
-              {"☆".repeat(5 - rating)}
+              {"★".repeat(3)}
+              {"☆".repeat(5 - 3)}
             </div>
-            <span className="text-sm text-gray-500">({rating})</span>
+            <span className="text-sm text-gray-500">({rating || 4})</span>
           </div>
-          <span className="text-2xl font-semibold text-card-foreground">
+           <div className="flex items-center gap-2">
+           <span className="text-2xl  text-gray-400 font-semibold line-through">
             {price}€
           </span>
+          <span className="text-2xl font-semibold text-card-foreground">
+            {discounts.length > 0 ? roundToTwoDecimals(price - (price * discounts[0].price) / 100) : price}€
+          </span>
+           </div>
         </div>
 
         {/* Add to Cart Button */}

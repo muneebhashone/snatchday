@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (user) {
       const userData = JSON.parse(user);
       setUser(userData);
-      console.log(userData, "user data from auth context");
       
       if (userData.user.role === 'admin') {
         if (window.location.pathname === '/admin/login' || window.location.pathname === '/') {

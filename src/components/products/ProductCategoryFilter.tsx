@@ -2,11 +2,16 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "../ui/slider";
+import { useGetFilters } from "@/hooks/api";
 
 
-const ProductCategoryFilter = () => {
+const ProductCategoryFilter = (filtersdata: any) => {
   const [priceRange, setPriceRange] = React.useState([1000]);
 
+    // const {data:filtersData, isLoading} = useGetFilters()
+      
+    // console.log(filtersData,"filtersData")
+    
   const filters = {
     "Laptop Type": [
       { name: "Gaming", count: 24 },
