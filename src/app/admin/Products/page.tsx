@@ -9,7 +9,7 @@ export default function ProductsPage() {
 <AdminLayout>    
         <h1 className="text-3xl font-bold">Products</h1>
     
-      <div className="bg-card rounded-lg border shadow-sm">
+      <div className="bg-card rounded-lg shadow-sm">
         <Product />
       </div>
     </AdminLayout>

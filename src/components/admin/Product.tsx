@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Trash, Trophy } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -19,7 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface FilterParams {
   price?: string;
@@ -53,6 +55,14 @@ export function Product() {
     limit: '10',
     offset: '0'
   });
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
+
+  // Update filters when debounced search term changes
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
+  }, [debouncedSearchTerm]);
 
   const { data: productsData, isLoading } = useGetProducts(filters);
   const { data: categoriesData } = useGetCategories();
@@ -136,8 +146,8 @@ export function Product() {
           <label className="text-sm font-medium mb-2 block">Search by Name</label>
           <Input
             placeholder="Product name"
-            value={filters.name}
-            onChange={(e) => handleFilterChange('name', e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div>
@@ -186,6 +196,7 @@ export function Product() {
               <TableHead>Category</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Actions</TableHead>
+              <TableHead>Tournament</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -217,7 +228,17 @@ export function Product() {
                     <Button variant="ghost" size="icon">
                       <Trash className="h-4 w-4" />
                     </Button>
+                  
                   </div>
+                </TableCell>
+                <TableCell>
+                
+                
+                <Button variant="ghost" size="icon">
+                      <Link href={`/admin/tournament/create/${product._id}`}>
+                        <Trophy className="h-4 w-4" />
+                      </Link>
+                    </Button>
                 </TableCell>
               </TableRow>
             ))}

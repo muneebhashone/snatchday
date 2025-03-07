@@ -23,11 +23,11 @@ export interface ProductFormData {
     liscenseKey?: string;
   }
   
-  export interface CategoryFormData {
+  export interface ResponseCategory {
     name: string;
     description: string;
     image: File;
-    parentId?: string;
+    parentCategoryId?: string;
     shop: boolean;
     above: boolean;
   }
@@ -43,7 +43,29 @@ export interface ProductFormData {
     name: string;
     description: string;
     image: string;
-    parentId: string; 
+    parentCategoryId: string; 
     shop: boolean;
     above: boolean;
+  }
+
+  export interface ResponseTournament {
+    _id: string;
+    name: string;
+    title: string;
+    textForBanner: string;
+    metaTitle: string;
+    metaDescription: string;
+    metaKeywords: string;
+    article: string;
+    startingPrice: number;
+    image: string;
+    priceReduction: number;
+    numberOfPieces: number;
+    game: string;
+    start: string;
+    length: number;
+    fee: number;
+    numberOfParticipants: number;
+    vip: boolean;
+    resubmissions: number;
   }

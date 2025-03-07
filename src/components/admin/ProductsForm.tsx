@@ -223,7 +223,7 @@ export default function ProductsForm() {
   }
 
   return (
-    <div className="mx-auto p-6">
+    <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">Create New Product</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

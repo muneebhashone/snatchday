@@ -21,7 +21,11 @@ import {
   updateFilter,
   FilterFormData,
   getProducts,
+  createTournament,
+  getTournaments,
+  manageTournament,
 } from '../lib/api';
+import { TournamentFormData } from '@/types/admin';
 
 
 
@@ -226,6 +230,34 @@ export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
     queryKey: ['products', filters],
     queryFn: () => getProducts(filters),
+  });
+};
+
+export const useCreateTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createTournament,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+
+export const useGetTournaments = () => {
+  return useQuery({
+    queryKey: ['tournaments'],
+    queryFn: getTournaments,
+  });
+};
+
+export const useManageTournament = () => {
+
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: manageTournament,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
   });
 };
 

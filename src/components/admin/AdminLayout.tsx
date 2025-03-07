@@ -89,7 +89,7 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
+              {/* <DropdownMenuContent align="end" className="w-80">
                 <DropdownMenuLabel>Notifications</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 
@@ -126,9 +126,9 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
                 <DropdownMenuItem className="justify-center text-center cursor-pointer">
                   View all notifications
                 </DropdownMenuItem>
-              </DropdownMenuContent>
+              </DropdownMenuContent> */}
             </DropdownMenu>
-            <Globe/>
+            {/* <Globe/> */}
             {/* <Button >   Logout <LogOut className="h-4 w-4" /></Button> */}
             <Button onClick={handleLogout}>{isPending ? "Logging out..." : "Logout"} <LogOut className="h-4 w-4" /></Button>
           </div>
