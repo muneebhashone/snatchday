@@ -23,7 +23,11 @@ import {
   forgetPassword,
   resetPassword,
   getCategoryById,
+  createTournament,
+  getTournaments,
+  manageTournament,
 } from '../lib/api';
+import { TournamentFormData } from '@/types/admin';
 
 import { CategoryFormData, FilterFormData, ResetPasswordTypes } from '@/types';
 import { useUserContext } from '@/context/userContext';

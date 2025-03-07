@@ -1,19 +1,20 @@
+import { TournamentFormData } from '@/types/admin';
 import axiosInstance from './axios';
-import { ProductFormData, CategoryFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes } from '@/types';
+import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData } from '@/types';
 
 
 export const fetchItems = async () => {
-  const response = await axiosInstance.get('/items');
+  const response = await axiosInstance.get("/items");
   return response.data;
 };
 
 export const logout = async () => {
-  const response = await axiosInstance.get('/auth/logout');
+  const response = await axiosInstance.get("/auth/logout");
   return response.data;
 };
 
 export const getMyprofile = async () => {
-  const response = await axiosInstance.get('/auth/me');
+  const response = await axiosInstance.get("/auth/me");
   return response.data;
 };
 
@@ -24,7 +25,7 @@ export const fetchItemById = async (id: string) => {
 
 export const authMutation = async (data: any, type: string) => {
   const response = await axiosInstance.post(`/auth/${type}`, data);
-  console.log(response.data, "response.data")
+  console.log(response.data, "response.data");
   return response.data;
 };
 
@@ -39,7 +40,7 @@ export const deleteItem = async (id: string) => {
 };
 
 export const filterItems = async (filters: Record<string, string>) => {
-  const response = await axiosInstance.get('/items', { params: filters });
+  const response = await axiosInstance.get("/items", { params: filters });
   return response.data;
 };
 
@@ -48,12 +49,16 @@ export const filterItems = async (filters: Record<string, string>) => {
 //   return response.data;
 // };
 
-export const createProduct = async (formData:FormData) => {
-  const response = await axiosInstance.post<ProductFormData>('/product/product', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+export const createProduct = async (formData: FormData) => {
+  const response = await axiosInstance.post<ProductFormData>(
+    "/product/product",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
   return response.data;
 };
 
@@ -68,7 +73,7 @@ export const createCategory = async (formData: FormData) => {
 };
 
 export const getCategories = async () => {
-  const response = await axiosInstance.get<Category[]>('/product/category');
+  const response = await axiosInstance.get<Category[]>("/product/category");
   return response.data;
 };
 
@@ -78,32 +83,45 @@ export const getCategoryById = async (id: string) => {
 };
 
 export const updateCategory = async (id: string, data: CategoryFormData) => {
-  const response = await axiosInstance.patch<CategoryFormData>(`/product/category/${id}`, data);
+  const response = await axiosInstance.patch<CategoryFormData>(
+    `/product/category/${id}`,
+    data
+  );
   return response.data;
 };
 
 export const deleteCategory = async (id: string) => {
-  const response = await axiosInstance.delete<CategoryFormData>(`/product/category/${id}`);
+  const response = await axiosInstance.delete<CategoryFormData>(
+    `/product/category/${id}`
+  );
   return response.data;
 };
 
 export const createFilter = async (formData: FilterFormData) => {
-  const response = await axiosInstance.post<FilterFormData>('/product/filter', formData);
+  const response = await axiosInstance.post<FilterFormData>(
+    "/product/filter",
+    formData
+  );
   return response.data;
 };
 
 export const getFilters = async () => {
-  const response = await axiosInstance.get<FilterFormData[]>('/product/filter');
+  const response = await axiosInstance.get<FilterFormData[]>("/product/filter");
   return response.data;
 };
 
 export const deleteFilter = async (id: string) => {
-  const response = await axiosInstance.delete<FilterFormData>(`/product/filter/${id}`);
+  const response = await axiosInstance.delete<FilterFormData>(
+    `/product/filter/${id}`
+  );
   return response.data;
 };
 
 export const updateFilter = async (id: string, data: FilterFormData) => {
-  const response = await axiosInstance.patch<FilterFormData>(`/product/filter/${id}`, data);
+  const response = await axiosInstance.patch<FilterFormData>(
+    `/product/filter/${id}`,
+    data
+  );
   return response.data;
 };
 
@@ -117,12 +135,23 @@ export const getProducts = async (params?: {
   category?: string;
   type?: string;
 }) => {
-  const response = await axiosInstance.get<ProductFormData[]>('/product/product', {
-    params,
-  });
+  const response = await axiosInstance.get<ProductFormData[]>(
+    "/product/product",
+    {
+      params,
+    }
+  );
   return response.data;
 };
 
+export const createTournament = async (data: TournamentFormData) => {
+  const response = await axiosInstance.post<ResponseTournament>(
+    "/tournament/manage",
+    data,
+    {}
+  );
+  return response.data;
+};
 
 export const getNewsletters = async (params?: {
   limit?: string;
@@ -148,3 +177,35 @@ export const resetPassword = async (data: ResetPasswordTypes)  => {
 };
 
 
+type TournamentParams = {
+  limit: string;
+  offset: string;
+  sort_attr: string;
+  sort: string;
+  name: string;
+  from: string;
+  until: string;
+  game: string;
+  fee: string;
+  vip: string;
+  product: string;
+  startingPrice: string;
+  category: string;
+  status: string;
+};
+
+export const getTournaments = async (params: TournamentParams) => {
+  const response = await axiosInstance.get<ResponseTournament[]>(
+    "/tournament/get",
+    { params }
+  );
+  return response.data;
+};
+
+export const manageTournament = async (data: TournamentFormData) => {
+  const response = await axiosInstance.patch<ResponseTournament>(
+    "/tournament/manage",
+    data
+  );
+  return response.data;
+};
