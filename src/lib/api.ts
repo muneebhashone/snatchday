@@ -222,3 +222,9 @@ export const subscribeNewsletter = async (email: string) => {
 
 
 
+export const getProductById = async (id: string) => {
+  const response = await axiosInstance.get<ProductFormData>(`/product/product/${id}`);
+    console.log(response.data, "response.data",id);
+  return response.data;
+};
+

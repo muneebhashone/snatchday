@@ -61,8 +61,7 @@ const ProductListingPage = () => {
 
   const { data: productsData, isLoading } = useGetProducts({
     category: category as string,
-    type: selectedFilters.join(","),
-    name: filters.name,
+    name: selectedFilters.join(","),
   });
 
   const { data: categoryData } = useGetCategoryById(category as string);
@@ -75,23 +74,26 @@ const ProductListingPage = () => {
       id: filter._id,
     })) || [];
 
-  console.log(availableFilters, "availableFilters");
 
-  const handleFilterChange = (filterValue: string) => {
-    setSelectedFilters((prev) => {
-      const newFilters = prev.includes(filterValue)
-        ? prev.filter((f) => f !== filterValue)
-        : [...prev, filterValue];
-
-      // Update product filters
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        filters: newFilters.join(","),
-      }));
-
-      return newFilters;
+  const handleFilterChange = (value: string) => {
+    setSelectedFilters(prev => {
+      const isSelected = prev.includes(value);
+      if (isSelected) {
+        return prev.filter(filter => filter !== value);
+      } else {
+        return [...prev, value];
+      }
     });
   };
+
+  useEffect(() => {
+    console.log('API Call Parameters:', {
+      category,
+      type: selectedFilters.join(','),
+      name: filters.name
+    });
+  }, [category, selectedFilters, filters.name]);
+
 
   const handlePriceChange = (range: number[]) => {
     setPriceRange(range);
@@ -351,7 +353,7 @@ const ProductListingPage = () => {
               ) : (
                 <>
                   {productsData.data.products.map((product, index) => (
-                    <ProductCard key={index} {...product} />
+                    <ProductCard key={index} {...product} id={product._id} />
                   ))}
                   {productsData.data.products.length > 0 && (
                     <div className="mt-10 col-span-3 flex items-center justify-between">

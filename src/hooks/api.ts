@@ -27,6 +27,7 @@ import {
   getTournaments,
   manageTournament,
   getFilterById,
+  getProductById,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 
@@ -254,6 +255,14 @@ export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
     queryKey: ['products', filters],
     queryFn: () => getProducts(filters),
+  });
+};
+
+export const useGetProductById = (id: string) => {
+  return useQuery({
+    queryKey: ['product', id],
+    queryFn: () => getProductById(id),
+    enabled: !!id,
   });
 };
 

@@ -62,7 +62,6 @@ const Header = () => {
   });
 
   const { data, isLoading } = useGetCategories();
-  console.log(data,"data")
   const [categoryImage, setCategoryImage] = useState("");
 
   // const { data: myprofile } = useGetMyProfile();

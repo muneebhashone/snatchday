@@ -78,6 +78,16 @@ const ProductCategoryFilter = ({
     ],
   };
 
+  const handleFilterChange = (value: string) => {
+    console.log('Filter clicked:', value); // Debug log for clicked value
+    console.log('Current selectedFilters:', selectedFilters); // Debug log for current state
+    onFilterChange(value);
+  };
+
+  // Debug log for props
+  console.log('Filters prop:', filters);
+  console.log('Selected filters prop:', selectedFilters);
+
   return (
     <div className="space-y-6 h-max pl-9 pr-10 border border-gray-200 pt-8 bg-white rounded-3xl">
       <p className="text-lg font-bold mb-4 text-card-foreground">Filters</p>
@@ -101,17 +111,23 @@ const ProductCategoryFilter = ({
           <div key={filter.id} className="space-y-2">
             <h3 className="font-medium text-lg">{filter.name}</h3>
             <div className="space-y-2">
-              {filter.values.map((value) => (
-                <label key={value} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={selectedFilters.includes(value)}
-                    onChange={() => onFilterChange(value)}
-                    className="rounded border-gray-300 text-primary focus:ring-primary"
-                  />
-                  <span className="text-sm text-gray-600">{value}</span>
-                </label>
-              ))}
+              {filter.values.map((value) => {
+                console.log('Rendering checkbox for value:', value); // Debug log for each checkbox
+                return (
+                  <label key={value} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={selectedFilters.includes(value)}
+                      onChange={() => {
+                        console.log('Checkbox clicked for value:', value); // Debug log for checkbox click
+                        handleFilterChange(value);
+                      }}
+                      className="rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm text-gray-600">{value}</span>
+                  </label>
+                );
+              })}
             </div>
           </div>
         ))

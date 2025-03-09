@@ -34,9 +34,16 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Loader from "@/components/Loader";
+import { useGetProductById } from "@/hooks/api";
+import { useParams } from "next/navigation";
 
 const ProductContent = () => {
-  const productData = {
+  const params = useParams();
+  const id = params.id 
+  const {data: productData, isLoading} = useGetProductById(id as string);
+  console.log(productData, "productData");
+
+  const productData1  = {
     title: `Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27) - 4710886045649`,
     images: [
       detailimage,
@@ -286,7 +293,7 @@ const ProductContent = () => {
         </Breadcrumb>
         <Separator className="my-5" />
 
-        <ProductDetails {...productData} />
+        <ProductDetails {...productData?.data} isLoading={isLoading} />
         <div className="bg-[#F9F9F9] container max-w-[1920px] mx-auto py-20 px-10">
           <h2 className="text-[48px] font-extrabold text-center capitalize mb-10">
             <span className=" bg-primary text-white px-4 py-1 rounded-lg">

@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
-import { Heart, ShoppingCartIcon, TruckIcon } from "lucide-react";
+import { Heart, ShoppingCartIcon, TruckIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { VatIcon } from "@/components/icons/icon";
@@ -9,28 +9,75 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "../ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
+// interface ProductDetailsProps {
+//   title: string;
+//   images: StaticImageData[];
+//   price: string;
+//   rating: number;
+//   reviews: number;
+//   isNew?: boolean;
+//   specifications: {
+//     leftColumn: string[];
+//     rightColumn: string[];
+//   };
+// }
+
+
 interface ProductDetailsProps {
+  id?: string;
   title: string;
-  images: StaticImageData[];
   price: string;
   rating: number;
-  reviews: number;
   isNew?: boolean;
-  specifications: {
-    leftColumn: string[];
-    rightColumn: string[];
-  };
+  isSale?: boolean;
+  article: string;
+  attributes: Record<string, unknown>;
+  barcodeEAN: string;
+  categoryIds: Array<Record<string, unknown>>;
+  colors: string[];
+  company: string;
+  createdAt: string;
+  discounts: Array<Record<string, unknown>>;
+  description: string;
+  images: Array<string | StaticImageData>;
+  isActive: boolean;
+  isFeatured: boolean;
+  liscenseKey: string;
+  metaDescription: string;
+  metaKeywords: string;
+  metaTitle: string;
+  name: string;
+  noStockMessage: string;
+  relatedProducts: string[];
+  requireShipping: boolean;
+  sku: string;
+  stock: number;
+  type: string;
 }
 
 const ProductDetails = ({
-  title,
-  images,
-  price,
-  rating,
-  reviews,
-  isNew = false,
-  specifications,
-}: ProductDetailsProps) => {
+ article,
+ attributes,
+ barcodeEAN,
+ categoryIds,
+ colors,
+ company,
+ createdAt,
+ discounts,
+ description,
+ images,
+ isActive,
+ name,
+ isFeatured,
+ liscenseKey,
+ isNew,
+ title,
+ rating,
+ reviews,
+ price,
+ specifications,
+ isLoading,
+}: ProductDetailsProps & { isLoading?: boolean }) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(4);
 
@@ -43,6 +90,16 @@ const ProductDetails = ({
       setQuantity((prev) => prev - 1);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="container max-w-[1600px] mx-auto relative z-10 min-h-[500px]">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
@@ -99,15 +156,15 @@ const ProductDetails = ({
             {/* Product Title */}
 
             <h1 className="text-[48px] font-extrabold text-[#1C1B1D] leading-[56px] mt-4">
-              {title}
+              {name}
             </h1>
 
             {/* Rating */}
             <div className="flex items-center gap-1">
               <div className="flex text-primary text-2xl">
-                {"★".repeat(rating)}
+                {"★".repeat(4)}
               </div>
-              <span className="text-sm text-gray-500">({reviews})</span>
+              <span className="text-sm text-gray-500">({4})</span>
             </div>
 
             {/* Price */}
@@ -337,7 +394,7 @@ const ProductDetails = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="description1" className="py-8 px-16 border mt-0">
+          {/* <TabsContent value="description1" className="py-8 px-16 border mt-0">
             <div className="grid grid-cols-2 gap-x-32">
               <ul className="space-y-4 text-sm">
                 {specifications.leftColumn.map((spec, index) => (
@@ -355,23 +412,23 @@ const ProductDetails = ({
                 ))}
               </ul>
             </div>
-          </TabsContent>
+          </TabsContent> */}
 
-          <TabsContent value="description2" className="py-8">
+          {/* <TabsContent value="description2" className="py-8">
             <div className="grid grid-cols-2 gap-x-32">
               <div className="text-sm text-gray-600">
                 Second description tab content
               </div>
             </div>
-          </TabsContent>
+          </TabsContent> */}
 
-          <TabsContent value="description3" className="py-8">
+          {/* <TabsContent value="description3" className="py-8">
             <div className="grid grid-cols-2 gap-x-32">
               <div className="text-sm text-gray-600">
                 Third description tab content
               </div>
             </div>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
     </div>
