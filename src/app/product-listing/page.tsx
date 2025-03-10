@@ -56,13 +56,28 @@ const ProductListingPage = () => {
     category: category as string,
   });
 
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<number[]>([1000]);
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
+  const [priceRange, setPriceRange] = useState<number[]>([]);
+  const debouncedPriceRange = useDebounce(priceRange, 500);
 
-  const { data: productsData, isLoading } = useGetProducts({
-    category: category as string,
-    name: selectedFilters.join(","),
-  });
+ 
+
+   console.log(selectedFilters,"selectedFilters")
+
+
+  const { data: productsData, isLoading } = useGetProducts(
+    false 
+      ? {
+          category: category as string,
+          attributes: attributesString
+        }
+      : {
+          category: category as string,
+          ...(debouncedPriceRange.length === 2 && {
+            price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`
+          })
+        }
+  );
 
   const { data: categoryData } = useGetCategoryById(category as string);
 
@@ -74,30 +89,24 @@ const ProductListingPage = () => {
       id: filter._id,
     })) || [];
 
-
-  const handleFilterChange = (value: string) => {
+  const handleFilterChange = (filterName: string, value: string) => {
     setSelectedFilters(prev => {
-      const isSelected = prev.includes(value);
-      if (isSelected) {
-        return prev.filter(filter => filter !== value);
+      const newFilters = { ...prev };
+      
+      // If the value is already selected, remove it
+      if (prev[filterName] === value) {
+        delete newFilters[filterName];
       } else {
-        return [...prev, value];
+        // Otherwise, add/update it
+        newFilters[filterName] = value;
       }
+      
+      return newFilters;
     });
   };
 
-  useEffect(() => {
-    console.log('API Call Parameters:', {
-      category,
-      type: selectedFilters.join(','),
-      name: filters.name
-    });
-  }, [category, selectedFilters, filters.name]);
-
-
   const handlePriceChange = (range: number[]) => {
     setPriceRange(range);
-    // Add price filter logic here if needed
   };
 
   const [searchTerm, setSearchTerm] = useState('');

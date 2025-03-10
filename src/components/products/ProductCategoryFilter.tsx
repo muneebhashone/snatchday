@@ -9,10 +9,10 @@ interface ProductCategoryFilterProps {
     values: string[];
     id: string;
   }>;
-  selectedFilters: string[];
-  onFilterChange: (value: string) => void;
+  selectedFilters: Record<string, string[]>;
+  onFilterChange: (filterName: string, value: string) => void;
   onPriceChange: (range: number[]) => void;
-  isLoading?: boolean;
+  isLoading: boolean;
 }
 
 const ProductCategoryFilter = ({
@@ -22,7 +22,7 @@ const ProductCategoryFilter = ({
   onPriceChange,
   isLoading
 }: ProductCategoryFilterProps) => {
-  const [priceRange, setPriceRange] = React.useState([1000]);
+  const [priceRange, setPriceRange] = React.useState([1000, 100000]);
 
     // const {data:filtersData, isLoading} = useGetFilters()
       
@@ -78,10 +78,15 @@ const ProductCategoryFilter = ({
     ],
   };
 
-  const handleFilterChange = (value: string) => {
-    console.log('Filter clicked:', value); // Debug log for clicked value
-    console.log('Current selectedFilters:', selectedFilters); // Debug log for current state
-    onFilterChange(value);
+  const handleFilterChange = (filterName: string, value: string) => {
+    console.log('Filter clicked:', value); 
+    console.log('Current selectedFilters:', selectedFilters); 
+    onFilterChange(filterName, value);
+  };
+
+  const handlePriceChange = (newRange: number[]) => {
+    setPriceRange(newRange);
+    onPriceChange(newRange);
   };
 
   // Debug log for props
@@ -117,10 +122,10 @@ const ProductCategoryFilter = ({
                   <label key={value} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
-                      checked={selectedFilters.includes(value)}
+                      checked={selectedFilters[filter.name]?.includes(value)}
                       onChange={() => {
-                        console.log('Checkbox clicked for value:', value); // Debug log for checkbox click
-                        handleFilterChange(value);
+                        console.log('Checkbox clicked for value:', value);
+                        handleFilterChange(filter.name, value);
                       }}
                       className="rounded border-gray-300 text-primary focus:ring-primary"
                     />
@@ -138,17 +143,17 @@ const ProductCategoryFilter = ({
         <p className="font-medium text-gray-700">Price Range</p>
         <div className="space-y-4">
           <Slider
-            defaultValue={[1000]}
-            max={100000}
-            min={1000}
-            step={1000}
+         defaultValue={[100, 2000]}
+         max={2000}
+         min={100}
+         step={10}
             value={priceRange}
-            // onValueChange={handlePriceRangeChange}
+            onValueChange={handlePriceChange}
             className="w-full"
           />
           <div className="flex items-center justify-between text-sm text-gray-500">
             <span>{priceRange[0].toFixed(3)}€</span>
-            <span>100.000€</span>
+            <span>{priceRange[1].toFixed(3)}€</span>
           </div>
         </div>
       </div>

@@ -41,7 +41,6 @@ const ProductContent = () => {
   const params = useParams();
   const id = params.id 
   const {data: productData, isLoading} = useGetProductById(id as string);
-  console.log(productData, "productData");
 
   const productData1  = {
     title: `Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27) - 4710886045649`,

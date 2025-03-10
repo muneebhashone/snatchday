@@ -233,7 +233,7 @@ export const useUpdateFilter = () => {
 };
 
 interface ProductFilters {
-  price?: string;
+  price?: string[];
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -241,6 +241,7 @@ interface ProductFilters {
   name?: string;
   category?: string;
   type?: string;
+  attributes?: string;
 }
 
 interface NewsletterFilters {
