@@ -1,6 +1,5 @@
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import { Separator } from "@/components/ui/separator";
-import React from "react";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 
 const AboutUs = () => {

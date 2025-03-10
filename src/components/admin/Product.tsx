@@ -97,9 +97,6 @@ export function Product() {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="py-10">

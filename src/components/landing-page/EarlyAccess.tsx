@@ -1,4 +1,5 @@
-import React from "react";
+"use client"
+
 import { MsgIcon } from "../icons/icon";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
