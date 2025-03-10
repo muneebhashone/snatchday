@@ -113,6 +113,7 @@ const ProductDetails = ({
                 alt="Product"
                 width={500}
                 height={500}
+                alt={name}
                 className="w-full h-auto object-contain"
               />
             </div>

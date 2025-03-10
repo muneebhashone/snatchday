@@ -79,8 +79,6 @@ const ProductCategoryFilter = ({
   };
 
   const handleFilterChange = (filterName: string, value: string) => {
-    console.log('Filter clicked:', value); 
-    console.log('Current selectedFilters:', selectedFilters); 
     onFilterChange(filterName, value);
   };
 
@@ -116,23 +114,16 @@ const ProductCategoryFilter = ({
           <div key={filter.id} className="space-y-2">
             <h3 className="font-medium text-lg">{filter.name}</h3>
             <div className="space-y-2">
-              {filter.values.map((value) => {
-                console.log('Rendering checkbox for value:', value); // Debug log for each checkbox
-                return (
-                  <label key={value} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={selectedFilters[filter.name]?.includes(value)}
-                      onChange={() => {
-                        console.log('Checkbox clicked for value:', value);
-                        handleFilterChange(filter.name, value);
-                      }}
-                      className="rounded border-gray-300 text-primary focus:ring-primary"
-                    />
-                    <span className="text-sm text-gray-600">{value}</span>
-                  </label>
-                );
-              })}
+              {filter.values.map((value) => (
+                <label key={value} className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={selectedFilters[filter.name]?.includes(value) || false}
+                    onCheckedChange={() => handleFilterChange(filter.name, value)}
+                    className="rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <span className="text-sm text-gray-600">{value}</span>
+                </label>
+              ))}
             </div>
           </div>
         ))
@@ -143,7 +134,7 @@ const ProductCategoryFilter = ({
         <p className="font-medium text-gray-700">Price Range</p>
         <div className="space-y-4">
           <Slider
-         defaultValue={[100, 2000]}
+         defaultValue={[2000, 2000]}
          max={2000}
          min={100}
          step={10}

@@ -46,6 +46,7 @@ interface FilterParams {
   filters?: string;
 }
 
+
 const ProductListingPage = () => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
@@ -62,42 +63,13 @@ const ProductListingPage = () => {
 
  
 
-   console.log(selectedFilters,"selectedFilters")
-
-
-  const { data: productsData, isLoading } = useGetProducts(
-    false 
-      ? {
-          category: category as string,
-          attributes: attributesString
-        }
-      : {
-          category: category as string,
-          ...(debouncedPriceRange.length === 2 && {
-            price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`
-          })
-        }
-  );
-
-  const { data: categoryData } = useGetCategoryById(category as string);
-
-  // Extract and organize filters from categoryData
-  const availableFilters =
-    categoryData?.data?.filters?.map((filter) => ({
-      name: filter.name,
-      values: filter.value || [],
-      id: filter._id,
-    })) || [];
-
   const handleFilterChange = (filterName: string, value: string) => {
     setSelectedFilters(prev => {
       const newFilters = { ...prev };
       
-      // If the value is already selected, remove it
-      if (prev[filterName] === value) {
+      if (newFilters[filterName] === value) {
         delete newFilters[filterName];
       } else {
-        // Otherwise, add/update it
         newFilters[filterName] = value;
       }
       
@@ -112,7 +84,6 @@ const ProductListingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
 
-  // Effect to update filters when debounced search term changes
   useEffect(() => {
     setFilters(prev => ({
       ...prev,
@@ -122,6 +93,7 @@ const ProductListingPage = () => {
   }, [debouncedSearchTerm]);
 
   const handleSearch = (value: string) => {
+    console.log(value,"value1223")
     setSearchTerm(value);
   };
 
@@ -268,6 +240,29 @@ const ProductListingPage = () => {
     },
   ];
 
+  const attributesString = JSON.stringify(selectedFilters); 
+
+  const { data: productsData, isLoading } = useGetProducts({
+    category: category as string,
+    ...(Object.keys(selectedFilters).length > 0 && {
+      attributes: attributesString  
+    }),
+    ...(debouncedPriceRange.length === 2 && {
+      price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`
+    }),
+    ...(debouncedSearchTerm && { name: debouncedSearchTerm }),
+  });
+
+  const { data: categoryData } = useGetCategoryById(category as string);
+
+  // Extract and organize filters from categoryData
+  const availableFilters =
+    categoryData?.data?.filters?.map((filter) => ({
+      name: filter.name,
+      values: filter.value || [],
+      id: filter._id,
+    })) || [];
+
   return (
     <ClientLayout>
       <div className="container mx-auto max-w-[1920px] my-40 px-12">
@@ -288,7 +283,7 @@ const ProductListingPage = () => {
           <div className="col-span-1">
             <div className="mb-5 mt-4">
               <Search 
-                placeholder="Search product, category" 
+                placeholder="Search by name" 
                 onSearch={handleSearch}
                 value={searchTerm}
               />
