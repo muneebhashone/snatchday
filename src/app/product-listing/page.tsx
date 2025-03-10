@@ -57,23 +57,26 @@ const ProductListingPage = () => {
     category: category as string,
   });
 
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [priceRange, setPriceRange] = useState<number[]>([]);
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
- 
-
   const handleFilterChange = (filterName: string, value: string) => {
     setSelectedFilters(prev => {
-      const newFilters = { ...prev };
-      
-      if (newFilters[filterName] === value) {
-        delete newFilters[filterName];
-      } else {
-        newFilters[filterName] = value;
-      }
-      
-      return newFilters;
+        const newFilters = { ...prev };
+        
+        if (newFilters[filterName]?.includes(value)) {
+            // Remove the value if it's already selected
+            newFilters[filterName] = newFilters[filterName].filter(v => v !== value);
+            if (newFilters[filterName].length === 0) {
+                delete newFilters[filterName]; // Remove the filter if no values are left
+            }
+        } else {
+            // Add the value to the filter
+            newFilters[filterName] = [...(newFilters[filterName] || []), value];
+        }
+        
+        return newFilters;
     });
   };
 
@@ -84,171 +87,21 @@ const ProductListingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
 
-  useEffect(() => {
-    setFilters(prev => ({
-      ...prev,
-      name: debouncedSearchTerm,
-      offset: "0"
-    }));
-  }, [debouncedSearchTerm]);
-
   const handleSearch = (value: string) => {
-    console.log(value,"value1223")
     setSearchTerm(value);
   };
 
-  const products = [
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-  ];
-
-  const attributesString = JSON.stringify(selectedFilters); 
+  const attributesArray = Object.entries(selectedFilters).flatMap(([key, values]) =>
+    values.map(value => ({ [key]: value }))
+  );
 
   const { data: productsData, isLoading } = useGetProducts({
-    category: category as string,
-    ...(Object.keys(selectedFilters).length > 0 && {
-      attributes: attributesString  
+    ...filters,
+    ...(attributesArray.length > 0 && {
+        attributes: JSON.stringify(attributesArray)
     }),
     ...(debouncedPriceRange.length === 2 && {
-      price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`
+        price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`
     }),
     ...(debouncedSearchTerm && { name: debouncedSearchTerm }),
   });
@@ -323,13 +176,13 @@ const ProductListingPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="text-card-foreground font-medium">Sort by</p>
-                  <Select>
+                  <Select onValueChange={(value) => setFilters(prev => ({ ...prev, sort: value }))}>
                     <SelectTrigger className="w-[250px] rounded-full">
                       <SelectValue placeholder="Newest" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1">Best Selling</SelectItem>
-                      <SelectItem value="2">Newest</SelectItem>
+                      <SelectItem value="aesc">Newest</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
