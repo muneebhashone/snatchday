@@ -152,6 +152,23 @@ export const getProducts = async (params?: {
   return response.data;
 };
 
+export const updateProduct = async (id: string, data: ProductFormData) => {
+  const response = await axiosInstance.patch<ProductFormData>(
+    `/product/product/${id}`,
+    data
+  );
+  return response.data;
+};
+
+export const deleteProduct = async (id: string) => {
+  const response = await axiosInstance.delete<ProductFormData>(
+    `/product/product/${id}`
+  );
+  return response.data;
+};
+
+
+
 export const createTournament = async (data: TournamentFormData) => {
   const response = await axiosInstance.post<ResponseTournament>(
     "/tournament/manage",
@@ -194,3 +211,12 @@ export const manageTournament = async (data: TournamentFormData) => {
   );
   return response.data;
 };
+
+
+export const cancelTournament = async (id: string) => {
+  const response = await axiosInstance.patch<ResponseTournament>(
+    `/tournament/cancel/${id}`
+  );
+  return response.data;
+};
+

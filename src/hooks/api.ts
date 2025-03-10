@@ -24,8 +24,12 @@ import {
   createTournament,
   getTournaments,
   manageTournament,
+  updateProduct,
+  deleteProduct,
+  cancelTournament,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
+import { ProductFormData } from '@/types';
 
 
 
@@ -233,6 +237,27 @@ export const useGetProducts = (filters?: ProductFilters) => {
   });
 };
 
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({id, data}: {id: string, data: ProductFormData}) => updateProduct(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteProduct(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+
 export const useCreateTournament = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -261,4 +286,12 @@ export const useManageTournament = () => {
   });
 };
 
-
+export const useCancelTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: cancelTournament,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
