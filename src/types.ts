@@ -48,6 +48,22 @@ export interface ProductFormData {
     above: boolean;
   }
 
+  export interface NewsletterTypes {
+    _id: string;
+    name: string;
+    email: string;
+    subscribedAt: string;
+    createdAt: string;
+    data?: NewsletterTypes[];
+  }
+
+export interface ResetPasswordTypes {
+  email: string;
+  password: string;
+  passwordResetToken: string;
+}
+
+
   export interface ResponseTournament {
     _id: string;
     name: string;

@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, 
-
   withCredentials: true, 
 });
 
@@ -24,6 +23,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       if (window.location.pathname.startsWith('/admin')) {
+        localStorage.removeItem("snatchday_user")
         window.location.href = '/admin/login';
       }
     }

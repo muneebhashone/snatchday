@@ -1,12 +1,7 @@
-import { TournamentFormData } from "@/types/admin";
-import axiosInstance from "./axios";
-import {
-  ProductFormData,
-  CategoryFormData,
-  FilterFormData,
-  Category,
-  ResponseTournament,
-} from "@/types";
+import { TournamentFormData } from '@/types/admin';
+import axiosInstance from './axios';
+import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData } from '@/types';
+
 
 export const fetchItems = async () => {
   const response = await axiosInstance.get("/items");
@@ -73,20 +68,17 @@ export const createProduct = async (formData: FormData) => {
 // };
 
 export const createCategory = async (formData: FormData) => {
-  const response = await axiosInstance.post<CategoryFormData>(
-    "/product/category",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  const response = await axiosInstance.post<CategoryFormData>('/product/category', formData)
   return response.data;
 };
 
 export const getCategories = async () => {
   const response = await axiosInstance.get<Category[]>("/product/category");
+  return response.data;
+};
+
+export const getCategoryById = async (id: string) => {
+  const response = await axiosInstance.get<Category>(`/product/category/${id}`);
   return response.data;
 };
 
@@ -175,9 +167,32 @@ export const createTournament = async (data: TournamentFormData) => {
     data,
     {}
   );
-
   return response.data;
 };
+
+export const getNewsletters = async (params?: {
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+}) => {
+  const response = await axiosInstance.get<NewsletterTypes>('/newsletter/subscribers', {
+    params,
+  });
+  return response.data;
+};
+
+
+export const forgetPassword = async (email: string) => {
+  const response = await axiosInstance.post('/auth/forgotPassword', { email });
+  return response.data;
+};
+
+export const resetPassword = async (data: ResetPasswordTypes)  => {
+  const response = await axiosInstance.put('/auth/resetPassword', data);
+  return response.data;
+};
+
 
 type TournamentParams = {
   limit: string;
@@ -212,11 +227,21 @@ export const manageTournament = async (data: TournamentFormData) => {
   return response.data;
 };
 
+export const getFilterById = async (id: string) => {
+  const response = await axiosInstance.get(`/product/filter/${id}`);
+  return response.data;
+};
 
-export const cancelTournament = async (id: string) => {
-  const response = await axiosInstance.patch<ResponseTournament>(
-    `/tournament/cancel/${id}`
-  );
+export const subscribeNewsletter = async (email: string) => {
+  const response = await axiosInstance.post('/newsletter/subscribe', { email });
+  return response.data;
+};
+
+
+
+export const getProductById = async (id: string) => {
+  const response = await axiosInstance.get<ProductFormData>(`/product/product/${id}`);
+    console.log(response.data, "response.data",id);
   return response.data;
 };
 

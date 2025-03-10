@@ -8,37 +8,51 @@ import {
   filterItems,
   getMyprofile,
   logout,
-
+  subscribeNewsletter,
   createProduct,
   getCategories,
   createCategory,
   updateCategory,
-  CategoryFormData,
   deleteCategory,
   createFilter,
   getFilters,
   deleteFilter,
   updateFilter,
-  FilterFormData,
   getProducts,
+  getNewsletters,
+  forgetPassword,
+  resetPassword,
+  getCategoryById,
   createTournament,
   getTournaments,
   manageTournament,
+<<<<<<< HEAD
   updateProduct,
   deleteProduct,
   cancelTournament,
+  getProductById,
+  getFilterById,
+=======
+  getFilterById,
+  getProductById,
+>>>>>>> 0d37c826af17367b428aafe02421427c671262ff
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 import { ProductFormData } from '@/types';
 
+import { CategoryFormData, FilterFormData, ResetPasswordTypes } from '@/types';
+import { useUserContext } from '@/context/userContext';
 
 
 
 // Fetch all items
 export const useGetMyProfile = () => {
+  const { user } = useUserContext();
+
   return useQuery({
     queryKey: ['myprofile'],
     queryFn: getMyprofile,
+    enabled: Boolean(user),
   });
 };
 
@@ -152,6 +166,14 @@ export const useGetCategories = () => {
   });
 };
 
+export const useGetCategoryById = (id: string) => {
+  return useQuery({
+    queryKey: ['category', id],
+    queryFn: () => getCategoryById(id),
+    enabled: !!id,
+  });
+};
+
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -220,7 +242,7 @@ export const useUpdateFilter = () => {
 };
 
 interface ProductFilters {
-  price?: string;
+  price?: string[];
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -228,7 +250,16 @@ interface ProductFilters {
   name?: string;
   category?: string;
   type?: string;
+  attributes?: string;
 }
+
+interface NewsletterFilters {
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+}
+
 
 export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
@@ -268,20 +299,33 @@ export const useCreateTournament = () => {
   });
 };
 
-export const useGetTournaments = () => {
+// export const useGetTournaments = () => {
+
+
+
+export const useGetProductById = (id: string) => {
   return useQuery({
-    queryKey: ['tournaments'],
-    queryFn: getTournaments,
+    queryKey: ['product', id],
+    queryFn: () => getProductById(id),
+    enabled: !!id,
   });
 };
 
-export const useManageTournament = () => {
+export const useGetNewsletters = (filters?: NewsletterFilters) => {
+  return useQuery({
+    queryKey: ['newsletters', filters],
+    queryFn: () => getNewsletters(filters),
+  });
+};
 
-  const queryClient = useQueryClient();
+export const useForgetPassword = () => {
   return useMutation({
-    mutationFn: manageTournament,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    mutationFn: (email: string) => forgetPassword(email),
+    onSuccess: (data) => {
+      console.log(data,"data from hooks");
+    },
+    onError: (error) => {
+      console.log(error,"error from hooks");
     },
   });
 };
@@ -292,6 +336,37 @@ export const useCancelTournament = () => {
     mutationFn: cancelTournament,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: (data: ResetPasswordTypes) => resetPassword(data),
+    onSuccess: (data) => {
+      console.log(data,"data from hooks");
+    },
+    onError: (error) => {
+      console.log(error,"error from hooks");
+    },
+  });
+};
+
+export const useGetFilterById = (id: string) => {
+  return useQuery({
+    queryKey: ['filter', id],
+    queryFn: () => getFilterById(id),
+    enabled: !!id,
+  });
+};
+
+
+
+export const useSubscribeNewsletter = () => {
+  return useMutation({
+    mutationFn: (email: string) => subscribeNewsletter(email),
+    onSuccess: () => {
+    },
+    onError: (error) => {
     },
   });
 };

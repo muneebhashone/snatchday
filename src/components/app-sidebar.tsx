@@ -22,6 +22,7 @@ import {
   ChevronDown,
   Plus,
   List,
+  Newspaper,
   Trophy
 } from "lucide-react"
 import {
@@ -79,6 +80,7 @@ const navItems = [
     url: "/admin/filters",
     icon: <Filter className="h-4 w-4" />,
   },
+
   {
     title: "Orders",
     url: "/admin/orders",
@@ -93,6 +95,11 @@ const navItems = [
     title: "Settings",
     url: "/admin/settings",
     icon: <Settings className="h-4 w-4" />,
+  },
+  {
+    title: "Newsletters",
+    url: "/admin/newsletters",
+    icon: <Newspaper className="h-4 w-4" />,
   },
 ]
 
