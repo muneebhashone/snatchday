@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetProducts, useGetCategories } from '@/hooks/api';
+import { useGetProducts, useGetCategories, useDeleteProduct } from '@/hooks/api';
 import {
   Table,
   TableBody,
@@ -67,7 +67,11 @@ export function Product() {
 
   const { data: productsData, isLoading } = useGetProducts(filters);
   const { data: categoriesData } = useGetCategories();
-  
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  const handleDelete = (id: string) => {
+    deleteProduct(id);
+  };
   
   const products = productsData?.data?.products || [];
   const categories = categoriesData?.data?.categories || [];
@@ -223,13 +227,14 @@ export function Product() {
                 <TableCell>{product.type}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="icon">
-                      <Edit className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/admin/products/update/${product._id}`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
                     </Button>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(product._id)}>
                       <Trash className="h-4 w-4" />
                     </Button>
-                  
                   </div>
                 </TableCell>
                 <TableCell>

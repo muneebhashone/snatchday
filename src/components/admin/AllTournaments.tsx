@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useGetTournaments } from "@/hooks/api";
+import { useCancelTournament, useGetTournaments } from "@/hooks/api";
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trash } from "lucide-react";
+import { CheckCircle, Trash } from "lucide-react";
 import { EditTournamentDialog } from "./EditTournamentDialog";
 
 interface FilterParams {
@@ -71,11 +71,16 @@ const AllTournaments = () => {
   const { data: getTournaments, isLoading } = useGetTournaments(filters);
   console.log(getTournaments);
   //   const { mutate: deleteTournament } = useDeleteTournament();
+  const { mutate: cancelTournament } = useCancelTournament();
 
   const tournaments = getTournaments?.data || [];
 
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleCancel = (id: string) => {
+    cancelTournament(id);
   };
 
   //   const handleDelete = async (id: string) => {
@@ -244,9 +249,13 @@ const AllTournaments = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      //   onClick={() => handleDelete(tournament._id)}
+                      onClick={() => handleCancel(tournament._id)}
                     >
-                      <Trash className="h-4 w-4 text-red-500" />
+                      {tournament.status === "cancelled" ? (
+                        <p>Cancelled</p>
+                      ) : (
+                        <p>Active</p>
+                      )}
                     </Button>
                   </div>
                 </TableCell>

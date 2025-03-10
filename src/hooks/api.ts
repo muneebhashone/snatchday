@@ -28,6 +28,10 @@ import {
   manageTournament,
   getFilterById,
   getProductById,
+  cancelTournament,
+  deleteProduct,
+  updateProduct,
+  TournamentParams,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 
@@ -259,6 +263,28 @@ export const useGetProducts = (filters?: ProductFilters) => {
   });
 };
 
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteProduct(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) => updateProduct(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+
+
 export const useGetProductById = (id: string) => {
   return useQuery({
     queryKey: ['product', id],
@@ -317,3 +343,41 @@ export const useSubscribeNewsletter = () => {
     },
   });
 };
+
+export const useCreateTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: TournamentFormData) => createTournament(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+
+export const useCancelTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => cancelTournament(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+
+export const useManageTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) => manageTournament(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+
+export const useGetTournaments = (params: TournamentParams) => {
+  return useQuery({
+    queryKey: ['tournaments', params],
+    queryFn: () => getTournaments(params),
+  });
+};
+
