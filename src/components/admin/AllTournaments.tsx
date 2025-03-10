@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -67,6 +69,7 @@ const AllTournaments = () => {
     limit: "10",
     offset: "0",
   });
+  const queryClient = useQueryClient();
 
   const { data: getTournaments, isLoading } = useGetTournaments(filters);
   console.log(getTournaments);
@@ -80,7 +83,15 @@ const AllTournaments = () => {
   };
 
   const handleCancel = (id: string) => {
-    cancelTournament(id);
+    cancelTournament(id, {
+      onSuccess: () => {
+        toast.success('Tournament cancelled successfully');
+        queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+      },
+      onError: () => {
+        toast.error('Failed to cancel tournament');
+      } 
+    });
   };
 
   //   const handleDelete = async (id: string) => {

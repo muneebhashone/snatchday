@@ -13,7 +13,8 @@ import { Trash } from 'lucide-react'
 import { useDeleteCategory, useGetCategories } from '@/hooks/api'
 import { CreateCategoryDialog } from './CreateCategoryDialog'
 import { EditCategoryDialog } from './EditCategoryDialog'
-
+import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'  
 interface CategoryType  {
   _id: string;
   name: string;
@@ -35,9 +36,18 @@ const Categories = () => {
   const { data : getCategories, isLoading, isError } = useGetCategories()
   const categories = getCategories?.data.categories
   const { mutate: deleteCategory } = useDeleteCategory()
-
+  const queryClient = useQueryClient()
   const handleDelete = (id: string) => {
-    deleteCategory(id)
+    deleteCategory(id, {
+      onSuccess: () => {
+        toast.success('Category deleted successfully');
+        queryClient.invalidateQueries({ queryKey: ['categories'] });
+      },
+      onError: (error) => {
+        toast.error('Failed to delete category');
+        console.error(error);
+      },
+    });
   }
   return (
     <div className="p-6">

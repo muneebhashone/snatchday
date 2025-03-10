@@ -15,7 +15,7 @@ import { Separator } from "../ui/separator";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authApi } from "@/hooks/api";
+import { useAuthApi } from "@/hooks/api";
 import { toast } from "sonner";
 interface RegisterProps {
   onBack: () => void;
@@ -41,7 +41,7 @@ const Register = ({ onBack }: RegisterProps) => {
     resolver: zodResolver(registerSchema), // Use Zod schema for validation
   });
 
-  const {mutate:register, isPending}=authApi()
+  const {mutate:register, isPending}=useAuthApi()
 
 
   const handleClose = () => {

@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import React from "react";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 
-const page = () => {
+const AboutUs = () => {
   return (
     <ClientLayout>
       <div className="container max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 pt-28 pb-32 mb-10">
@@ -69,4 +69,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default AboutUs;

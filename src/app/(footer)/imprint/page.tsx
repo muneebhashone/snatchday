@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 
-const page = () => {
+const ImprintPage = () => {
   return (
     <ClientLayout>
       <div className="container max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 pt-28 pb-32">
@@ -119,4 +119,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ImprintPage;

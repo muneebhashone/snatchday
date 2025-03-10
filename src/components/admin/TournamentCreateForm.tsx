@@ -40,7 +40,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import Image from "next/image";
-
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string({ required_error: "Name is required" }).min(3, "Name must be at least 3 characters"),
@@ -64,7 +64,7 @@ const formSchema = z.object({
 });
 
 const TournamentCreateForm = ({productId}: {productId: string}) => {
-
+  const queryClient = useQueryClient();
   console.log(productId, "productId")
   
   const { mutate: createTournament, isPending } = useCreateTournament();
@@ -116,7 +116,7 @@ const TournamentCreateForm = ({productId}: {productId: string}) => {
       createTournament(values, {
         onSuccess: () => {
           toast.success("Tournament created successfully");
-        
+          queryClient.invalidateQueries({ queryKey: ['tournaments'] });
           form.reset();
         },
         onError: (error: Error) => {

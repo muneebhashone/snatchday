@@ -10,7 +10,7 @@ import img3 from "@/app/images/complain3.png";
 import img4 from "@/app/images/complain4.png";
 import { Button } from "@/components/ui/button";
 
-const page = () => {
+const ReturnsPage = () => {
   const content = [
     {
       heading: "Return / exchange items",
@@ -143,4 +143,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default ReturnsPage;

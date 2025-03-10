@@ -22,9 +22,12 @@ import {
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDebounce } from '@/hooks/useDebounce';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
+import { CategoriesResponse, ProductsResponse } from '@/types';
 
 interface FilterParams {
-  price?: string;
+  price?: string[];
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -48,7 +51,10 @@ interface Category {
   _id: string;
   name: string;
   displayName: string;
+
 }
+
+
 
 export function Product() {
   const [filters, setFilters] = useState<FilterParams>({
@@ -56,6 +62,7 @@ export function Product() {
     offset: '0'
     
   });
+  const queryClient = useQueryClient();
   
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
@@ -65,16 +72,26 @@ export function Product() {
     setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
   }, [debouncedSearchTerm]);
 
-  const { data: productsData, isLoading } = useGetProducts(filters);
-  const { data: categoriesData } = useGetCategories();
+  const productsData = useGetProducts(filters)  as ProductsResponse
+  const categoriesData  = useGetCategories()  as CategoriesResponse
   const { mutate: deleteProduct } = useDeleteProduct();
 
+  
+
   const handleDelete = (id: string) => {
-    deleteProduct(id);
+    deleteProduct(id, {
+      onSuccess: () => {
+        toast.success('Product deleted successfully');
+        queryClient.invalidateQueries({ queryKey: ['products'] });
+      },
+      onError: (error) => {
+        toast.error('Failed to delete product');
+        console.error(error);
+      },
+    });
   };
   
-  const products = productsData?.data?.products || [];
-  const categories = categoriesData?.data?.categories || [];
+  
 
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -91,7 +108,7 @@ export function Product() {
           <label className="text-sm font-medium mb-2 block">Price Range</label>
           <Input
             placeholder="min,max (e.g., 10,100)"
-            value={filters.price}
+            value={filters.price?.join(',')}
             onChange={(e) => handleFilterChange('price', e.target.value)}
           />
         </div>
@@ -165,7 +182,7 @@ export function Product() {
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map((category: Category) => (
+              {categoriesData?.data?.categories?.map((category: Category) => (
                 <SelectItem key={category._id} value={category._id}>
                   {category.displayName || category.name}
                 </SelectItem>
@@ -205,7 +222,7 @@ export function Product() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product: Product) => (
+            {productsData?.data?.products?.map((product: Product) => (
               <TableRow key={product._id}>
                 <TableCell>
                   {product.images && product.images[0] && (

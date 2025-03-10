@@ -21,6 +21,8 @@ export interface ProductFormData {
     relatedProducts?: string;
     requireShipping?: boolean;
     liscenseKey?: string;
+    data?: any;
+    
   }
   
   export interface ResponseCategory {
@@ -36,6 +38,7 @@ export interface ProductFormData {
     name: string;
     value: string[];
     category: string;
+    data?: any;
   }
 
   export interface Category {
@@ -85,3 +88,37 @@ export interface ResetPasswordTypes {
     vip: boolean;
     resubmissions: number;
   }
+
+export interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  stock: number;
+  images: string[];
+  categoryIds: string[];
+  type: 'NEW' | 'SALE';
+  data?: any;
+}
+
+export interface ProductsData {
+  data: {
+    products: Product[];
+  };
+  isLoading: boolean;
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+  displayName: string;
+  data?: any;
+}
+
+export interface CategoriesData {
+  data: {
+    categories: Category[];
+  };
+  isLoading: boolean;
+}
+
+

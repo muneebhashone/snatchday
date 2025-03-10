@@ -68,14 +68,9 @@ const ProductDetails = ({
  images,
  isActive,
  name,
- isFeatured,
  liscenseKey,
  isNew,
- title,
- rating,
- reviews,
  price,
- specifications,
  isLoading,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -113,7 +108,6 @@ const ProductDetails = ({
                 alt="Product"
                 width={500}
                 height={500}
-                alt={name}
                 className="w-full h-auto object-contain"
               />
             </div>

@@ -190,7 +190,7 @@ Further promotions will be announced`,
   },
 ];
 
-const Page = () => {
+const FaqPage = () => {
   const [openSubAccordion, setOpenSubAccordion] = useState<string>("");
   return (
     <ClientLayout>
@@ -328,4 +328,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default FaqPage;

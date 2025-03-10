@@ -22,6 +22,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Category } from "@/types"
+import { useQueryClient } from "@tanstack/react-query"
 
 
 
@@ -42,6 +43,7 @@ export default function CategoriesForm() {
   const { mutate: createCategory, isPending } = useCreateCategory()
   const { data: getCategories } = useGetCategories()
   const categories = getCategories?.data?.categories
+  const queryClient = useQueryClient()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,6 +95,7 @@ export default function CategoriesForm() {
           if (previewUrl) {
             URL.revokeObjectURL(previewUrl)
           }
+          queryClient.invalidateQueries({ queryKey: ['categories'] });
           setPreviewUrl("")
           form.reset()
         },

@@ -26,8 +26,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { useQueryClient } from "@tanstack/react-query";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
+
+
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
@@ -129,13 +134,17 @@ interface Category {
   _id: string;
   name: string;
   displayName: string;
+  
 }
 
 export default function ProductUpdateForm({ product }: { product: Product}) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [previewUrls, setPreviewUrls] = useState<string[]>(product.images || []);
   const { mutate: updateProduct } = useUpdateProduct();
   const { data: categoriesResponse } = useGetCategories();
+   
+  
   const categories = categoriesResponse?.data?.categories || [];
 
   const form = useForm<ProductFormData>({
@@ -260,6 +269,7 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
       }, {
         onSuccess: () => {
           toast.success("Product updated successfully");
+          queryClient.invalidateQueries({ queryKey: ['products'] });
           router.push(`/admin/products`);
         },
         onError: (error) => {

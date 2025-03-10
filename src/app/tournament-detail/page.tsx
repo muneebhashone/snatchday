@@ -20,7 +20,7 @@ import image from '@/app/images/choosetournament.png'
 import image3 from '@/app/images/participateintournament.png'
 import image4 from '@/app/images/win.png'
 
-const page = () => {
+const TournamentDetailPage = () => {
 
   const displayProducts = [
     {
@@ -365,4 +365,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default TournamentDetailPage;

@@ -43,7 +43,7 @@ import {
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Edit } from "lucide-react";
 import { useManageTournament } from "@/hooks/api";
-
+import { useQueryClient } from "@tanstack/react-query";
 const formSchema = z.object({
   id: z.string().min(1, "ID is required"),
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -103,6 +103,7 @@ export function EditTournamentDialog({
   const { mutate: manageTournament } = useManageTournament();
 //   console.log(tournament, "tournament");
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -133,6 +134,7 @@ export function EditTournamentDialog({
     manageTournament(values, {
       onSuccess: () => {
         toast.success("Tournament updated successfully");
+        queryClient.invalidateQueries({ queryKey: ['tournaments'] });
         setOpen(false);
       },
       onError: (error) => {
