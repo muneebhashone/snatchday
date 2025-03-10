@@ -1,6 +1,7 @@
 import { TournamentFormData } from '@/types/admin';
 import axiosInstance from './axios';
 import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData } from '@/types';
+import { useMutation } from '@tanstack/react-query';
 
 
 export const fetchItems = async () => {
@@ -144,17 +145,17 @@ export const getProducts = async (params?: {
   return response.data;
 };
 
-export const updateProduct = async (id: string, data: ProductFormData) => {
-  const response = await axiosInstance.patch<ProductFormData>(
-    `/product/product/${id}`,
-    data
+export const deleteProduct = async (id: string) => {
+  const response = await axiosInstance.delete<ProductFormData>(
+    `/product/product/${id}`
   );
   return response.data;
 };
 
-export const deleteProduct = async (id: string) => {
-  const response = await axiosInstance.delete<ProductFormData>(
-    `/product/product/${id}`
+export const updateProduct = async (id: string, data: FormData) => {
+  const response = await axiosInstance.put<ProductFormData>(
+    `/product/product/${id}`,
+    data
   );
   return response.data;
 };
@@ -169,6 +170,23 @@ export const createTournament = async (data: TournamentFormData) => {
   );
   return response.data;
 };
+
+export const cancelTournament = async (id: string) => {
+  const response = await axiosInstance.patch<ResponseTournament>(
+    `/tournament/manage/${id}`,
+    {}
+  );
+  return response.data;
+};  
+
+export const manageTournament = async (id: string, data: TournamentFormData) => {
+  const response = await axiosInstance.patch<ResponseTournament>(
+    `/tournament/manage/${id}`,
+    data
+  );
+  return response.data;
+};
+
 
 export const getNewsletters = async (params?: {
   limit?: string;
@@ -194,7 +212,7 @@ export const resetPassword = async (data: ResetPasswordTypes)  => {
 };
 
 
-type TournamentParams = {
+export type TournamentParams = {
   limit: string;
   offset: string;
   sort_attr: string;
@@ -219,13 +237,7 @@ export const getTournaments = async (params: TournamentParams) => {
   return response.data;
 };
 
-export const manageTournament = async (data: TournamentFormData) => {
-  const response = await axiosInstance.patch<ResponseTournament>(
-    "/tournament/manage",
-    data
-  );
-  return response.data;
-};
+
 
 export const getFilterById = async (id: string) => {
   const response = await axiosInstance.get(`/product/filter/${id}`);
@@ -244,4 +256,3 @@ export const getProductById = async (id: string) => {
     console.log(response.data, "response.data",id);
   return response.data;
 };
-

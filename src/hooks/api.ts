@@ -26,19 +26,14 @@ import {
   createTournament,
   getTournaments,
   manageTournament,
-<<<<<<< HEAD
-  updateProduct,
-  deleteProduct,
+  getFilterById,
+  getProductById,
   cancelTournament,
-  getProductById,
-  getFilterById,
-=======
-  getFilterById,
-  getProductById,
->>>>>>> 0d37c826af17367b428aafe02421427c671262ff
+  deleteProduct,
+  updateProduct,
+  TournamentParams,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
-import { ProductFormData } from '@/types';
 
 import { CategoryFormData, FilterFormData, ResetPasswordTypes } from '@/types';
 import { useUserContext } from '@/context/userContext';
@@ -268,16 +263,6 @@ export const useGetProducts = (filters?: ProductFilters) => {
   });
 };
 
-export const useUpdateProduct = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({id, data}: {id: string, data: ProductFormData}) => updateProduct(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
-  });
-};
-
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -288,18 +273,15 @@ export const useDeleteProduct = () => {
   });
 };
 
-
-export const useCreateTournament = () => {
+export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createTournament,
+    mutationFn: ({ id, data }: { id: string; data: FormData }) => updateProduct(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+      queryClient.invalidateQueries({ queryKey: ['products'] });
     },
   });
 };
-
-// export const useGetTournaments = () => {
 
 
 
@@ -330,15 +312,6 @@ export const useForgetPassword = () => {
   });
 };
 
-export const useCancelTournament = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: cancelTournament,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
-    },
-  });
-};
 export const useResetPassword = () => {
   return useMutation({
     mutationFn: (data: ResetPasswordTypes) => resetPassword(data),
@@ -370,3 +343,41 @@ export const useSubscribeNewsletter = () => {
     },
   });
 };
+
+export const useCreateTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: TournamentFormData) => createTournament(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+
+export const useCancelTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => cancelTournament(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+
+export const useManageTournament = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) => manageTournament(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+  });
+};
+
+export const useGetTournaments = (params: TournamentParams) => {
+  return useQuery({
+    queryKey: ['tournaments', params],
+    queryFn: () => getTournaments(params),
+  });
+};
+

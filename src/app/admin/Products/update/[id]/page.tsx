@@ -3,6 +3,7 @@
 import ProductUpdateForm from "@/components/admin/ProductUpdateForm";
 import { useGetProducts } from "@/hooks/api";
 import { useParams } from "next/navigation";
+import AdminLayout from "@/components/admin/AdminLayout";
 
 export default function EditProductPage() {
   const params = useParams();
@@ -15,5 +16,7 @@ export default function EditProductPage() {
     return <div className="p-6">Loading...</div>;
   }
 
-  return <ProductUpdateForm product={product} />;
+  return <AdminLayout>
+    <ProductUpdateForm product={product} />
+  </AdminLayout>;
 }
