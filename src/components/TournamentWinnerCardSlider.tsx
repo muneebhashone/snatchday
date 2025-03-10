@@ -12,35 +12,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import maintrophysection from "@/app/images/winnerbg.png";
-import winnerAvatar from "@/app/images/avatarimage.svg";
+import { winners } from "@/dummydata";
 
 const TournamentWinnerCardSlider = () => {
-  const winners = [
-    {
-      heading: "December",
-      title:
-        "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6) - (4710886785170)",
-      price: "535.99",
-      winnerName: "Sher Gut",
-      winnerImage: winnerAvatar,
-    },
-    {
-      heading: "November",
-      title:
-        "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6) - (4710886785170)",
-      price: "535.99",
-      winnerName: "Sher Gut",
-      winnerImage: winnerAvatar,
-    },
-    {
-      heading: "October",
-      title:
-        "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6) - (4710886785170)",
-      price: "535.99",
-      winnerName: "Sher Gut",
-      winnerImage: winnerAvatar,
-    },
-  ];
+
 
   return (
     <div className="flex items-center justify-center relative xl:h-[718px] md:h-[450px] h-[350px] max-w-[1920px] mx-auto">

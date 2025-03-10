@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import avatarimage from "@/app/images/avatarimage.svg";
 import ratingmobileimage from "@/app/images/ratingmobileimage.png";
+import { reviews } from "@/dummydata";
 
 import {
   Carousel,
@@ -15,31 +16,7 @@ import { ProvenExpertIcon } from "./icons/icon";
 
 
 const RatingSlider = () => {
-  const reviews = [
-    {
-      name: "Sher Gut",
-      rating: 5,
-      image: avatarimage,
-      review:
-        "Nunc non quam sit amet mi pretium pretium eu a eros. Proin semper rhoncus magna, et imperdiet ipsum faucibus vitae. Phasellus lacinia sagittis odio, et tempus erat aliquam eu.",
-      product: {
-        name: "Realme Narzo 60X",
-        image: ratingmobileimage,
-      },
-    },
-    {
-      name: "Sher Gut",
-      rating: 5,
-      image: avatarimage,
-      review:
-        "Nunc non quam sit amet mi pretium pretium eu a eros. Proin semper rhoncus magna, et imperdiet ipsum faucibus vitae. Phasellus lacinia sagittis odio, et tempus erat aliquam eu.",
-      product: {
-        name: "Realme Narzo 60X",
-        image: ratingmobileimage,
-      },
-    },
-    // Add more reviews as needed
-  ];
+ 
 
   return (
     <Carousel

@@ -15,7 +15,7 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 
-const page = () => {
+const TrainingCenterPage = () => {
   const displayProducts = [
     {
       title: "14 - AMD Ryzen 9 3 GHz - Win 11",
@@ -153,4 +153,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default TrainingCenterPage;

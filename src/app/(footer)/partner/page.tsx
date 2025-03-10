@@ -4,7 +4,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const page = () => {
+const PartnerPage = () => {
   return (
     <ClientLayout>
       <div className="container max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 pt-28 pb-32">
@@ -123,4 +123,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default PartnerPage;

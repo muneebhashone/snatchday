@@ -2,125 +2,20 @@
 
 import Image from "next/image";
 import React, { useState } from "react";
-import game1 from "@/app/images/game1.png";
-import game2 from "@/app/images/game2.png";
-import game3 from "@/app/images/game3.png";
-import game4 from "@/app/images/game4.png";
-import game5 from "@/app/images/game5.png";
-
 import { Button } from "./ui/button";
 import { ArrowDown} from "lucide-react";
+import { trainingGameCards } from "@/dummydata";
 
 const GameCards = () => {
 
     const [visibleCards, setVisibleCards] = useState(4);
-  const trainingCards = [
-    {
-      icon: game1,
-      label: "Memorized - TC",
-    },
-    {
-      icon: game2,
-      label: "Fill - TC",
-      notification: true,
-    },
-    {
-      icon: game3,
-      label: "Sporos - TC",
-    },
-    {
-      icon: game4,
-      label: "Puzzle Color - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-    {
-      icon: game1,
-      label: "Memorized - TC",
-    },
-    {
-      icon: game2,
-      label: "Fill - TC",
-      notification: true,
-    },
-    {
-      icon: game3,
-      label: "Sporos - TC",
-    },
-    {
-      icon: game4,
-      label: "Puzzle Color - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-    {
-      icon: game5,
-      label: "Reorder - TC",
-    },
-    {
-      icon: game1,
-      label: "Push It - TC",
-    },
-  ];
 
   return (
     <div className="px-10 pb-28">
   
       {/* <div className="grid grid-cols-4 gap-12"> */}
       <div className="flex w-full flex-wrap items-center justify-between gap-5">
-        {trainingCards.slice(0, visibleCards).map((card, index) => (
+        {trainingGameCards.slice(0, visibleCards).map((card, index) => (
           <div
           key={index}
           className="group p-5 md:px-10 lg:px-20 md:py-7 lg:py-20 shadow-xl rounded-lg hover:border-2 hover:border-primary"
@@ -135,9 +30,9 @@ const GameCards = () => {
         </div>
       ))}
     </div>
-    {visibleCards < trainingCards.length && (
+    {visibleCards < trainingGameCards.length && (
       <Button 
-        onClick={() => setVisibleCards(prev => Math.min(prev + 4, trainingCards.length))}
+        onClick={() => setVisibleCards(prev => Math.min(prev + 4, trainingGameCards.length))}
         className="block mx-auto rounded-full w-24 md:w-32 h-24 md:h-32 bg-white shadow-lg my-10"
       >
         <p className="text-xs md:text-lg text-card-foreground font-normal">

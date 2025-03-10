@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,13 +20,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {  useAuthApi } from "@/hooks/api";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useUserContext } from "@/context/userContext";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 const Login = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  // Temporary state to simulate login status - replace with your auth logic
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [userName] = useState("Percy Reed");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {user,setUserData}=useUserContext()
+  const { mutate: login, isPending } = useAuthApi();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
   const handleOpenRegister = () => {
     setIsLoginOpen(false);
@@ -40,7 +58,37 @@ const Login = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    // Add your logout logic here
+  };
+
+  useEffect(() => {
+    if (user) { 
+      setIsLoggedIn(true); 
+    }
+  }, [user]);
+
+
+  const onSubmit = (data: z.infer<typeof loginSchema>) => {
+    login(
+      {
+        data: {
+          email: data.email,
+          password: data.password,
+        },
+        type: "login",
+      },
+      {
+        onSuccess: ({data}) => {
+          setIsLoggedIn(true);
+          setUserData(data)
+          setIsLoginOpen(false)
+          toast.success("Login successful");
+        },
+        onError: (error) => {
+          toast.error("Login failed");
+          console.error("Login failed:", error);
+        },
+      }
+    );
   };
 
   if (isRegisterOpen) {
@@ -51,17 +99,13 @@ const Login = () => {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-          <p className="text-lg font-medium text-card-foreground">{userName}</p>
+          <p className="text-lg font-medium text-card-foreground">{user?.user?.name}</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-36 mt-6">
           <Link href="/my-account/my-profile">
             <DropdownMenuItem className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
-              <Link href="/my-account/my-profile">
-                <p className="text-sm font-medium text-card-foreground">
-                  My Account
-                </p>
-              </Link>
+              <p className="text-sm font-medium text-card-foreground">My Account</p>
             </DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />
@@ -70,9 +114,7 @@ const Login = () => {
             onClick={handleLogout}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            <p className="text-sm font-medium text-card-foreground text-red-600">
-              Logout
-            </p>
+            <p className="text-sm font-medium text-card-foreground text-red-600">Logout</p>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -97,51 +139,48 @@ const Login = () => {
             </Button>
           </DialogTrigger>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-[48px] font-extrabold">
-              Log In
-            </DialogTitle>
+            <DialogTitle className="text-[48px] font-extrabold">Log In</DialogTitle>
           </div>
         </DialogHeader>
 
         <div className="mt-5 px-24 pb-16">
-          {/* Email Input */}
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <Input
               type="email"
               placeholder="E-mail address"
               className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              {...register("email")}
             />
+            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
             <Input
               type="password"
               placeholder="Password"
               className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              {...register("password")}
             />
-          </div>
+            {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+            <Button
+              type="submit"
+              className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10"
+              disabled={isPending}
+            >
+              {isPending ? "Logging in..." : "Login to your account"}
+            </Button>
+          </form>
 
-          {/* Forgot Password Link */}
           <div className="text-right mt-5">
-            <Link href="#" className="text-gray-600 hover:underline text-sm">
+            <Link href="/forgot-password" className="text-gray-600 hover:underline text-sm">
               Forgot your password?
             </Link>
           </div>
 
-          {/* Login Button */}
-          <Button className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10">
-            Login to your account
-          </Button>
-
-          {/* Social Login Divider */}
           <div className="flex items-center justify-between mt-10">
-            <p className="text-center text-gray-600 mx-4">
-              Or Login with Social Media
-            </p>
+            <p className="text-center text-gray-600 mx-4">Or Login with Social Media</p>
             <FacebookIcon />
           </div>
 
-          {/* Separator */}
           <Separator className="my-10" />
 
-          {/* Register Link */}
           <div className="text-left space-x-1">
             <span className="text-gray-600">Don&apos;t have account?</span>
             <button

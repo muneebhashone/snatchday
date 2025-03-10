@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart, ChevronDown, Headphones, Monitor, Smartphone, Gamepad, Computer, LucideIcon } from "lucide-react";
+import { User, Heart, ShoppingCart, ChevronDown, Loader2 } from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -27,130 +27,29 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import iphone from '@/app/images/iphone.png'
-import laptop1 from '@/app/images/laptop.png'
-import laptop2 from '@/app/images/laptopv2.png'
-import { StaticImageData } from "next/image";
+import { useGetCategories, useGetMyProfile } from "@/hooks/api";
+import { useUserContext } from "@/context/userContext";
+// import iphone from '@/app/images/iphone.png'
+// import laptop1 from '@/app/images/laptop.png'
+// import laptop2 from '@/app/images/laptopv2.png'
+// import { StaticImageData } from "next/image";
+// import { useGetMyProfile } from "@/hooks/api";
 
-type ICatogory = {
-  id: number,
-  name: string,
-  path: string,
-  icon: LucideIcon,
-  image: StaticImageData,
-  subcategories: ISub[]
+import { categoryData, menu } from "@/dummydata";
+import { Category } from "@/types";
+import Loader from "../Loader";
+
+// Define the Category interface
+
+// Define the SubCategory interface
+interface SubCategory {
+  name: string;
+  image: string;
 }
-
-type ISub = {
-  name: string,
-  path: string,
-  image: StaticImageData
-}
-
-const categoryData: ICatogory[] = [
-  {
-    id: 1,
-    name: "Audio, Video & HiFi",
-    path: "/audio-video-hifi",
-    icon: Headphones,
-    image: iphone,
-    subcategories: [
-      { name: "Home Theater Systems", path: "/category/home-theater", image: iphone },
-      { name: "Speakers", path: "/category/speakers", image: laptop1 },
-      { name: "Amplifiers", path: "/category/amplifiers", image: laptop2 },
-      { name: "Receivers", path: "/category/receivers", image: iphone },
-    ]
-  },
-  {
-    id: 2,
-    name: "Computer & Hardware",
-    path: "/computer-hardware",
-    icon: Monitor,
-    image: laptop1,
-    subcategories: [
-      { name: "Processors", path: "/category/processors", image: iphone },
-      { name: "Motherboards", path: "/category/motherboards", image: iphone },
-      { name: "Memory", path: "/category/memory", image: iphone },
-      { name: "Storage", path: "/category/storage", image: iphone },
-    ]
-  },
-  {
-    id: 3,
-    name: "Cell Phones & Communication",
-    path: "/phones-communication",
-    icon: Smartphone,
-    image: laptop2,
-    subcategories: [
-      { name: "Smartphones", path: "/category/smartphones", image: iphone },
-      { name: "Phone Accessories", path: "/category/accessories", image: iphone },
-      { name: "Cases & Protection", path: "/category/cases", image: iphone },
-      { name: "Chargers & Cables", path: "/category/chargers", image: iphone },
-    ]
-  },
-  {
-    id: 4,
-    name: "Entertainment & Gaming",
-    path: "/entertainment-gaming",
-    icon: Gamepad,
-    image: iphone,
-    subcategories: [
-      { name: "Gaming Consoles", path: "/category/consoles", image: iphone },
-      { name: "Video Games", path: "/category/games", image: iphone },
-      { name: "Gaming Accessories", path: "/category/accessories", image: iphone },
-      { name: "Virtual Reality", path: "/category/vr", image: iphone },
-    ]
-  },
-  {
-    id: 5,
-    name: "PC Systems",
-    path: "/pc-systems",
-    icon: Computer,
-    image: laptop1,
-    subcategories: [
-      { name: "Desktop Computers", path: "/category/desktop", image: iphone },
-      { name: "Workstations", path: "/category/workstations", image: iphone },
-      { name: "All-in-One PCs", path: "/category/all-in-one", image: iphone },
-      { name: "Mini PCs", path: "/category/mini-pcs", image: iphone },
-    ]
-  },
-];
-
-
-const menu = [
-  {
-    id: 1,
-    name: "VIP Shop",
-    link: "/vip-shop",
-  },
-  {
-    id: 2,
-    name: "Turniere",
-    link: "/tournaments",
-  },
-  {
-    id: 3,
-    name: "Duellarena",
-    link: "/duel-arena",
-  },
-  {
-    id: 4,
-    name: "Trainingscenter",
-    link: "/trainings-center",
-  },
-  {
-    id: 5,
-    name: "Gewinnspiel im Januar",
-    link: "/gewinnspiel-im-januar",
-  },
-  {
-    id: 6,
-    name: "Support",
-    link: "/support",
-  },
-];
 
 const Header = () => {
   const pathname = usePathname();
+  const { user } = useUserContext();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -162,7 +61,10 @@ const Header = () => {
     discountPoints: 750,
   });
 
-  const [categoryImage, setCategoryImage] = useState(categoryData[0].image);
+  const { data, isLoading } = useGetCategories();
+  const [categoryImage, setCategoryImage] = useState("");
+
+  // const { data: myprofile } = useGetMyProfile();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -202,22 +104,23 @@ const Header = () => {
     });
   };
 
+  // const { data: myprofile, isLoading } = useGetMyProfile();
+
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}
-          <Link
-            href="/"
-            className="flex items-center space-x-2 pr-6"
-          >
+          <Link href="/" className="flex items-center space-x-2 pr-6">
             <Image src={logo} alt="Logo" width={180} height={58} unoptimized />
           </Link>
 
           {/* {/ Date Time Bar /} */}
           <div className="py-1 px-4 flex items-center justify-start text-xs text-foreground rounded-full">
             <div className="flex items-center gap-2 font-medium">
-              <span className="border-r pr-2">{formatDate(currentDateTime)}</span>
+              <span className="border-r pr-2">
+                {formatDate(currentDateTime)}
+              </span>
               <span>{formatTime(currentDateTime)}</span>
             </div>
           </div>
@@ -229,66 +132,84 @@ const Header = () => {
             <NavigationMenuList className="">
               <NavigationMenuItem className="">
                 <NavigationMenuTrigger className="bg-primary hover:bg-primary data-[state=open]:bg-primary">
+                    {isLoading ? <Loader2  className="w-4 h-4 animate-spin" /> : (
                   <Hamburger />
+                )}
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-white border-t border-gray-100">
-                  <div className="max-w-[1920px] mx-auto p-8">
-                    <div className="grid grid-cols-12 gap-8 w-screen">
-                      {/* Categories List */}
-                      <div className="col-span-8">
-                        <div className="grid grid-cols-3 gap-x-8 gap-y-6">
-                          {categoryData.map((category) => {
-                            const Icon = category.icon;
-                            return (
-                              <div
-                                key={category.id}
-                                className="group"
-                              >
-                                <Link
-                                  href={category.path}
-                                  className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
-                                >
-                                  <Icon className="w-4 h-4" />
-                                  {category.name}
-                                </Link>
-                                <ul className="space-y-2">
-                                  {category.subcategories.map((subcategory) => (
-                                    <li
-                                      key={subcategory.path}
-                                      onMouseEnter={() => setCategoryImage(subcategory.image)}
-                                    >
-                                      <Link
-                                        href={subcategory.path}
-                                        className="text-gray-500 hover:text-primary transition-colors block text-sm"
-                                      >
-                                        {subcategory.name}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      {/* Category Image */}
-                      <div className="col-span-4">
-                        {categoryImage && (
-                          <div className="relative h-full w-full">
-                            <Image
-                              src={categoryImage}
-                              alt="Category preview"
-                              fill
-                              className="object-contain w-10 h-10"
-                              unoptimized
-                            />
+            
+                  <NavigationMenuContent className="border-t border-gray-100">
+                    <div className="max-w-[1920px] mx-auto p-8">
+                      <div className="grid grid-cols-12 gap-8 w-screen">
+                        {/* Categories List */}
+                        {isLoading ? (
+                          <div className="flex justify-center items-center h-full w-full">
+                            <span className="text-lg font-medium"><Loader2  className="w-4 h-4 animate-spin" /></span>
                           </div>
+                        ) : (
+                           <>
+                           <div className="col-span-8">
+                           <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                             {data?.data?.categories
+                               ?.filter((category: Category) => !category.above)
+                               .map((category: Category) => {
+                                 // const Icon = category.icon;
+                                 return (
+                                   <div key={category._id} className="group">
+                                     <Link
+                                       href={`/product-listing?category=${category._id}`}
+                                       className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                     >
+                                       {/* <Icon className="w-4 h-4" /> */}
+                                       {category.name}
+                                     </Link>
+                                     <ul className="space-y-2">
+                                       {category.subCategories.map(
+                                         (subcategory: SubCategory, index) => (
+                                           <li
+                                             key={index}
+                                             onMouseEnter={() =>
+                                               setCategoryImage(
+                                                 subcategory.image
+                                               )
+                                             }
+                                           >
+                                             <Link
+                                               href={`/product-listing?category=${subcategory._id}`}
+                                               className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                             >
+                                               {subcategory?.name || "N/A"}
+                                             </Link>
+                                           </li>
+                                         )
+                                       )}
+                                     </ul>
+                                   </div>
+                                 );
+                               })}
+                           </div>
+                         </div>
+ 
+                         {/* Category Image */}
+                         <div className="col-span-4">
+                           {categoryImage && (
+                             <div className="relative h-full w-full">
+                               <Image
+                                 src={categoryImage}
+                                 alt="Category preview"
+                                 fill
+                                 className="object-contain w-10 h-10"
+                                 unoptimized
+                               />
+                             </div>
+                           )}
+                         </div>
+                           </>
                         )}
+                       
                       </div>
                     </div>
-                  </div>
-                </NavigationMenuContent>
+                  </NavigationMenuContent>
+                
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>
@@ -313,16 +234,18 @@ const Header = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
-                        ? "text-primary"
-                        : "text-foreground"
-                        }`}
+                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                        pathname === items.link
+                          ? "text-primary"
+                          : "text-foreground"
+                      }`}
                     >
                       {items.name}
                       <ChevronDown className="text-primary w-5 h-5" />
                       <div
-                        className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
-                          }`}
+                        className={`w-2 h-2 bg-primary rounded-full ${
+                          pathname === items.link ? "opacity-100" : "opacity-0"
+                        }`}
                       ></div>
                     </button>
                   </DialogTrigger>
@@ -331,19 +254,22 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
-                    ? "text-primary underline underline-offset-8 decoration-2"
-                    : "text-foreground"
-                    }`}
+                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                    pathname === items.link
+                      ? "text-primary underline underline-offset-8 decoration-2"
+                      : "text-foreground"
+                  }`}
                 >
                   {items.name}
                   <ChevronDown
-                    className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"
-                      }`}
+                    className={`w-5 h-5 ${
+                      pathname === items.link ? "text-white" : "text-primary"
+                    }`}
                   />
                   <div
-                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
-                      }`}
+                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
+                      pathname === items.link ? "opacity-100" : "opacity-0"
+                    }`}
                   ></div>
                 </Link>
               )}
@@ -482,22 +408,30 @@ const Header = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Snap Points</span>
-                  <span className="text-primary font-bold">{userPoints.snapPoints}</span>
+                  <span className="text-primary font-bold">
+                    {userPoints.snapPoints}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">Equivalent Value</span>
-                  <span className="text-primary font-medium">{userPoints.snapPoints / 100}€</span>
+                  <span className="text-primary font-medium">
+                    {userPoints.snapPoints / 100}€
+                  </span>
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Discount Points</span>
-                  <span className="text-primary font-bold">{userPoints.discountPoints}</span>
+                  <span className="text-primary font-bold">
+                    {userPoints.discountPoints}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">Equivalent Value</span>
-                  <span className="text-primary font-medium">{userPoints.discountPoints / 100}€</span>
+                  <span className="text-primary font-medium">
+                    {userPoints.discountPoints / 100}€
+                  </span>
                 </div>
               </div>
             </div>
