@@ -43,7 +43,7 @@ const activities: ActivityItem[] = [
 
 export function LatestActivity() {
   return (
-    <Card>
+    <Card className="border-primary">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CalendarDays className="h-4 w-4" />
@@ -55,7 +55,7 @@ export function LatestActivity() {
           {activities.map((activity, index) => (
             <div key={index} className="flex items-start gap-2 text-sm">
               <div className="flex-1">
-                <span className="font-medium text-blue-500">{activity.name}</span>
+                <span className="font-medium text-primary">{activity.name}</span>
                 <span className="ml-1">{activity.action}</span>
               </div>
               <div className="text-muted-foreground">

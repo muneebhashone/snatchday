@@ -151,6 +151,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             asChild
                             isActive={pathname === subItem.url}
                             tooltip={subItem.title}
+                            className="[&[data-active]]:bg-primary [&[data-active]]:text-white rounded-md"
                           >
                             <a href={subItem.url} className="flex items-center gap-3">
                               {subItem.icon}
@@ -165,7 +166,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild 
                       isActive={pathname === item.url}
                       tooltip={item.title}
-                      className="text-xl"
+                      className={`text-xl ${pathname === item.url ? 'data-[active]:bg-primary data-[active]:text-white' : 'text-foreground bg-transparent'} rounded-md`}
                     >
                       <a href={item.url} className="flex items-center gap-3">
                         {item.icon}

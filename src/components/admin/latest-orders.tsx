@@ -58,7 +58,7 @@ const orders: Order[] = [
 
 export function LatestOrders() {
   return (
-    <Card>
+    <Card className="border-primary">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShoppingCart className="h-4 w-4" />
