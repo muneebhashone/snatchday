@@ -181,7 +181,7 @@ export function Product() {
             <SelectContent>
               {categoriesData?.data?.categories?.map((category: Category) => (
                 <SelectItem key={category._id} value={category._id}>
-                  {category.displayName || category.name}
+                  {category?.displayName || category?.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -220,9 +220,9 @@ export function Product() {
           </TableHeader>
           <TableBody>
             {productsData?.data?.products?.map((product: Product) => (
-              <TableRow key={product._id}>
+              <TableRow key={product?._id}>
                 <TableCell>
-                  {product.images && product.images[0] && (
+                  {product?.images && product?.images[0] && (
                     <div className="relative h-16 w-16">
                       <img 
                         src={product.images[0]} 
