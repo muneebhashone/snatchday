@@ -120,7 +120,7 @@ const ProductCard = ({
             {price}€
           </span>
           <span className="text-2xl font-semibold text-card-foreground">
-            {discounts.length > 0 ? roundToTwoDecimals(price - (price * discounts[0].price) / 100) : price}€
+            {discounts?.length > 0 ? roundToTwoDecimals(price - (price * discounts[0].price) / 100) : price}€
           </span>
            </div>
         </div>

@@ -11,7 +11,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import laptop from "@/app/images/laptop.png";
 
 import React, { useState } from "react";
 import { Separator } from "@/components/ui/separator";
@@ -49,7 +48,7 @@ const ProductListingPage = () => {
   const category = searchParams.get("category")
  
 
-  const [filters, setFilters] = useState<FilterParams>({
+  const [filters] = useState<FilterParams>({
     limit: '10',
     offset: '0',
     category: category as string,
@@ -62,148 +61,148 @@ const ProductListingPage = () => {
   console.log(productsData,"productsData")
     
 
-  const products = [
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  // const products = [
+  //   {
+  //     image: laptop,
+  //     title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
+  //     price: "29,32",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.152,76",
+  //     rating: 5,
+  //     isSale: true,
+  //     isNew: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.382,92",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
+  //     price: "468,06",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
+  //   {
+  //     image: laptop,
+  //     title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
+  //     price: "29,32",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.152,76",
+  //     rating: 5,
+  //     isSale: true,
+  //     isNew: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.382,92",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
+  //     price: "468,06",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
+  //   {
+  //     image: laptop,
+  //     title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
+  //     price: "29,32",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.152,76",
+  //     rating: 5,
+  //     isSale: true,
+  //     isNew: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.382,92",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-    {
-      image: laptop,
-      title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-      price: "29,32",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
+  //     price: "468,06",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
+  //   {
+  //     image: laptop,
+  //     title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
+  //     price: "29,32",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.152,76",
-      rating: 5,
-      isSale: true,
-      isNew: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.152,76",
+  //     rating: 5,
+  //     isSale: true,
+  //     isNew: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-      price: "2.382,92",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
+  //   {
+  //     image: laptop,
+  //     title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
+  //     price: "2.382,92",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
 
-    {
-      image: laptop,
-      title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-      price: "468,06",
-      rating: 5,
-      isNew: true,
-      isSale: false,
-    },
-  ];
+  //   {
+  //     image: laptop,
+  //     title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
+  //     price: "468,06",
+  //     rating: 5,
+  //     isNew: true,
+  //     isSale: false,
+  //   },
+  // ];
 
   const productFilters = productsData?.data?.products || [];
   const allFilters = productFilters.flatMap((product) => product.categoryIds);

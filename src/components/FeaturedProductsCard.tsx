@@ -1,31 +1,33 @@
 import React from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 
-import { StaticImageData } from "next/image";
 interface FeaturedProductCardProps {
   title: string;
+  name: string;
   price: string;
   oldPrice: string;
   rating: number;
   reviews: number;
-  image: StaticImageData;
+  image?: StaticImageData;
+  images?: string[];
   isSale?: boolean;
   isNew?: boolean;
-  discount: string;
- 
+  discounts: string;
 }
 
 const FeaturedProductsCard = ({
   title,
+  name,
+  discounts,
   price,
   oldPrice,
   rating,
   reviews,
+  images,
   image,
   isSale,
   isNew,
   discount,
-
 }: FeaturedProductCardProps) => {
   return (
     <div className="flex flex-col justify-between bg-white rounded-2xl p-4 border border-gray-200 hover:border-primary relative group hover:shadow-lg transition-all duration-300 w-[337px] h-[439px]">
@@ -37,34 +39,50 @@ const FeaturedProductsCard = ({
 
       {/* Product Image */}
       <div className="mb-5 mt-7 pt-2">
-        <Image
-          src={image}
-          alt={title}
-          width={200}
-          height={200}
-          className="w-full h-[140px] object-contain group-hover:scale-105 transition-transform duration-300"
-        />
+        {images ? (
+          <Image
+            src={images[0]}
+            alt={title}
+            width={200}
+            height={200}
+            className="w-full h-[140px] object-contain group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <Image
+            src={image}
+            alt={title}
+            width={200}
+            height={200}
+            className="w-full h-[140px] object-contain group-hover:scale-105 transition-transform duration-300"
+          />
+        )}
       </div>
 
       {/* Product Info */}
       <div className="space-y-1 md:space-y-2">
         {/* Title */}
-        <p className="text-card-foreground text-md md:text-[20px]">{title}</p>
+        <p className="text-card-foreground text-md md:text-[20px]">{name}</p>
 
         {/* Rating */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex text-primary items-center gap-1 text-[22px]">
-            {"★".repeat(rating)}{" "}
+            {"★".repeat(3)}{" "}
             <span className="text-sm text-gray-500">({reviews})</span>{" "}
           </div>
           {/* <span className="text-xs text-gray-500">({reviews})</span> */}
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <p className="text-lg lg:text-[21px] font-bold">
-                €{price}{" "}
-                <span className=" text-gray-400 line-through font-normal">€{oldPrice}</span>
-              </p>
-            </div>
+            {discounts?.length ? (
+              <div className="space-y-1">
+                <p className="text-lg lg:text-[21px] font-bold">
+                  €{discounts[0].price}{" "}
+                  <span className=" text-gray-400 line-through font-normal">
+                    €{price}
+                  </span>
+                </p>
+              </div>
+            ) : (
+              <p className="text-lg lg:text-[21px] font-bold">€{price} </p>
+            )}
           </div>
         </div>
 
@@ -74,7 +92,9 @@ const FeaturedProductsCard = ({
       </div>
       <div className="flex justify-between items-center border-t border-gray-200 pt-5 ">
         {discount && (
-          <div className="text-green-900">Save - <span className="text-foreground">{discount}</span></div>
+          <div className="text-green-900">
+            Save - <span className="text-foreground">{discount}</span>
+          </div>
         )}
         {/* Badges */}
         <div className="">
