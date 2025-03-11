@@ -13,7 +13,7 @@ export function CreateCategoryDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost"className="bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+        <Button variant="ghost"className="bg-primary text-white hover:bg-primary transition-colors">
          Add Category
         </Button>
       </DialogTrigger>
