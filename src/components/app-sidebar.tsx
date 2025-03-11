@@ -50,12 +50,12 @@ const navItems = [
     subItems: [
       {
         title: "All Products",
-        url: "/admin/products",
+        url: "/admin/Products",
         icon: <List className="h-4 w-4" />,
       },
       {
         title: "Create Product",
-        url: "/admin/products/create",
+        url: "/admin/Products/create",
         icon: <Plus className="h-4 w-4" />,
       },
     ],
