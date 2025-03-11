@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { authApi } from "@/hooks/api";
+import {  useAuthApi } from "@/hooks/api";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,7 +37,7 @@ const Login = () => {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {user,setUserData}=useUserContext()
-  const { mutate: login, isPending } = authApi();
+  const { mutate: login, isPending } = useAuthApi();
   const {
     register,
     handleSubmit,

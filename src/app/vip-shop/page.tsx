@@ -7,7 +7,7 @@ import ExclusiveOffers from "@/components/ExclusiveOffers";
 import Testimonials from "@/components/landing-page/Testimonials";
 import RatingsSection from "@/components/landing-page/RatingsSection";
 
-const page = () => {
+const VipShopPage = () => {
   return (
     <ClientLayout>
       <div>
@@ -25,4 +25,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default VipShopPage;

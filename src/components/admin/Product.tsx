@@ -1,6 +1,6 @@
 "use client";
 
-import { useGetProducts, useGetCategories } from '@/hooks/api';
+import { useGetProducts, useGetCategories, useDeleteProduct } from '@/hooks/api';
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash } from 'lucide-react';
+import { Edit, Trash, Trophy } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -19,10 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useDebounce } from '@/hooks/useDebounce';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
+import { CategoriesResponse, ProductsResponse } from '@/types';
 
 interface FilterParams {
-  price?: string;
+  price?: string[];
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -46,7 +51,10 @@ interface Category {
   _id: string;
   name: string;
   displayName: string;
+
 }
+
+
 
 export function Product() {
   const [filters, setFilters] = useState<FilterParams>({
@@ -54,21 +62,41 @@ export function Product() {
     offset: '0'
     
   });
+  const queryClient = useQueryClient();
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
 
-  const { data: productsData, isLoading } = useGetProducts(filters);
-  const { data: categoriesData } = useGetCategories();
+  // Update filters when debounced search term changes
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
+  }, [debouncedSearchTerm]);
+
+  const productsData = useGetProducts(filters)  as ProductsResponse
+  const categoriesData  = useGetCategories()  as CategoriesResponse
+  const { mutate: deleteProduct } = useDeleteProduct();
+
+  
+
+  const handleDelete = (id: string) => {
+    deleteProduct(id, {
+      onSuccess: () => {
+        toast.success('Product deleted successfully');
+        queryClient.invalidateQueries({ queryKey: ['products'] });
+      },
+      onError: (error) => {
+        toast.error('Failed to delete product');
+        console.error(error);
+      },
+    });
+  };
   
   
-  const products = productsData?.data?.products || [];
-  const categories = categoriesData?.data?.categories || [];
 
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="py-10">
@@ -77,7 +105,7 @@ export function Product() {
           <label className="text-sm font-medium mb-2 block">Price Range</label>
           <Input
             placeholder="min,max (e.g., 10,100)"
-            value={filters.price}
+            value={filters.price?.join(',')}
             onChange={(e) => handleFilterChange('price', e.target.value)}
           />
         </div>
@@ -137,8 +165,8 @@ export function Product() {
           <label className="text-sm font-medium mb-2 block">Search by Name</label>
           <Input
             placeholder="Product name"
-            value={filters.name}
-            onChange={(e) => handleFilterChange('name', e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div>
@@ -151,7 +179,7 @@ export function Product() {
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map((category: Category) => (
+              {categoriesData?.data?.categories?.map((category: Category) => (
                 <SelectItem key={category._id} value={category._id}>
                   {category.displayName || category.name}
                 </SelectItem>
@@ -187,10 +215,11 @@ export function Product() {
               <TableHead>Category</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Actions</TableHead>
+              <TableHead>Tournament</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product: Product) => (
+            {productsData?.data?.products?.map((product: Product) => (
               <TableRow key={product._id}>
                 <TableCell>
                   {product.images && product.images[0] && (
@@ -212,13 +241,24 @@ export function Product() {
                 <TableCell>{product.type}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="icon">
-                      <Edit className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" asChild>
+                      <Link href={`/admin/products/update/${product._id}`}>
+                        <Edit className="h-4 w-4" />
+                      </Link>
                     </Button>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => handleDelete(product._id)}>
                       <Trash className="h-4 w-4" />
                     </Button>
                   </div>
+                </TableCell>
+                <TableCell>
+                
+                
+                <Button variant="ghost" size="icon">
+                      <Link href={`/admin/tournament/create/${product._id}`}>
+                        <Trophy className="h-4 w-4" />
+                      </Link>
+                    </Button>
                 </TableCell>
               </TableRow>
             ))}

@@ -23,6 +23,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { useQueryClient } from "@tanstack/react-query"
+
 import {
   Select,
   SelectContent,
@@ -50,7 +52,7 @@ export function CreateFilterDialog() {
   const { mutate: createFilter } = useCreateFilter()
   const { data: getCategories } = useGetCategories()
   const categories = getCategories?.data.categories || []
-
+  const queryClient = useQueryClient()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -85,6 +87,7 @@ export function CreateFilterDialog() {
       onSuccess: () => {
         toast.success("Filter created successfully")
         setOpen(false)
+        queryClient.invalidateQueries({ queryKey: ['filters'] });
         form.reset()
         setValues([])
       },

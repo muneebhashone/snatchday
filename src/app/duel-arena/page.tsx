@@ -16,7 +16,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-const page = () => {
+const DuelArenaPage = () => {
   const displayProducts = [
     {
       title: "14 - AMD Ryzen 9 3 GHz - Win 11",
@@ -187,4 +187,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default DuelArenaPage;

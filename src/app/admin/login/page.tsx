@@ -3,11 +3,11 @@
 import Loading from "@/app/loading";
 import { useAuth } from "@/components/context/authContext";
 import { LoginForm } from "@/components/login-form"
-import { authApi } from "@/hooks/api";
+import { useAuthApi } from "@/hooks/api";
 
 export default function LoginPage() {
   const { loading } = useAuth();
-  const { mutate: login, isPending } = authApi();
+  const { mutate: login, isPending } = useAuthApi();
 
 
 

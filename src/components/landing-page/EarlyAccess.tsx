@@ -1,12 +1,46 @@
-import React from "react";
+"use client"
+
 import { MsgIcon } from "../icons/icon";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { SubscriptIcon } from "../icons/icon";
 import Image from "next/image";
 import earlyformimage from "@/app/images/earlyformimage.png";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useSubscribeNewsletter } from "@/hooks/api";
+import { toast } from "sonner";
+const newsletterSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+});
+
+type NewsletterFormValues = z.infer<typeof newsletterSchema>;
 
 const EarlyAccess = () => {
+  const { mutate: subscribeNewsletter, isPending } = useSubscribeNewsletter();
+  
+  const form = useForm<NewsletterFormValues>({
+    resolver: zodResolver(newsletterSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = (data: NewsletterFormValues) => {
+    subscribeNewsletter(data.email, {
+      onSuccess: () => {
+        form.reset();
+        toast.success("Successfully subscribed to newsletter");
+      },
+      onError: (error) => {
+        toast.error("Failed to subscribe to newsletter");
+        console.error(error);
+      },
+    } 
+  );
+  };
+
   return (
     // max-w-[1440px]
     // <div className="absolute -top-20 left-0 w-full">
@@ -25,21 +59,29 @@ const EarlyAccess = () => {
         <div className="w-[85%] lg:w-[75%]">
           <h2 className="text-md md:text-[32px] text-foreground">
             Subscribe to our newsletter to{" "}
-            <h2 className="text-primary font-bold">win tournaments.</h2>
+            <span className="text-primary font-bold">win tournaments.</span>
           </h2>
           <p className="text-sm sm:text-lg text-foreground mt-2">
             Be the first to know about our new tournaments by subscribing to our
             newsletter.
           </p>
-          <div className="relative xl:max-w-[730px]">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="relative xl:max-w-[730px]">
             <Input
+              {...form.register("email")}
               placeholder="Enter Email Address"
               className="w-full border text-sm md:text-lg border-primary rounded-lg md:h-16 pl-4 md:pl-12 mt-5"
             />
-            <Button className="bg-white border border-primary absolute top-0 right-0 text-primary rounded-lg w-16 md:h-16 hover:bg-white hover:text-primary">
+            {form.formState.errors.email && (
+              <p className="text-red-500 mt-1">{form.formState.errors.email.message}</p>
+            )}
+            <Button 
+              type="submit"
+              disabled={isPending}
+              className="bg-white border border-primary absolute top-0 right-0 text-primary rounded-lg w-16 md:h-16 hover:bg-white hover:text-primary"
+            >
               <SubscriptIcon />
             </Button>
-          </div>
+          </form>
         </div>
       </div>
 

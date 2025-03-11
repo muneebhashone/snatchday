@@ -2,17 +2,33 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "../ui/slider";
-import { useGetFilters } from "@/hooks/api";
 
+interface ProductCategoryFilterProps {
+  filters: Array<{
+    name: string;
+    values: string[];
+    id: string;
+  }>;
+  selectedFilters: Record<string, string[]>;
+  onFilterChange: (filterName: string, value: string) => void;
+  onPriceChange: (range: number[]) => void;
+  isLoading: boolean;
+}
 
-const ProductCategoryFilter = (filtersdata: any) => {
-  const [priceRange, setPriceRange] = React.useState([1000]);
+const ProductCategoryFilter = ({
+  filters,
+  selectedFilters,
+  onFilterChange,
+  onPriceChange,
+  isLoading
+}: ProductCategoryFilterProps) => {
+  const [priceRange, setPriceRange] = React.useState([1000, 100000]);
 
     // const {data:filtersData, isLoading} = useGetFilters()
       
     // console.log(filtersData,"filtersData")
     
-  const filters = {
+  const filtersData = {
     "Laptop Type": [
       { name: "Gaming", count: 24 },
       { name: "Working", count: 12 },
@@ -62,56 +78,73 @@ const ProductCategoryFilter = (filtersdata: any) => {
     ],
   };
 
+  const handleFilterChange = (filterName: string, value: string) => {
+    onFilterChange(filterName, value);
+  };
+
+  const handlePriceChange = (newRange: number[]) => {
+    setPriceRange(newRange);
+    onPriceChange(newRange);
+  };
+
+  // Debug log for props
+  console.log('Filters prop:', filters);
+  console.log('Selected filters prop:', selectedFilters);
+
   return (
-    // <div className="space-y-6 h-[190vh] overflow-y-auto sticky top-32 pr-4 border border-gray-200 bg-white p-4 rounded-xl">
     <div className="space-y-6 h-max pl-9 pr-10 border border-gray-200 pt-8 bg-white rounded-3xl">
       <p className="text-lg font-bold mb-4 text-card-foreground">Filters</p>
 
-      {/* Price Range Filter */}
-
-      {/* Other Filters */}
-      {Object.entries(filters).map(([category, items]) => (
-        <div key={category} className="space-y-3 ">
-          <p className="text-card-foreground font-medium text-lg">{category}</p>
-          <div className="space-y-2">
-            {items.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between space-x-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`${category}-${index}`}
-                    className="border-gray-300 border-2"
-                  />
-                  <label
-                    htmlFor={`${category}-${index}`}
-                    className="font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-card-foreground"
-                  >
-                    {item.name}
-                  </label>
-                </div>
-                <span className="text-card-foreground">{item.count}</span>
+      {/* Dynamic Filters */}
+      {isLoading ? (
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="h-6 w-1/2 bg-gray-200 rounded mb-3"></div>
+              <div className="space-y-2">
+                {[1, 2, 3].map((j) => (
+                  <div key={j} className="h-5 w-3/4 bg-gray-100 rounded"></div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      ))}
+      ) : (
+        filters.map((filter) => (
+          <div key={filter.id} className="space-y-2">
+            <h3 className="font-medium text-lg">{filter.name}</h3>
+            <div className="space-y-2">
+              {filter.values.map((value) => (
+                <label key={value} className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={selectedFilters[filter.name]?.includes(value) || false}
+                    onCheckedChange={() => handleFilterChange(filter.name, value)}
+                    className="rounded border-gray-300 text-primary focus:ring-primary"
+                  />
+                  <span className="text-sm text-gray-600">{value}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        ))
+      )}
+
+      {/* Price Range Filter */}
       <div className="space-y-4">
         <p className="font-medium text-gray-700">Price Range</p>
         <div className="space-y-4">
           <Slider
-            defaultValue={[1000]}
-            max={100000}
-            min={1000}
-            step={1000}
+         defaultValue={[2000, 2000]}
+         max={2000}
+         min={100}
+         step={10}
             value={priceRange}
-            onValueChange={setPriceRange}
+            onValueChange={handlePriceChange}
             className="w-full"
           />
           <div className="flex items-center justify-between text-sm text-gray-500">
             <span>{priceRange[0].toFixed(3)}€</span>
-            <span>100.000€</span>
+            <span>{priceRange[1].toFixed(3)}€</span>
           </div>
         </div>
       </div>

@@ -1,11 +1,11 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Image, { StaticImageData } from "next/image";
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
-  images: string[];
+  id?: string;
   title: string;
   price: string;
   rating: number;
@@ -18,10 +18,9 @@ interface ProductCardProps {
   colors: string[];
   company: string;
   createdAt: string;
-  discounts: string[];
-  description: string;
   discounts: Array<Record<string, unknown>>;
-  images: string[];
+  description: string;
+  images: Array<string | StaticImageData>;
   isActive: boolean;
   isFeatured: boolean;
   liscenseKey: string;
@@ -42,12 +41,14 @@ const roundToTwoDecimals = (value: number): number => {
 };
 
 const ProductCard = ({
+  id,
   images,
   title,
   price,
   rating,
   isNew,
   isSale,
+  name,
   metaTitle,
   article,
   attributes,
@@ -61,14 +62,13 @@ const ProductCard = ({
 }: ProductCardProps) => {
   const router = useRouter();
 
-  console.log(images,"image")
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    const urlTitle = encodeURIComponent(
-      title.toLowerCase().replace(/\s+/g, "-")
-    );
-    router.push(`/product-listing/${urlTitle}`);
+    // const urlTitle = encodeURIComponent(
+    //   title.toLowerCase().replace(/\s+/g, "-")
+    // );
+    router.push(`/product-listing/${id}`);
   };
 
 
@@ -99,7 +99,7 @@ const ProductCard = ({
         {/* Title */}
         <div className="flex justify-between items-start gap-10">
           <p className="text-xl text-card-foreground font-light line-clamp-1 overflow-hidden text-ellipsis">
-            {metaTitle}
+            {name}
           </p>
           <button className="rounded-full bg-[#F5F5F5] p-4 hover:bg-gray-100 transition-colors">
             <Heart className="w-6 h-6 text-gray-400 hover:text-orange-500" />

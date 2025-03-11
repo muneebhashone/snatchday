@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface Category {
   _id: string;
@@ -59,6 +60,7 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
   const [open, setOpen] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string>(category.image)
   const { mutate: updateCategory } = useUpdateCategory()
+  const queryClient = useQueryClient()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,6 +112,7 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
           onSuccess: () => {
             toast.success("Category updated successfully")
             setOpen(false)
+            queryClient.invalidateQueries({ queryKey: ['categories'] });
             form.reset()
           },
           onError: (error) => {

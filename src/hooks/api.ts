@@ -1,14 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import {
-  fetchItems,
   fetchItemById,
   authMutation,
-  updateItem,
-  deleteItem,
-  filterItems,
   getMyprofile,
   logout,
-
+  subscribeNewsletter,
   createProduct,
   getCategories,
   createCategory,
@@ -23,11 +19,20 @@ import {
   forgetPassword,
   resetPassword,
   getCategoryById,
+  createTournament,
+  getTournaments,
+  manageTournament,
+  getFilterById,
+  getProductById,
+  cancelTournament,
+  deleteProduct,
+  updateProduct,
+  TournamentParams,
 } from '../lib/api';
+import { TournamentFormData } from '@/types/admin';
 
-import { CategoryFormData, FilterFormData, ResetPasswordTypes } from '@/types';
+import { CategoryFormData, FilterFormData, ProductFormData, ResetPasswordTypes } from '@/types';
 import { useUserContext } from '@/context/userContext';
-
 
 
 // Fetch all items
@@ -52,24 +57,11 @@ export const useLogout = () => {
 };
 
 
-// Fetch all items
-export const useGetItems = () => {
-  return useQuery({
-    queryKey: ['items'],
-    queryFn: fetchItems,
-  });
-};
-
 // Create a new item
-export const authApi = () => {
-  const queryClient = useQueryClient();
+export const useAuthApi = () => {
   return useMutation({
     mutationFn: ({ data, type }: { data: { email: string; password: string } | { email: string; name: string; password: string }; type: string }) => authMutation(data, type),
-    onSuccess: (data: any) => {
-      console.log(data, "data login data from api hooks");
-      queryClient.invalidateQueries({ queryKey: ['login'] });
-    },
-  });
+  }); 
 };
 
 // Fetch a single item by ID
@@ -83,41 +75,12 @@ export const useGetItemById = (id: string) => {
 
 // Create a new item
 export const useRegister = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({data,type}: {data: any,type: string}) => authMutation(data,type),
-    onSuccess: () => {
-      // Invalidate the 'items' query to refetch data after creation
-      queryClient.invalidateQueries({ queryKey: ['items'] });
-    },
   });
 };
 
-// Update an item by ID
-export const useUpdateItem = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => updateItem(id, data),
-    onSuccess: () => {
-      // Invalidate the 'items' query to refetch data after update
-      queryClient.invalidateQueries({ queryKey: ['items'] });
-    },
-  });
-};
 
-// Delete an item by ID
-export const useDeleteItem = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => deleteItem(id),
-    onSuccess: () => {
-      // Invalidate the 'items' query to refetch data after deletion
-      queryClient.invalidateQueries({ queryKey: ['items'] });
-    },
-  });
-};
-
-// Filter items dynamically
 export const useFilteredItems = (filters: Record<string, string>) => {
   return useQuery({
     queryKey: ['items', filters], // Dynamic query key based on filters
@@ -135,12 +98,8 @@ export const useFilteredItems = (filters: Record<string, string>) => {
 // };
 
 export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
+  return useMutation<ProductFormData>({
     mutationFn: createProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['products'] });
-    },
   });
 };
 
@@ -160,42 +119,26 @@ export const useGetCategoryById = (id: string) => {
 };
 
 export const useCreateCategory = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createCategory,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-    },
   });
 };
 
 export const useUpdateCategory = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: CategoryFormData }) => updateCategory(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-    },
   });
 };
 
 export const useDeleteCategory = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteCategory(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
-    },
   });
 };
 
 export const useCreateFilter = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createFilter,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['filters'] });
-    },
   });
 };
 
@@ -207,27 +150,19 @@ export const useGetFilters = () => {
 };
 
 export const useDeleteFilter = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteFilter(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['filters'] });
-    },
   });
 };
 
 export const useUpdateFilter = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: FilterFormData }) => updateFilter(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['filters'] });
-    },
   });
 };
 
 interface ProductFilters {
-  price?: string;
+  price?: string[];
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -235,6 +170,7 @@ interface ProductFilters {
   name?: string;
   category?: string;
   type?: string;
+  attributes?: string;
 }
 
 interface NewsletterFilters {
@@ -242,6 +178,11 @@ interface NewsletterFilters {
   offset?: string;
   sort_attr?: string;
   sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+  attributes?: string;
+  price?: string;
 }
 
 
@@ -249,6 +190,28 @@ export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
     queryKey: ['products', filters],
     queryFn: () => getProducts(filters),
+  });
+};
+
+export const useDeleteProduct = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteProduct(id),
+  });
+};
+
+export const useUpdateProduct = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FormData }) => updateProduct(id, data),
+  });
+};
+
+
+
+export const useGetProductById = (id: string) => {
+  return useQuery({
+    queryKey: ['product', id],
+    queryFn: () => getProductById(id),
+    enabled: !!id,
   });
 };
 
@@ -283,5 +246,48 @@ export const useResetPassword = () => {
   });
 };
 
+export const useGetFilterById = (id: string) => {
+  return useQuery({
+    queryKey: ['filter', id],
+    queryFn: () => getFilterById(id),
+    enabled: !!id,
+  });
+};
 
+
+
+export const useSubscribeNewsletter = () => {
+  return useMutation({
+    mutationFn: (email: string) => subscribeNewsletter(email),
+    onSuccess: () => {
+    },
+    onError: (error) => {
+    },
+  });
+};
+
+export const useCreateTournament = () => {
+  return useMutation({
+    mutationFn: (data: TournamentFormData) => createTournament(data),
+  });
+};
+
+export const useCancelTournament = () => {
+  return useMutation({
+    mutationFn: (id: string) => cancelTournament(id),
+  });
+};
+
+export const useManageTournament = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) => manageTournament(id, data),
+  });
+};
+
+export const useGetTournaments = (params: TournamentParams) => {
+  return useQuery({
+    queryKey: ['tournaments', params],
+    queryFn: () => getTournaments(params),
+  });
+};
 

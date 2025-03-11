@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
+import { useQueryClient } from "@tanstack/react-query"
 import {
   Form,
   FormControl,
@@ -60,6 +61,7 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
   const [open, setOpen] = useState(false)
   const [currentValue, setCurrentValue] = useState("")
   const [values, setValues] = useState(filter.value)
+  const queryClient = useQueryClient()
 
   const { mutate: updateFilter } = useUpdateFilter()
   const { data: getCategories } = useGetCategories()
@@ -103,6 +105,7 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
         onSuccess: () => {
           toast.success("Filter updated successfully")
           setOpen(false)
+          queryClient.invalidateQueries({ queryKey: ['filters'] });
         },
         onError: (error) => {
           toast.error("Failed to update filter")

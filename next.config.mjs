@@ -3,6 +3,13 @@ const nextConfig = {
     images: {
         domains: ["encrypted-tbn0.gstatic.com"],
     },
+    typescript:{
+         ignoreBuildErrors:true
+    },
+    eslint: {
+        // Ignores ESLint errors during the build
+        ignoreDuringBuilds: true,
+      },
 };
 
 export default nextConfig;

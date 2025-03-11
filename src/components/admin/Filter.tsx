@@ -14,7 +14,7 @@ import { useDeleteFilter, useGetFilters, useGetCategories } from '@/hooks/api'
 import { CreateFilterDialog } from './CreateFilterDialog'
 import { EditFilterDialog } from './EditFilterDialog'
 import { toast } from 'sonner'
-
+import { useQueryClient } from '@tanstack/react-query'
 interface Category {
   _id: string;
   name: string;
@@ -32,6 +32,7 @@ interface Filter {
 
 const Filter = () => {
   // Fetch filters and categories using the hooks
+  const queryClient = useQueryClient()
   const { data: getFilters, isLoading, isError } = useGetFilters()
   const { data: getCategories } = useGetCategories()
   const { mutate: deleteFilter } = useDeleteFilter()
@@ -52,6 +53,7 @@ const Filter = () => {
     deleteFilter(id, {
       onSuccess: () => {
         toast.success("Filter deleted successfully")
+        queryClient.invalidateQueries({ queryKey: ['filters'] });
       },
       onError: (error) => {
         toast.error("Failed to delete filter")

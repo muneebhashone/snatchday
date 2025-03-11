@@ -28,7 +28,7 @@ const faqData = [
     items: [
       {
         question: "What is Snatch Day?",
-        answer: `The new online shop with “Bargain or Discount” tournaments
+        answer: `The new online shop with "Bargain or Discount" tournaments
   
   
   
@@ -192,19 +192,19 @@ Further promotions will be announced`,
   },
 ];
 
-const Page = () => {
+const FaqDetailPage = () => {
   const router = useRouter();
-  const param = useParams();
+  const { id } = useParams();
   const [openAccordion, setOpenAccordion] = useState<string>("");
   const [openSubAccordion, setOpenSubAccordion] = useState<string>("");
 
   useEffect(() => {
-    if (param.id) {
-      setOpenAccordion(`section-${Number(param.id) - 1}`);
+    if (id) {
+      setOpenAccordion(`section-${Number(id) - 1}`);
     } else {
       router.push("/support");
     }
-  }, [param.id, router]);
+  }, [id, router]);
   return (
     <ClientLayout>
       <div className="container max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 pt-28 pb-32 mb-20">
@@ -348,4 +348,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default FaqDetailPage;

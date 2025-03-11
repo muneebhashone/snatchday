@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react"
 import { VersionSwitcher } from "@/components/version-switcher"
 import {
@@ -22,7 +23,8 @@ import {
   ChevronDown,
   Plus,
   List,
-  Newspaper
+  Newspaper,
+  Trophy
 } from "lucide-react"
 import {
   Collapsible,
@@ -56,6 +58,22 @@ const navItems = [
         url: "/admin/products/create",
         icon: <Plus className="h-4 w-4" />,
       },
+    ],
+  },
+  {
+    title: "Tournaments",
+    icon: <Trophy className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Tournaments",
+        url: "/admin/tournament",
+        icon: <List className="h-4 w-4" />,
+      },
+      // {
+      //   title: "Create Tournament",
+      //   url: "/admin/tournament/create",
+      //   icon: <Plus className="h-4 w-4" />,
+      // },
     ],
   },
   {
@@ -116,7 +134,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     >
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
-                          className="w-full flex items-center justify-between"
+                          className="w-full text-xl flex items-center justify-between"
                           tooltip={item.title}
                         >
                           <div className="flex items-center gap-3">

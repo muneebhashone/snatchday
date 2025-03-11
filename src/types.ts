@@ -21,13 +21,15 @@ export interface ProductFormData {
     relatedProducts?: string;
     requireShipping?: boolean;
     liscenseKey?: string;
+    data?: any;
+    
   }
   
-  export interface CategoryFormData {
+  export interface ResponseCategory {
     name: string;
     description: string;
     image: File;
-    parentId?: string;
+    parentCategoryId?: string;
     shop: boolean;
     above: boolean;
   }
@@ -36,6 +38,7 @@ export interface ProductFormData {
     name: string;
     value: string[];
     category: string;
+    data?: any;
   }
 
   export interface Category {
@@ -43,7 +46,7 @@ export interface ProductFormData {
     name: string;
     description: string;
     image: string;
-    parentId: string; 
+    parentCategoryId: string; 
     shop: boolean;
     above: boolean;
   }
@@ -53,6 +56,7 @@ export interface ProductFormData {
     name: string;
     email: string;
     subscribedAt: string;
+    createdAt: string;
     data?: NewsletterTypes[];
   }
 
@@ -60,6 +64,61 @@ export interface ResetPasswordTypes {
   email: string;
   password: string;
   passwordResetToken: string;
+}
+
+
+  export interface ResponseTournament {
+    _id: string;
+    name: string;
+    title: string;
+    textForBanner: string;
+    metaTitle: string;
+    metaDescription: string;
+    metaKeywords: string;
+    article: string;
+    startingPrice: number;
+    image: string;
+    priceReduction: number;
+    numberOfPieces: number;
+    game: string;
+    start: string;
+    length: number;
+    fee: number;
+    numberOfParticipants: number;
+    vip: boolean;
+    resubmissions: number;
+  }
+
+export interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  stock: number;
+  images: string[];
+  categoryIds: string[];
+  type: 'NEW' | 'SALE';
+  data?: any;
+}
+
+export interface ProductsData {
+  data: {
+    products: Product[];
+  };
+  isLoading: boolean;
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+  displayName: string;
+  data?: any;
+}
+
+export interface CategoriesData {
+  data: {
+    categories: Category[];
+  };
+  isLoading: boolean;
 }
 
 

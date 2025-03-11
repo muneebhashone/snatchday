@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { authApi } from "@/hooks/api";
+import { useAuthApi } from "@/hooks/api";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -48,7 +48,7 @@ export function LoginForm({
     },
   });
 
-  const { mutate: login, isPending } = authApi();
+  const { mutate: login, isPending } = useAuthApi();
 
   const onSubmit = (data: LoginFormValues) => {
     login(
