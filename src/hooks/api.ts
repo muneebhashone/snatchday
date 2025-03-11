@@ -31,7 +31,7 @@ import {
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 
-import { CategoryFormData, FilterFormData, ProductFormData, ResetPasswordTypes } from '@/types';
+import { FilterFormData, ProductFormData, ResetPasswordTypes, ResponseCategory } from '@/types';
 import { useUserContext } from '@/context/userContext';
 
 
@@ -81,13 +81,13 @@ export const useRegister = () => {
 };
 
 
-export const useFilteredItems = (filters: Record<string, string>) => {
-  return useQuery({
-    queryKey: ['items', filters], // Dynamic query key based on filters
-    queryFn: () => filterItems(filters),
-    enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
-  });
-};
+// export const useFilteredItems = (filters: Record<string, string>) => {
+//   return useQuery({
+//     queryKey: ['items', filters], // Dynamic query key based on filters
+//     queryFn: () => getFilters,
+//     enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
+//   });
+// };
 
 
 // export const useProducts = () => {
@@ -98,7 +98,7 @@ export const useFilteredItems = (filters: Record<string, string>) => {
 // };
 
 export const useCreateProduct = () => {
-  return useMutation<ProductFormData>({
+  return useMutation<ProductFormData, Error, FormData>({
     mutationFn: createProduct,
   });
 };
@@ -126,7 +126,7 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CategoryFormData }) => updateCategory(id, data),
+    mutationFn: ({ id, data }: { id: string; data: ResponseCategory }) => updateCategory(id, data),
   });
 };
 
@@ -189,7 +189,7 @@ interface NewsletterFilters {
 export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
     queryKey: ['products', filters],
-    queryFn: () => getProducts(filters),
+    queryFn: () => getProducts(filters as any),
   });
 };
 

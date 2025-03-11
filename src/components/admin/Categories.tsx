@@ -15,25 +15,14 @@ import { CreateCategoryDialog } from './CreateCategoryDialog'
 import { EditCategoryDialog } from './EditCategoryDialog'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'  
-interface CategoryType  {
-  _id: string;
-  name: string;
-  description: string;
-  displayName: string;
-  image: string;
-  parentCategory: string | null;
-  shop: boolean;
-  above: boolean;
-  filters: string[];
-  subCategories: string[];
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Category } from '@/types';
+
+
 
 const Categories = () => {
   // Fetch categories using the hook
   const { data : getCategories, isLoading, isError } = useGetCategories()
+  console.log(getCategories)
   const categories = getCategories?.data.categories
   const { mutate: deleteCategory } = useDeleteCategory()
   const queryClient = useQueryClient()
@@ -83,7 +72,7 @@ const Categories = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {categories?.map((category: CategoryType) => (
+                {categories?.map((category: Category) => (
                   <TableRow key={category._id} className="hover:bg-gray-50">
                     {/* <TableCell>
                       <input type="checkbox" className="rounded border-gray-300" />

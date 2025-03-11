@@ -3,12 +3,15 @@ export interface ProductFormData {
     description?: string;
     company?: string;
     images: File[];
-    colors?: string;
+    colors?: string[];
     stock: number;
     price: number;
-    discounts?: string;
+    discounts?: {
+      type: string;
+      value: number;
+    }[] | string;
     attributes?: string;
-    categoryIds: string;
+    categoryIds: string[];
     type?: 'NEW' | 'SALE';
     isFeatured?: boolean;
     metaTitle: string;
@@ -18,11 +21,9 @@ export interface ProductFormData {
     sku?: string;
     barcodeEAN?: string;
     noStockMessage?: string;
-    relatedProducts?: string;
+    relatedProducts?: string[];
     requireShipping?: boolean;
     liscenseKey?: string;
-    data?: any;
-    
   }
   
   export interface ResponseCategory {
@@ -41,15 +42,22 @@ export interface ProductFormData {
     data?: any;
   }
 
-  export interface Category {
-    _id: string;
-    name: string;
-    description: string;
-    image: string;
-    parentCategoryId: string; 
-    shop: boolean;
-    above: boolean;
-  }
+ export interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  displayName: string;
+  image: string;
+  parentCategory: string | null;
+  shop: boolean;
+  above: boolean;
+  filters: string[];
+  subCategories: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+  
 
   export interface NewsletterTypes {
     _id: string;
@@ -89,36 +97,79 @@ export interface ResetPasswordTypes {
     resubmissions: number;
   }
 
-export interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  stock: number;
-  images: string[];
-  categoryIds: string[];
-  type: 'NEW' | 'SALE';
-  data?: any;
+  export interface ProductType {
+    _id: string;
+    name: string;
+    description: string;
+    company: string;
+    images: string[];
+    colors: string[];
+    stock: number;
+    price: number;
+    discounts: {
+      amount: number;
+      price: number;
+      type: 'PERCENTAGE';
+      customerGroup: string;
+    }[];
+    attributes: Record<string, string>;
+    categoryIds: {
+      _id: string;
+      name: string;
+      description: string;
+      displayName: string;
+      filters: string[];
+      image: string;
+      isActive: boolean;
+      parentCategory: string | null;
+      shop: boolean;
+      above: boolean;
+      subCategories: string[];
+      createdAt: string;
+      updatedAt: string;
+
+    }[];
+    type: "NEW" | "SALE";
+    isFeatured: boolean;
+    metaTitle: string;
+    metaDescription: string;
+    metaKeywords: string;
+    article: string;
+    sku: string;
+    barcodeEAN: string;
+    noStockMessage: string;
+    relatedProducts: string[];
+    requireShipping: boolean;
+    liscenseKey: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  
+  }
+
+export interface productFilterParams {
+  price?: string[];
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
 }
 
-export interface ProductsData {
-  data: {
-    products: Product[];
-  };
-  isLoading: boolean;
-}
+// export interface Category {
+//   _id: string;
+//   name: string;
+//   displayName: string;
+//   data?: any;
+// }
 
-export interface Category {
-  _id: string;
-  name: string;
-  displayName: string;
-  data?: any;
-}
-
-export interface CategoriesData {
-  data: {
-    categories: Category[];
-  };
-  isLoading: boolean;
-}
+// export interface CategoriesData {
+//   data: {
+//     categories: Category[];
+//   };
+//   isLoading: boolean;
+// }
 
 

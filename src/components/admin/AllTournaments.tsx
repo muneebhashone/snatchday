@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { CheckCircle, Trash } from "lucide-react";
 import { EditTournamentDialog } from "./EditTournamentDialog";
+import Image from "next/image";
 
 interface FilterParams {
   limit?: string;
@@ -71,7 +72,7 @@ const AllTournaments = () => {
   });
   const queryClient = useQueryClient();
 
-  const { data: getTournaments, isLoading } = useGetTournaments(filters);
+  const { data: getTournaments, isLoading } = useGetTournaments(filters as any);
   console.log(getTournaments);
   //   const { mutate: deleteTournament } = useDeleteTournament();
   const { mutate: cancelTournament } = useCancelTournament();
@@ -227,7 +228,7 @@ const AllTournaments = () => {
                 <TableCell>
                   {tournament.image && (
                     <div className="relative h-16 w-16">
-                      <img
+                      <Image
                         src={tournament.image}
                         alt={tournament.name}
                         className="rounded-md object-cover w-full h-full"

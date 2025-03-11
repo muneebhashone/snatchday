@@ -1,7 +1,7 @@
 import { TournamentFormData } from '@/types/admin';
 import axiosInstance from './axios';
-import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData } from '@/types';
-import { useMutation } from '@tanstack/react-query';
+import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, ProductType, ResponseCategory } from '@/types';
+
 
 
 export const fetchItems = async () => {
@@ -57,7 +57,7 @@ export const createProduct = async (formData: FormData) => {
 // };
 
 export const createCategory = async (formData: FormData) => {
-  const response = await axiosInstance.post<CategoryFormData>('/product/category', formData)
+  const response = await axiosInstance.post<ResponseCategory>('/product/category', formData)
   return response.data;
 };
 
@@ -71,8 +71,8 @@ export const getCategoryById = async (id: string) => {
   return response.data;
 };
 
-export const updateCategory = async (id: string, data: CategoryFormData) => {
-  const response = await axiosInstance.patch<CategoryFormData>(
+export const updateCategory = async (id: string, data: ResponseCategory) => {
+  const response = await axiosInstance.patch<ResponseCategory>(
     `/product/category/${id}`,
     data
   );
@@ -80,7 +80,7 @@ export const updateCategory = async (id: string, data: CategoryFormData) => {
 };
 
 export const deleteCategory = async (id: string) => {
-  const response = await axiosInstance.delete<CategoryFormData>(
+  const response = await axiosInstance.delete<ResponseCategory>(
     `/product/category/${id}`
   );
   return response.data;
@@ -124,7 +124,7 @@ export const getProducts = async (params?: {
   category?: string;
   type?: string;
 }) => {
-  const response = await axiosInstance.get<ProductFormData[]>(
+  const response = await axiosInstance.get<ProductType[]>(
     "/product/product",
     {
       params,
@@ -240,7 +240,7 @@ export const subscribeNewsletter = async (email: string) => {
 
 
 export const getProductById = async (id: string) => {
-  const response = await axiosInstance.get<ProductFormData>(`/product/product/${id}`);
+  const response = await axiosInstance.get<ProductType>(`/product/product/${id}`);
     console.log(response.data, "response.data",id);
   return response.data;
 };

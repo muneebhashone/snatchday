@@ -101,7 +101,7 @@ const ProductListingPage = () => {
         attributes: JSON.stringify(attributesArray)
     }),
     ...(debouncedPriceRange.length === 2 && {
-        price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`
+        price: [`${debouncedPriceRange[0]}`, `${debouncedPriceRange[1]}`]
     }),
     ...(debouncedSearchTerm && { name: debouncedSearchTerm }),
   });

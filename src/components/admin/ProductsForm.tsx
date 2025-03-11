@@ -27,12 +27,13 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { useState } from "react"
 import Image from "next/image"
+import { Category} from "@/types"
 
-interface Category {
-  _id: string;
-  name: string;
-  displayName: string;
-}
+// interface Category {
+//   _id: string;
+//   name: string;
+//   displayName: string;
+// }
 
 interface DiscountItem {
   amount: number;
@@ -49,7 +50,7 @@ const formSchema = z.object({
   colors: z.string().min(1, "Colors cannot be empty"),
   stock: z.number().min(0, "Stock must be 0 or greater"),
   price: z.number().min(0, "Price must be 0 or greater"),
-  discounts: z.string().refine((value) => {
+  discounts: z.string().optional().refine((value) => {
     try {
       const discounts = value.split(',').map(d => {
         const [amount, price] = d.split(':').map(v => parseFloat(v.trim()));
@@ -78,13 +79,7 @@ const formSchema = z.object({
 
 export default function ProductsForm() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
-  const { mutate: createProduct, isPending } = useCreateProduct({
-    options:{
-      onSuccess(data, variables, context) {
-          
-      },
-    }
-  })
+  const { mutate: createProduct, isPending } = useCreateProduct()
   const { data: getCategories } = useGetCategories()
   const categories = getCategories?.data.categories || []
   const { data: getProducts } = useGetProducts()
@@ -211,7 +206,7 @@ export default function ProductsForm() {
         }
       })
 
-      createProduct(formData, {
+      createProduct(formData as any, {
         onSuccess: () => {
           toast.success("Product created successfully")
           // Clear image previews

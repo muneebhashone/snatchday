@@ -24,40 +24,16 @@ import Link from 'next/link';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
-import { CategoriesResponse, ProductsResponse } from '@/types';
+import { Category, ProductType, productFilterParams } from '@/types';
+import Image from 'next/image';
 
-interface FilterParams {
-  price?: string[];
-  limit?: string;
-  offset?: string;
-  sort_attr?: string;
-  sort?: string;
-  name?: string;
-  category?: string;
-  type?: string;
-}
 
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-  stock: number;
-  images: string[];
-  categoryIds: string[];
-  type: 'NEW' | 'SALE';
-}
 
-interface Category {
-  _id: string;
-  name: string;
-  displayName: string;
-
-}
 
 
 
 export function Product() {
-  const [filters, setFilters] = useState<FilterParams>({
+  const [filters, setFilters] = useState<productFilterParams>({
     limit: '10',
     offset: '0'
     
@@ -72,9 +48,11 @@ export function Product() {
     setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
   }, [debouncedSearchTerm]);
 
-  const productsData = useGetProducts(filters)  as ProductsResponse
-  const categoriesData  = useGetCategories()  as CategoriesResponse
-  const { mutate: deleteProduct } = useDeleteProduct();
+  const { data: productsData } = useGetProducts(filters)
+  const { data: categoriesData } = useGetCategories()
+  const { mutate: deleteProduct } = useDeleteProduct()
+
+  console.log(productsData)
 
   
 
@@ -93,7 +71,7 @@ export function Product() {
   
   
 
-  const handleFilterChange = (key: keyof FilterParams, value: string) => {
+  const handleFilterChange = (key: keyof productFilterParams, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
   };
 
@@ -219,12 +197,12 @@ export function Product() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {productsData?.data?.products?.map((product: Product) => (
+            {productsData?.data?.products?.map((product: ProductType) => (
               <TableRow key={product._id}>
                 <TableCell>
                   {product.images && product.images[0] && (
                     <div className="relative h-16 w-16">
-                      <img 
+                      <Image 
                         src={product.images[0]} 
                         alt={product.name} 
                         className="rounded-md object-cover w-full h-full" 
