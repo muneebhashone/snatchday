@@ -80,10 +80,8 @@ export default function ProductsForm() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
   const { mutate: createProduct, isPending } = useCreateProduct()
   const { data: getCategories } = useGetCategories()
-  const categories = getCategories?.data?.categories || []
-  const { data: getProducts } = useGetProducts()
-  const products = getProducts?.data?.products || []
  
+  const { data: getProducts } = useGetProducts()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -400,7 +398,7 @@ export default function ProductsForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categories?.map((category: Category) => (
+                    {getCategories?.data?.categories?.map((category: Category) => (
                       <SelectItem key={category._id} value={category._id}>
                         {category.displayName || category.name}
                       </SelectItem>
@@ -585,7 +583,7 @@ export default function ProductsForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {products?.map((product) => (
+                      {getProducts?.data?.products?.map((product) => (
                         <SelectItem 
                           key={product._id} 
                           value={product._id}
@@ -600,7 +598,7 @@ export default function ProductsForm() {
                 {field.value?.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {field.value.map((productId) => {
-                      const product = products?.find((p) => p._id === productId);
+                      const product = getProducts?.data?.products?.find((p) => p._id === productId);
                       return (
                         <div
                           key={productId}
