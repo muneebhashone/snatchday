@@ -108,7 +108,6 @@ const ProductListingPage = () => {
 
   const { data: categoryData } = useGetCategoryById(category as string);
 
-  // Extract and organize filters from categoryData
   const availableFilters =
     categoryData?.data?.filters?.map((filter) => ({
       name: filter.name,

@@ -25,9 +25,10 @@ import { useResetPassword } from "@/hooks/api";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 export default function ResetPassword() {
-//   const router = useRouter();   
+  const router = useRouter();   
     const searchParams = useSearchParams();  
     const email = searchParams.get("email");
+    const isAdmin = searchParams.get("admin"); 
 
     const {mutate: resetPassword,isPending} = useResetPassword();
 
@@ -50,6 +51,11 @@ export default function ResetPassword() {
         onSuccess: (data) => {
             toast.success("Password reset successfully");
             console.log(data, "data from hooks");
+            if(isAdmin === "true"){
+                router.push("/admin/login");
+            }else{
+                router.push("/");
+            }
         },
         onError: (error) => {
             toast.error("Password reset failed");
