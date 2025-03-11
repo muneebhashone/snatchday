@@ -24,7 +24,6 @@ import Link from 'next/link';
 import { useDebounce } from '@/hooks/useDebounce';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
-import { CategoriesResponse, ProductsResponse } from '@/types';
 
 interface FilterParams {
   price?: string[];
@@ -72,8 +71,8 @@ export function Product() {
     setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
   }, [debouncedSearchTerm]);
 
-    const {data: productsData} = useGetProducts(filters)  as ProductsResponse
-    const {data: categoriesData} = useGetCategories()  as CategoriesResponse
+    const {data: productsData} = useGetProducts(filters) 
+    const {data: categoriesData} = useGetCategories()  
     const { mutate: deleteProduct } = useDeleteProduct();
 
   
@@ -180,7 +179,7 @@ export function Product() {
             </SelectTrigger>
             <SelectContent>
               {categoriesData?.data?.categories?.map((category: Category) => (
-                <SelectItem key={category._id} value={category._id}>
+                <SelectItem key={category?._id} value={category?._id}>
                   {category?.displayName || category?.name}
                 </SelectItem>
               ))}
@@ -225,20 +224,20 @@ export function Product() {
                   {product?.images && product?.images[0] && (
                     <div className="relative h-16 w-16">
                       <img 
-                        src={product.images[0]} 
-                        alt={product.name} 
+                        src={product?.images[0]} 
+                        alt={product?.name} 
                         className="rounded-md object-cover w-full h-full" 
                       />
                     </div>
                   )}
                 </TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.stock}</TableCell>
+                <TableCell>{product?.name || "N/A"}</TableCell>
+                <TableCell>{product?.price || "N/A"}</TableCell>
+                <TableCell>{product?.stock || "N/A"}</TableCell>
                 <TableCell>
-                 {product.categoryIds[0].displayName}
+                 {product.categoryIds[0]?.displayName || "N/A"}
                 </TableCell>
-                <TableCell>{product.type}</TableCell>
+                <TableCell>{product?.type}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <Button variant="ghost" size="icon" asChild>
@@ -255,7 +254,7 @@ export function Product() {
                 
                 
                 <Button variant="ghost" size="icon">
-                      <Link href={`/admin/tournament/create/${product._id}`}>
+                      <Link href={`/admin/tournament/create/${product?._id}`}>
                         <Trophy className="h-4 w-4" />
                       </Link>
                     </Button>
