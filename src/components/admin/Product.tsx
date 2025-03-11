@@ -72,9 +72,9 @@ export function Product() {
     setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
   }, [debouncedSearchTerm]);
 
-  const productsData = useGetProducts(filters)  as ProductsResponse
-  const categoriesData  = useGetCategories()  as CategoriesResponse
-  const { mutate: deleteProduct } = useDeleteProduct();
+    const {data: productsData} = useGetProducts(filters)  as ProductsResponse
+    const {data: categoriesData} = useGetCategories()  as CategoriesResponse
+    const { mutate: deleteProduct } = useDeleteProduct();
 
   
 

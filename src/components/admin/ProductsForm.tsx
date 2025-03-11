@@ -78,17 +78,11 @@ const formSchema = z.object({
 
 export default function ProductsForm() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
-  const { mutate: createProduct, isPending } = useCreateProduct({
-    options:{
-      onSuccess(data, variables, context) {
-          
-      },
-    }
-  })
+  const { mutate: createProduct, isPending } = useCreateProduct()
   const { data: getCategories } = useGetCategories()
-  const categories = getCategories?.data.categories || []
+  const categories = getCategories?.data?.categories || []
   const { data: getProducts } = useGetProducts()
-  const products = getProducts?.data.products || []
+  const products = getProducts?.data?.products || []
  
 
   const form = useForm<z.infer<typeof formSchema>>({
