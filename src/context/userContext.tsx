@@ -36,6 +36,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => getUserFromStorage());
 
   const setUserData = (userData: User | null) => {
+   
     setUser(userData);
   };
 
