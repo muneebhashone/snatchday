@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { useCreateProduct, useGetCategories, useGetProducts} from "@/hooks/api"
+import { useCreateProduct, useGetCategories, useGetFilters, useGetProducts} from "@/hooks/api"
 import {
   Form,
   FormControl,
@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 
 interface Category {
@@ -78,18 +78,11 @@ const formSchema = z.object({
 
 export default function ProductsForm() {
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
-  const { mutate: createProduct, isPending } = useCreateProduct({
-    options:{
-      onSuccess(data, variables, context) {
-          
-      },
-    }
-  })
+  const { mutate: createProduct, isPending } = useCreateProduct()
   const { data: getCategories } = useGetCategories()
-  const categories = getCategories?.data.categories || []
-  const { data: getProducts } = useGetProducts()
-  const products = getProducts?.data.products || []
  
+  const { data: getProducts } = useGetProducts()
+  const {data:filters} = useGetFilters()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -118,6 +111,18 @@ export default function ProductsForm() {
     },
   })
 
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
+  const [selectedValues, setSelectedValues] = useState<string[]>({});
+
+  // Effect to reset selected values when filter changes
+  useEffect(() => {
+    if (selectedFilter) {
+      const filter = filters?.data.find(f => f.name === selectedFilter);
+      setSelectedValues(filter ? filter.value : []);
+    } else {
+      setSelectedValues([]);
+    }
+  }, [selectedFilter, filters]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -135,9 +140,13 @@ export default function ProductsForm() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+
+   
+
+
     try {
       const formData = new FormData()
-
+      console.log(values,"values")
       // Append all form fields to FormData
       Object.entries(values).forEach(([key, value]) => {
         if (key === 'categoryIds') {
@@ -155,17 +164,11 @@ export default function ProductsForm() {
           // Convert comma-separated colors to array
           const colorsArray = value.split(',').map((color: string) => color.trim()).filter(Boolean)
           formData.append('colors', JSON.stringify(colorsArray))
-        } else if (key === 'attributes') {
+        } 
+        else if (key === 'attributes') {
           try {
-            // Convert key:value pairs to object
-            const attributesObject = value.split(',').reduce((acc: Record<string, string>, pair: string) => {
-              const [attrKey, attrValue] = pair.split(':').map(item => item.trim())
-              if (attrKey && attrValue) {
-                acc[attrKey] = attrValue
-              }
-              return acc
-            }, {})
-            formData.append('attributes', JSON.stringify(attributesObject))
+            // const attributeName = value; // Assuming value is the attribute name
+           
           } catch (error) {
             console.error('Error parsing attributes:', error)
             formData.append('attributes', '{}')
@@ -210,6 +213,16 @@ export default function ProductsForm() {
           formData.append(key, value.toString())
         }
       })
+
+      // Add selected filter and its values to formData
+      if (selectedFilter) {
+        // Create an object with multiple names and their corresponding values
+        const attributesObject = selectedValues.reduce((acc, value, index) => {
+          acc[`${selectedFilter}${index + 1}`] = value; // Assign unique names like selectedFilter1, selectedFilter2, etc.
+          return acc;
+        }, {});
+        formData.append('attributes', JSON.stringify(attributesObject));
+      }
 
       createProduct(formData, {
         onSuccess: () => {
@@ -406,7 +419,7 @@ export default function ProductsForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categories?.map((category: Category) => (
+                    {getCategories?.data?.categories?.map((category: Category) => (
                       <SelectItem key={category._id} value={category._id}>
                         {category.displayName || category.name}
                       </SelectItem>
@@ -488,17 +501,49 @@ export default function ProductsForm() {
             name="attributes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Attributes *</FormLabel>
+                <FormLabel>Filters name *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Product attributes (key:value pairs, comma-separated)" {...field} />
+                  <Select onValueChange={(value) => {
+                    setSelectedFilter(value);
+                    field.onChange(value);
+                  }}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select filter" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {filters?.data?.map((filter) => (
+                        <SelectItem key={filter._id} value={filter.name}>
+                          {filter.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
-                <FormDescription>
-                  Enter attributes as key:value pairs (e.g., Size:XL, Color:Blue)
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          {selectedValues.length > 0 && (
+            <FormField
+              control={form.control}
+              name="filterValues"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Filter Values</FormLabel>
+                  <FormControl>
+                    <Input
+                      value={selectedValues.join(', ')}
+                      disabled
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
@@ -591,7 +636,7 @@ export default function ProductsForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {products?.map((product) => (
+                      {getProducts?.data?.products?.map((product) => (
                         <SelectItem 
                           key={product._id} 
                           value={product._id}
@@ -606,7 +651,7 @@ export default function ProductsForm() {
                 {field.value?.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {field.value.map((productId) => {
-                      const product = products?.find((p) => p._id === productId);
+                      const product = getProducts?.data?.products?.find((p) => p._id === productId);
                       return (
                         <div
                           key={productId}

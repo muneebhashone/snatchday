@@ -1,13 +1,13 @@
 "use client"
 import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+// import {
+//   Breadcrumb,
+//   BreadcrumbItem,
+//   BreadcrumbLink,
+//   BreadcrumbList,
+//   BreadcrumbPage,
+//   BreadcrumbSeparator,
+// } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -33,7 +33,7 @@ DropdownMenu,
 } from '@/components/ui/dropdown-menu'
 import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/api"
-
+import DynamicBreadcrumb from "@/components/DynamicBreadcrumb"
 const AdminLayout = ({children}: {children: React.ReactNode}) => {
 
   const router = useRouter();
@@ -63,19 +63,7 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
           <div className="flex items-center">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
-                  Building Your Application
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <DynamicBreadcrumb />
           </div>
 
           <div className="flex items-center gap-4">

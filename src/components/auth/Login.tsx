@@ -20,13 +20,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {  useAuthApi } from "@/hooks/api";
+import {  useAuthApi, useLogout } from "@/hooks/api";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUserContext } from "@/context/userContext";
-
+import { useRouter } from "next/navigation";
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -36,8 +36,10 @@ const Login = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const {user,setUserData}=useUserContext()
+  const {user,setUserData,logout}=useUserContext()
+  const router=useRouter()
   const { mutate: login, isPending } = useAuthApi();
+  const {mutate:Userlogout}=useLogout()
   const {
     register,
     handleSubmit,
@@ -57,8 +59,20 @@ const Login = () => {
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    Userlogout(undefined, {
+      onSuccess: () => {
+        localStorage.removeItem('snatchday_user');
+        setIsLoggedIn(false);
+        logout();
+        toast.success("Logout successful");
+        router.push('/');
+      },
+      onError: (error) => {
+        console.error('Logout failed:', error);
+      }
+    });
   };
+
 
   useEffect(() => {
     if (user) { 
@@ -94,6 +108,10 @@ const Login = () => {
   if (isRegisterOpen) {
     return <Register onBack={handleBackToLogin} />;
   }
+  //  const handleLogout = () => {
+  //   setIsLoggedIn(false);
+  //   setUserData(null)
+  //  }
 
   if (isLoggedIn) {
     return (
@@ -114,7 +132,7 @@ const Login = () => {
             onClick={handleLogout}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            <p className="text-sm font-medium text-card-foreground text-red-600">Logout</p>
+            <p className="text-sm font-medium text-card-foreground text-red-600" onClick={handleLogout}>Logout</p>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

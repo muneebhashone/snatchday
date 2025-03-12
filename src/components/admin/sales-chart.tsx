@@ -39,7 +39,7 @@ export function SalesChart() {
     const data = date?.from && date?.to ? generateData(date.from, date.to) : []
 
     return (
-        <Card>
+        <Card className="border-primary">
             <CardHeader className="flex flex-row items-center justify-between pb-8">
                 <CardTitle className="flex items-center gap-2">
                     <span>Sales Statistics</span>
@@ -110,7 +110,7 @@ export function SalesChart() {
                             <Line
                                 type="monotone"
                                 dataKey="orders"
-                                stroke="#2563eb"
+                                stroke="#F37835"
                                 strokeWidth={2}
                                 dot={false}
                                 name="Orders"

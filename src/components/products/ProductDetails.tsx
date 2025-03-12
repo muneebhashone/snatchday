@@ -68,13 +68,14 @@ const ProductDetails = ({
  images,
  isActive,
  name,
+ stock,
  liscenseKey,
  isNew,
  price,
  isLoading,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(4);
+  const [quantity, setQuantity] = useState(1);
 
   const handleIncrement = () => {
     setQuantity((prev) => prev + 1);
@@ -86,6 +87,8 @@ const ProductDetails = ({
     }
   };
 
+
+
   if (isLoading) {
     return (
       <div className="container max-w-[1600px] mx-auto relative z-10 min-h-[500px]">
@@ -95,6 +98,9 @@ const ProductDetails = ({
       </div>
     );
   }
+const roundToTwoDecimals = (value: number): number => {
+  return Math.round(value * 100) / 100;
+};
 
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
@@ -179,7 +185,7 @@ const ProductDetails = ({
             <div className="mt-3">
               <p className="">
                 <span className="text-[#444444] font-bold">Availability:</span>{" "}
-                Order item
+                {stock > 0 ? "In Stock" : "Out of Stock"}
               </p>
             </div>
 
@@ -243,14 +249,14 @@ const ProductDetails = ({
             {/* Discount Points */}
             <div className="mt-3">
               <p className="text-lg mb-3 text-[#444444] font-bold">
-                <span className="text-[#3A672B] font-bold">10.00€ </span>
+                <span className="text-[#3A672B] font-bold">{(discounts?.length > 0 ? discounts[0].price : 0) as number} € </span>
                 discount possible{" "}
                 <span className="text-primary cursor-help">?</span>
               </p>
               <span className="bg-orange-100 text-primary rounded-full pl-3 pr-1 py-2">
                 With discount points only:{" "}
                 <span className="text-white bg-primary font-medium rounded-full px-2 py-1">
-                  238.35€
+                  {discounts?.length > 0 ? roundToTwoDecimals(Number(price) - (Number(price) * Number(discounts[0].price)) / 100) : price}€
                 </span>
               </span>
             </div>
@@ -379,19 +385,20 @@ const ProductDetails = ({
               value="description2"
               className="font-medium px-6 py-2 data-[state=active]:bg-[#FF6B3D] data-[state=active]:text-white data-[state=active]:shadow-none"
             >
-              Description
+              Characteristics
             </TabsTrigger>
-            <TabsTrigger
+            {/* <TabsTrigger
               value="description3"
               className="font-medium px-6 py-2 data-[state=active]:bg-[#FF6B3D] data-[state=active]:text-white data-[state=active]:shadow-none"
             >
               Description
-            </TabsTrigger>
+            </TabsTrigger>  */}
           </TabsList>
 
-          {/* <TabsContent value="description1" className="py-8 px-16 border mt-0">
-            <div className="grid grid-cols-2 gap-x-32">
-              <ul className="space-y-4 text-sm">
+          <TabsContent value="description1" className="py-8 px-16 border mt-0">
+            <div >
+              {description || "discription not found"}
+              {/* <ul className="space-y-4 text-sm">
                 {specifications.leftColumn.map((spec, index) => (
                   <li key={index} className="flex items-center gap-2">
                     <span>{spec}</span>
@@ -405,17 +412,27 @@ const ProductDetails = ({
                     <span>{spec}</span>
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
-          </TabsContent> */}
+          </TabsContent>
 
-          {/* <TabsContent value="description2" className="py-8">
+          <TabsContent value="description2" className="py-8">
             <div className="grid grid-cols-2 gap-x-32">
               <div className="text-sm text-gray-600">
-                Second description tab content
+                {Object.keys(attributes).length === 0 ? (
+                  <p>Not found</p>
+                ) : (
+                  <ul>
+                    {Object.entries(attributes).map(([key, value]) => (
+                      <li key={key} className="flex items-center gap-2">
+                        <span>{key}: {String(value)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             </div>
-          </TabsContent> */}
+          </TabsContent>
 
           {/* <TabsContent value="description3" className="py-8">
             <div className="grid grid-cols-2 gap-x-32">

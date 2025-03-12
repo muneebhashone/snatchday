@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForgetPassword } from "@/hooks/api";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const schema = z.object({
   email: z.string().email("Invalid email address").nonempty("Email is required"),
@@ -22,13 +22,17 @@ export default function ForgotPassword() {
   });
   const { mutate: forgetPassword, isPending } = useForgetPassword();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const ref = searchParams.get("ref"); 
+  const isAdmin = ref === "admin"; 
+
   
 
   const onSubmit = (data: z.infer<typeof schema>) => {
     forgetPassword(data.email as string,{
       onSuccess: () => {
         toast.success("Email sent successfully");
-        router.push(`/reset-password?email=${data.email}`);
+        router.push(`/reset-password?email=${data.email}&admin=${isAdmin}`); // Pass isAdmin as a query parameter
       },
       onError: (error) => {
         toast.error("Email not found");

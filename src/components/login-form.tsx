@@ -134,7 +134,7 @@ export function LoginForm({
               </form>
             </Form>
           <div className="flex justify-end my-2">
-            <Link href="/forgot-password" className="underline text-sm hover:text-orange-500">Forgot password</Link>
+            <Link href={{ pathname: "/forgot-password", query: { ref: "admin" } }} className="underline text-sm hover:text-orange-500">Forgot password</Link>
           </div>  
           </CardContent>
         </Card>
