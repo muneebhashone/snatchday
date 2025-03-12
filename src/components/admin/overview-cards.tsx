@@ -9,14 +9,14 @@ interface StatCardProps {
 }
 
 const StatCard = ({ title, value, subtitle, icon }: StatCardProps) => (
-  <Card>
+  <Card className="border border-primary text-primary">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      {icon}
+      <span className="text-white bg-primary p-[4px] rounded-full ">{icon}</span>
     </CardHeader>
     <CardContent>
       <div className="text-2xl font-bold">{value}</div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs ">
         {subtitle}
       </p>
     </CardContent>
@@ -29,25 +29,25 @@ export function OverviewCards() {
       title: "TOTAL ORDERS",
       value: "864",
       subtitle: "+0% from last month",
-      icon: <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+      icon: <ShoppingCart className="h-5 w-5 text-white" />
     },
     {
       title: "SALES TOTAL",
       value: "45K",
       subtitle: "+0% from last month",
-      icon: <CreditCard className="h-4 w-4 text-muted-foreground" />
+      icon: <CreditCard className="h-5 w-5 text-white" />
     },
     {
       title: "ALL CUSTOMERS",
       value: "8",
       subtitle: "+0% from last month",
-      icon: <Users className="h-4 w-4 text-muted-foreground" />
+      icon: <Users className="h-5 w-5 text-white" />
     },
     {
       title: "VISITORS ONLINE",
       value: "1",
       subtitle: "Current active users",
-      icon: <Eye className="h-4 w-4 text-muted-foreground" />
+      icon: <Eye className="h-5 w-5 text-white" />
     }
   ]
 

@@ -13,6 +13,7 @@ interface FeaturedProductCardProps {
   isSale?: boolean;
   isNew?: boolean;
   discounts: string;
+  discount:string
 }
 
 const FeaturedProductsCard = ({

@@ -11,7 +11,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import laptop from "@/app/images/laptop.png";
 
 import React, { useState, useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
@@ -30,7 +29,6 @@ import { useSearchParams } from "next/navigation";
 import {
   useGetCategoryById,
   useGetProducts,
-  useGetFilterById,
 } from "@/hooks/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
