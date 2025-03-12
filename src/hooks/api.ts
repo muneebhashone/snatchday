@@ -28,6 +28,8 @@ import {
   deleteProduct,
   updateProduct,
   TournamentParams,
+  upComingTournament,
+  getTournamentById,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 
@@ -291,3 +293,19 @@ export const useGetTournaments = (params: TournamentParams) => {
   });
 };
 
+
+export const useUpComingTournament = () => {
+  return useQuery({
+    queryKey: ['upComingTournament'],
+    queryFn: () => upComingTournament(),
+  });
+};
+
+
+export const useGetTournamentById = (id: string) => {
+  return useQuery({
+    queryKey: ['tournament', id],
+    queryFn: () => getTournamentById(id),
+    enabled: !!id,
+  });
+};

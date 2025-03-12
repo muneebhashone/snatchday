@@ -24,6 +24,8 @@ import { LiveIcon } from "../icons/icon";
 import laptop from "@/app/images/detailimage.png";
 import { motion, AnimatePresence } from "framer-motion"; 
 import { Swiper as SwiperType } from "swiper";
+import { useUpComingTournament } from "@/hooks/api";
+import { TournamentResponse } from "@/types";
 
 const tournaments = [
   {
@@ -117,6 +119,9 @@ const HeroSection = () => {
   const [key, setKey] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const { data: upComingTournament } = useUpComingTournament();
+
+  console.log(upComingTournament, "upComingTournament");
   // Set isLoaded to true after component mounts
   useEffect(() => {
     setIsLoaded(true);
@@ -136,6 +141,9 @@ const HeroSection = () => {
     { src: five, alt: "Featured product five" },
     { src: six, alt: "Featured product six" },
   ];
+
+
+  
 
   // Text animation variants (from left)
   const textVariants = {
@@ -284,6 +292,20 @@ const HeroSection = () => {
     }
   };
 
+  // Function to calculate the countdown
+  const calculateCountdown = (startDate: string) => {
+    const now = new Date();
+    const start = new Date(startDate);
+    const totalSeconds = Math.floor((start.getTime() - now.getTime()) / 1000);
+    
+    return {
+      days: Math.floor(totalSeconds / (3600 * 24)),
+      hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
+      minutes: Math.floor((totalSeconds % 3600) / 60),
+      seconds: totalSeconds % 60,
+    };
+  };
+
   return (
     <motion.section 
       className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10"
@@ -350,218 +372,224 @@ const HeroSection = () => {
           className="h-full"
           onSlideChange={handleSlideChange}
         >
-          {tournaments.map((tournament, index) => (
-            <SwiperSlide key={index}>
-              <div className="mt-20 grid grid-cols-1 lg:grid-cols-7 items-center">
-                {/* Left Content */}
-                <div className="col-span-4">
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={key}
-                      className="pt-5 xl:pt-10 pb-5 xl:pb-12 px-5 sm:px-7 relative"
-                      initial="hidden"
-                      animate="visible"
-                      variants={staggerContainerVariants}
-                    >
-                      {/* Tournament Badge */}
-                      <motion.div
-                        variants={staggerItemVariants}
-                        className="mb-3 flex items-center"
-                      >
-                        <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-2xl">
-                          Tournament ID :
-                          <span className="text-primary"> 1234567890</span>
-                        </h2>
-                      </motion.div>
-                      <motion.div
-                        variants={staggerItemVariants}
-                        className="flex gap-2 items-center text-red-600"
-                      >
-                        <div className="inline-block bg-primary text-white text-xs xl:text-xl px-2 sm:px-3 py-1 rounded-full ">
-                          {tournament.title}
-                        </div>
-                        <div className="flex items-center text-lg font-bold">
-                          {tournament.status === "live" ? (
-                            <div className="flex flex-col text-xs items-center justify-center leading-[3px]">
-                              <LiveIcon />
-                              Live
-                            </div>
-                          ) : (
-                            <Image
-                              src={crown}
-                              alt="crown"
-                              width={40}
-                              height={40}
-                            />
-                          )}
-                        </div>
-                      </motion.div>
+          {upComingTournament?.data?.map((tournament, index) => {
+            const countdown = calculateCountdown(tournament.start);
 
-                      {/* Product Title */}
-                      <motion.p
-                        variants={staggerItemVariants}
-                        className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6"
-                      >
-                        {tournament.productName}
-                      </motion.p>
-
-                      {/* Game Info */}
+            return (
+              <SwiperSlide key={index}>
+                <div className="mt-20 grid grid-cols-1 lg:grid-cols-7 items-center">
+                  {/* Left Content */}
+                  <div className="col-span-4">
+                    <AnimatePresence mode="wait">
                       <motion.div
-                        variants={staggerItemVariants}
-                        className="flex flex-col justify-center gap-2 mt-2 xl:mt-5"
+                        key={key}
+                        className="pt-5 xl:pt-10 pb-5 xl:pb-12 px-5 sm:px-7 relative"
+                        initial="hidden"
+                        animate="visible"
+                        variants={staggerContainerVariants}
                       >
-                        <div className="flex items-center justify-start gap-2 w-max">
-                          <div className="w-12 xl:w-24 h-12 xl:h-24 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
-                            <Image
-                              className=""
-                              src={tournament.gameIcon}
-                              alt="Game Icon"
-                              width={70}
-                              height={65}
-                            />
+                        {/* Tournament Badge */}
+                        <motion.div
+                          variants={staggerItemVariants}
+                          className="mb-3 flex items-center"
+                        >
+                          <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-2xl">
+                            Tournament ID :
+                            <span className="text-primary"> 1234567890</span>
+                          </h2>
+                        </motion.div>
+                        <motion.div
+                          variants={staggerItemVariants}
+                          className="flex gap-2 items-center text-red-600"
+                        >
+                          <div className="inline-block bg-primary text-white text-xs xl:text-xl px-2 sm:px-3 py-1 rounded-full ">
+                            {/* {tournament?.title} */}
+                            Bargain or Discount Tournament
                           </div>
-                          <div className="">
-                            <div className="flex items-center gap-1">
-                              <p className="text-lg xl:text-xl font-bold">
-                                Game:
-                              </p>
-                              <p className="text-primary text-lg xl:text-xl font-bold">
-                                {tournament.gameName}
-                              </p>
+                          <div className="flex items-center text-lg font-bold">
+                            {tournament?.status === "live" ? (
+                              <div className="flex flex-col text-xs items-center justify-center leading-[3px]">
+                                <LiveIcon />
+                                Live
+                              </div>
+                            ) : (
+                              <Image
+                                src={crown}
+                                alt="crown"
+                                width={40}
+                                height={40}
+                              />
+                            )}
+                          </div>
+                        </motion.div>
+
+                        {/* Product Title */}
+                        <motion.p
+                          variants={staggerItemVariants}
+                          className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6"
+                        >
+                          {tournament?.name}
+                        </motion.p>
+
+                        {/* Game Info */}
+                        <motion.div
+                          variants={staggerItemVariants}
+                          className="flex flex-col justify-center gap-2 mt-2 xl:mt-5"
+                        >
+                          <div className="flex items-center justify-start gap-2 w-max">
+                            <div className="w-12 xl:w-24 h-12 xl:h-24 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
+                              <Image
+                                className=""
+                                src={graphiccard}
+                                alt="Game Icon"
+                                width={70}
+                                height={65}
+                              />
                             </div>
-                            <div className="flex w-max items-center gap-1 text-card-foreground ">
-                              <p className="text-lg font-semibold">Duration:</p>
-                              <p className="text-lg font-semibold">
-                                {tournament.duration}
-                              </p>
+                            <div className="">
+                              <div className="flex items-center gap-1">
+                                <p className="text-lg xl:text-xl font-bold">
+                                  Game:
+                                </p>
+                                <p className="text-primary text-lg xl:text-xl font-bold">
+                                  {tournament?.game}
+                                </p>
+                              </div>
+                              <div className="flex w-max items-center gap-1 text-card-foreground ">
+                                <p className="text-lg font-semibold">Duration:</p>
+                                <p className="text-lg font-semibold">
+                                  {tournament.length + " minutes"}
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <p className="text-sm sm:text-2xl font-bold">
-                            {" "}
-                            Participants:
-                          </p>
-                          <p className="text-sm sm:text-xl text-primary font-semibold">
-                            {tournament.participants}
-                          </p>
-                        </div>
-                      </motion.div>
-
-                      <motion.div
-                        variants={staggerItemVariants}
-                        className="flex items-center justify-between mt-2"
-                      >
-                        <div className="flex flex-col w-full gap-2">
-                          {/* Price Info */}
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <p className="text-card-foreground text-2xl font-semibold">
-                                Current price:
-                              </p>
-                              <p className="text-2xl font-medium text-primary">
-                                {tournament.currentPriceValue}€
-                              </p>
-                            </div>
-                            <p className="text-xs sm:text-lg mt-4 text-card-foreground">
-                              incl. 19% VAT, plus shipping costs
+                          <div className="flex items-center gap-3">
+                            <p className="text-sm sm:text-2xl font-bold">
+                              {" "}
+                              Participants:
+                            </p>
+                            <p className="text-sm sm:text-xl text-primary font-semibold">
+                              {`0 to ${tournament.numberOfParticipants}`}
                             </p>
                           </div>
+                        </motion.div>
 
-                          {/* Participation Fee */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3 xl:justify-center">
-                              <p className="text-sm sm:text-2xl text-card-foreground font-bold">
-                                Participation fee:
-                              </p>
-                              <p className="text-card-foreground font-medium text-xl">
-                                {tournament.participationPoints} points /{" "}
-                                {tournament.participationFee}
+                        <motion.div
+                          variants={staggerItemVariants}
+                          className="flex items-center justify-between mt-2"
+                        >
+                          <div className="flex flex-col w-full gap-2">
+                            {/* Price Info */}
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <p className="text-card-foreground text-2xl font-semibold">
+                                  Current price:
+                                </p>
+                                <p className="text-2xl font-medium text-primary">
+                                  {tournament.startingPrice}€
+                                </p>
+                              </div>
+                              <p className="text-xs sm:text-lg mt-4 text-card-foreground">
+                                incl. 19% VAT, plus shipping costs
                               </p>
                             </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                      <motion.div
-                        variants={staggerItemVariants}
-                        className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between"
-                      >
-                        <div className="flex items-center gap-2">
-                          <Button className="mt-6 gradient-primary text-lg font-bold hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg w-[244px] h-[57px]">
-                            <Link href="/tournament-detail">
-                              To The Tournament
-                            </Link>
-                          </Button>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
 
-                {/* Right Content - Product Image with Animation */}
-                <div className="col-span-3 relative">
-                  <div className="w-full">
-                    <Image
-                      src={imgbottom}
-                      alt="Bottom Image"
-                      className="w-full h-auto"
-                      priority
-                    />
+                            {/* Participation Fee */}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3 xl:justify-center">
+                                <p className="text-sm sm:text-2xl text-card-foreground font-bold">
+                                  Participation fee:
+                                </p>
+                                <p className="text-card-foreground font-medium text-xl">
+                                  {tournament.fee} points /{" "}
+                                  {(tournament.fee * 0.01).toFixed(2)}€
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                        <motion.div
+                          variants={staggerItemVariants}
+                          className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Button className="mt-6 gradient-primary text-lg font-bold hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg w-[244px] h-[57px]">
+                              <Link href={`/tournament-detail?id=${tournament._id}`}>
+                                To The Tournament
+                              </Link>
+                            </Button>
+                          </div>
+                        </motion.div>
+                      </motion.div>
+                    </AnimatePresence>
                   </div>
-                 
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={key}
-                      initial="hidden"
-                      animate="visible"
-                      variants={fadeInVariants}
-                      className="absolute top-20 left-[0%] w-full h-[400px]"
-                    >
+
+                  {/* Right Content - Product Image with Animation */}
+                  <div className="col-span-3 relative">
+                    <div className="w-full">
                       <Image
-                        src={tournament.image}
-                        alt={tournament.alt}
-                        width={525}
-                        height={500}
-                        className="w-full h-full object-contain"
+                        src={imgbottom}
+                        alt="Bottom Image"
+                        className="w-full h-auto"
                         priority
-                        unoptimized
                       />
-                    </motion.div>
-                  </AnimatePresence>
-                  <div className="flex items-center justify-center 2xl:gap-1 gap-2 mt-3 xl:mt-12">
-                    <div className="text-center text-[#1C1B1D]">
-                      <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-                        {tournament.countdown.days}
-                      </div>
-                      <p className="text-xs hidden xl:block">Days</p>
-                      <p className="xl:hidden block text-xs">Dys</p>
                     </div>
-                    <div className="text-center text-[#1C1B1D]">
-                      <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-                        {tournament.countdown.hours}
-                      </div>
-                      <p className="text-xs hidden xl:block">Hours</p>
-                      <p className="xl:hidden block text-xs">Hrs</p>
-                    </div>
-                    <div className="text-center text-[#1C1B1D]">
-                      <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-                        {tournament.countdown.minutes}
-                      </div>
-                      <p className="text-xs hidden xl:block">Minutes</p>
-                      <p className="text-xs xl:hidden block">Min</p>
-                    </div>
-                    <div className="text-center text-[#1C1B1D]">
-                      <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-                        {tournament.countdown.seconds}
-                      </div>
-                      <p className="text-xs hidden xl:block">Seconds</p>
-                      <p className="text-xs xl:hidden block">Sec</p>
+
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={key}
+                        initial="hidden"
+                        animate="visible"
+                        variants={fadeInVariants}
+                        className="absolute top-20 left-[0%] w-full h-[400px]"
+                      >
+                        <Image
+                          src={tournament.image}
+                          alt={tournament.alt}
+                          width={525}
+                          height={500}
+                          className="w-full h-full object-contain"
+                          priority
+                          unoptimized
+                        />
+                      </motion.div>
+                    </AnimatePresence>
+                    <div className="flex items-center justify-center 2xl:gap-1 gap-2 mt-3 xl:mt-12">
+                      <>
+                        <div className="text-center text-[#1C1B1D]">
+                          <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
+                            {countdown.days}
+                          </div>
+                          <p className="text-xs hidden xl:block">Days</p>
+                        </div>
+                        <div className="text-center text-[#1C1B1D]">
+                          <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
+                            {countdown.hours}
+                          </div>
+                          <p className="text-xs hidden xl:block">Hours</p>
+                          <p className="xl:hidden block text-xs">Hrs</p>
+                        </div>
+                        <div className="text-center text-[#1C1B1D]">
+                          <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
+                            {countdown.minutes}
+                          </div>
+                          <p className="text-xs hidden xl:block">Minutes</p>
+                          <p className="text-xs xl:hidden block">Min</p>
+                        </div>
+                        <div className="text-center text-[#1C1B1D]">
+                          <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
+                            {countdown.seconds}
+                          </div>
+                          <p className="text-xs hidden xl:block">Seconds</p>
+                          <p className="text-xs xl:hidden block">Sec</p>
+                        </div>
+                      </>
                     </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
+              </SwiperSlide>
+            );
+          })}
         </Swiper>
       </div>
       <PermotionalSection />

@@ -1,3 +1,4 @@
+"use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 
@@ -19,8 +20,16 @@ import image2 from '@/app/images/traingame.png'
 import image from '@/app/images/choosetournament.png'
 import image3 from '@/app/images/participateintournament.png'
 import image4 from '@/app/images/win.png'
-
+import { useSearchParams } from "next/navigation";
+import { useGetTournamentById } from "@/hooks/api";
+import { TournamentDetailResponse } from "@/types";
 const TournamentDetailPage = () => {
+  const id = useSearchParams().get('id');
+  console.log(id, "id");  
+  const { data: tournament } = useGetTournamentById(id) ;
+  
+  console.log(tournament, "tournament");
+
 
   const displayProducts = [
     {
@@ -241,7 +250,7 @@ const TournamentDetailPage = () => {
     <ClientLayout>
       <main className="mb-56 overflow-hidden">
         <div className="mt-[115px]">
-          <TournamentDetailHero />
+          <TournamentDetailHero  isLoading={tournament?.isLoading}  tournamentData={tournament?.data} />
         </div>
         <div
           style={{ backgroundImage: `url(${bg.src})` }}

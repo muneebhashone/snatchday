@@ -1,3 +1,4 @@
+import { Tournament } from './types';
 export interface ProductFormData {
     name: string;
     description?: string;
@@ -122,3 +123,73 @@ export interface CategoriesData {
 }
 
 
+
+export interface Tournament {
+  title: string;
+  productName: string;
+  startDate: string;
+  checkoutTime: string;
+  game: string;
+  duration: string;
+  rrp: string;
+  currentPrice: string;
+  priceDrop: string;
+  participationFee: string;
+  participants: string;
+  image: string;
+  alt: string;
+  rating: number;
+  reviews: number;
+  gameIcon: string;
+  gameName: string;
+  name: string;
+  participationPoints: number;
+  currentPriceValue: number;
+  countdown?: {
+    days: number;
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
+  status: string;
+}
+
+
+  // src/types/Tournament.ts
+
+export interface detailTournament {
+  article: string;
+  category: string[];
+  createdAt: string; 
+  fee: number;
+  game: string;
+  image: string; 
+  length: number; 
+  metaDescription: string;
+  metaKeywords: string;
+  metaTitle: string;
+  name: string;
+  numberOfParticipants: number;
+  numberOfPieces: number;
+  participants: any[]; 
+  priceReduction: number;
+  resubmissions: number;
+  start: Date;
+  startingPrice: number;
+  status: string;
+  textForBanner: string;
+  title: string;
+  updatedAt: string; 
+  vip: boolean;
+  __v: number; 
+  _id: string; 
+}
+
+export interface TournamentDetailResponse {
+  success: boolean;
+  data: detailTournament;
+}
+export interface TournamentResponse {
+  success: boolean;
+  data: Tournament[];
+}

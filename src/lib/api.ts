@@ -244,3 +244,16 @@ export const getProductById = async (id: string) => {
     console.log(response.data, "response.data",id);
   return response.data;
 };
+
+
+export const upComingTournament = async () => {
+  const response = await axiosInstance.get<ResponseTournament[]>("/tournament/upcoming");
+  return response.data;
+};
+
+
+export const getTournamentById = async (id: string) => {
+  const response = await axiosInstance.get<ResponseTournament>(`/tournament/get/${id}`);
+  return response.data;
+};
+

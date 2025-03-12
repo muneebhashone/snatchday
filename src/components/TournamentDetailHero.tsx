@@ -10,8 +10,15 @@ import { ShareArrowIcon, TaxIcon } from "./icons/icon";
 import image1 from "@/app/images/lastSectionImage1.png";
 import image2 from "@/app/images/lastSectionImage2.png";
 import image3 from "@/app/images/lastSectionImage3.png";
+import { TournamentDetailResponse } from "@/types";
+import Loading from "@/app/loading";
+import { Loader2 } from "lucide-react";
 
-const TournamentDetailHero = () => {
+
+
+
+
+const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: TournamentDetailResponse, isLoading: boolean  }) => {
   //   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedImage, setSelectedImage] = useState(0);
   const images = [image2, image1, image3];
@@ -34,7 +41,11 @@ const TournamentDetailHero = () => {
     },
   ];
   return (
-    <div className="relative h-max">
+    
+       
+
+
+<div className="relative h-max">
       <Image
         className="absolute top-0 z-[-1]"
         src={bg}
@@ -42,16 +53,24 @@ const TournamentDetailHero = () => {
       />
       {/* {/ left side /} */}
       <div className="px-48 pt-28 pb-6 grid grid-cols-7 z-100 border-b border-b-[#e9f0ff]">
+       {isLoading ? <div className="col-span-7 flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin" />
+       </div> :<>
         <div className="col-span-4 flex gap-2 flex-col">
           <button className="py-[6px] bg-primary rounded-full px-5 text-white font-semibold w-max">
             Tournament ID: 1641
           </button>
           <h1 className="text-[48px] text-[#1C1B1D] font-extrabold leading-[70px]">
-            Acer Aspire 3 A315-35 - Intel Pentium Silver N6000
+            {tournamentData?.name}
           </h1>
           <p className="text-[24px]">
             Tournament starts on{" "}
-            <span className="text-primary font-extrabold text-[25px]">01.02.2025 at 18:31.</span> Check-out
+            <span className="text-primary font-extrabold text-[25px]">
+              {new Date(tournamentData?.start).toLocaleDateString()}
+            </span> at 
+            <span className="text-primary font-extrabold text-[25px]">
+              {new Date(tournamentData?.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>. Check-out
             time: <span className="text-primary font-extrabold text-[25px]">18:21</span>
           </p>
           <div className=" flex flex-col gap-2 border pl-2 w-max border-primary">
@@ -63,7 +82,7 @@ const TournamentDetailHero = () => {
                 <div className="mr-14 flex flex-col justify-center">
                   <h1 className="text-xl font-bold leading-7">Game</h1>
                   <h1 className="text-3xl text-primary font-bold leading-7">PowerBlocks</h1>
-                  <p className="text-lg">Duration: 3:00 minutes</p>
+                  <p className="text-lg">Duration: {tournamentData?.length || "N/A"} minutes</p>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -71,7 +90,7 @@ const TournamentDetailHero = () => {
                   <p>
                     Aktueller Preis{" "}
                     <h2 className="text-white text-[34px] font-extrabold">
-                      201,65€
+                      {tournamentData?.startingPrice || "N/A"}
                     </h2>
                   </p>
                 </div>
@@ -83,8 +102,8 @@ const TournamentDetailHero = () => {
             </div>
             <div className="flex gap-6 mt-3">
               <p className=" rounded-full px-8 py-1 text-[21px] underline underline-offset-8 decoration-gray-300 decoration-[3px]">
-                Participation fee: <span className="text-primary">250</span>{" "}
-                points / <span className="text-primary">2 .50€</span>
+                Participation fee: <span className="text-primary">{tournamentData?.fee || "N/A"}</span>{" "}
+                points / <span className="text-primary">{(tournamentData?.fee * 0.01).toFixed(2)}€</span>
               </p>
               {/* <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold">
               50<span className="text-primary">€</span> Gunstiger
@@ -213,8 +232,13 @@ const TournamentDetailHero = () => {
             })}
           </div>
         </div>
+       </>}
       </div>{" "}
     </div>
+
+      
+  
+  
   );
 };
 
