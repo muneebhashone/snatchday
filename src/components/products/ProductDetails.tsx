@@ -8,6 +8,9 @@ import { VatIcon } from "@/components/icons/icon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "../ui/separator";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { useParams } from "next/navigation";
+import { toast } from "sonner";
+import { useCompareProducts } from "@/hooks/api";
 
 // interface ProductDetailsProps {
 //   title: string;
@@ -56,24 +59,26 @@ interface ProductDetailsProps {
 }
 
 const ProductDetails = ({
- article,
- attributes,
- barcodeEAN,
- categoryIds,
- colors,
- company,
- createdAt,
- discounts,
- description,
- images,
- isActive,
- name,
- stock,
- liscenseKey,
- isNew,
- price,
- isLoading,
+  article,
+  attributes,
+  barcodeEAN,
+  categoryIds,
+  colors,
+  company,
+  createdAt,
+  discounts,
+  description,
+  images,
+  isActive,
+  name,
+  stock,
+  liscenseKey,
+  isNew,
+  price,
+  isLoading,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
+  const params = useParams()
+  const { mutate: productIdForCompare } = useCompareProducts();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
@@ -98,9 +103,22 @@ const ProductDetails = ({
       </div>
     );
   }
-const roundToTwoDecimals = (value: number): number => {
-  return Math.round(value * 100) / 100;
-};
+  const roundToTwoDecimals = (value: number): number => {
+    return Math.round(value * 100) / 100;
+  };
+
+
+  const handleClick = () => {
+    productIdForCompare(params.id as string, {
+      onSuccess: () => {
+        toast.success("producst successfully");
+      },
+      onError: (error) => {
+        toast.error("Failed to update tournament");
+        console.error(error);
+      }
+    })
+  }
 
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
@@ -295,7 +313,9 @@ const roundToTwoDecimals = (value: number): number => {
 
             {/* Additional Actions */}
             <div className="flex items-center justify-between pt-4 ">
-              <button className="text-foreground text-sm flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
+              <button
+                onClick={handleClick}
+                className="text-foreground text-sm flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
                 <svg
                   width="24"
                   height="18"
