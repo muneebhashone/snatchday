@@ -55,12 +55,14 @@ const formSchema = z.object({
   numberOfPieces: z.coerce.number({ required_error: "Number of pieces is required" }).min(1, "Number of pieces must be at least 1"),
   game: z.string({ required_error: "Game selection is required" }).min(1, "Game must be selected"),
   start: z.string({ required_error: "Start date is required" }).min(1, "Start date must be selected"),
+  end: z.string({ required_error: "End date is required" }).min(1, "End date must be selected"),
   length: z.coerce.number({ required_error: "Length is required" }).min(1, "Length must be at least 1"),
   fee: z.coerce.number({ required_error: "Fee is required" }).min(0, "Fee must be positive"),
   numberOfParticipants: z.coerce.number({ required_error: "Number of participants is required" }).min(1, "Number of participants must be at least 1"),
   vip: z.boolean(),
   resubmissions: z.coerce.number({ required_error: "Resubmissions is required" }).min(0, "Resubmissions must be positive"),
   image: z.string(),
+
 });
 
 const TournamentCreateForm = ({productId}: {productId: string}) => {
@@ -93,6 +95,7 @@ const TournamentCreateForm = ({productId}: {productId: string}) => {
       numberOfPieces: 1,
       game: "",
       start: "",
+      end: "",
       length: 1,
       fee: 0,
       numberOfParticipants: 1,
@@ -281,6 +284,51 @@ const TournamentCreateForm = ({productId}: {productId: string}) => {
                 <FormItem className="flex flex-col">
                   <FormLabel className="flex items-center gap-1">
                     Start Date
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(new Date(field.value), "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value ? new Date(field.value) : undefined}
+                        onSelect={(date) => field.onChange(date?.toISOString())}
+                        disabled={(date) =>
+                          date < new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="end"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="flex items-center gap-1">
+                    End Date
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <Popover>

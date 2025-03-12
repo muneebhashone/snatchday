@@ -33,6 +33,8 @@ export const authMutation = async (data: any, type: string) => {
 
 
 
+
+
 // export const products = async () => {
 //   const response = await axiosInstance.post<ProductFormData>('/product/product');
 //   return response.data;
@@ -244,3 +246,11 @@ export const getProductById = async (id: string) => {
     console.log(response.data, "response.data",id);
   return response.data;
 };
+
+export const tournamentclone = async (id: string) => {
+  const response = await axiosInstance.post(`/tournament/clone/${id}`);
+  return response.data;
+};
+
+
+

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useCancelTournament, useGetTournaments } from "@/hooks/api";
+import { useCancelTournament, useGetTournaments, useTournamentClone } from "@/hooks/api";
 import {
   Table,
   TableBody,
@@ -72,6 +72,7 @@ const AllTournaments = () => {
   const queryClient = useQueryClient();
 
   const { data: getTournaments, isLoading } = useGetTournaments(filters);
+  const { mutate: cloneTournament } = useTournamentClone();
   console.log(getTournaments);
   //   const { mutate: deleteTournament } = useDeleteTournament();
   const { mutate: cancelTournament } = useCancelTournament();
@@ -91,6 +92,18 @@ const AllTournaments = () => {
       onError: () => {
         toast.error('Failed to cancel tournament');
       } 
+    });
+  };
+
+  const handleClone = (id: string) => {
+    cloneTournament(id, {
+      onSuccess: () => {
+        toast.success('Tournament cloned successfully');
+        queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+      },
+      onError: () => {
+        toast.error('Failed to clone tournament');
+      }
     });
   };
 
@@ -255,7 +268,7 @@ const AllTournaments = () => {
                   </span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex gap-2">
+                  <div className="flex gap-5">
                     <EditTournamentDialog tournament={tournament} />
                     <Button
                       variant="ghost"
@@ -268,8 +281,17 @@ const AllTournaments = () => {
                         <p>Active</p>
                       )}
                     </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleClone(tournament._id)}
+                  >
+                    Clone
+                  </Button>
                   </div>
                 </TableCell>
+
+                
               </TableRow>
             ))}
             {!tournaments.length && (
