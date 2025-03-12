@@ -63,7 +63,7 @@ const Login = () => {
       onSuccess: () => {
         localStorage.removeItem('snatchday_user');
         setIsLoggedIn(false);
-        setUserData(null);
+        logout();
         toast.success("Logout successful");
         router.push('/');
       },
