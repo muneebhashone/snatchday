@@ -165,6 +165,7 @@ const Register = ({ onBack }: RegisterProps) => {
                   Yes, I would like to be informed about tournaments, special
                   offers and news and receive newsletters from Snatch Day
                 </label>
+                {errors.newsletter && <span className="text-red-500">{errors.newsletter.message}</span>}
               </div>
             </div>
 
@@ -191,7 +192,7 @@ const Register = ({ onBack }: RegisterProps) => {
                           terms and conditions
                         </Link>
                       </label>
-
+                      {errors.terms && <span className="text-red-500">{errors.terms.message}</span>}
                     </div>
 
                   )}
