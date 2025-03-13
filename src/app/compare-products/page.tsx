@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import {
   Table,
@@ -19,7 +19,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { GitCompareArrowsIcon, HomeIcon, Loader } from "lucide-react";
+import { GitCompareArrowsIcon, HomeIcon, Loader, Loader2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useCompareProducts, useGetCompareProducts } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
@@ -47,24 +47,30 @@ const ComparisonPage = () => {
   const { data, isLoading, isError, error } = useGetCompareProducts();
   const compareProducts = data?.data?.products;
 
+  const [isRemove, setIsRemove] = useState("");
   const { mutate: removeProduct } = useCompareProducts();
   const handleRemoveFromComparison = (productId: string) => {
+    setIsRemove(productId);
     removeProduct(productId, {
       onSuccess: () => {
         toast.success("Product has been removed");
         queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+        setIsRemove("");
       },
       onError: (error) => {
         toast.error("Failed to remove product");
         console.error(error);
+        setIsRemove("");
       },
     });
     console.log(`Removing product ${productId} from comparison`);
   };
 
-  useEffect(() => {
-    console.log(compareProducts);
-  });
+  //   useEffect(() => {
+  //     if (compareProducts?.length > 4) {
+  //       removeProduct(compareProducts[0]);
+  //     }
+  //   }, [compareProducts, removeProduct]);
 
   const pathName = usePathname();
   const path1 = pathName.split("/");
@@ -183,7 +189,11 @@ const ComparisonPage = () => {
                                 handleRemoveFromComparison(product._id)
                               }
                             >
-                              Remove
+                              {isRemove !== product._id ? (
+                                "Remove"
+                              ) : (
+                                <Loader className="animate-spin" size={20} />
+                              )}
                             </Button>
                           </div>
                         </TableCell>

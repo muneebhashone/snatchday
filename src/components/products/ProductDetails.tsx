@@ -1,16 +1,31 @@
 "use client";
 import React, { useState } from "react";
 import Image, { StaticImageData } from "next/image";
-import { Heart, ShoppingCartIcon, TruckIcon, Loader2 } from "lucide-react";
+import {
+  Heart,
+  ShoppingCartIcon,
+  TruckIcon,
+  Loader2,
+  List,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { VatIcon } from "@/components/icons/icon";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "../ui/separator";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { useCompareProducts } from "@/hooks/api";
+import { useCompareProducts, useGetCompareProducts } from "@/hooks/api";
+import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import { Dialog, DialogTrigger } from "../ui/dialog";
+import RecommendProductModal from "../RecommendProductModal";
 
 // interface ProductDetailsProps {
 //   title: string;
@@ -24,7 +39,6 @@ import { useCompareProducts } from "@/hooks/api";
 //     rightColumn: string[];
 //   };
 // }
-
 
 interface ProductDetailsProps {
   id?: string;
@@ -77,7 +91,10 @@ const ProductDetails = ({
   price,
   isLoading,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
-  const params = useParams()
+  const [isOpen, setIsOpen] = useState(false);
+  const params = useParams();
+  const queryClient = useQueryClient();
+  const { data: compareProducts } = useGetCompareProducts();
   const { mutate: productIdForCompare } = useCompareProducts();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -92,8 +109,6 @@ const ProductDetails = ({
     }
   };
 
-
-
   if (isLoading) {
     return (
       <div className="container max-w-[1600px] mx-auto relative z-10 min-h-[500px]">
@@ -106,20 +121,91 @@ const ProductDetails = ({
   const roundToTwoDecimals = (value: number): number => {
     return Math.round(value * 100) / 100;
   };
+  const productExist = compareProducts?.data.products.some(
+    (pro) => pro._id === params.id
+  );
 
+  // const handleClick = () => {
+  //   const productExist = compareProducts?.data.products.some(
+  //     (pro) => pro._id === params.id
+  //   );
+  //   if (compareProducts.data.products.length > 3 && !productExist) {
+  //     productIdForCompare(compareProducts.data.products[0]._id);
+  //     productIdForCompare(params.id as string, {
+  //       onSuccess: () => {
+  //         if (productExist) {
+  //           toast.warning("Product remove from compare list");
+  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+  //         } else {
+  //           toast.success("product added for compare");
+  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+  //         }
+  //       },
+  //       onError: (error) => {
+  //         toast.error("Failed to add for compare");
+  //         console.error(error);
+  //       },
+  //     });
+  //   } else {
+  //     productIdForCompare(params.id as string, {
+  //       onSuccess: () => {
+  //         if (productExist) {
+  //           toast.warning("Product remove from compare list");
+  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+  //         } else {
+  //           toast.success("product added for compare");
+  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+  //         }
+  //       },
+  //       onError: (error) => {
+  //         toast.error("Failed to add for compare");
+  //         console.error(error);
+  //       },
+  //     });
+  //   }
+  //   console.log(compareProducts.data.products, "compareProducts");
+  // };
 
+  // const handleClick = () => {
+  //   productIdForCompare(params.id as string, {
+  //     onSuccess: () => {
+  //       toast.success("product added for compare");
+  //       queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+  //     },
+  //     onError: (error) => {
+  //       toast.error("Failed to add for compare");
+  //       console.error(error);
+  //     },
+  //   });
+  //   console.log(compareProducts.data.products, "compareProducts");
+  // };
   const handleClick = () => {
-    productIdForCompare(params.id as string, {
-      onSuccess: () => {
-        toast.success("producst successfully");
-      },
-      onError: (error) => {
-        toast.error("Failed to add for compare");
-        console.error(error);
-      }
-    })
-  }
-
+    if (compareProducts.data.products.length > 3) {
+      productIdForCompare(compareProducts.data.products[0]._id);
+      productIdForCompare(params.id as string, {
+        onSuccess: () => {
+          toast.success("product added for compare");
+          queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+        },
+        onError: (error) => {
+          toast.error("Failed to add for compare");
+          console.error(error);
+        },
+      });
+    } else {
+      productIdForCompare(params.id as string, {
+        onSuccess: () => {
+          toast.success("product added for compare");
+          queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
+        },
+        onError: (error) => {
+          toast.error("Failed to add for compare");
+          console.error(error);
+        },
+      });
+    }
+    console.log(compareProducts.data.products, "compareProducts");
+  };
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
       <div className="rounded-3xl p-8 relative z-10">
@@ -140,10 +226,11 @@ const ProductDetails = ({
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`rounded border p-2 cursor-pointer transition-all duration-300 ${selectedImage === index
-                    ? "border-primary ring-2 ring-primary ring-opacity-50"
-                    : "border-gray-200 hover:border-primary"
-                    }`}
+                  className={`rounded border p-2 cursor-pointer transition-all duration-300 ${
+                    selectedImage === index
+                      ? "border-primary ring-2 ring-primary ring-opacity-50"
+                      : "border-gray-200 hover:border-primary"
+                  }`}
                   onClick={() => setSelectedImage(index)}
                 >
                   <Image
@@ -180,9 +267,7 @@ const ProductDetails = ({
 
             {/* Rating */}
             <div className="flex items-center gap-1">
-              <div className="flex text-primary text-2xl">
-                {"★".repeat(4)}
-              </div>
+              <div className="flex text-primary text-2xl">{"★".repeat(4)}</div>
               <span className="text-sm text-gray-500">({4})</span>
             </div>
 
@@ -267,14 +352,22 @@ const ProductDetails = ({
             {/* Discount Points */}
             <div className="mt-3">
               <p className="text-lg mb-3 text-[#444444] font-bold">
-                <span className="text-[#3A672B] font-bold">{(discounts?.length > 0 ? discounts[0].price : 0) as number} € </span>
+                <span className="text-[#3A672B] font-bold">
+                  {(discounts?.length > 0 ? discounts[0].price : 0) as number} €{" "}
+                </span>
                 discount possible{" "}
                 <span className="text-primary cursor-help">?</span>
               </p>
               <span className="bg-orange-100 text-primary rounded-full pl-3 pr-1 py-2">
                 With discount points only:{" "}
                 <span className="text-white bg-primary font-medium rounded-full px-2 py-1">
-                  {discounts?.length > 0 ? roundToTwoDecimals(Number(price) - (Number(price) * Number(discounts[0].price)) / 100) : price}€
+                  {discounts?.length > 0
+                    ? roundToTwoDecimals(
+                        Number(price) -
+                          (Number(price) * Number(discounts[0].price)) / 100
+                      )
+                    : price}
+                  €
                 </span>
               </span>
             </div>
@@ -292,10 +385,20 @@ const ProductDetails = ({
               <TooltipProvider>
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
-                    <Button className="bg-primary h-8 w-8 rounded-full text-[24px] text-white flex items-center justify-center" variant="outline">?</Button>
+                    <Button
+                      className="bg-primary h-8 w-8 rounded-full text-[24px] text-white flex items-center justify-center"
+                      variant="outline"
+                    >
+                      ?
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent className="bg-gray-700 text-white text-center">
-                    <p className="w-48 h-max text-xs">Play for it here you have the ooportunity to vote for a product for which there is no tournament yet. If several users choose a product, a corresponding tournament will be created.</p>
+                    <p className="w-48 h-max text-xs">
+                      Play for it here you have the ooportunity to vote for a
+                      product for which there is no tournament yet. If several
+                      users choose a product, a corresponding tournament will be
+                      created.
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -313,39 +416,60 @@ const ProductDetails = ({
 
             {/* Additional Actions */}
             <div className="flex items-center justify-between pt-4 ">
-              <button
-                onClick={handleClick}
-                className="text-foreground text-sm flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
-                <svg
-                  width="24"
-                  height="18"
-                  viewBox="0 0 24 18"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+              {productExist ? (
+                <Link
+                  href="/compare-products"
+                  className="text-foreground text-sm flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2"
                 >
-                  <path
-                    d="M9.84934 13.2185H0.666676C0.477342 13.2185 0.318676 13.1553 0.190676 13.0289C0.0626757 12.9026 -0.000879693 12.7448 9.19542e-06 12.5557C0.000898084 12.3666 0.0644535 12.2089 0.190676 12.0825C0.316898 11.9561 0.475565 11.8929 0.666676 11.8929H9.84934L6.19601 8.26102C6.07067 8.13731 6.00401 7.9862 5.99601 7.80769C5.98712 7.63096 6.05378 7.46924 6.19601 7.32255C6.34267 7.17675 6.5009 7.10384 6.67067 7.10384C6.84045 7.10384 6.99912 7.17675 7.14667 7.32255L11.656 11.8068C11.7724 11.9217 11.8542 12.0396 11.9013 12.1607C11.9484 12.2818 11.972 12.4134 11.972 12.5557C11.972 12.698 11.9484 12.8296 11.9013 12.9507C11.8542 13.0718 11.7724 13.1897 11.656 13.3046L7.13867 17.7968C7.00889 17.9258 6.85601 17.9934 6.68001 17.9996C6.50312 18.0058 6.34134 17.9356 6.19467 17.7889C6.05245 17.6431 5.98045 17.4866 5.97867 17.3196C5.9769 17.1526 6.0489 16.9966 6.19467 16.8517L9.84934 13.2185ZM14.1507 6.10705L17.804 9.73898C17.9293 9.86269 17.996 10.0134 18.004 10.191C18.012 10.3686 17.9453 10.5308 17.804 10.6774C17.6582 10.8233 17.5 10.8962 17.3293 10.8962C17.1587 10.8962 17.0004 10.8233 16.8547 10.6774L12.344 6.19321C12.2276 6.07833 12.1458 5.96036 12.0987 5.83929C12.0516 5.71823 12.028 5.58656 12.028 5.44429C12.028 5.30202 12.0516 5.17035 12.0987 5.04928C12.1458 4.92822 12.2276 4.80981 12.344 4.69404L16.8613 0.20318C16.9911 0.0741626 17.1444 0.0065612 17.3213 0.000375437C17.4982 -0.00581033 17.6596 0.0644422 17.8053 0.211133C17.9476 0.35694 18.0196 0.51291 18.0213 0.679042C18.024 0.846057 17.952 1.00247 17.8053 1.14828L14.152 4.7802H23.3333C23.5236 4.7802 23.6822 4.84383 23.8093 4.97108C23.9364 5.09833 24 5.25606 24 5.44429C24 5.63251 23.9364 5.79025 23.8093 5.9175C23.6822 6.04475 23.5236 6.10793 23.3333 6.10705H14.1507Z"
-                    fill="#888888"
-                  />
-                </svg>
-                Compare
-              </button>
-              <button className="text-foreground flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
+                  <List className="text-[#888888]" />
+                  <button>Compare List</button>
+                </Link>
+              ) : (
+                <button
+                  onClick={handleClick}
+                  className="text-foreground text-sm flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2"
                 >
-                  <path
-                    d="M13.2905 7.78419L12.7447 7.6934C12.7315 7.77267 12.7358 7.85386 12.7571 7.93132C12.7785 8.00878 12.8164 8.08067 12.8684 8.14198C12.9203 8.2033 12.985 8.25257 13.0579 8.28638C13.1308 8.32018 13.2101 8.33771 13.2905 8.33775V7.78419ZM1.11216 7.78419V7.23063C0.965341 7.23063 0.824541 7.28895 0.720728 7.39276C0.616915 7.49657 0.558594 7.63737 0.558594 7.78419H1.11216ZM3.3264 19.409H15.9033V18.3019H3.3264V19.409ZM17.2319 7.23063H13.2905V8.33775H17.2319V7.23063ZM13.8363 7.87497L14.7287 2.52203L13.637 2.33936L12.7447 7.6934L13.8363 7.87497ZM13.0912 0.587891H12.8554V1.69501H13.0912V0.587891ZM9.63036 2.31389L6.84484 6.49107L7.76596 7.10552L10.5504 2.92724L9.63036 2.31389ZM5.46315 7.23063H1.11216V8.33775H5.46315V7.23063ZM0.558594 7.78419V16.6412H1.66572V7.78419H0.558594ZM18.618 17.1837L19.9465 10.5409L18.8615 10.3239L17.533 16.9667L18.618 17.1837ZM6.84484 6.49107C6.6932 6.71855 6.48775 6.90507 6.24672 7.03408C6.00569 7.16309 5.73653 7.23061 5.46315 7.23063V8.33775C5.91876 8.33776 6.36732 8.22529 6.76904 8.01034C7.17075 7.79538 7.51319 7.48458 7.76596 7.10552L6.84484 6.49107ZM14.7287 2.52203C14.7684 2.28415 14.7558 2.04047 14.6918 1.80794C14.6278 1.57541 14.5139 1.35961 14.3581 1.17554C14.2023 0.991474 14.0082 0.843556 13.7894 0.742072C13.5707 0.640588 13.3324 0.587975 13.0912 0.587891V1.69501C13.1717 1.69489 13.2512 1.7123 13.3242 1.74604C13.3972 1.77977 13.462 1.82902 13.5141 1.89036C13.5662 1.95169 13.6042 2.02363 13.6257 2.10118C13.6471 2.17872 13.6513 2.26 13.6381 2.33936L14.7287 2.52203ZM17.2319 8.33775C17.4776 8.33773 17.7202 8.39224 17.9423 8.49732C18.1644 8.60241 18.3604 8.75547 18.5161 8.94546C18.6719 9.13545 18.7836 9.35764 18.8432 9.59602C18.9027 9.83439 18.9097 10.083 18.8615 10.3239L19.9465 10.5409C20.0268 10.1395 20.0158 9.72534 19.9167 9.32818C19.8176 8.93103 19.6316 8.56081 19.3722 8.24419C19.1127 7.92758 18.7863 7.67244 18.4164 7.49718C18.0465 7.32191 17.6423 7.23087 17.233 7.23063L17.2319 8.33775ZM15.9033 19.409C16.5433 19.4091 17.1636 19.1874 17.6585 18.7817C18.1535 18.376 18.4925 17.8112 18.618 17.1837L17.533 16.9667C17.4577 17.3434 17.2541 17.6823 16.957 17.9258C16.6598 18.1692 16.2875 18.3021 15.9033 18.3019V19.409ZM12.8543 0.587891C12.2162 0.587795 11.5879 0.745294 11.0253 1.0464C10.4627 1.3475 9.98313 1.78289 9.62925 2.31389L10.5504 2.92724C10.8031 2.54818 11.1456 2.23738 11.5473 2.02243C11.949 1.80747 12.3976 1.69501 12.8532 1.69501L12.8543 0.587891ZM3.3264 18.3019C2.88596 18.3019 2.46356 18.1269 2.15212 17.8154C1.84068 17.504 1.66572 17.0816 1.66572 16.6412H0.558594C0.558594 17.0046 0.630185 17.3646 0.76928 17.7004C0.908376 18.0362 1.11225 18.3413 1.36927 18.5983C1.62628 18.8553 1.9314 19.0592 2.26721 19.1983C2.60301 19.3374 2.96293 19.409 3.3264 19.409V18.3019Z"
-                    fill="#888888"
-                  />
-                  <path d="M5.54102 7.78516V18.8564" stroke="#888888" />
-                </svg>
-                Recommend Product
-              </button>
+                  <svg
+                    width="24"
+                    height="18"
+                    viewBox="0 0 24 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9.84934 13.2185H0.666676C0.477342 13.2185 0.318676 13.1553 0.190676 13.0289C0.0626757 12.9026 -0.000879693 12.7448 9.19542e-06 12.5557C0.000898084 12.3666 0.0644535 12.2089 0.190676 12.0825C0.316898 11.9561 0.475565 11.8929 0.666676 11.8929H9.84934L6.19601 8.26102C6.07067 8.13731 6.00401 7.9862 5.99601 7.80769C5.98712 7.63096 6.05378 7.46924 6.19601 7.32255C6.34267 7.17675 6.5009 7.10384 6.67067 7.10384C6.84045 7.10384 6.99912 7.17675 7.14667 7.32255L11.656 11.8068C11.7724 11.9217 11.8542 12.0396 11.9013 12.1607C11.9484 12.2818 11.972 12.4134 11.972 12.5557C11.972 12.698 11.9484 12.8296 11.9013 12.9507C11.8542 13.0718 11.7724 13.1897 11.656 13.3046L7.13867 17.7968C7.00889 17.9258 6.85601 17.9934 6.68001 17.9996C6.50312 18.0058 6.34134 17.9356 6.19467 17.7889C6.05245 17.6431 5.98045 17.4866 5.97867 17.3196C5.9769 17.1526 6.0489 16.9966 6.19467 16.8517L9.84934 13.2185ZM14.1507 6.10705L17.804 9.73898C17.9293 9.86269 17.996 10.0134 18.004 10.191C18.012 10.3686 17.9453 10.5308 17.804 10.6774C17.6582 10.8233 17.5 10.8962 17.3293 10.8962C17.1587 10.8962 17.0004 10.8233 16.8547 10.6774L12.344 6.19321C12.2276 6.07833 12.1458 5.96036 12.0987 5.83929C12.0516 5.71823 12.028 5.58656 12.028 5.44429C12.028 5.30202 12.0516 5.17035 12.0987 5.04928C12.1458 4.92822 12.2276 4.80981 12.344 4.69404L16.8613 0.20318C16.9911 0.0741626 17.1444 0.0065612 17.3213 0.000375437C17.4982 -0.00581033 17.6596 0.0644422 17.8053 0.211133C17.9476 0.35694 18.0196 0.51291 18.0213 0.679042C18.024 0.846057 17.952 1.00247 17.8053 1.14828L14.152 4.7802H23.3333C23.5236 4.7802 23.6822 4.84383 23.8093 4.97108C23.9364 5.09833 24 5.25606 24 5.44429C24 5.63251 23.9364 5.79025 23.8093 5.9175C23.6822 6.04475 23.5236 6.10793 23.3333 6.10705H14.1507Z"
+                      fill="#888888"
+                    />
+                  </svg>
+                  Compare
+                </button>
+              )}
+              <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                  asChild
+                >
+                  <button className="text-foreground flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.2905 7.78419L12.7447 7.6934C12.7315 7.77267 12.7358 7.85386 12.7571 7.93132C12.7785 8.00878 12.8164 8.08067 12.8684 8.14198C12.9203 8.2033 12.985 8.25257 13.0579 8.28638C13.1308 8.32018 13.2101 8.33771 13.2905 8.33775V7.78419ZM1.11216 7.78419V7.23063C0.965341 7.23063 0.824541 7.28895 0.720728 7.39276C0.616915 7.49657 0.558594 7.63737 0.558594 7.78419H1.11216ZM3.3264 19.409H15.9033V18.3019H3.3264V19.409ZM17.2319 7.23063H13.2905V8.33775H17.2319V7.23063ZM13.8363 7.87497L14.7287 2.52203L13.637 2.33936L12.7447 7.6934L13.8363 7.87497ZM13.0912 0.587891H12.8554V1.69501H13.0912V0.587891ZM9.63036 2.31389L6.84484 6.49107L7.76596 7.10552L10.5504 2.92724L9.63036 2.31389ZM5.46315 7.23063H1.11216V8.33775H5.46315V7.23063ZM0.558594 7.78419V16.6412H1.66572V7.78419H0.558594ZM18.618 17.1837L19.9465 10.5409L18.8615 10.3239L17.533 16.9667L18.618 17.1837ZM6.84484 6.49107C6.6932 6.71855 6.48775 6.90507 6.24672 7.03408C6.00569 7.16309 5.73653 7.23061 5.46315 7.23063V8.33775C5.91876 8.33776 6.36732 8.22529 6.76904 8.01034C7.17075 7.79538 7.51319 7.48458 7.76596 7.10552L6.84484 6.49107ZM14.7287 2.52203C14.7684 2.28415 14.7558 2.04047 14.6918 1.80794C14.6278 1.57541 14.5139 1.35961 14.3581 1.17554C14.2023 0.991474 14.0082 0.843556 13.7894 0.742072C13.5707 0.640588 13.3324 0.587975 13.0912 0.587891V1.69501C13.1717 1.69489 13.2512 1.7123 13.3242 1.74604C13.3972 1.77977 13.462 1.82902 13.5141 1.89036C13.5662 1.95169 13.6042 2.02363 13.6257 2.10118C13.6471 2.17872 13.6513 2.26 13.6381 2.33936L14.7287 2.52203ZM17.2319 8.33775C17.4776 8.33773 17.7202 8.39224 17.9423 8.49732C18.1644 8.60241 18.3604 8.75547 18.5161 8.94546C18.6719 9.13545 18.7836 9.35764 18.8432 9.59602C18.9027 9.83439 18.9097 10.083 18.8615 10.3239L19.9465 10.5409C20.0268 10.1395 20.0158 9.72534 19.9167 9.32818C19.8176 8.93103 19.6316 8.56081 19.3722 8.24419C19.1127 7.92758 18.7863 7.67244 18.4164 7.49718C18.0465 7.32191 17.6423 7.23087 17.233 7.23063L17.2319 8.33775ZM15.9033 19.409C16.5433 19.4091 17.1636 19.1874 17.6585 18.7817C18.1535 18.376 18.4925 17.8112 18.618 17.1837L17.533 16.9667C17.4577 17.3434 17.2541 17.6823 16.957 17.9258C16.6598 18.1692 16.2875 18.3021 15.9033 18.3019V19.409ZM12.8543 0.587891C12.2162 0.587795 11.5879 0.745294 11.0253 1.0464C10.4627 1.3475 9.98313 1.78289 9.62925 2.31389L10.5504 2.92724C10.8031 2.54818 11.1456 2.23738 11.5473 2.02243C11.949 1.80747 12.3976 1.69501 12.8532 1.69501L12.8543 0.587891ZM3.3264 18.3019C2.88596 18.3019 2.46356 18.1269 2.15212 17.8154C1.84068 17.504 1.66572 17.0816 1.66572 16.6412H0.558594C0.558594 17.0046 0.630185 17.3646 0.76928 17.7004C0.908376 18.0362 1.11225 18.3413 1.36927 18.5983C1.62628 18.8553 1.9314 19.0592 2.26721 19.1983C2.60301 19.3374 2.96293 19.409 3.3264 19.409V18.3019Z"
+                        fill="#888888"
+                      />
+                      <path d="M5.54102 7.78516V18.8564" stroke="#888888" />
+                    </svg>
+                    Recommend Product
+                  </button>
+                </DialogTrigger>
+                <RecommendProductModal setIsOpen={setIsOpen} />
+              </Dialog>
               <button className="text-foreground flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
                 <svg
                   width="18"
@@ -416,7 +540,7 @@ const ProductDetails = ({
           </TabsList>
 
           <TabsContent value="description1" className="py-8 px-16 border mt-0">
-            <div >
+            <div>
               {description || "discription not found"}
               {/* <ul className="space-y-4 text-sm">
                 {specifications.leftColumn.map((spec, index) => (
@@ -445,7 +569,9 @@ const ProductDetails = ({
                   <ul>
                     {Object.entries(attributes).map(([key, value]) => (
                       <li key={key} className="flex items-center gap-2">
-                        <span>{key}: {String(value)}</span>
+                        <span>
+                          {key}: {String(value)}
+                        </span>
                       </li>
                     ))}
                   </ul>
