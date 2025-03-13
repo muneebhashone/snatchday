@@ -1,5 +1,6 @@
+"use client"
 import React from "react";
-import { User } from "lucide-react";
+import { Loader2, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -14,10 +15,23 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import VipMembershipModal from "./VipMembershipModal";
 import CollectPointsModal from "./CollectPointsModal";
+import { useGetMyProfile } from "@/hooks/api";
+import Loading from "@/app/loading";
+import { formatDate } from "@/lib/utils";
 
 const UserProfile = () => {
+
+   const {data:myProfile,isLoading}=useGetMyProfile()
+   console.log(myProfile?.data?.wallet?.discountPoints,"myProfile")
   return (
-    <div className="bg-white rounded-3xl p-8">
+  <>
+    {isLoading ?
+    <div className="flex items-center justify-center h-screen">
+    <Loader2 className="animate-spin size-10"/>
+    </div>
+    :
+    <>
+      <div className="bg-white rounded-3xl p-8">
       <h2 className="text-2xl font-bold mb-6">MY PROFILE</h2>
 
       <div className="flex flex-col items-start justify-between mb-8 gap-8">
@@ -35,7 +49,7 @@ const UserProfile = () => {
 
           <div className="flex-1 space-y-6">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-semibold">tester</span>
+              <span className="text-xl font-semibold capitalize ">{myProfile?.data?.user?.name || "N/A"}</span>
             </div>
 
             <div className="flex items-center gap-2 text-gray-600">
@@ -68,6 +82,7 @@ const UserProfile = () => {
 
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600 font-medium">Verified:</span>
+                  {myProfile?.data?.user?.isVerified ?
                   <svg
                     className="w-5 h-5 text-green-500"
                     viewBox="0 0 24 24"
@@ -82,29 +97,47 @@ const UserProfile = () => {
                       strokeLinejoin="round"
                     />
                   </svg>
+                  :
+                  <svg
+                    className="w-5 h-5 text-red-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M6 18L18 6M6 6l12 12"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  }
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600 font-medium">Registered on:</span>
-                  <span className="text-gray-900">August 31, 2023</span>
+                  <span className="text-gray-900">
+                       {formatDate(myProfile?.data?.user?.createdAt) || "N/A"}
+                  </span>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600 font-medium">Snap points:</span>
-                  <span className="text-gray-900">4,875</span>
+                  <span className="text-gray-900">{myProfile?.data?.wallet?.snapPoints}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className="text-gray-600 font-medium">Discount points:</span>
-                  <span className="text-gray-900">750</span>
+                  <span className="text-gray-900">{myProfile?.data?.wallet?.discountPoints}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <span className="text-gray-600 font-medium">Last online:</span>
-                  <span className="text-gray-900">2022-02-19 13:26:38</span>
+                  <span className="text-gray-900">{formatDate(myProfile?.data?.user?.user?.lastActive) || "N/A"}</span>
                 </div>
               </div>
             </div>
@@ -362,6 +395,8 @@ const UserProfile = () => {
         </Tabs>
       </div>
     </div>
+    </>}
+    </>
   );
 };
 

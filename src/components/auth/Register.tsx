@@ -28,10 +28,10 @@ const registerSchema = z
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Confirm Password is required"),
     terms: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms and conditions",
+      message: "required",
     }),
     newsletter: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms and conditions",
+      message: "required",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -44,7 +44,11 @@ const Register = ({ onBack }: RegisterProps) => {
 
   // Initialize useForm with zodResolver
   const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(registerSchema), // Use Zod schema for validation
+    resolver: zodResolver(registerSchema),
+    defaultValues:{
+      newsletter:false,
+      terms:false
+    } // Use Zod schema for validation
   });
 
   const { mutate: register, isPending } = useAuthApi()
@@ -158,7 +162,7 @@ const Register = ({ onBack }: RegisterProps) => {
                   name="newsletter"
                   control={control}
                   render={({ field }) => (
-                    <Checkbox {...field} id="newsletter" className="mt-1 rounded-full" checked={field.value} onChange={(e) => field.onChange((e.target as HTMLInputElement).checked)} />
+                    <Checkbox {...field} id="newsletter" className="mt-1 rounded-full" checked={field.value}            onCheckedChange={field.onChange} />
                   )}
                 />
                 <label htmlFor="newsletter" className="text-foreground">
@@ -180,8 +184,8 @@ const Register = ({ onBack }: RegisterProps) => {
                         id="terms"
                         className="mt-1 rounded-full"
                         checked={field.value}
-                        onChange={(e) => field.onChange((e.target as HTMLInputElement).checked)}
-                      />
+                        onCheckedChange={field.onChange} 
+                        />
                       <label htmlFor="terms" className="text-foreground">
                         I agree to the{" "}
                         <Link href="#" className="text-[#FF6B3D] hover:underline">
@@ -194,11 +198,9 @@ const Register = ({ onBack }: RegisterProps) => {
                       </label>
                       {errors.terms && <span className="text-red-500">{errors.terms.message}</span>}
                     </div>
-
                   )}
                 />
               </div>
-
             </div>
 
             {/* Register Button */}
