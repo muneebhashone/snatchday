@@ -1,36 +1,37 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FeaturedProductsCard from "../FeaturedProductsCard";
 import Link from "next/link";
 import { FeaturedStarIcon } from "../icons/icon";
-import { featuredProducts, featuredProductTabs } from "@/dummydata";
-
-interface Product {
-  title: string;
-  price: string;
-  oldPrice: string;
-  rating: number;
-  reviews: number;
-  image: any;
-  isSale: boolean;
-  isNew?: boolean;
-  discount: string;
-  category: string;
-}
-
-interface ProductCategories {
-  all: Product[];
-  audio: Product[];
-  computer: Product[];
-  displays: Product[];
-  elektro: Product[];
-}
+import { useGetCategories, useGetProducts } from "@/hooks/api";
 
 const FeaturedProducts = () => {
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("");
+  const [categoryId, getCategoryId] = useState(``);
+  const [parentCategories, setparentCategories] = useState([]);
+  const { data } = useGetCategories();
+  const { data: filterProducts } = useGetProducts({ category: categoryId });
 
-  const displayProducts =
-    featuredProducts[activeTab as keyof typeof featuredProducts] || featuredProducts.all;
+  useEffect(() => {
+    const filtered = data?.data.categories.filter(
+      (cat) => cat.parentCategory === null
+    );
+    setparentCategories(filtered);
+    console.log(filtered, "filtered");
+    if (filtered?.length) {
+      setActiveTab(filtered[0].name);
+      getCategoryId(filtered[0]._id);
+    }
+  }, [data]);
+
+  // console.log(data?.data.categories);
+
+  const handleCategory = (categoryName: string, categoryId: string) => {
+    setActiveTab(categoryName);
+    getCategoryId(categoryId);
+  };
+
+  // console.log(filterProducts?.data.products, "filterProducts");
 
   return (
     <section className="py-8 md:py-12 lg:py-16 bg-white">
@@ -38,7 +39,7 @@ const FeaturedProducts = () => {
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center lg:px-8 justify-between gap-6 mb-8 lg:mb-10">
           <h3 className="text-2xl md:text-3xl lg:text-[48px] font-extrabold flex flex-wrap items-center gap-2">
-            <FeaturedStarIcon/>
+            <FeaturedStarIcon />
             Featured{" "}
             <span className="bg-primary text-white px-4 py-2 rounded">
               Products
@@ -48,27 +49,35 @@ const FeaturedProducts = () => {
           {/* Tabs Section - Scrollable on mobile */}
           <div className="w-full lg:w-auto overflow-x-auto pb-4 lg:pb-0">
             <div className="flex items-center space-x-10 min-w-max border-b border-gray-200">
-              {featuredProductTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 relative text-sm md:text-lg font-normal text-foreground whitespace-nowrap transition-colors
+              {parentCategories?.map((tab, index) => {
+                // console.log(tab, "check tab");
+                return (
+                  <>
+                    <button
+                      key={`${index}`}
+                      onClick={() => {
+                        handleCategory(tab.name, tab._id);
+                      }}
+                      className={`py-4 relative text-sm md:text-lg font-normal text-foreground whitespace-nowrap transition-colors
                     ${
-                      activeTab === tab.id
+                      activeTab === tab.name
                         ? "text-primary"
                         : "text-foreground hover:text-primary"
                     }
+                    ${index < 6 ? "block" : "hidden"}
                   `}
-                >
-                  {tab.label}
-                  {activeTab === tab.id && (
-                    <>
-                      <div className="w-[6px] h-[6px] bg-primary rounded-full absolute top-6 -translate-y-1/21/2 -translate-y-1/2 -right-2"></div>
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                    </>
-                  )}
-                </button>
-              ))}
+                    >
+                      {tab.name}
+                      {activeTab === tab.name && (
+                        <>
+                          <div className="w-[6px] h-[6px] bg-primary rounded-full absolute top-6 -translate-y-1/21/2 -translate-y-1/2 -right-2"></div>
+                          <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
+                        </>
+                      )}
+                    </button>
+                  </>
+                );
+              })}
               <Link
                 href="/product-listing"
                 className="hidden lg:flex lg:text-lg text-foreground hover:text-primary font-normal items-center whitespace-nowrap"
@@ -94,11 +103,11 @@ const FeaturedProducts = () => {
 
         {/* Product Grid */}
         <div className="px-0 md:px-6">
-          {/* <div className="overflow-x-hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 md:gap-5 gap-8"> */}
           <div className="max-w-[1920px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 md:gap-5 gap-8">
-            {displayProducts.map((product, index) => (
-              <FeaturedProductsCard key={index} {...product} />
-            ))}
+            {filterProducts?.data.products.map((product, index) => {
+              console.log(product);
+              return <FeaturedProductsCard key={index} {...product} />;
+            })}
           </div>
         </div>
 

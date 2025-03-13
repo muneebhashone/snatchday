@@ -19,7 +19,7 @@ export function VisitTournamentModal({
       closeModal(false);
     }
   };
-  console.log(closeModal);
+  // console.log(closeModal);
 
   return (
     <div
