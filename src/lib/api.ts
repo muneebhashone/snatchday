@@ -42,7 +42,7 @@ export const authMutation = async (data: any, type: string) => {
 
 export const createProduct = async (formData: FormData) => {
   const response = await axiosInstance.post<ProductFormData>(
-    "/product/product",
+    "/product",
     formData,
     {
       headers: {
@@ -59,23 +59,23 @@ export const createProduct = async (formData: FormData) => {
 // };
 
 export const createCategory = async (formData: FormData) => {
-  const response = await axiosInstance.post<CategoryFormData>('/product/category', formData)
+  const response = await axiosInstance.post<CategoryFormData>('/category', formData)
   return response.data;
 };
 
 export const getCategories = async () => {
-  const response = await axiosInstance.get<Category[]>("/product/category");
+  const response = await axiosInstance.get<Category[]>("/category");
   return response.data;
 };
 
 export const getCategoryById = async (id: string) => {
-  const response = await axiosInstance.get<Category>(`/product/category/${id}`);
+  const response = await axiosInstance.get<Category>(`/category/${id}`);
   return response.data;
 };
 
 export const updateCategory = async (id: string, data: CategoryFormData) => {
   const response = await axiosInstance.patch<CategoryFormData>(
-    `/product/category/${id}`,
+    `/category/${id}`,
     data
   );
   return response.data;
@@ -83,34 +83,34 @@ export const updateCategory = async (id: string, data: CategoryFormData) => {
 
 export const deleteCategory = async (id: string) => {
   const response = await axiosInstance.delete<CategoryFormData>(
-    `/product/category/${id}`
+    `/category/${id}`
   );
   return response.data;
 };
 
 export const createFilter = async (formData: FilterFormData) => {
   const response = await axiosInstance.post<FilterFormData>(
-    "/product/filter",
+    "/filter",
     formData
   );
   return response.data;
 };
 
 export const getFilters = async () => {
-  const response = await axiosInstance.get<FilterFormData[]>("/product/filter");
+  const response = await axiosInstance.get<FilterFormData[]>("/filter");
   return response.data;
 };
 
 export const deleteFilter = async (id: string) => {
   const response = await axiosInstance.delete<FilterFormData>(
-    `/product/filter/${id}`
+    `/filter/${id}`
   );
   return response.data;
 };
 
 export const updateFilter = async (id: string, data: FilterFormData) => {
   const response = await axiosInstance.patch<FilterFormData>(
-    `/product/filter/${id}`,
+    `/filter/${id}`,
     data
   );
   return response.data;
@@ -127,7 +127,7 @@ export const getProducts = async (params?: {
   type?: string;
 }) => {
   const response = await axiosInstance.get<ProductFormData[]>(
-    "/product/product",
+    "/product",
     {
       params,
     }
@@ -137,14 +137,14 @@ export const getProducts = async (params?: {
 
 export const deleteProduct = async (id: string) => {
   const response = await axiosInstance.delete<ProductFormData>(
-    `/product/product/${id}`
+    `/product/${id}`
   );
   return response.data;
 };
 
 export const updateProduct = async (id: string, data: FormData) => {
   const response = await axiosInstance.put<ProductFormData>(
-    `/product/product/${id}`,
+    `/product/${id}`,
     data
   );
   return response.data;
@@ -167,11 +167,11 @@ export const cancelTournament = async (id: string) => {
     {}
   );
   return response.data;
-};  
+};
 
-export const manageTournament = async (id: string, data: TournamentFormData) => {
+export const manageTournament = async (data: TournamentFormData) => {
   const response = await axiosInstance.patch<ResponseTournament>(
-    `/tournament/manage/${id}`,
+    `/tournament/manage`,
     data
   );
   return response.data;
@@ -196,7 +196,7 @@ export const forgetPassword = async (email: string) => {
   return response.data;
 };
 
-export const resetPassword = async (data: ResetPasswordTypes)  => {
+export const resetPassword = async (data: ResetPasswordTypes) => {
   const response = await axiosInstance.put('/auth/resetPassword', data);
   return response.data;
 };
@@ -230,7 +230,7 @@ export const getTournaments = async (params: TournamentParams) => {
 
 
 export const getFilterById = async (id: string) => {
-  const response = await axiosInstance.get(`/product/filter/${id}`);
+  const response = await axiosInstance.get(`/filter/${id}`);
   return response.data;
 };
 
@@ -242,8 +242,8 @@ export const subscribeNewsletter = async (email: string) => {
 
 
 export const getProductById = async (id: string) => {
-  const response = await axiosInstance.get<ProductFormData>(`/product/product/${id}`);
-    console.log(response.data, "response.data",id);
+  const response = await axiosInstance.get<ProductFormData>(`/product/${id}`);
+  console.log(response.data, "response.data", id);
   return response.data;
 };
 
@@ -254,3 +254,14 @@ export const tournamentclone = async (id: string) => {
 
 
 
+//Comapre Products
+export const compareProducts = async (id: string) => {
+  const response = await axiosInstance.post('/compare', { id })
+  return response.data
+}
+
+export const getCompareProducts = async () => {
+  const response = await axiosInstance.get('/compare')
+  console.log(response.data)
+  return response.data
+}

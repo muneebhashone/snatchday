@@ -29,6 +29,8 @@ import {
   updateProduct,
   TournamentParams,
   tournamentclone,
+  compareProducts,
+  getCompareProducts,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 
@@ -48,9 +50,9 @@ export const useGetMyProfile = () => {
 };
 
 export const useLogout = () => {
-    return useMutation({
+  return useMutation({
     mutationFn: logout,
-    onSuccess: () => {},
+    onSuccess: () => { },
     onError: (error) => {
       console.error('Logout failed:', error);
     },
@@ -62,7 +64,7 @@ export const useLogout = () => {
 export const useAuthApi = () => {
   return useMutation({
     mutationFn: ({ data, type }: { data: { email: string; password: string } | { email: string; name: string; password: string }; type: string }) => authMutation(data, type),
-  }); 
+  });
 };
 
 // Fetch a single item by ID
@@ -77,7 +79,7 @@ export const useGetItemById = (id: string) => {
 // Create a new item
 export const useRegister = () => {
   return useMutation({
-    mutationFn: ({data,type}: {data: any,type: string}) => authMutation(data,type),
+    mutationFn: ({ data, type }: { data: any, type: string }) => authMutation(data, type),
   });
 };
 
@@ -99,7 +101,7 @@ export const useFilteredItems = (filters: Record<string, string>) => {
 // };
 
 export const useCreateProduct = () => {
-  return useMutation<ProductFormData>({
+  return useMutation<ProductFormData, Error, FormData>({
     mutationFn: createProduct,
   });
 };
@@ -227,10 +229,10 @@ export const useForgetPassword = () => {
   return useMutation({
     mutationFn: (email: string) => forgetPassword(email),
     onSuccess: (data) => {
-      console.log(data,"data from hooks");
+      console.log(data, "data from hooks");
     },
     onError: (error) => {
-      console.log(error,"error from hooks");
+      console.log(error, "error from hooks");
     },
   });
 };
@@ -239,10 +241,10 @@ export const useResetPassword = () => {
   return useMutation({
     mutationFn: (data: ResetPasswordTypes) => resetPassword(data),
     onSuccess: (data) => {
-      console.log(data,"data from hooks");
+      console.log(data, "data from hooks");
     },
     onError: (error) => {
-      console.log(error,"error from hooks");
+      console.log(error, "error from hooks");
     },
   });
 };
@@ -281,7 +283,7 @@ export const useCancelTournament = () => {
 
 export const useManageTournament = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) => manageTournament(id, data),
+    mutationFn: ({data }: {data: TournamentFormData }) => manageTournament(data),
   });
 };
 
@@ -298,3 +300,29 @@ export const useTournamentClone = () => {
   });
 };
 
+//Compare Products
+
+export const useCompareProducts = () => {
+  return useMutation({
+    mutationFn: (id: string) => compareProducts(id)
+  })
+}
+// export const useCompareProducts = () => {
+//   return useMutation({
+//     mutationFn: () => compareProducts(''),
+//   });
+// };
+
+// export const useCompareProducts = () => {
+//   const mutation = useMutation({
+//     mutationFn: (id: string | number) => compareProducts(id)
+//   });
+
+//   return mutation;
+// };
+export const useGetCompareProducts = () => {
+  return useQuery({
+    queryKey: ['compareProducts'],
+    queryFn: getCompareProducts
+  })
+}

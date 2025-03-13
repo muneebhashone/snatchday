@@ -16,7 +16,7 @@ const StatCard = ({ title, value, subtitle, icon }: StatCardProps) => (
     </CardHeader>
     <CardContent>
       <div className="text-2xl font-bold">{value}</div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs ">
         {subtitle}
       </p>
     </CardContent>

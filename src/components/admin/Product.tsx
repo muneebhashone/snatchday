@@ -74,6 +74,7 @@ export function Product() {
     const {data: productsData} = useGetProducts(filters) 
     const {data: categoriesData} = useGetCategories()  
     const { mutate: deleteProduct } = useDeleteProduct();
+    console.log(productsData, "productsData");
 
   
 

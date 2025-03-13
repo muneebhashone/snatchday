@@ -13,6 +13,7 @@ export interface TournamentFormData {
   numberOfPieces: number;
   game: string;
   start: string;
+  end: string;
   length: number;
   fee: number;
   numberOfParticipants: number;

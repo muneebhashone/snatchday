@@ -7,7 +7,7 @@ import { LatestOrders } from './latest-orders'
 
 const OverviewPage = () => {
   return (
-    <div className="space-y-8 p-8">
+    <div className="space-y-8 p-8 text-white">
       <OverviewCards />
       <SalesChart />
       <div className="grid gap-8 md:grid-cols-2">

@@ -109,6 +109,7 @@ const TournamentCreateForm = ({productId}: {productId: string}) => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
+      console.log(values, "values");
       // const formData = new FormData();
 
       // Object.entries(values).forEach(([key, value]) => {
