@@ -1,6 +1,6 @@
 import { TournamentFormData } from '@/types/admin';
 import axiosInstance from './axios';
-import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData } from '@/types';
+import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData, ComapreProduct } from '@/types';
 import { useMutation } from '@tanstack/react-query';
 
 
@@ -246,13 +246,12 @@ export const getProductById = async (id: string) => {
 };
 
 //Comapre Products
-export const compareProducts = async (id: string) => {
-  const response = await axiosInstance.post('/compare', { id })
+export const compareProducts = async (productId: string) => {
+  const response = await axiosInstance.post('/compare', { productId })
   return response.data
 }
 
 export const getCompareProducts = async () => {
   const response = await axiosInstance.get('/compare')
-  console.log(response.data)
   return response.data
 }

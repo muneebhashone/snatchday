@@ -300,19 +300,7 @@ export const useCompareProducts = () => {
     mutationFn: (id: string) => compareProducts(id)
   })
 }
-// export const useCompareProducts = () => {
-//   return useMutation({
-//     mutationFn: () => compareProducts(''),
-//   });
-// };
 
-// export const useCompareProducts = () => {
-//   const mutation = useMutation({
-//     mutationFn: (id: string | number) => compareProducts(id)
-//   });
-
-//   return mutation;
-// };
 export const useGetCompareProducts = () => {
   return useQuery({
     queryKey: ['compareProducts'],

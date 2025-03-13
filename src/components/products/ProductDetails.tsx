@@ -114,7 +114,7 @@ const ProductDetails = ({
         toast.success("producst successfully");
       },
       onError: (error) => {
-        toast.error("Failed to update tournament");
+        toast.error("Failed to add for compare");
         console.error(error);
       }
     })
