@@ -27,6 +27,12 @@ const registerSchema = z
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string().min(6, "Confirm Password is required"),
+    terms: z.boolean().refine((val) => val === true, {
+      message: "You must accept the terms and conditions",
+    }),
+    newsletter: z.boolean().refine((val) => val === true, {
+      message: "You must accept the terms and conditions",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
@@ -41,7 +47,7 @@ const Register = ({ onBack }: RegisterProps) => {
     resolver: zodResolver(registerSchema), // Use Zod schema for validation
   });
 
-  const {mutate:register, isPending}=useAuthApi()
+  const { mutate: register, isPending } = useAuthApi()
 
 
   const handleClose = () => {
@@ -50,13 +56,13 @@ const Register = ({ onBack }: RegisterProps) => {
   };
 
   const onSubmit = (data: z.infer<typeof registerSchema>) => {
-    const {name,email,password}=data
-    register({data:{name,email,password},type:"register"},{
-      onSuccess:({data})=>{
-        toast.success("Registration successful")
+    const { name, email, password } = data
+    register({ data: { name, email, password }, type: "register" }, {
+      onSuccess: ({ data }) => {
+        toast.success("Registration successfull")
         handleClose()
       },
-      onError:(error:any)=>{
+      onError: (error: any) => {
         toast.error(error.response.data.message)
       },
     })
@@ -83,82 +89,115 @@ const Register = ({ onBack }: RegisterProps) => {
           {/* Form Inputs */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
-              <Controller
-                name="name"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    placeholder="User Name"
-                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                  />
-                )}
-              />
-              {errors.name && <span className="text-red-500">{errors.name.message}</span>}
-              <Controller
-                name="email"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="email"
-                    placeholder="E-Mail Address"
-                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                  />
-                )}
-              />
-              {errors.email && <span className="text-red-500">{errors.email.message}</span>}
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="password"
-                    placeholder="Password"
-                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                  />
-                )}
-              />
-              {errors.password && <span className="text-red-500">{errors.password.message}</span>}
-              <Controller
-                name="confirmPassword"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="password"
-                    placeholder="Repeat Password"
-                    className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                  />
-                )}
-              />
-              {errors.confirmPassword && <span className="text-red-500">{errors.confirmPassword.message}</span>}
+              <div>
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="User Name"
+                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                    />
+                  )}
+                />
+                {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+              </div>
+              <div>
+                <Controller
+                  name="email"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="E-Mail Address"
+                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                    />
+                  )}
+                />
+                {errors.email && <span className="text-red-500">{errors.email.message}</span>}
+              </div>
+              <div>
+                <Controller
+                  name="password"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Password"
+                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                    />
+                  )}
+                />
+                {errors.password && <span className="text-red-500">{errors.password.message}</span>}
+              </div>
+              <div>
+                <Controller
+                  name="confirmPassword"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Repeat Password"
+                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                    />
+                  )}
+                />
+                {errors.confirmPassword && <span className="text-red-500">{errors.confirmPassword.message}</span>}
+              </div>
             </div>
 
             {/* Terms and Newsletter Checkbox */}
             <div className="mt-10">
               <div className="flex items-start space-x-3">
-                <Checkbox id="newsletter" className="mt-1 rounded-full" />
+                <Controller
+                  name="newsletter"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox {...field} id="newsletter" className="mt-1 rounded-full" checked={field.value} onChange={(e) => field.onChange((e.target as HTMLInputElement).checked)} />
+                  )}
+                />
                 <label htmlFor="newsletter" className="text-foreground">
                   Yes, I would like to be informed about tournaments, special
                   offers and news and receive newsletters from Snatch Day
                 </label>
               </div>
+            </div>
+
+            <div className="flex items-start space-x-3 mt-2">
               <div className="flex items-start space-x-3 mt-2">
-                <Checkbox id="terms" className="mt-1 rounded-full" />
-                <label htmlFor="terms" className="text-foreground">
-                  I agree to the{" "}
-                  <Link href="#" className="text-[#FF6B3D] hover:underline">
-                    privacy policy
-                  </Link>{" "}
-                  and the{" "}
-                  <Link href="#" className="text-[#FF6B3D] hover:underline">
-                    terms and conditions
-                  </Link>
-                </label>
+                <Controller
+                  name="terms"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="flex items-start space-x-3 mt-2">
+                      <Checkbox
+                        id="terms"
+                        className="mt-1 rounded-full"
+                        checked={field.value}
+                        onChange={(e) => field.onChange((e.target as HTMLInputElement).checked)}
+                      />
+                      <label htmlFor="terms" className="text-foreground">
+                        I agree to the{" "}
+                        <Link href="#" className="text-[#FF6B3D] hover:underline">
+                          privacy policy
+                        </Link>{" "}
+                        and the{" "}
+                        <Link href="#" className="text-[#FF6B3D] hover:underline">
+                          terms and conditions
+                        </Link>
+                      </label>
+
+                    </div>
+
+                  )}
+                />
               </div>
+
             </div>
 
             {/* Register Button */}
