@@ -61,17 +61,17 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
             Tournament ID: 1641
           </button>
           <h1 className="text-[48px] text-[#1C1B1D] font-extrabold leading-[70px]">
-            {tournamentData?.name}
+            {tournamentData?.data?.name}
           </h1>
           <p className="text-[24px]">
             Tournament starts on{" "}
             <span className="text-primary font-extrabold text-[25px]">
-              {new Date(tournamentData?.start).toLocaleDateString()}
+              {new Date(tournamentData?.data?.start).toLocaleDateString()}
             </span> at 
             <span className="text-primary font-extrabold text-[25px]">
-              {new Date(tournamentData?.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {new Date(tournamentData?.data?.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>. Check-out
-            time: <span className="text-primary font-extrabold text-[25px]">18:21</span>
+            time: <span className="text-primary font-extrabold text-[25px]">{new Date(tournamentData?.data?.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </p>
           <div className=" flex flex-col gap-2 border pl-2 w-max border-primary">
             <div className="flex gap-5 w-max mt-7 ">
@@ -82,7 +82,7 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
                 <div className="mr-14 flex flex-col justify-center">
                   <h1 className="text-xl font-bold leading-7">Game</h1>
                   <h1 className="text-3xl text-primary font-bold leading-7">PowerBlocks</h1>
-                  <p className="text-lg">Duration: {tournamentData?.length || "N/A"} minutes</p>
+                  <p className="text-lg">Duration: {tournamentData?.data?.length || "N/A"} minutes</p>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -90,7 +90,7 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
                   <p>
                     Aktueller Preis{" "}
                     <h2 className="text-white text-[34px] font-extrabold">
-                      {tournamentData?.startingPrice || "N/A"}
+                      {tournamentData?.data?.startingPrice || "N/A"}
                     </h2>
                   </p>
                 </div>
@@ -102,14 +102,14 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
             </div>
             <div className="flex gap-6 mt-3">
               <p className=" rounded-full px-8 py-1 text-[21px] underline underline-offset-8 decoration-gray-300 decoration-[3px]">
-                Participation fee: <span className="text-primary">{tournamentData?.fee || "N/A"}</span>{" "}
-                points / <span className="text-primary">{(tournamentData?.fee * 0.01).toFixed(2)}€</span>
+                Participation fee: <span className="text-primary">{tournamentData?.data?.fee || "N/A"}</span>{" "}
+                points / <span className="text-primary">{(tournamentData?.data?.fee * 0.01).toFixed(2)}€</span>
               </p>
               {/* <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold">
               50<span className="text-primary">€</span> Gunstiger
             </h3> */}
               <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold text-primary">
-                Already Saved: 50€
+                Already Saved: {(tournamentData?.data?.numberOfParticipants || 0) * 5}€
               </h3>
             </div>
             <div className="flex gap-3 items-center justify-start">
@@ -124,7 +124,7 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
                 <div className=" flex flex-col border-r border-r-gray-300 px-5 ">
                   <p>Participants:</p>
                   <p className="text-[21px]">
-                    0 of <span className="text-primary">200</span>
+                    0 of <span className="text-primary">{tournamentData?.data?.numberOfParticipants || "N/A"}</span>
                   </p>
                 </div>
                 <div className=" flex flex-col px-5">

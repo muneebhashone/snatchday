@@ -2,6 +2,7 @@ import { TournamentFormData } from '@/types/admin';
 import axiosInstance from './axios';
 import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData } from '@/types';
 import { useMutation } from '@tanstack/react-query';
+import { TournamentDetailResponse } from '@/types';
 
 
 export const fetchItems = async () => {
@@ -252,8 +253,8 @@ export const upComingTournament = async () => {
 };
 
 
-export const getTournamentById = async (id: string) => {
-  const response = await axiosInstance.get<ResponseTournament>(`/tournament/get/${id}`);
+export const getTournamentById = async (id: string): Promise<TournamentDetailResponse> => {
+  const response = await axiosInstance.get<TournamentDetailResponse>(`/tournament/get/${id}`);
   return response.data;
 };
 

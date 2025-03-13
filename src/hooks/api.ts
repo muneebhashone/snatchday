@@ -306,6 +306,5 @@ export const useGetTournamentById = (id: string) => {
   return useQuery({
     queryKey: ['tournament', id],
     queryFn: () => getTournamentById(id),
-    enabled: !!id,
   });
 };

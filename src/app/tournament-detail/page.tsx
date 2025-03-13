@@ -25,10 +25,8 @@ import { useGetTournamentById } from "@/hooks/api";
 import { TournamentDetailResponse } from "@/types";
 const TournamentDetailPage = () => {
   const id = useSearchParams().get('id');
-  console.log(id, "id");  
-  const { data: tournament } = useGetTournamentById(id) ;
+  const { data: tournament ,isLoading} = useGetTournamentById(id) ;
   
-  console.log(tournament, "tournament");
 
 
   const displayProducts = [
@@ -250,7 +248,7 @@ const TournamentDetailPage = () => {
     <ClientLayout>
       <main className="mb-56 overflow-hidden">
         <div className="mt-[115px]">
-          <TournamentDetailHero  isLoading={tournament?.isLoading}  tournamentData={tournament?.data} />
+          <TournamentDetailHero  isLoading={isLoading}  tournamentData={tournament} />
         </div>
         <div
           style={{ backgroundImage: `url(${bg.src})` }}
