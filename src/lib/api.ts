@@ -40,7 +40,7 @@ export const authMutation = async (data: any, type: string) => {
 
 export const createProduct = async (formData: FormData) => {
   const response = await axiosInstance.post<ProductFormData>(
-    "/product/product",
+    "/product",
     formData,
     {
       headers: {
