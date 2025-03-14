@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CalendarDays } from "lucide-react"
+import { CalendarDays, Circle } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface ActivityItem {
   name: string
@@ -43,23 +44,47 @@ const activities: ActivityItem[] = [
 
 export function LatestActivity() {
   return (
-    <Card className="border-primary">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <CalendarDays className="h-4 w-4" />
+    <Card className={cn(
+      "border-border/50 relative overflow-hidden transition-all duration-300",
+      "hover:shadow-lg",
+      "bg-gradient-to-br from-card to-background"
+    )}>
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
+      <CardHeader className="relative">
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <CalendarDays className="h-4 w-4" />
+          </div>
           <span>Latest Activity</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="relative">
+        <div className="space-y-0">
           {activities.map((activity, index) => (
-            <div key={index} className="flex items-start gap-2 text-sm">
-              <div className="flex-1">
-                <span className="font-medium text-primary">{activity.name}</span>
-                <span className="ml-1">{activity.action}</span>
+            <div 
+              key={index} 
+              className={cn(
+                "group relative pl-6 py-4 flex items-start gap-4",
+                "hover:bg-muted/50 transition-colors",
+                index !== activities.length - 1 && "border-b border-border/50"
+              )}
+            >
+              <div className="absolute left-0 top-0 bottom-0 flex items-center">
+                <Circle className="h-2 w-2 text-primary fill-primary" />
+                {index !== activities.length - 1 && (
+                  <div className="absolute top-4 left-[3.5px] bottom-0 w-[1px] bg-border" />
+                )}
               </div>
-              <div className="text-muted-foreground">
-                {activity.date} {activity.time}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 text-sm">
+                  <span className="font-medium text-primary truncate">{activity.name}</span>
+                  <span className="text-muted-foreground truncate">{activity.action}</span>
+                </div>
+                <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                  <span>{activity.date}</span>
+                  <span className="inline-block w-1 h-1 rounded-full bg-border" />
+                  <span>{activity.time}</span>
+                </div>
               </div>
             </div>
           ))}
