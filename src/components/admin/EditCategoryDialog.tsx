@@ -239,9 +239,9 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel>Above Category</FormLabel>
+                    <FormLabel>Make child Category</FormLabel>
                     <FormDescription>
-                      Is this an above category?
+                      Is this an child category?
                     </FormDescription>
                   </div>
                   <FormControl>

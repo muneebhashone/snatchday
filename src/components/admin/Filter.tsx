@@ -83,7 +83,7 @@ const Filter = () => {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Values</TableHead>
-                  <TableHead>Category</TableHead>
+                  {/* <TableHead>Category</TableHead> */}
                   <TableHead>Created At</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -104,7 +104,7 @@ const Filter = () => {
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell>{getCategoryName(filter.category)}</TableCell>
+                    {/* <TableCell>{getCategoryName(filter.category)}</TableCell> */}
                     <TableCell>{new Date(filter.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right space-x-2">
                       <EditFilterDialog filter={filter} />
