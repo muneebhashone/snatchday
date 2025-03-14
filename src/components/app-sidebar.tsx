@@ -117,16 +117,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar {...props}>
-      <SidebarHeader className="border-b border-sidebar-border h-20 flex items-center justify-center">
-        <VersionSwitcher />
+    <Sidebar {...props} className="border-none shadow-2xl">
+      <SidebarHeader className=" bg-black text-primary">
+        {/* <VersionSwitcher /> */}
+        <div className="bg-black text-primaryrounded-lg">
+    {/* <Image src={logo} alt="logo" width={200} height={200} className="w-full h-full"/> */}
+    <p className="text-2xl font-bold">Snatch Day</p>
+    <p className="text-sm text-gray-500">Admin</p>
+  </div>
       </SidebarHeader>
-      <SidebarContent className="py-6">
+      <SidebarContent className="py-6 bg-black text-white">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => (
-                <SidebarMenuItem className="mb-5" key={item.title}>
+                <SidebarMenuItem className="" key={item.title}>
                   {item.subItems ? (
                     <Collapsible
                       open={openItems.includes(item.title)}
@@ -134,7 +139,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     >
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
-                          className="w-full text-xl flex items-center justify-between"
+                          className="w-full text-xl py-7 flex items-center justify-between hover:bg-primary hover:text-white rounded-md"
                           tooltip={item.title}
                         >
                           <div className="flex items-center gap-3">
@@ -151,7 +156,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             asChild
                             isActive={pathname === subItem.url}
                             tooltip={subItem.title}
-                            className="[&[data-active]]:bg-primary [&[data-active]]:text-white rounded-md"
+                            className="[&[data-active]]:bg-primary [&[data-active]]:text-white text-white rounded-md m-0"
                           >
                             <a href={subItem.url} className="flex items-center gap-3">
                               {subItem.icon}
@@ -166,9 +171,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild 
                       isActive={pathname === item.url}
                       tooltip={item.title}
-                      className={`text-xl ${pathname === item.url ? 'data-[active]:bg-primary data-[active]:text-white' : 'text-foreground bg-transparent'} rounded-md`}
+                      className={`text-xl text-white py-7 ${pathname === item.url ? 'data-[active]:bg-primary data-[active]:text-white' : 'text-foreground bg-transparent'} hover:bg-primary hover:text-white rounded-md`}
                     >
-                      <a href={item.url} className="flex items-center gap-3">
+                      <a href={item.url} className="flex items-center gap-3 text-white">
                         {item.icon}
                         <span>{item.title}</span>
                       </a>
