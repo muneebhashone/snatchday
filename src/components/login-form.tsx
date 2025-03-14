@@ -25,6 +25,10 @@ import {
 } from "@/components/ui/form";
 import { useUserContext } from "@/context/userContext";
 import Link from "next/link";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import Image from "next/image";
+import logo from "@/app/images/logo.png";
 // Form validation schema
 const loginFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -39,6 +43,7 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
   const { setUserData } = useUserContext();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
@@ -50,7 +55,8 @@ export function LoginForm({
 
   const { mutate: login, isPending } = useAuthApi();
 
-  const onSubmit = (data: LoginFormValues) => {
+  const onSubmit = async (data: LoginFormValues) => {
+    setIsRedirecting(true);
     login(
       {
         data: {
@@ -62,21 +68,30 @@ export function LoginForm({
       {
         onSuccess: ({ data }) => {
           setUserData(data);
-          toast.success("Login successful");
-
+          toast.success("Login successfully");
           router.push("/admin");
         },
         onError: (error) => {
           console.error("Login failed:", error);
           toast.error("Login failed");
         },
+        onSettled: () => {
+          setIsRedirecting(false);
+        }
+
       }
     );
   };
- 
 
   return (
     <>
+    {isRedirecting ? (
+      <div className="flex flex-col justify-center items-center h-screen">
+        <Image src={logo} alt="Snatchday Logo" className="mb-4" />
+        <Loader2 className="animate-spin size-14" />
+      </div>
+    ) : (
+      <>
       <div className={cn("flex flex-col gap-6", className)} {...props}>
         <Card>
           <CardHeader>
@@ -133,12 +148,19 @@ export function LoginForm({
                 </Button>
               </form>
             </Form>
-          <div className="flex justify-end my-2">
-            <Link href={{ pathname: "/forgot-password", query: { ref: "admin" } }} className="underline text-sm hover:text-orange-500">Forgot password</Link>
-          </div>  
+            <div className="flex justify-end my-2">
+              <Link
+                href={{ pathname: "/forgot-password", query: { ref: "admin" } }}
+                className="underline text-sm hover:text-orange-500"
+              >
+                Forgot password
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>
+      </>
+    )}
     </>
   );
 }

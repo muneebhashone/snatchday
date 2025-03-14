@@ -240,6 +240,11 @@ export const subscribeNewsletter = async (email: string) => {
 
 export const getProductById = async (id: string) => {
   const response = await axiosInstance.get<ProductFormData>(`/product/${id}`);
-    console.log(response.data, "response.data",id);
   return response.data;
 };
+
+
+// export const getWallet = async () => {
+//   const response = await axiosInstance.get<WalletTypes>('/wallet');
+//   return response.data;
+// };
