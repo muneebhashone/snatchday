@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from "recharts"
 import { DateRange } from "react-day-picker"
 import { addDays, format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
@@ -14,6 +14,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useState } from "react"
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white/90 backdrop-blur-sm border rounded-lg shadow-lg p-4">
+        <p className="text-sm font-medium mb-2">{`Day ${label}`}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={index} className="text-sm" style={{ color: entry.stroke }}>
+            {`${entry.name}: ${entry.value.toFixed(2)}`}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 export function SalesChart() {
     const [date, setDate] = useState<DateRange | undefined>({
@@ -28,7 +44,7 @@ export function SalesChart() {
         while (currentDate <= endDate) {
             data.push({
                 day: format(currentDate, "dd"),
-                orders: Math.random() * 0.5, // Random data for demonstration
+                orders: Math.random() * 0.5,
                 customers: Math.random() * 0.5,
             })
             currentDate = addDays(currentDate, 1)
@@ -39,9 +55,14 @@ export function SalesChart() {
     const data = date?.from && date?.to ? generateData(date.from, date.to) : []
 
     return (
-        <Card className="border-primary">
-            <CardHeader className="flex flex-row items-center justify-between pb-8">
-                <CardTitle className="flex items-center gap-2">
+        <Card className={cn(
+          "border-border/50 relative overflow-hidden transition-all duration-300",
+          "hover:shadow-lg",
+          "bg-gradient-to-br from-card to-background"
+        )}>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
+            <CardHeader className="flex flex-row items-center justify-between pb-8 relative">
+                <CardTitle className="flex items-center gap-2 text-lg font-semibold">
                     <span>Sales Statistics</span>
                 </CardTitle>
                 <Popover>
@@ -49,7 +70,10 @@ export function SalesChart() {
                         <Button
                             variant={"outline"}
                             className={cn(
-                                "justify-start text-left font-normal w-[300px]",
+                                "justify-start text-left font-normal",
+                                "bg-background/60 backdrop-blur-sm",
+                                "hover:bg-background/80 transition-colors",
+                                "border-border/50 hover:border-border",
                                 !date && "text-muted-foreground"
                             )}
                         >
@@ -80,7 +104,7 @@ export function SalesChart() {
                     </PopoverContent>
                 </Popover>
             </CardHeader>
-            <CardContent>
+            <CardContent className="relative pb-4">
                 <div className="h-[400px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart
@@ -92,12 +116,23 @@ export function SalesChart() {
                                 bottom: 0,
                             }}
                         >
+                            <defs>
+                                <linearGradient id="ordersGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#F37835" stopOpacity={0.2}/>
+                                    <stop offset="95%" stopColor="#F37835" stopOpacity={0}/>
+                                </linearGradient>
+                                <linearGradient id="customersGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.2}/>
+                                    <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0}/>
+                                </linearGradient>
+                            </defs>
                             <XAxis
                                 dataKey="day"
                                 stroke="#888888"
                                 fontSize={12}
                                 tickLine={true}
                                 axisLine={true}
+                                tickMargin={8}
                             />
                             <YAxis
                                 stroke="#888888"
@@ -106,22 +141,37 @@ export function SalesChart() {
                                 axisLine={true}
                                 domain={[-1, 1]}
                                 ticks={[-1, -0.5, 0, 0.5, 1]}
+                                tickMargin={8}
+                            />
+                            <Tooltip 
+                                content={<CustomTooltip />}
+                                cursor={{ stroke: '#666', strokeWidth: 1, strokeDasharray: '4 4' }}
+                            />
+                            <Legend 
+                                verticalAlign="top" 
+                                height={36}
+                                iconType="circle"
+                                iconSize={8}
                             />
                             <Line
                                 type="monotone"
                                 dataKey="orders"
                                 stroke="#F37835"
-                                strokeWidth={2}
+                                strokeWidth={2.5}
                                 dot={false}
                                 name="Orders"
+                                activeDot={{ r: 6, strokeWidth: 2 }}
+                                fill="url(#ordersGradient)"
                             />
                             <Line
                                 type="monotone"
                                 dataKey="customers"
                                 stroke="#0ea5e9"
-                                strokeWidth={2}
+                                strokeWidth={2.5}
                                 dot={false}
                                 name="Customers"
+                                activeDot={{ r: 6, strokeWidth: 2 }}
+                                fill="url(#customersGradient)"
                             />
                         </LineChart>
                     </ResponsiveContainer>
