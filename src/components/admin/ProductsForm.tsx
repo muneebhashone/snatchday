@@ -55,17 +55,7 @@ const formSchema = z.object({
   colors: z.string().min(1, "Colors cannot be empty"),
   stock: z.number().min(0, "Stock must be 0 or greater"),
   price: z.number().min(0, "Price must be 0 or greater"),
-  discounts: z.string().refine((value) => {
-    try {
-      const discounts = value.split(",").map((d) => {
-        const [amount, price] = d.split(":").map((v) => parseFloat(v.trim()));
-        return !isNaN(amount) && !isNaN(price);
-      });
-      return discounts.every(Boolean);
-    } catch {
-      return false;
-    }
-  }, "Enter discounts as 'percentage:price' pairs (e.g., '10:100, 20:200')"),
+  discounts: z.string().optional(),
   attributes: z.any(),
   categoryIds: z.string().min(1, "Category is required"),
   type: z.enum(["NEW", "SALE"]),
@@ -504,16 +494,15 @@ export default function ProductsForm() {
             name="discounts"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Discounts *</FormLabel>
+                <FormLabel>Discounts </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Enter as percentage:price (e.g., 10:100, 20:200)"
+                    placeholder="Enter discounts"
                     {...field}
                   />
                 </FormControl>
                 <FormDescription>
-                  Enter discounts as percentage:price pairs, separated by commas
-                  (e.g., 10:100, 20:200)
+                  Enter discounts separated by commas (e.g., customerGroup:discount rate, Vip:200)
                 </FormDescription>
                 <FormMessage />
               </FormItem>
