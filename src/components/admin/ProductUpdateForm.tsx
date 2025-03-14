@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { toast } from "sonner";
-import { useUpdateProduct, useGetCategories } from "@/hooks/api";
+import { useUpdateProduct, useGetCategories, useGetFilters } from "@/hooks/api";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -30,6 +30,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { X } from "lucide-react";
 
 
 
@@ -37,7 +38,7 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
   company: z.string().min(1, "Company cannot be empty"),
-  images: z.any().nullable(),
+  images: z.array(z.instanceof(File)).min(1, "At least one image is required"),
   colors: z.string().min(1, "Colors cannot be empty"),
   stock: z.number().min(0, "Stock must be 0 or greater"),
   price: z.number().min(0, "Price must be 0 or greater"),
@@ -52,7 +53,7 @@ const formSchema = z.object({
       return false;
     }
   }, "Enter discounts as 'percentage:price' pairs (e.g., '10:100, 20:200')"),
-  attributes: z.string().min(1, "Attributes cannot be empty"),
+  attributes: z.any(),
   categoryIds: z.string().min(1, "Category is required"),
   type: z.enum(["NEW", "SALE"]),
   isFeatured: z.boolean(),
@@ -74,6 +75,8 @@ const formSchema = z.object({
 //   }
 // }
 
+
+
 interface ProductFormData {
   name: string;
   description: string;
@@ -85,6 +88,7 @@ interface ProductFormData {
   discounts: string;
   attributes: string;
   categoryIds: string;
+  
   type: "NEW" | "SALE";
   isFeatured: boolean;
   metaTitle: string;
@@ -114,8 +118,8 @@ interface Product {
     type: 'PERCENTAGE';
     customerGroup: string;
   }[];
-  attributes: Record<string, string>;
-  categoryIds: string[];
+  attributes: "";
+  categoryIds: string[] | string;
   type: "NEW" | "SALE";
   isFeatured: boolean;
   metaTitle: string;
@@ -143,9 +147,15 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
   const [previewUrls, setPreviewUrls] = useState<string[]>(product.images || []);
   const { mutate: updateProduct } = useUpdateProduct();
   const { data: categoriesResponse } = useGetCategories();
-   
-  
+  const [selectedFilter, setSelectedFilters] = useState<string | null>(null);
+
+  const { data: filters } = useGetFilters();
   const categories = categoriesResponse?.data?.categories || [];
+
+
+
+ // Re-run when filters or product attributes change
+
 
   const form = useForm<ProductFormData>({
     resolver: zodResolver(formSchema),
@@ -153,13 +163,13 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
       name: product.name,
       description: product.description,
       company: product.company,
-      images: null,
+      images: product.images && Array.isArray(product.images) ? product.images : [],  // Ensure images is always an array
       colors: product.colors.join(', '),
       stock: product.stock,
       price: product.price,
       discounts: product.discounts.map(d => `${d.amount}:${d.price}`).join(', '),
-      attributes: Object.entries(product.attributes).map(([key, value]) => `${key}:${value}`).join(', '),
-      categoryIds: product.categoryIds[0] || '',
+      attributes: "", 
+      categoryIds: product.categoryIds[0]._id as string || "",
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
@@ -175,25 +185,22 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
     },
   });
 
+
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      // Clear previous previews
-      previewUrls.forEach(url => {
-        if (url.startsWith('blob:')) {
-          URL.revokeObjectURL(url);
-        }
-      });
-      
+      // Convert FileList to an array of File objects
+      const filesArray = Array.from(files);
+  
       // Create new previews
-      const urls = Array.from(files).map(file => URL.createObjectURL(file));
+      const urls = filesArray.map(file => URL.createObjectURL(file));
       setPreviewUrls(urls);
-      
-      // Update form
-      form.setValue('images', files);
-    }
+  
+      // If no new images, keep the existing ones
+      const files = e.target.files; // This is of type FileList
+      form.setValue('images', filesArray.length > 0 ? filesArray : form.getValues('images'));    }
   };
-
   async function onSubmit(values: ProductFormData) {
     try {
       const formData = new FormData();
@@ -212,13 +219,15 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
           formData.append('colors', JSON.stringify(colorsArray));
         } else if (key === 'attributes') {
           try {
-            const attributesObject = value.split(',').reduce((acc: Record<string, string>, pair: string) => {
-              const [attrKey, attrValue] = pair.split(':').map(item => item.trim());
-              if (attrKey && attrValue) {
-                acc[attrKey] = attrValue;
-              }
-              return acc;
-            }, {});
+            const attributesObject = Object.entries(selectedFilter).reduce(
+              (acc, [filterName, filterValues]) => {
+                filterValues.forEach((value) => {
+                  acc[filterName] = value;
+                });
+                return acc;
+              },
+              {}
+            );
             formData.append('attributes', JSON.stringify(attributesObject));
           } catch (error) {
             console.error('Error parsing attributes:', error);
@@ -332,12 +341,12 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
             )}
           />
 
-          <FormField
+                <FormField
             control={form.control}
             name="images"
             render={() => (
               <FormItem>
-                <FormLabel>Images</FormLabel>
+                <FormLabel>Images *</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
@@ -346,20 +355,33 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
                     onChange={handleImageChange}
                   />
                 </FormControl>
-                {previewUrls.length > 0 && (
-                  <div className="grid grid-cols-4 gap-4 mt-4">
-                    {previewUrls.map((url, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden border">
-                        <Image
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="flex gap-4 my-2">
+                  {previewUrls?.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square w-20 h-20 rounded-lg overflow-hidden border"
+                    >
+                      <Image
+                        src={url}
+                        alt={`Preview ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                      <button
+                        className="absolute top-0 left-0 bg-white rounded-full p-1 shadow"
+                        onClick={() => {
+                          setPreviewUrls((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          );
+
+                          URL.revokeObjectURL(url);
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -409,7 +431,7 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field?.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
@@ -445,6 +467,84 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
                     <SelectItem value="SALE">Sale</SelectItem>
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+           <FormField
+            control={form.control}
+            name="attributes"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Filters name</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={(value) => {
+                      const currentValues = field.value || [];
+                      if (!currentValues.includes(value)) {
+                        field.onChange([...currentValues, value]);
+
+                        // Assuming each selected filter name will give corresponding values
+                        const filter = filters?.data.find(
+                          (f) => f.name === value
+                        );
+                        if (filter) {
+                          setSelectedFilters((prevFilters) => ({
+                            ...prevFilters,
+                            [filter.name]: filter.value, // Store filter name as key and its values as array
+                          }));
+                        }
+                      }
+                    }}
+                    multiple
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select filter" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {filters?.data?.map((filter) => (
+                        <SelectItem key={filter._id} value={filter.name}>
+                          {filter.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+
+                {field.value?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {field.value.map((filterName) => (
+                      <div
+                        key={filterName}
+                        className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                      >
+                        <span className="text-sm">{filterName}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
+                          onClick={() => {
+                            field.onChange(
+                              field.value.filter((name) => name !== filterName)
+                            );
+                            setSelectedFilters((prevFilters) => {
+                              const updatedFilters = { ...prevFilters };
+                              delete updatedFilters[filterName]; // Remove filter from selected filters
+                              return updatedFilters;
+                            });
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <FormMessage />
               </FormItem>
             )}
@@ -508,22 +608,31 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
             )}
           />
 
-          <FormField
+<FormField
             control={form.control}
-            name="attributes"
+            name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Attributes *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Product attributes (key:value pairs, comma-separated)" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Enter attributes as key:value pairs (e.g., Size:XL, Color:Blue)
-                </FormDescription>
+                <FormLabel>Type</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="NEW">New</SelectItem>
+                    <SelectItem value="SALE">Sale</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
+
 
           <FormField
             control={form.control}

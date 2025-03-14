@@ -1,11 +1,16 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { useCreateProduct, useGetCategories, useGetFilters, useGetProducts} from "@/hooks/api"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  useCreateProduct,
+  useGetCategories,
+  useGetFilters,
+  useGetProducts,
+} from "@/hooks/api";
 import {
   Form,
   FormControl,
@@ -14,19 +19,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { useState, useEffect } from "react"
-import Image from "next/image"
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { X } from "lucide-react";
 
 interface Category {
   _id: string;
@@ -36,7 +42,7 @@ interface Category {
 
 interface DiscountItem {
   amount: number;
-  type: 'PERCENTAGE';
+  type: "PERCENTAGE";
   customerGroup: string;
   price: number;
 }
@@ -45,14 +51,14 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
   company: z.string().min(1, "Company cannot be empty"),
-  images: z.any(),
+  images: z.array(z.instanceof(File)).min(1, "At least one image is required"),
   colors: z.string().min(1, "Colors cannot be empty"),
   stock: z.number().min(0, "Stock must be 0 or greater"),
   price: z.number().min(0, "Price must be 0 or greater"),
   discounts: z.string().refine((value) => {
     try {
-      const discounts = value.split(',').map(d => {
-        const [amount, price] = d.split(':').map(v => parseFloat(v.trim()));
+      const discounts = value.split(",").map((d) => {
+        const [amount, price] = d.split(":").map((v) => parseFloat(v.trim()));
         return !isNaN(amount) && !isNaN(price);
       });
       return discounts.every(Boolean);
@@ -60,7 +66,7 @@ const formSchema = z.object({
       return false;
     }
   }, "Enter discounts as 'percentage:price' pairs (e.g., '10:100, 20:200')"),
-  attributes: z.string().min(1, "Attributes cannot be empty"),
+  attributes: z.any(),
   categoryIds: z.string().min(1, "Category is required"),
   type: z.enum(["NEW", "SALE"]),
   isFeatured: z.boolean(),
@@ -74,15 +80,15 @@ const formSchema = z.object({
   relatedProducts: z.array(z.string()).optional(),
   requireShipping: z.boolean(),
   liscenseKey: z.string().min(1, "License key cannot be empty"),
-})
+});
 
 export default function ProductsForm() {
-  const [previewUrls, setPreviewUrls] = useState<string[]>([])
-  const { mutate: createProduct, isPending } = useCreateProduct()
-  const { data: getCategories } = useGetCategories()
- 
-  const { data: getProducts } = useGetProducts()
-  const {data:filters} = useGetFilters()
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const { mutate: createProduct, isPending } = useCreateProduct();
+  const { data: getCategories } = useGetCategories();
+
+  const { data: getProducts } = useGetProducts();
+  const { data: filters } = useGetFilters();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -108,138 +114,129 @@ export default function ProductsForm() {
       relatedProducts: [],
       requireShipping: false,
       liscenseKey: "",
+      images: [],
     },
-  })
+  });
 
-  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
-  const [selectedValues, setSelectedValues] = useState<string[]>({});
+  const [selectedFilter, setSelectedFilters] = useState<string | null>(null);
 
-  // Effect to reset selected values when filter changes
-  useEffect(() => {
-    if (selectedFilter) {
-      const filter = filters?.data.find(f => f.name === selectedFilter);
-      setSelectedValues(filter ? filter.value : []);
-    } else {
-      setSelectedValues([]);
-    }
-  }, [selectedFilter, filters]);
+
+
+
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const files = e.target.files;
     if (files) {
+      const fileArray = Array.from(files);
+
       // Clear previous previews
-      previewUrls.forEach(url => URL.revokeObjectURL(url))
-      
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+
       // Create new previews
-      const urls = Array.from(files).map(file => URL.createObjectURL(file))
-      setPreviewUrls(urls)
-      
-      // Update form
-      form.setValue('images', files)
+      const urls = fileArray.map((file) => URL.createObjectURL(file));
+      setPreviewUrls(urls);
+
+      // Update form field
+      form.setValue("images", fileArray, { shouldValidate: true });
     }
-  }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-
-   
-
-
     try {
-      const formData = new FormData()
-      console.log(values,"values")
+      const formData = new FormData();
       // Append all form fields to FormData
       Object.entries(values).forEach(([key, value]) => {
-        if (key === 'categoryIds') {
+        if (key === "categoryIds") {
           // Convert single category ID to array format
-          formData.append('categoryIds', JSON.stringify([value]))
-        } else if (key === 'images') {
+          formData.append("categoryIds", JSON.stringify([value]));
+        } else if (key === "images") {
           // Handle multiple image files
-          const files = value as FileList
+          const files = value as File[];
           if (files) {
             Array.from(files).forEach((file) => {
-              formData.append('images', file)
-            })
+              formData.append("images", file);
+            });
           }
-        } else if (key === 'colors') {
+        } else if (key === "colors") {
           // Convert comma-separated colors to array
-          const colorsArray = value.split(',').map((color: string) => color.trim()).filter(Boolean)
-          formData.append('colors', JSON.stringify(colorsArray))
-        } 
-        else if (key === 'attributes') {
-          try {
-            // const attributeName = value; // Assuming value is the attribute name
-           
-          } catch (error) {
-            console.error('Error parsing attributes:', error)
-            formData.append('attributes', '{}')
-          }
-        } else if (key === 'relatedProducts') {
+          const colorsArray = value
+            .split(",")
+            .map((color: string) => color.trim())
+            .filter(Boolean);
+          formData.append("colors", JSON.stringify(colorsArray));
+        } else if (key === "attributes") {
+          const attributesObject = Object.entries(selectedFilter).reduce(
+            (acc, [filterName, filterValues]) => {
+              filterValues.forEach((value) => {
+                acc[filterName] = value;
+              });
+              return acc;
+            },
+            {}
+          );
+
+          formData.append("attributes", JSON.stringify(attributesObject));
+        } else if (key === "relatedProducts") {
           // Handle empty or valid array of product IDs
-          const productIds = Array.isArray(value) ? value : []
-          formData.append('relatedProducts', JSON.stringify(productIds))
-        } else if (key === 'discounts') {
+          const productIds = Array.isArray(value) ? value : [];
+          formData.append("relatedProducts", JSON.stringify(productIds));
+        } else if (key === "discounts") {
           try {
             // Convert 'percentage:price' pairs to proper format
-            const discountsArray: DiscountItem[] = value.split(',').map((discount: string) => {
-              const [amountStr, priceStr] = discount.split(':').map(v => v.trim());
-              const amount = parseFloat(amountStr);
-              const price = parseFloat(priceStr);
-              
-              if (isNaN(amount) || isNaN(price)) {
-                throw new Error(`Invalid discount format: ${discount}`);
-              }
+            const discountsArray: DiscountItem[] = value
+              .split(",")
+              .map((discount: string) => {
+                const [amountStr, priceStr] = discount
+                  .split(":")
+                  .map((v) => v.trim());
+                const amount = parseFloat(amountStr);
+                const price = parseFloat(priceStr);
 
-              return {
-                amount,
-                price,
-                type: 'PERCENTAGE' as const,
-                customerGroup: 'ALL'
-              };
-            }).filter((d: DiscountItem) => d.amount > 0 && d.price > 0);
+                if (isNaN(amount) || isNaN(price)) {
+                  throw new Error(`Invalid discount format: ${discount}`);
+                }
 
-            formData.append('discounts', JSON.stringify(discountsArray));
+                return {
+                  amount,
+                  price,
+                  type: "PERCENTAGE" as const,
+                  customerGroup: "ALL",
+                };
+              })
+              .filter((d: DiscountItem) => d.amount > 0 && d.price > 0);
+
+            formData.append("discounts", JSON.stringify(discountsArray));
           } catch (error) {
-            console.error('Error parsing discounts:', error);
-            formData.append('discounts', '[]');
+            console.error("Error parsing discounts:", error);
+            formData.append("discounts", "[]");
           }
-        } else if (key === 'price' || key === 'stock') {
+        } else if (key === "price" || key === "stock") {
           // Ensure numbers are properly formatted
-          formData.append(key, value.toString())
-        } else if (key === 'isFeatured' || key === 'requireShipping') {
+          formData.append(key, value.toString());
+        } else if (key === "isFeatured" || key === "requireShipping") {
           // Convert boolean to string
-          formData.append(key, value ? 'true' : 'false')
+          formData.append(key, value ? "true" : "false");
         } else if (value !== undefined && value !== null) {
           // Handle all other string fields
-          formData.append(key, value.toString())
+          formData.append(key, value.toString());
         }
-      })
-
-      // Add selected filter and its values to formData
-      if (selectedFilter) {
-        // Create an object with multiple names and their corresponding values
-        const attributesObject = selectedValues.reduce((acc, value, index) => {
-          acc[`${selectedFilter}${index + 1}`] = value; // Assign unique names like selectedFilter1, selectedFilter2, etc.
-          return acc;
-        }, {});
-        formData.append('attributes', JSON.stringify(attributesObject));
-      }
+      });
 
       createProduct(formData, {
         onSuccess: () => {
-          toast.success("Product created successfully")
-          // Clear image previews
-          previewUrls.forEach(url => URL.revokeObjectURL(url))
-          setPreviewUrls([])
-          form.reset()
+          toast.success("Product created successfully");
+          setPreviewUrls([]);
+          form.reset();
         },
         onError: (error) => {
-          toast.error("Failed to create product")
-          console.error(error)
-        }
-      })
+          toast.error("Failed to create product");
+          console.error(error);
+        },
+      });
     } catch (error) {
-      toast.error("Failed to create product")
-      console.error(error)
+      toast.error("Failed to create product");
+      console.error(error);
     }
   }
 
@@ -304,20 +301,33 @@ export default function ProductsForm() {
                     onChange={handleImageChange}
                   />
                 </FormControl>
-                {previewUrls.length > 0 && (
-                  <div className="grid grid-cols-4 gap-4 mt-4">
-                    {previewUrls.map((url, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden border">
-                        <Image
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <div className="flex gap-4 my-2">
+                  {previewUrls?.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square w-20 h-20 rounded-lg overflow-hidden border"
+                    >
+                      <Image
+                        src={url}
+                        alt={`Preview ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                      <button
+                        className="absolute top-0 left-0 bg-white rounded-full p-1 shadow"
+                        onClick={() => {
+                          setPreviewUrls((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          );
+
+                          URL.revokeObjectURL(url);
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -335,7 +345,9 @@ export default function ProductsForm() {
                       type="number"
                       placeholder="0.00"
                       {...field}
-                      onChange={e => field.onChange(parseFloat(e.target.value))}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -354,7 +366,7 @@ export default function ProductsForm() {
                       type="number"
                       placeholder="0"
                       {...field}
-                      onChange={e => field.onChange(parseInt(e.target.value))}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />
@@ -369,7 +381,10 @@ export default function ProductsForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select type" />
@@ -412,18 +427,23 @@ export default function ProductsForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {getCategories?.data?.categories?.map((category: Category) => (
-                      <SelectItem key={category._id} value={category._id}>
-                        {category.displayName || category.name}
-                      </SelectItem>
-                    ))}
+                    {getCategories?.data?.categories?.map(
+                      (category: Category) => (
+                        <SelectItem key={category._id} value={category._id}>
+                          {category.displayName || category.name}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -466,7 +486,10 @@ export default function ProductsForm() {
               <FormItem>
                 <FormLabel>Colors *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Product colors (comma-separated)" {...field} />
+                  <Input
+                    placeholder="Product colors (comma-separated)"
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
                   Enter colors separated by commas (e.g., Red, Blue, Green)
@@ -483,30 +506,46 @@ export default function ProductsForm() {
               <FormItem>
                 <FormLabel>Discounts *</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="Enter as percentage:price (e.g., 10:100, 20:200)" 
-                    {...field} 
+                  <Input
+                    placeholder="Enter as percentage:price (e.g., 10:100, 20:200)"
+                    {...field}
                   />
                 </FormControl>
                 <FormDescription>
-                  Enter discounts as percentage:price pairs, separated by commas (e.g., 10:100, 20:200)
+                  Enter discounts as percentage:price pairs, separated by commas
+                  (e.g., 10:100, 20:200)
                 </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="attributes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Filters name *</FormLabel>
+                <FormLabel>Filters name</FormLabel>
                 <FormControl>
-                  <Select onValueChange={(value) => {
-                    setSelectedFilter(value);
-                    field.onChange(value);
-                  }}>
+                  <Select
+                    onValueChange={(value) => {
+                      const currentValues = field.value || [];
+                      if (!currentValues.includes(value)) {
+                        field.onChange([...currentValues, value]);
+
+                        // Assuming each selected filter name will give corresponding values
+                        const filter = filters?.data.find(
+                          (f) => f.name === value
+                        );
+                        if (filter) {
+                          setSelectedFilters((prevFilters) => ({
+                            ...prevFilters,
+                            [filter.name]: filter.value, // Store filter name as key and its values as array
+                          }));
+                        }
+                      }
+                    }}
+                    multiple
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select filter" />
@@ -521,29 +560,42 @@ export default function ProductsForm() {
                     </SelectContent>
                   </Select>
                 </FormControl>
+
+                {field.value?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {field.value.map((filterName) => (
+                      <div
+                        key={filterName}
+                        className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                      >
+                        <span className="text-sm">{filterName}</span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
+                          onClick={() => {
+                            field.onChange(
+                              field.value.filter((name) => name !== filterName)
+                            );
+                            setSelectedFilters((prevFilters) => {
+                              const updatedFilters = { ...prevFilters };
+                              delete updatedFilters[filterName]; // Remove filter from selected filters
+                              return updatedFilters;
+                            });
+                          }}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <FormMessage />
               </FormItem>
             )}
           />
-
-          {selectedValues.length > 0 && (
-            <FormField
-              control={form.control}
-              name="filterValues"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Filter Values</FormLabel>
-                  <FormControl>
-                    <Input
-                      value={selectedValues.join(', ')}
-                      disabled
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
 
           <FormField
             control={form.control}
@@ -566,7 +618,10 @@ export default function ProductsForm() {
               <FormItem>
                 <FormLabel>Meta Keywords *</FormLabel>
                 <FormControl>
-                  <Input placeholder="SEO meta keywords (comma-separated)" {...field} />
+                  <Input
+                    placeholder="SEO meta keywords (comma-separated)"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -608,7 +663,10 @@ export default function ProductsForm() {
               <FormItem>
                 <FormLabel>No Stock Message *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Message to show when out of stock" {...field} />
+                  <Input
+                    placeholder="Message to show when out of stock"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -622,7 +680,7 @@ export default function ProductsForm() {
               <FormItem>
                 <FormLabel>Related Products</FormLabel>
                 <FormControl>
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       const currentValues = field.value || [];
                       if (!currentValues.includes(value)) {
@@ -637,8 +695,8 @@ export default function ProductsForm() {
                     </FormControl>
                     <SelectContent>
                       {getProducts?.data?.products?.map((product) => (
-                        <SelectItem 
-                          key={product._id} 
+                        <SelectItem
+                          key={product._id}
                           value={product._id}
                           disabled={field.value?.includes(product._id)}
                         >
@@ -651,7 +709,9 @@ export default function ProductsForm() {
                 {field.value?.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {field.value.map((productId) => {
-                      const product = getProducts?.data?.products?.find((p) => p._id === productId);
+                      const product = getProducts?.data?.products?.find(
+                        (p) => p._id === productId
+                      );
                       return (
                         <div
                           key={productId}
@@ -664,7 +724,9 @@ export default function ProductsForm() {
                             size="sm"
                             className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
                             onClick={() => {
-                              field.onChange(field.value.filter((id) => id !== productId));
+                              field.onChange(
+                                field.value.filter((id) => id !== productId)
+                              );
                             }}
                           >
                             ×
@@ -718,14 +780,12 @@ export default function ProductsForm() {
           />
 
           <div className="flex justify-end">
-            <Button 
-              type="submit" 
-            >
+            <Button type="submit">
               {isPending ? "Creating..." : "Create Product"}
             </Button>
           </div>
         </form>
       </Form>
     </div>
-  )
+  );
 }
