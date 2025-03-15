@@ -241,7 +241,7 @@ export function Product() {
                 <TableCell>
                   <div className="flex gap-2">
                     <Button variant="ghost" size="icon" asChild>
-                      <Link href={`/admin/Products/update/${product._id}`}>
+                      <Link href={`/admin/products/update/${product._id}`}>
                         <Edit className="h-4 w-4" />
                       </Link>
                     </Button>

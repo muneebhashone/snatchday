@@ -140,7 +140,7 @@ export const deleteProduct = async (id: string) => {
 };
 
 export const updateProduct = async (id: string, data: FormData) => {
-  const response = await axiosInstance.put<ProductFormData>(
+  const response = await axiosInstance.patch<ProductFormData>(
     `/product/${id}`,
     data
   );
