@@ -6,7 +6,7 @@ export default function OverviewPage() {
   return (
     <AdminLayout>
     <div className="p-6 space-y-6">
-      <h2 className="text-3xl font-bold tracking-tight">Dashboard Overview</h2>
+      <h2 className="text-3xl font-bold tracking-tight text-primary">Dashboard Overview</h2>
      <Overview />
     </div>
     </AdminLayout>

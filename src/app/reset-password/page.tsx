@@ -36,9 +36,10 @@ export default function ResetPassword() {
     pin: z.string().min(6, {
       message: "Your one-time password must be 6 characters.",
     }),
-    password: z.string().min(6, {
-      message: "Your password must be 6 characters.",
-    }),
+    password: z.string()
+    .min(6, "Password must be at least 6 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character"),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {

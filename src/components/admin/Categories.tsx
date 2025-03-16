@@ -90,7 +90,7 @@ const Categories = () => {
                     </TableCell> */}
                     <TableCell>{category.name}</TableCell>
                     <TableCell>{category.displayName}</TableCell>
-                    <TableCell>{category.description}</TableCell>
+                    <TableCell className='max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap'>{category.description}</TableCell>
                     <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         category.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

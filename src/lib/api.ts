@@ -141,7 +141,7 @@ export const deleteProduct = async (id: string) => {
 };
 
 export const updateProduct = async (id: string, data: FormData) => {
-  const response = await axiosInstance.put<ProductFormData>(
+  const response = await axiosInstance.patch<ProductFormData>(
     `/product/${id}`,
     data
   );
@@ -241,7 +241,6 @@ export const subscribeNewsletter = async (email: string) => {
 
 export const getProductById = async (id: string) => {
   const response = await axiosInstance.get<ProductFormData>(`/product/${id}`);
-    console.log(response.data, "response.data",id);
   return response.data;
 };
 
@@ -257,3 +256,7 @@ export const getTournamentById = async (id: string): Promise<TournamentDetailRes
   return response.data;
 };
 
+// export const getWallet = async () => {
+//   const response = await axiosInstance.get<WalletTypes>('/wallet');
+//   return response.data;
+// };
