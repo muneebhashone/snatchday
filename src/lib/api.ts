@@ -248,3 +248,11 @@ export const getProductById = async (id: string) => {
 //   const response = await axiosInstance.get<WalletTypes>('/wallet');
 //   return response.data;
 // };
+
+
+export const updateProfile = async (formData: FormData) => {
+  const response = await axiosInstance.put('/auth/updateMe', formData);
+  return response.data;
+};
+
+

@@ -28,6 +28,7 @@ import {
   deleteProduct,
   updateProduct,
   TournamentParams,
+  updateProfile,
 } from '../lib/api';
 import { TournamentFormData } from '@/types/admin';
 
@@ -288,6 +289,12 @@ export const useGetTournaments = (params: TournamentParams) => {
   return useQuery({
     queryKey: ['tournaments', params],
     queryFn: () => getTournaments(params),
+  });
+};
+
+export const useUpdateProfile = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => updateProfile(formData),
   });
 };
 
