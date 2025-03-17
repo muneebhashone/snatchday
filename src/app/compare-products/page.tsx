@@ -159,7 +159,7 @@ const ComparisonPage = () => {
                                 String(product[attr.key])
                               )
                             ) : attr.key === "discounts" ? (
-                              <div>{`${product[attr.key][0].price}`}</div>
+                              <div>{`${product[attr.key][0]?.price}`}</div>
                             ) : (
                               String(product[attr.key] || "-")
                             )}
