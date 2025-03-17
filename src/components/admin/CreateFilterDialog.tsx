@@ -104,7 +104,7 @@ export function CreateFilterDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 text-white hover:bg-blue-600 transition-colors">
+        <Button className="bg-primary text-white hover:bg-primary transition-colors">
           <Plus className="h-4 w-4 mr-2" />
           Add Filter
         </Button>

@@ -71,7 +71,7 @@ export function Product() {
     setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
   }, [debouncedSearchTerm]);
 
-    const {data: productsData} = useGetProducts(filters) 
+    const {data: productsData, isLoading: isProductsLoading} = useGetProducts(filters) 
     const {data: categoriesData} = useGetCategories()  
     const { mutate: deleteProduct } = useDeleteProduct();
 
@@ -218,49 +218,53 @@ export function Product() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {productsData?.data?.products?.map((product: Product) => (
-              <TableRow key={product?._id}>
-                <TableCell>
-                  {product?.images && product?.images[0] && (
-                    <div className="relative h-16 w-16">
-                      <img 
-                        src={product?.images[0]} 
-                        alt={product?.name} 
-                        className="rounded-md object-cover w-full h-full" 
-                      />
+            {isProductsLoading ? (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">Loading...</TableCell>
+              </TableRow>
+            ) : (
+              productsData?.data?.products?.map((product: Product) => (
+                <TableRow key={product?._id}>
+                  <TableCell>
+                    {product?.images && product?.images[0] && (
+                      <div className="relative h-16 w-16">
+                        <img 
+                          src={product?.images[0]} 
+                          alt={product?.name} 
+                          className="rounded-md object-cover w-full h-full" 
+                        />
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell>{product?.name || "N/A"}</TableCell>
+                  <TableCell>{product?.price || "N/A"}</TableCell>
+                  <TableCell>{product?.stock || "N/A"}</TableCell>
+                  <TableCell>
+                    {product.categoryIds[0]?.displayName || "N/A"}
+                  </TableCell>
+                  <TableCell>{product?.type}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/admin/products/update/${product._id}`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(product._id)}>
+                        <Trash className="h-4 w-4" />
+                      </Button>
                     </div>
-                  )}
-                </TableCell>
-                <TableCell>{product?.name || "N/A"}</TableCell>
-                <TableCell>{product?.price || "N/A"}</TableCell>
-                <TableCell>{product?.stock || "N/A"}</TableCell>
-                <TableCell>
-                 {product.categoryIds[0]?.displayName || "N/A"}
-                </TableCell>
-                <TableCell>{product?.type}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" asChild>
-                      <Link href={`/admin/products/update/${product._id}`}>
-                        <Edit className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(product._id)}>
-                      <Trash className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-                <TableCell>
-                
-                
-                <Button variant="ghost" size="icon">
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="icon">
                       <Link href={`/admin/tournament/create/${product?._id}`}>
                         <Trophy className="h-4 w-4" />
                       </Link>
                     </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

@@ -62,6 +62,10 @@ const ProductListingPage = () => {
   const [priceRange, setPriceRange] = useState<number[]>([]);
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
+
+
+
+
   const handleFilterChange = (filterName: string, value: string) => {
     setSelectedFilters((prev) => {
       const newFilters = { ...prev };
@@ -82,6 +86,14 @@ const ProductListingPage = () => {
       return newFilters;
     });
   };
+
+  useEffect(() => {
+    setFilters(prev => ({
+      ...prev,
+      category: category as string, 
+      offset: "0", 
+    }));
+  }, [category]);
 
   const handlePriceChange = (range: number[]) => {
     setPriceRange(range);

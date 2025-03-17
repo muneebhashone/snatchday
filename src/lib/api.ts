@@ -145,7 +145,7 @@ export const deleteProduct = async (id: string) => {
 };
 
 export const updateProduct = async (id: string, data: FormData) => {
-  const response = await axiosInstance.put<ProductFormData>(
+  const response = await axiosInstance.patch<ProductFormData>(
     `/product/${id}`,
     data
   );
@@ -269,3 +269,9 @@ export const CurrenOffers = async () => {
   const response = await axiosInstance.get("/product/?currentOffer=true");
   return response.data;
 };
+
+
+// export const getWallet = async () => {
+//   const response = await axiosInstance.get<WalletTypes>('/wallet');
+//   return response.data;
+// };

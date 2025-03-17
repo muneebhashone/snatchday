@@ -32,7 +32,9 @@ import { useQueryClient } from "@tanstack/react-query"
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
-  image: z.any(),
+  image: z.instanceof(File).refine((file) => file.size > 0, {
+    message: "Image file is required",
+  }),
   parentCategoryId: z.string().optional(),
   shop: z.boolean(),
   above: z.boolean(),
@@ -58,6 +60,7 @@ export default function CategoriesForm() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
+    
     if (file) {
       // Clear previous preview
       if (previewUrl) {
@@ -83,11 +86,16 @@ export default function CategoriesForm() {
           const file = value as File
           if (file) {
             formData.append('image', file)
+          } else {
+            console.error("Image file is not available")
           }
         } else if (value !== undefined && value !== null) {
           formData.append(key, value.toString())
         }
       })
+
+   
+
       createCategory(formData, {
         onSuccess: () => {
           toast.success("Category created successfully")
@@ -224,7 +232,7 @@ export default function CategoriesForm() {
             render={({ field }) => (
               <FormItem className="flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel>Above Category</FormLabel>
+                  <FormLabel>Make child Category</FormLabel>
                   <FormDescription>
                     Is this an above category?
                   </FormDescription>

@@ -61,18 +61,18 @@ const Login = () => {
   const handleLogout = () => {
     Userlogout(undefined, {
       onSuccess: () => {
-        localStorage.removeItem('snatchday_user');
+        setUserData(null);
         setIsLoggedIn(false);
         logout();
-        toast.success("Logout successful");
+        toast.success("Logout successfully");
         router.push('/');
       },
       onError: (error) => {
         console.error('Logout failed:', error);
+        toast.error("Logout failed");
       }
     });
   };
-
 
   useEffect(() => {
     if (user) { 
@@ -108,10 +108,7 @@ const Login = () => {
   if (isRegisterOpen) {
     return <Register onBack={handleBackToLogin} />;
   }
-  //  const handleLogout = () => {
-  //   setIsLoggedIn(false);
-  //   setUserData(null)
-  //  }
+
 
   if (isLoggedIn) {
     return (
@@ -132,7 +129,7 @@ const Login = () => {
             onClick={handleLogout}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            <p className="text-sm font-medium text-card-foreground text-red-600" onClick={handleLogout}>Logout</p>
+            <p className="text-sm font-medium text-card-foreground text-red-600" >Logout</p>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

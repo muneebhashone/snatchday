@@ -39,12 +39,10 @@ const Filter = () => {
   
   const filters = getFilters?.data
   const categories = getCategories?.data.categories || []
-  console.log("categories", categories)
-  console.log("filters[9]", filters)
+
 
   // Function to get category name by ID
   const getCategoryName = (categoryId: string) => {
-    console.log("categoryId", categoryId)
     const category = categories.find((cat: Category) => cat._id === categoryId)
     return category ? category.displayName || category.name : 'Unknown Category'
   }
@@ -83,13 +81,13 @@ const Filter = () => {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Values</TableHead>
-                  <TableHead>Category</TableHead>
+                  {/* <TableHead>Category</TableHead> */}
                   <TableHead>Created At</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filters?.map((filter: Filter) => (
+                {filters?.sort((a: Filter, b: Filter) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((filter: Filter) => (
                   <TableRow key={filter._id} className="hover:bg-gray-50">
                     <TableCell>{filter.name}</TableCell>
                     <TableCell>
@@ -104,7 +102,7 @@ const Filter = () => {
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell>{getCategoryName(filter.category)}</TableCell>
+                    {/* <TableCell>{getCategoryName(filter.category)}</TableCell> */}
                     <TableCell>{new Date(filter.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right space-x-2">
                       <EditFilterDialog filter={filter} />
