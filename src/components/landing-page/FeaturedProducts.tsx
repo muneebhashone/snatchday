@@ -4,13 +4,16 @@ import FeaturedProductsCard from "../FeaturedProductsCard";
 import Link from "next/link";
 import { FeaturedStarIcon } from "../icons/icon";
 import { useGetCategories, useGetProducts } from "@/hooks/api";
+import { Loader } from "lucide-react";
 
 const FeaturedProducts = () => {
   const [activeTab, setActiveTab] = useState("");
   const [categoryId, getCategoryId] = useState(``);
   const [parentCategories, setparentCategories] = useState([]);
   const { data } = useGetCategories();
-  const { data: filterProducts } = useGetProducts({ category: categoryId });
+  const { data: filterProducts, isLoading } = useGetProducts({
+    category: categoryId,
+  });
 
   useEffect(() => {
     const filtered = data?.data.categories.filter(
@@ -104,10 +107,20 @@ const FeaturedProducts = () => {
         {/* Product Grid */}
         <div className="px-0 md:px-6">
           <div className="max-w-[1920px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 md:gap-5 gap-8">
-            {filterProducts?.data.products.map((product, index) => {
-              console.log(product);
-              return <FeaturedProductsCard key={index} {...product} />;
-            })}
+            {isLoading ? (
+              <div className="col-span-5 flex items-center justify-center">
+                <Loader className="animate-spin" size={30} />
+              </div>
+            ) : !filterProducts?.data.products.length ? (
+              <div className="flex items-center justify-center col-span-5">
+                <h1>Products not available</h1>{" "}
+              </div>
+            ) : (
+              filterProducts?.data.products.map((product, index) => {
+                console.log(product);
+                return <FeaturedProductsCard key={index} {...product} />;
+              })
+            )}
           </div>
         </div>
 
