@@ -7,6 +7,7 @@ import {
   TruckIcon,
   Loader2,
   List,
+  Loader,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -95,7 +96,7 @@ const ProductDetails = ({
   const params = useParams();
   const queryClient = useQueryClient();
   const { data: compareProducts } = useGetCompareProducts();
-  const { mutate: productIdForCompare } = useCompareProducts();
+  const { mutate: productIdForCompare, isPending } = useCompareProducts();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
@@ -416,13 +417,17 @@ const ProductDetails = ({
 
             {/* Additional Actions */}
             <div className="flex items-center justify-between pt-4 ">
-              {productExist ? (
+              {isPending ? (
+                <div className="bg-gray-100 rounded-full px-10 py-2">
+                  <Loader size={15} className="animate-spin" />
+                </div>
+              ) : productExist ? (
                 <Link
                   href="/compare-products"
                   className="text-foreground text-sm flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2"
                 >
                   <List className="text-[#888888]" />
-                  <button>Compare List</button>
+                  <button>Comparison List</button>
                 </Link>
               ) : (
                 <button

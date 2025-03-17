@@ -31,6 +31,7 @@ import {
   compareProducts,
   getCompareProducts,
   RecommendProduct,
+  CurrenOffers,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
@@ -320,5 +321,13 @@ export const useGetCompareProducts = () => {
 export const useRecommendProduct = () => {
   return useMutation({
     mutationFn: RecommendProduct,
+  });
+};
+
+//Current Offers
+export const useCurrentOffers = () => {
+  return useQuery({
+    queryKey: ["currentProducts"],
+    queryFn: CurrenOffers,
   });
 };

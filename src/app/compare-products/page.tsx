@@ -24,6 +24,7 @@ import { usePathname } from "next/navigation";
 import { useCompareProducts, useGetCompareProducts } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const comparisonAttributes = [
   { key: "name", label: "Product Name" },
@@ -66,12 +67,6 @@ const ComparisonPage = () => {
     console.log(`Removing product ${productId} from comparison`);
   };
 
-  //   useEffect(() => {
-  //     if (compareProducts?.length > 4) {
-  //       removeProduct(compareProducts[0]);
-  //     }
-  //   }, [compareProducts, removeProduct]);
-
   const pathName = usePathname();
   const path1 = pathName.split("/");
   const path = path1[1].split("-");
@@ -99,6 +94,14 @@ const ComparisonPage = () => {
             Compare Products
           </h1>
           <GitCompareArrowsIcon className="text-primary" size={30} />
+        </div>
+        <div className="mb-10 flex items-center justify-end">
+          <Link
+            className="border border-primary hover:bg-white hover:text-primary rounded-lg px-4 py-2 bg-primary text-white"
+            href="/product-listing"
+          >
+            Add Another Product
+          </Link>
         </div>
         <>
           {isLoading ? (

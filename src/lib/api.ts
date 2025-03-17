@@ -263,3 +263,9 @@ export const RecommendProduct = async (data: IRecommendProduct) => {
   console.log(response, "response from api recommend product");
   return response.data;
 };
+
+//Current Offers
+export const CurrenOffers = async () => {
+  const response = await axiosInstance.get("/product/?currentOffer=true");
+  return response.data;
+};

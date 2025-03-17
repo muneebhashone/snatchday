@@ -9,7 +9,7 @@ export interface ProductFormData {
   discounts?: string;
   attributes?: string;
   categoryIds: string;
-  type?: 'NEW' | 'SALE';
+  type?: "NEW" | "SALE";
   isFeatured?: boolean;
   metaTitle: string;
   metaDescription?: string;
@@ -22,7 +22,6 @@ export interface ProductFormData {
   requireShipping?: boolean;
   liscenseKey?: string;
   data?: any;
-
 }
 
 export interface ResponseCategory {
@@ -66,7 +65,6 @@ export interface ResetPasswordTypes {
   passwordResetToken: string;
 }
 
-
 export interface ResponseTournament {
   _id: string;
   name: string;
@@ -96,7 +94,7 @@ export interface Product {
   stock: number;
   images: string[];
   categoryIds: string[];
-  type: 'NEW' | 'SALE';
+  type: "NEW" | "SALE";
   data?: any;
 }
 
@@ -153,3 +151,33 @@ export interface ComapreProduct {
   _id: string;
 }
 
+//current offers
+export interface ICurrentOfferProduct {
+  article: string;
+  attributes: Record<string, any>;
+  barcodeEAN: string;
+  categoryIds: string[];
+  colors: string[];
+  company: string;
+  createdAt: string;
+  description: string;
+  discounts: Record<string, any>[];
+  images: string[];
+  isActive: boolean;
+  isFeatured: boolean;
+  liscenseKey: string;
+  metaDescription: string;
+  metaKeywords: string;
+  metaTitle: string;
+  name: string;
+  noStockMessage: string;
+  price: number;
+  relatedProducts: string[];
+  requireShipping: boolean;
+  sku: string;
+  stock: number;
+  type: "NEW" | "SALE";
+  updatedAt: string;
+  __v: number;
+  _id: string;
+}
