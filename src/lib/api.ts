@@ -1,8 +1,18 @@
-import { TournamentFormData } from '@/types/admin';
-import axiosInstance from './axios';
-import { ProductFormData, FilterFormData, Category, NewsletterTypes, ResetPasswordTypes, ResponseTournament, CategoryFormData } from '@/types';
-import { TournamentDetailResponse } from '@/types';
-
+import { TournamentFormData } from "@/types/admin";
+import axiosInstance from "./axios";
+import {
+  ProductFormData,
+  FilterFormData,
+  Category,
+  NewsletterTypes,
+  ResetPasswordTypes,
+  ResponseTournament,
+  CategoryFormData,
+  ComapreProduct,
+  TournamentDetailResponse,
+} from "@/types";
+import { useMutation } from "@tanstack/react-query";
+import { IRecommendProduct } from "@/components/RecommendProductModal";
 
 export const fetchItems = async () => {
   const response = await axiosInstance.get("/items");
@@ -30,9 +40,6 @@ export const authMutation = async (data: any, type: string) => {
   return response.data;
 };
 
-
-
-
 // export const products = async () => {
 //   const response = await axiosInstance.post<ProductFormData>('/product/product');
 //   return response.data;
@@ -57,7 +64,10 @@ export const createProduct = async (formData: FormData) => {
 // };
 
 export const createCategory = async (formData: FormData) => {
-  const response = await axiosInstance.post<CategoryFormData>('/category', formData)
+  const response = await axiosInstance.post<CategoryFormData>(
+    "/category",
+    formData
+  );
   return response.data;
 };
 
@@ -100,9 +110,7 @@ export const getFilters = async () => {
 };
 
 export const deleteFilter = async (id: string) => {
-  const response = await axiosInstance.delete<FilterFormData>(
-    `/filter/${id}`
-  );
+  const response = await axiosInstance.delete<FilterFormData>(`/filter/${id}`);
   return response.data;
 };
 
@@ -124,12 +132,9 @@ export const getProducts = async (params?: {
   category?: string;
   type?: string;
 }) => {
-  const response = await axiosInstance.get<ProductFormData[]>(
-    "/product",
-    {
-      params,
-    }
-  );
+  const response = await axiosInstance.get<ProductFormData[]>("/product", {
+    params,
+  });
   return response.data;
 };
 
@@ -148,8 +153,6 @@ export const updateProduct = async (id: string, data: FormData) => {
   return response.data;
 };
 
-
-
 export const createTournament = async (data: TournamentFormData) => {
   const response = await axiosInstance.post<ResponseTournament>(
     "/tournament/manage",
@@ -165,9 +168,12 @@ export const cancelTournament = async (id: string) => {
     {}
   );
   return response.data;
-};  
+};
 
-export const manageTournament = async (id: string, data: TournamentFormData) => {
+export const manageTournament = async (
+  id: string,
+  data: TournamentFormData
+) => {
   const response = await axiosInstance.patch<ResponseTournament>(
     `/tournament/manage/${id}`,
     data
@@ -175,30 +181,30 @@ export const manageTournament = async (id: string, data: TournamentFormData) => 
   return response.data;
 };
 
-
 export const getNewsletters = async (params?: {
   limit?: string;
   offset?: string;
   sort_attr?: string;
   sort?: string;
 }) => {
-  const response = await axiosInstance.get<NewsletterTypes>('/newsletter/subscribers', {
-    params,
-  });
+  const response = await axiosInstance.get<NewsletterTypes>(
+    "/newsletter/subscribers",
+    {
+      params,
+    }
+  );
   return response.data;
 };
-
 
 export const forgetPassword = async (email: string) => {
-  const response = await axiosInstance.post('/auth/forgotPassword', { email });
+  const response = await axiosInstance.post("/auth/forgotPassword", { email });
   return response.data;
 };
 
-export const resetPassword = async (data: ResetPasswordTypes)  => {
-  const response = await axiosInstance.put('/auth/resetPassword', data);
+export const resetPassword = async (data: ResetPasswordTypes) => {
+  const response = await axiosInstance.put("/auth/resetPassword", data);
   return response.data;
 };
-
 
 export type TournamentParams = {
   limit: string;
@@ -225,22 +231,43 @@ export const getTournaments = async (params: TournamentParams) => {
   return response.data;
 };
 
-
-
 export const getFilterById = async (id: string) => {
-  const response = await axiosInstance.get(`/product/filter/${id}`);
+  const response = await axiosInstance.get(`/filter/${id}`);
   return response.data;
 };
 
 export const subscribeNewsletter = async (email: string) => {
-  const response = await axiosInstance.post('/newsletter/subscribe', { email });
+  const response = await axiosInstance.post("/newsletter/subscribe", { email });
   return response.data;
 };
 
-
-
 export const getProductById = async (id: string) => {
   const response = await axiosInstance.get<ProductFormData>(`/product/${id}`);
+  // console.log(response.data, "response.data", id);
+  return response.data;
+};
+
+//Comapre Products
+export const compareProducts = async (productId: string) => {
+  const response = await axiosInstance.post("/compare", { productId });
+  return response.data;
+};
+
+export const getCompareProducts = async () => {
+  const response = await axiosInstance.get("/compare");
+  return response.data;
+};
+
+//Recommend Product
+export const RecommendProduct = async (data: IRecommendProduct) => {
+  const response = await axiosInstance.post("/product/recommend", data);
+  console.log(response, "response from api recommend product");
+  return response.data;
+};
+
+//Current Offers
+export const CurrenOffers = async () => {
+  const response = await axiosInstance.get("/product/?currentOffer=true");
   return response.data;
 };
 
@@ -260,3 +287,11 @@ export const getTournamentById = async (id: string): Promise<TournamentDetailRes
 //   const response = await axiosInstance.get<WalletTypes>('/wallet');
 //   return response.data;
 // };
+
+
+export const updateProfile = async (formData: FormData) => {
+  const response = await axiosInstance.put('/auth/updateMe', formData);
+  return response.data;
+};
+
+

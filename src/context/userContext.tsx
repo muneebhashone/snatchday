@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-interface User {
+export interface User {
   _id: string;
   name: string;
   email: string;
@@ -10,7 +10,17 @@ interface User {
   emailVerified: boolean;
   isActive: boolean;
   createdAt: string;
+  salutation:string;
+  title:string;
+  lastName:string;
+  firstName:string;
   updatedAt: string;
+  image:string;
+  username:string;
+  street:string;
+  zip:string;
+  location:string;
+  country:string;
 }
 
 
@@ -36,7 +46,6 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => getUserFromStorage());
 
   const setUserData = (userData: User | null) => {
-   
     setUser(userData);
   };
 

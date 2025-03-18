@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   fetchItemById,
   authMutation,
@@ -28,48 +28,64 @@ import {
   deleteProduct,
   updateProduct,
   TournamentParams,
+  compareProducts,
+  getCompareProducts,
+  RecommendProduct,
+  CurrenOffers,
+  updateProfile,
   upComingTournament,
   getTournamentById,
-} from '../lib/api';
-import { TournamentFormData } from '@/types/admin';
+} from "../lib/api";
+import { TournamentFormData} from "@/types/admin";
 
-import { CategoryFormData, FilterFormData, ProductFormData, ResetPasswordTypes } from '@/types';
-import { useUserContext } from '@/context/userContext';
-
+import {
+  CategoryFormData,
+  FilterFormData,
+  ProductFormData,
+  ResetPasswordTypes,
+} from "@/types";
+import { useUserContext } from "@/context/userContext";
 
 // Fetch all items
 export const useGetMyProfile = () => {
   const { user } = useUserContext();
 
   return useQuery({
-    queryKey: ['myprofile'],
+    queryKey: ["myprofile"],
     queryFn: getMyprofile,
     enabled: Boolean(user),
   });
 };
 
 export const useLogout = () => {
-    return useMutation({
+  return useMutation({
     mutationFn: logout,
     onSuccess: () => {},
     onError: (error) => {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     },
   });
 };
 
-
 // Create a new item
 export const useAuthApi = () => {
   return useMutation({
-    mutationFn: ({ data, type }: { data: { email: string; password: string } | { email: string; name: string; password: string }; type: string }) => authMutation(data, type),
-  }); 
+    mutationFn: ({
+      data,
+      type,
+    }: {
+      data:
+        | { email: string; password: string }
+        | { email: string; name: string; password: string };
+      type: string;
+    }) => authMutation(data, type),
+  });
 };
 
 // Fetch a single item by ID
 export const useGetItemById = (id: string) => {
   return useQuery({
-    queryKey: ['item', id],
+    queryKey: ["item", id],
     queryFn: () => fetchItemById(id),
     enabled: !!id, // Only fetch if ID is provided
   });
@@ -78,19 +94,18 @@ export const useGetItemById = (id: string) => {
 // Create a new item
 export const useRegister = () => {
   return useMutation({
-    mutationFn: ({data,type}: {data: any,type: string}) => authMutation(data,type),
+    mutationFn: ({ data, type }: { data: any; type: string }) =>
+      authMutation(data, type),
   });
 };
 
-
-export const useFilteredItems = (filters: Record<string, string>) => {
-  return useQuery({
-    queryKey: ['items', filters], // Dynamic query key based on filters
-    queryFn: () => filterItems(filters),
-    enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
-  });
-};
-
+// export const useFilteredItems = (filters: Record<string, string>) => {
+//   return useQuery({
+//     queryKey: ["items", filters], // Dynamic query key based on filters
+//     queryFn: () => filterItems(filters),
+//     enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
+//   });
+// };
 
 // export const useProducts = () => {
 //   return useQuery({
@@ -100,21 +115,21 @@ export const useFilteredItems = (filters: Record<string, string>) => {
 // };
 
 export const useCreateProduct = () => {
-  return useMutation<ProductFormData>({
-    mutationFn: createProduct,
+  return useMutation<ProductFormData, unknown, FormData>({
+    mutationFn: (formData: FormData) => createProduct(formData),
   });
 };
 
 export const useGetCategories = () => {
   return useQuery({
-    queryKey: ['categories'],
+    queryKey: ["categories"],
     queryFn: getCategories,
   });
 };
 
 export const useGetCategoryById = (id: string) => {
   return useQuery({
-    queryKey: ['category', id],
+    queryKey: ["category", id],
     queryFn: () => getCategoryById(id),
     enabled: !!id,
   });
@@ -128,7 +143,8 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CategoryFormData }) => updateCategory(id, data),
+    mutationFn: ({ id, data }: { id: string; data: CategoryFormData }) =>
+      updateCategory(id, data),
   });
 };
 
@@ -146,7 +162,7 @@ export const useCreateFilter = () => {
 
 export const useGetFilters = () => {
   return useQuery({
-    queryKey: ['filters'],
+    queryKey: ["filters"],
     queryFn: getFilters,
   });
 };
@@ -159,7 +175,8 @@ export const useDeleteFilter = () => {
 
 export const useUpdateFilter = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: FilterFormData }) => updateFilter(id, data),
+    mutationFn: ({ id, data }: { id: string; data: FilterFormData }) =>
+      updateFilter(id, data),
   });
 };
 
@@ -187,10 +204,9 @@ interface NewsletterFilters {
   price?: string;
 }
 
-
 export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
-    queryKey: ['products', filters],
+    queryKey: ["products", filters],
     queryFn: () => getProducts(filters),
   });
 };
@@ -203,15 +219,14 @@ export const useDeleteProduct = () => {
 
 export const useUpdateProduct = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: FormData }) => updateProduct(id, data),
+    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
+      updateProduct(id, data),
   });
 };
 
-
-
 export const useGetProductById = (id: string) => {
   return useQuery({
-    queryKey: ['product', id],
+    queryKey: ["product", id],
     queryFn: () => getProductById(id),
     enabled: !!id,
   });
@@ -219,7 +234,7 @@ export const useGetProductById = (id: string) => {
 
 export const useGetNewsletters = (filters?: NewsletterFilters) => {
   return useQuery({
-    queryKey: ['newsletters', filters],
+    queryKey: ["newsletters", filters],
     queryFn: () => getNewsletters(filters),
   });
 };
@@ -228,10 +243,10 @@ export const useForgetPassword = () => {
   return useMutation({
     mutationFn: (email: string) => forgetPassword(email),
     onSuccess: (data) => {
-      console.log(data,"data from hooks");
+      console.log(data, "data from hooks");
     },
     onError: (error) => {
-      console.log(error,"error from hooks");
+      console.log(error, "error from hooks");
     },
   });
 };
@@ -240,31 +255,27 @@ export const useResetPassword = () => {
   return useMutation({
     mutationFn: (data: ResetPasswordTypes) => resetPassword(data),
     onSuccess: (data) => {
-      console.log(data,"data from hooks");
+      console.log(data, "data from hooks");
     },
     onError: (error) => {
-      console.log(error,"error from hooks");
+      console.log(error, "error from hooks");
     },
   });
 };
 
 export const useGetFilterById = (id: string) => {
   return useQuery({
-    queryKey: ['filter', id],
+    queryKey: ["filter", id],
     queryFn: () => getFilterById(id),
     enabled: !!id,
   });
 };
 
-
-
 export const useSubscribeNewsletter = () => {
   return useMutation({
     mutationFn: (email: string) => subscribeNewsletter(email),
-    onSuccess: () => {
-    },
-    onError: (error) => {
-    },
+    onSuccess: () => {},
+    onError: (error) => {},
   });
 };
 
@@ -282,13 +293,14 @@ export const useCancelTournament = () => {
 
 export const useManageTournament = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) => manageTournament(id, data),
+    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) =>
+      manageTournament(id, data),
   });
 };
 
 export const useGetTournaments = (params: TournamentParams) => {
   return useQuery({
-    queryKey: ['tournaments', params],
+    queryKey: ["tournaments", params],
     queryFn: () => getTournaments(params),
   });
 };
@@ -306,5 +318,42 @@ export const useGetTournamentById = (id: string) => {
   return useQuery({
     queryKey: ['tournament', id],
     queryFn: () => getTournamentById(id),
+  });
+};
+
+export const useUpdateProfile = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => updateProfile(formData),
+  }); 
+};
+
+//Compare Products
+
+export const useCompareProducts = () => {
+  return useMutation({
+    mutationFn: (id: string) => compareProducts(id),
+  });
+};
+
+export const useGetCompareProducts = () => {
+  return useQuery({
+    queryKey: ["compareProducts"],
+    queryFn: getCompareProducts,
+  });
+};
+
+
+//Recommend Product
+export const useRecommendProduct = () => {
+  return useMutation({
+    mutationFn: RecommendProduct,
+  });
+};
+
+//Current Offers
+export const useCurrentOffers = () => {
+  return useQuery({
+    queryKey: ["currentProducts"],
+    queryFn: CurrenOffers,
   });
 };

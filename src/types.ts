@@ -1,94 +1,99 @@
-import { Tournament } from './types';
 export interface ProductFormData {
-    name: string;
-    description?: string;
-    company?: string;
-    images: File[];
-    colors?: string;
-    stock: number;
-    price: number;
-    discounts?: string;
-    attributes?: string;
-    categoryIds: string;
-    type?: 'NEW' | 'SALE';
-    isFeatured?: boolean;
-    metaTitle: string;
-    metaDescription?: string;
-    metaKeywords?: string;
-    article: string;
-    sku?: string;
-    barcodeEAN?: string;
-    noStockMessage?: string;
-    relatedProducts?: string;
-    requireShipping?: boolean;
-    liscenseKey?: string;
-    data?: any;
-    
-  }
-  
-  export interface ResponseCategory {
-    name: string;
-    description: string;
-    image: File;
-    parentCategoryId?: string;
-    shop: boolean;
-    above: boolean;
-  }
-  
-  export interface FilterFormData {
-    name: string;
-    value: string[];
-    category: string;
-    data?: any;
-  }
+  name: string;
+  description?: string;
+  company?: string;
+  images: File[];
+  colors?: string;
+  stock: number;
+  price: number;
+  discounts?: string;
+  attributes?: string;
+  categoryIds: string;
+  type?: "NEW" | "SALE";
+  isFeatured?: boolean;
+  metaTitle: string;
+  metaDescription?: string;
+  metaKeywords?: string;
+  article: string;
+  sku?: string;
+  barcodeEAN?: string;
+  noStockMessage?: string;
+  relatedProducts?: string;
+  requireShipping?: boolean;
+  liscenseKey?: string;
+  data?: any;
+}
 
-  export interface Category {
-    _id: string;
-    name: string;
-    description: string;
-    image: string;
-    parentCategoryId: string; 
-    shop: boolean;
-    above: boolean;
-  }
+export interface ResponseCategory {
+  name: string;
+  description: string;
+  image: File;
+  parentCategoryId?: string;
+  shop: boolean;
+  above: boolean;
+}
 
-  export interface NewsletterTypes {
-    _id: string;
-    name: string;
-    email: string;
-    subscribedAt: string;
-    createdAt: string;
-    data?: NewsletterTypes[];
-  }
+export interface FilterFormData {
+  name: string;
+  value: string[];
+  category: string;
+  data?: any;
+}
 
+export interface Category {
+  _id: string;
+  name: string;
+  description: string;
+  image: string;
+  parentCategoryId: string;
+  shop: boolean;
+  above: boolean;
+}
+
+export interface NewsletterTypes {
+  _id: string;
+  name: string;
+  email: string;
+  subscribedAt: string;
+  createdAt: string;
+  data?: NewsletterTypes[];
+}
+
+export interface CategoryFormData {
+  name: string;
+  description: string;
+  image: File;
+  parentCategoryId: string;
+  shop: boolean;
+  above: boolean;
+}
 export interface ResetPasswordTypes {
   email: string;
   password: string;
   passwordResetToken: string;
 }
 
-
-  export interface ResponseTournament {
-    _id: string;
-    name: string;
-    title: string;
-    textForBanner: string;
-    metaTitle: string;
-    metaDescription: string;
-    metaKeywords: string;
-    article: string;
-    startingPrice: number;
-    image: string;
-    priceReduction: number;
-    numberOfPieces: number;
-    game: string;
-    start: string;
-    length: number;
-    fee: number;
-    numberOfParticipants: number;
-    vip: boolean;
-    resubmissions: number;
-  }
+export interface ResponseTournament {
+  _id: string;
+  name: string;
+  title: string;
+  textForBanner: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  article: string;
+  startingPrice: number;
+  image: string;
+  priceReduction: number;
+  numberOfPieces: number;
+  game: string;
+  start: string;
+  length: number;
+  fee: number;
+  numberOfParticipants: number;
+  vip: boolean;
+  resubmissions: number;
+}
 
 export interface Product {
   _id: string;
@@ -97,7 +102,7 @@ export interface Product {
   stock: number;
   images: string[];
   categoryIds: string[];
-  type: 'NEW' | 'SALE';
+  type: "NEW" | "SALE";
   data?: any;
 }
 
@@ -122,49 +127,22 @@ export interface CategoriesData {
   isLoading: boolean;
 }
 
+//comapre products
 
-
-export interface Tournament {
-  title: string;
-  productName: string;
-  startDate: string;
-  checkoutTime: string;
-  game: string;
-  duration: string;
-  rrp: string;
-  currentPrice: string;
-  priceDrop: string;
-  participationFee: string;
-  participants: string;
-  image: string;
-  alt: string;
-  rating: number;
-  reviews: number;
-  gameIcon: string;
-  gameName: string;
-  name: string;
-  participationPoints: number;
-  currentPriceValue: number;
-  countdown?: {
-    days: number;
-    hours: number;
-    minutes: number;
-    seconds: number;
-  };
-  status: string;
-}
-
-
-  // src/types/Tournament.ts
-
-export interface detailTournament {
+export interface ComapreProduct {
   article: string;
-  category: string[];
-  createdAt: string; 
-  fee: number;
-  game: string;
-  image: string; 
-  length: number; 
+  attributes: Record<string, string>;
+  barcodeEAN: string;
+  categoryIds: string[];
+  colors: string[];
+  company: string;
+  createdAt: string; // ISO date string
+  description: string;
+  discounts: Record<string, any>[]; // Adjust type based on discount structure
+  images: string[];
+  isActive: boolean;
+  isFeatured: boolean;
+  liscenseKey: string;
   metaDescription: string;
   metaKeywords: string;
   metaTitle: string;
@@ -183,6 +161,27 @@ export interface detailTournament {
   vip: boolean;
   __v: number; 
   _id: string; 
+}
+
+export interface Tournament {
+  _id: string;
+  name: string;
+  title: string;
+  textForBanner: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  article: string;
+  startingPrice: number;
+  image: string;
+  priceReduction: number;
+  numberOfPieces: number;
+  game: string;
+  start: string;
+  length: number;
+  fee: number;
+  numberOfParticipants: number;
+  vip: boolean;
 }
 
 export interface TournamentDetailResponse {
@@ -213,4 +212,5 @@ export interface TournamentDetailResponse {
 export interface TournamentResponse {
   success: boolean;
   data: Tournament[];
+  
 }

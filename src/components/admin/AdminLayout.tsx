@@ -31,10 +31,12 @@ import {
 import { useRouter } from "next/navigation"
 import { useLogout } from "@/hooks/api"
 import DynamicBreadcrumb from "@/components/DynamicBreadcrumb"
+import { useUserContext } from "@/context/userContext"
 
 const AdminLayout = ({children}: {children: React.ReactNode}) => {
   const router = useRouter()
   const { mutate: logout, isPending } = useLogout()
+  const {user}=useUserContext()
 
   const handleLogout = () => {
     logout(undefined, {
@@ -85,7 +87,7 @@ const AdminLayout = ({children}: {children: React.ReactNode}) => {
                   className="h-10 w-10 rounded-xl ring-2 ring-gray-100"
                 />
                 <div className="text-sm">
-                  <p className="font-medium text-gray-900">John Doe</p>
+                  <p className="font-medium text-gray-900">{user?.user?.name}</p>
                   <p className="text-gray-500">Admin</p>
                 </div>
               </div>
