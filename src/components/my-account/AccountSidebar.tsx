@@ -10,9 +10,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useUserContext } from "@/context/userContext";
+import { User, useUserContext } from "@/context/userContext";
+import Image from "next/image";
 
-const AccountSidebar = () => {
+const AccountSidebar = ({Userprofile}:{Userprofile:User}) => {
   const pathname = usePathname();
   const {user}=useUserContext()
 
@@ -60,10 +61,10 @@ const AccountSidebar = () => {
         {/* User Profile */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="w-32 h-32 rounded-full overflow-hidden mb-4 bg-gray-100 flex items-center justify-center">
-            <UserCircle className="w-16 h-16 text-gray-400" />
+            {Userprofile?.image ? <Image src={Userprofile?.image}   alt="avatar" width={100} height={100} /> : <UserCircle className="w-16 h-16 text-gray-400" />}
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">{user?.user?.username || user?.user?.name}</h2>
-          <p className="text-gray-500">{user?.user?.email}</p>
+          <h2 className="text-2xl font-bold text-gray-900">{Userprofile?.username || Userprofile?.data?.user?.name}</h2>
+          <p className="text-gray-500">{Userprofile?.email}</p>
         </div>
 
         {/* Navigation Links */}

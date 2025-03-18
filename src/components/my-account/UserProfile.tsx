@@ -16,14 +16,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import VipMembershipModal from "./VipMembershipModal";
 import CollectPointsModal from "./CollectPointsModal";
 import { useGetMyProfile, useUpdateProfile } from "@/hooks/api";
-import Loading from "@/app/loading";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import Image from "next/image";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUserContext } from "@/context/userContext";
+import {  useUserContext } from "@/context/userContext";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -44,7 +43,7 @@ const UserProfile = () => {
   const { register, handleSubmit, formState: { errors }, control, setValue, reset } = useForm({
     resolver: zodResolver(profileSchema)
   });
-
+ 
    const {data:myProfile,isLoading,refetch}=useGetMyProfile()
 
 
@@ -73,32 +72,19 @@ const UserProfile = () => {
    };
    
 
-   const onSubmit = async (data: z.infer<typeof profileSchema>) => {
+   const onSubmit = async (profileData: z.infer<typeof profileSchema>) => {
      const formData = new FormData();
-     Object.entries(data).forEach(([key, value]) => formData.append(key, value || ""));
-     await updateProfile(formData,{
-          onSuccess:(data:any)=>{
-            console.log(data,"userdata111")
-            toast.success("Profile updated successfully")
-            setUserData({
-              ...user,
-              username:data?.username,
-              name:data?.name,
-              email:data?.email,
-              image:data?.image,
-              salutation:data?.salutation,
-              title:data?.title,
-              lastName:data?.lastName,
-              firstName:data?.firstName,
-              street:data?.street,
-              zip:data?.zip,
-              location:data?.location,
-            });
-          },
-          onError:(error:any)=>{
-            toast.error(error.response.data.message || "Something went wrong")
-          }
-       }); 
+     Object.entries(profileData).forEach(([key, value]) => formData.append(key, value || ""));
+     await updateProfile(formData, {
+       onSuccess: () => {
+        refetch()
+
+          toast.success("Profile updated successfully");
+       },
+       onError: (error: any) => {
+         toast.error(error.response.data.message || "Something went wrong");
+       }
+     }); 
      
    };
 
@@ -119,6 +105,7 @@ const UserProfile = () => {
       });
     }
   }, [myProfile, reset]);
+
 
 
    return (
@@ -185,7 +172,7 @@ const UserProfile = () => {
 
           <div className="flex-1 space-y-6">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-semibold capitalize ">{myProfile?.data?.user?.name || "N/A"}</span>
+              <span className="text-xl font-semibold capitalize ">{ myProfile?.data?.user?.username || myProfile?.data?.user?.username || "N/A"}</span>
             </div>
 
             <div className="flex items-center gap-2 text-gray-600">
@@ -562,7 +549,8 @@ const UserProfile = () => {
         </Tabs>
       </div>
     </div>
-    </>}
+    </>
+    }
     </>
   );
 };

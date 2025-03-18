@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, X, LogOut } from "lucide-react";
+import { User, X, LogOut, Loader2 } from "lucide-react";
 import { FacebookIcon } from "../icons/icon";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {  useAuthApi, useLogout } from "@/hooks/api";
+import {  useAuthApi, useGetMyProfile, useLogout } from "@/hooks/api";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,6 +39,7 @@ const Login = () => {
   const {user,setUserData,logout}=useUserContext()
   const router=useRouter()
   const { mutate: login, isPending } = useAuthApi();
+  const {data:myProfile,isPending:isMyProfilePending}=useGetMyProfile()
   const {mutate:Userlogout}=useLogout()
   const {
     register,
@@ -108,13 +109,13 @@ const Login = () => {
   if (isRegisterOpen) {
     return <Register onBack={handleBackToLogin} />;
   }
-
+ 
 
   if (isLoggedIn) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-          <p className="text-lg font-medium text-card-foreground">{user?.user?.name}</p>
+          <p className="text-lg font-medium text-card-foreground">{ isMyProfilePending ? <Loader2 className="animate-spin" /> : myProfile?.data?.user?.username || myProfile?.data?.user?.name }</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-36 mt-6">
           <Link href="/my-account/my-profile">
