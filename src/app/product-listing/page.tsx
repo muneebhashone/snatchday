@@ -46,7 +46,6 @@ interface FilterParams {
   filters?: string;
 }
 
-
 const ProductListingPage = () => {
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
@@ -57,7 +56,9 @@ const ProductListingPage = () => {
     category: category as string,
   });
 
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string[]>
+  >({});
   const [priceRange, setPriceRange] = useState<number[]>([]);
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
@@ -66,21 +67,23 @@ const ProductListingPage = () => {
 
 
   const handleFilterChange = (filterName: string, value: string) => {
-    setSelectedFilters(prev => {
-        const newFilters = { ...prev };
-        
-        if (newFilters[filterName]?.includes(value)) {
-            // Remove the value if it's already selected
-            newFilters[filterName] = newFilters[filterName].filter(v => v !== value);
-            if (newFilters[filterName].length === 0) {
-                delete newFilters[filterName]; // Remove the filter if no values are left
-            }
-        } else {
-            // Add the value to the filter
-            newFilters[filterName] = [...(newFilters[filterName] || []), value];
+    setSelectedFilters((prev) => {
+      const newFilters = { ...prev };
+
+      if (newFilters[filterName]?.includes(value)) {
+        // Remove the value if it's already selected
+        newFilters[filterName] = newFilters[filterName].filter(
+          (v) => v !== value
+        );
+        if (newFilters[filterName].length === 0) {
+          delete newFilters[filterName]; // Remove the filter if no values are left
         }
-        
-        return newFilters;
+      } else {
+        // Add the value to the filter
+        newFilters[filterName] = [...(newFilters[filterName] || []), value];
+      }
+
+      return newFilters;
     });
   };
 
@@ -96,24 +99,24 @@ const ProductListingPage = () => {
     setPriceRange(range);
   };
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
 
   const handleSearch = (value: string) => {
     setSearchTerm(value);
   };
 
-  const attributesArray = Object.entries(selectedFilters).flatMap(([key, values]) =>
-    values.map(value => ({ [key]: value }))
+  const attributesArray = Object.entries(selectedFilters).flatMap(
+    ([key, values]) => values.map((value) => ({ [key]: value }))
   );
 
   const { data: productsData, isLoading } = useGetProducts({
     ...filters,
     ...(attributesArray.length > 0 && {
-        attributes: JSON.stringify(attributesArray)
+      attributes: JSON.stringify(attributesArray),
     }),
     ...(debouncedPriceRange.length === 2 && {
-        price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`
+      price: `[${debouncedPriceRange[0]},${debouncedPriceRange[1]}]`,
     }),
     ...(debouncedSearchTerm && { name: debouncedSearchTerm }),
   });
@@ -146,8 +149,8 @@ const ProductListingPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-10">
           <div className="col-span-1">
             <div className="mb-5 mt-4">
-              <Search 
-                placeholder="Search by name" 
+              <Search
+                placeholder="Search by name"
                 onSearch={handleSearch}
                 value={searchTerm}
               />
@@ -174,7 +177,11 @@ const ProductListingPage = () => {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <p className="text-card-foreground font-medium">Show</p>
-                  <Select onValueChange={(value) => setFilters(prev => ({ ...prev, limit: value }))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, limit: value }))
+                    }
+                  >
                     <SelectTrigger className="w-[100px] rounded-full">
                       <SelectValue placeholder={filters.limit} />
                     </SelectTrigger>
@@ -187,7 +194,11 @@ const ProductListingPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <p className="text-card-foreground font-medium">Sort by</p>
-                  <Select onValueChange={(value) => setFilters(prev => ({ ...prev, sort: value }))}>
+                  <Select
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, sort: value }))
+                    }
+                  >
                     <SelectTrigger className="w-[250px] rounded-full">
                       <SelectValue placeholder="Newest" />
                     </SelectTrigger>
