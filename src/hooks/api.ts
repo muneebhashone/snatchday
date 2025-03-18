@@ -85,7 +85,7 @@ export const useRegister = () => {
 export const useFilteredItems = (filters: Record<string, string>) => {
   return useQuery({
     queryKey: ['items', filters], // Dynamic query key based on filters
-    queryFn: () => filterItems(filters),
+    queryFn: () => useFilteredItems(filters),
     enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
   });
 };

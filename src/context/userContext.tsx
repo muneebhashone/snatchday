@@ -11,6 +11,12 @@ interface User {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  image:string;
+  username:string;
+  street:string;
+  zip:string;
+  location:string;
+  country:string;
 }
 
 

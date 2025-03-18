@@ -80,7 +80,7 @@ export default function ForgotPassword() {
         </form>
         <div className="flex justify-center">
           <Link
-            href="/admin/login"
+            href={`${isAdmin ? "/admin/login" : "/"}`}
             className="text-sm underline hover:text-orange-500 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
             prefetch={false}
           >

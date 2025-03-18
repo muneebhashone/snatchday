@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUserContext } from "@/context/userContext";
 
 const AccountSidebar = () => {
   const pathname = usePathname();
+  const {user}=useUserContext()
 
   const navigationLinks = [
     {
@@ -60,8 +62,8 @@ const AccountSidebar = () => {
           <div className="w-32 h-32 rounded-full overflow-hidden mb-4 bg-gray-100 flex items-center justify-center">
             <UserCircle className="w-16 h-16 text-gray-400" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Percy Reed</h2>
-          <p className="text-gray-500">john@gmail.com</p>
+          <h2 className="text-2xl font-bold text-gray-900">{user?.user?.username || user?.user?.name}</h2>
+          <p className="text-gray-500">{user?.user?.email}</p>
         </div>
 
         {/* Navigation Links */}
