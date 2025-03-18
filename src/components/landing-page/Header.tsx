@@ -49,7 +49,6 @@ interface SubCategory {
 
 const Header = () => {
   const pathname = usePathname();
-  const { user } = useUserContext();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

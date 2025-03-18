@@ -32,8 +32,9 @@ import {
   getCompareProducts,
   RecommendProduct,
   CurrenOffers,
+  updateProfile,
 } from "../lib/api";
-import { TournamentFormData } from "@/types/admin";
+import { TournamentFormData} from "@/types/admin";
 
 import {
   CategoryFormData,
@@ -96,13 +97,13 @@ export const useRegister = () => {
   });
 };
 
-export const useFilteredItems = (filters: Record<string, string>) => {
-  return useQuery({
-    queryKey: ["items", filters], // Dynamic query key based on filters
-    queryFn: () => filterItems(filters),
-    enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
-  });
-};
+// export const useFilteredItems = (filters: Record<string, string>) => {
+//   return useQuery({
+//     queryKey: ["items", filters], // Dynamic query key based on filters
+//     queryFn: () => filterItems(filters),
+//     enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
+//   });
+// };
 
 // export const useProducts = () => {
 //   return useQuery({
@@ -112,8 +113,8 @@ export const useFilteredItems = (filters: Record<string, string>) => {
 // };
 
 export const useCreateProduct = () => {
-  return useMutation<ProductFormData>({
-    mutationFn: createProduct,
+  return useMutation<ProductFormData, unknown, FormData>({
+    mutationFn: (formData: FormData) => createProduct(formData),
   });
 };
 
@@ -299,6 +300,12 @@ export const useGetTournaments = (params: TournamentParams) => {
   return useQuery({
     queryKey: ["tournaments", params],
     queryFn: () => getTournaments(params),
+  });
+};
+
+export const useUpdateProfile = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => updateProfile(formData),
   });
 };
 

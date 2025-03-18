@@ -1,3 +1,4 @@
+import { CategoryFormData } from '@/types';
 export interface ProductFormData {
   name: string;
   description?: string;
@@ -59,6 +60,14 @@ export interface NewsletterTypes {
   data?: NewsletterTypes[];
 }
 
+export interface CategoryFormData {
+  name: string;
+  description: string;
+  image: File;
+  parentCategoryId: string;
+  shop: boolean;
+  above: boolean;
+}
 export interface ResetPasswordTypes {
   email: string;
   password: string;
