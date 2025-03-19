@@ -207,20 +207,20 @@ export const resetPassword = async (data: ResetPasswordTypes) => {
 };
 
 export type TournamentParams = {
-  limit: string;
-  offset: string;
-  sort_attr: string;
-  sort: string;
-  name: string;
-  from: string;
-  until: string;
-  game: string;
-  fee: string;
-  vip: string;
-  product: string;
-  startingPrice: string;
-  category: string;
-  status: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  from?: string;
+  until?: string;
+  game?: string;
+  fee?: string;
+  vip?: string;
+  product?: string;
+  startingPrice?: string;
+  category?: string;
+  status?: string;
 };
 
 export const getTournaments = async (params: TournamentParams) => {
@@ -294,4 +294,9 @@ export const updateProfile = async (formData: FormData) => {
   return response.data;
 };
 
+
+export const participateTournament = async (id: string) => {
+  const response = await axiosInstance.patch(`/tournament/participate/${id}`);
+  return response.data;
+};
 

@@ -7,43 +7,85 @@ import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
 import questionmark from "@/app/images/qustionmark.png";
 import { ShareArrowIcon, TaxIcon } from "./icons/icon";
-import image1 from "@/app/images/lastSectionImage1.png";
-import image2 from "@/app/images/lastSectionImage2.png";
-import image3 from "@/app/images/lastSectionImage3.png";
+// import image1 from "@/app/images/lastSectionImage1.png";
+// import image2 from "@/app/images/lastSectionImage2.png";
+// import image3 from "@/app/images/lastSectionImage3.png";
 import { TournamentDetailResponse } from "@/types";
 import Loading from "@/app/loading";
 import { Loader2 } from "lucide-react";
+import { useGetProductById, useParticipateTournament } from "@/hooks/api";
+import CountdownDisplay from "./CountdownProps";
+import { calculateCountdown } from "@/lib/utils";
+import { toast } from "sonner";
+import { useUserContext } from "@/context/userContext";
+import Login from "@/components/auth/Login";
 
 
 
 
 
 const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: TournamentDetailResponse, isLoading: boolean  }) => {
-  //   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const images = [image2, image1, image3];
-  const time = [
-    {
-      timer: "24",
-      timerText: "Days",
-    },
-    {
-      timer: "48",
-      timerText: "Hours",
-    },
-    {
-      timer: "37",
-      timerText: "Minutes",
-    },
-    {
-      timer: "19",
-      timerText: "Seconds",
-    },
-  ];
+    const {data:product, isLoading:productLoading}=useGetProductById(tournamentData?.data?.article)
+    const [selectedImage, setSelectedImage] = useState(0);
+    const {user}=useUserContext()
+
+  const { mutate: participateTournament ,isPending} = useParticipateTournament();
+
+  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
+
+  const openLoginModal = () => {
+    setLoginModalOpen(true);
+  };
+
+  const closeLoginModal = () => {
+    setLoginModalOpen(false);
+  };
+
+  // const images = [image2, image1, image3];
+  // const time = [
+  //   {
+  //     timer: "24",
+  //     timerText: "Days",
+  //   },
+  //   {
+  //     timer: "48",
+  //     timerText: "Hours",
+  //   },
+  //   {
+  //     timer: "37",
+  //     timerText: "Minutes",
+  //   },
+  //   {
+  //     timer: "19",
+  //     timerText: "Seconds",
+  //   },
+  // ];
+
+
+  const handleParticipate = () => {
+    if (user) {
+      if (tournamentData?.data?._id) {
+        participateTournament(tournamentData?.data?._id, {
+          onSuccess: (data) => {
+            console.log(data,"data")
+            toast.success("Participation successful");
+          },
+          onError: (error: any) => {
+            console.error("Participation failed:", error);
+            toast.error(error?.message);
+          }
+        });
+      }
+    } else {
+      openLoginModal();
+    }
+  };
+  
+
+
   return (
     
        
-
 
 <div className="relative h-max">
       <Image
@@ -109,7 +151,7 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
               50<span className="text-primary">€</span> Gunstiger
             </h3> */}
               <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold text-primary">
-                Already Saved: {(tournamentData?.data?.numberOfParticipants || 0) * 5}€
+                Already Saved: {(tournamentData?.data?.numberOfParticipants > 0 ? (tournamentData?.data?.numberOfParticipants - 1) * 5 : 0)}€ 
               </h3>
             </div>
             <div className="flex gap-3 items-center justify-start">
@@ -160,15 +202,23 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
               }}
               className=" w-[285px] h-[83px] text-2xl font-bold flex items-center justify-between"
             >
-              <div className="ml-8 flex items-center gap-4">
-                <Image
-                  src={crown}
-                  width={45}
-                  height={45}
-                  alt="crown"
-                  className=""
-                />
-                Register
+              <div onClick={handleParticipate} className="ml-8 flex items-center gap-4">
+                
+                  <>
+                    {isPending ? "Registering..." : (
+                      <>
+                        <Image
+                          src={crown}
+                          width={45}
+                          height={45}
+                          alt="crown"
+                          className=""
+                        />
+                        {user ? <span>  Register</span> : <span   onClick={openLoginModal}> <Login type="TournamentRegister" /></span>}
+                      </>
+                    )}
+                  </>
+                
               </div>
               <Image src={questionmark} alt="" />
             </Button>
@@ -180,9 +230,12 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
         {/* {/ right side /} */}
         <div className="col-span-3 ml-10">
           <div className="flex flex-col">
+              {productLoading ? <div className="flex justify-center items-center h-screen">
+              <Loader2 className="animate-spin" />
+            </div> : <>
             <div className="bg-transparent p-8 h-[550px] w-[550px]">
               <Image
-                src={images[selectedImage]}
+                src={product?.data?.images[selectedImage]}
                 alt="Product"
                 width={500}
                 height={500}
@@ -190,7 +243,7 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
               />
             </div>
             <div className="flex gap-7 items-center justify-center">
-              {images.map((image, index) => (
+              {product?.data?.images?.map((image : string, index : number) => (
                 <div
                   key={index}
                   className={`flex items-center justify-center p-2 rounded-xl border w-[100px] h-[92px] cursor-pointer transition-all duration-300 ${selectedImage === index
@@ -208,38 +261,26 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
                   />
                 </div>
               ))}
-            </div>
+            
+              </div>
+            </>}
           </div>
           <div className="flex items-center justify-center gap-1 md:gap-4 relative z-10 mt-10">
-            {time?.map((item) => {
-              return (
-                <div
-                  key={item.timer}
-                  className="text-center flex flex-col items-center text-xs lg:text-lg "
-                >
-                  <div
-                    className={`bg-opacity-50 text-md sm:w-max lg:text-[45px] border px-2 lg:px-6 py-1 lg:py-4 mb-2 ${item.timerText === "Days" &&
-                      "border border-primary"
-                      }`}
-                  >
-                    <h1 className={`${item.timerText === "Days" &&
-                      "text-primary"}`}>{item.timer}</h1>
-                  </div>
-
-                  <p className="text-sm">{item.timerText}</p>
-                </div>
-              );
-            })}
+             <CountdownDisplay countdown={calculateCountdown(tournamentData?.data?.start)} />
           </div>
         </div>
+
        </>}
       </div>{" "}
+    
+  
     </div>
 
-      
+  
   
   
   );
 };
+
 
 export default TournamentDetailHero;

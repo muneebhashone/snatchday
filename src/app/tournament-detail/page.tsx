@@ -21,11 +21,18 @@ import image from '@/app/images/choosetournament.png'
 import image3 from '@/app/images/participateintournament.png'
 import image4 from '@/app/images/win.png'
 import { useSearchParams } from "next/navigation";
-import { useGetTournamentById } from "@/hooks/api";
+import { useGetTournamentById, useGetTournaments } from "@/hooks/api";
 import { TournamentDetailResponse } from "@/types";
 const TournamentDetailPage = () => {
   const id = useSearchParams().get('id');
   const { data: tournament ,isLoading} = useGetTournamentById(id) ;
+  
+  const {data:tournaments}=useGetTournaments({
+     limit:"1000",
+     offset:"0"
+  })
+
+  
   
 
 
@@ -242,7 +249,14 @@ const TournamentDetailPage = () => {
     },
   ];
 
+  // Filter out current tournament and past tournaments
+  const filteredNextTournaments = tournaments?.data?.filter(nextTournament => {
+    const now = new Date();
+    const tournamentDate = new Date(nextTournament.start);
+    return tournamentDate > now && nextTournament._id !== id; // Add ID check
+  });
 
+  console.log(filteredNextTournaments,"filteredNextTournaments")
   
   return (
     <ClientLayout>
@@ -254,7 +268,7 @@ const TournamentDetailPage = () => {
           style={{ backgroundImage: `url(${bg.src})` }}
           className="bg-cover bg-center bg-[##f9f9f9] relative py-16 pb-20 h-max border-b"
         >
-          <ProductDetailTheorySec />
+          {/* <ProductDetailTheorySec /> */}
         </div>
         {/* <div className="bg-cover bg-center relative h-[900px] w-[100%]">
           <Image
@@ -310,7 +324,7 @@ const TournamentDetailPage = () => {
               {nextTournaments.map((tournament, index) => (
                 <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2">
                   <NextTournamentCard
-                    productImage={tournament.productImage}
+                    productImage={tournament.image}
                     gameIcon={tournament.gameIcon}
                     title={tournament.title}
                     rating={tournament.rating}

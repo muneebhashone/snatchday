@@ -6,38 +6,53 @@ import { Separator } from "./ui/separator";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import { ShareIcon } from "./icons/icon";
-
+import gameIcon from "@/app/images/graphiccard.png"
 interface NextTournamentCardProps {
-  productImage: StaticImageData;
-  gameIcon: StaticImageData;
+  article: string;
+  category: string[];
+  createdAt: string;
+  end: string;
+  fee: number;
+  game: string;
+  image: string;
+  length: number;
+  metaDescription: string;
+  metaKeywords: string;
+  metaTitle: string;
+  name: string;
+  numberOfParticipants: number;
+  numberOfPieces: number;
+  participants: any[];
+  priceReduction: number;
+  resubmissions: number;
+  start: string;
+  startingPrice: number;
+  status: string;
+  textForBanner: string;
   title: string;
-  rating: number;
-  reviews: number;
-  gameName: string;
-  duration: string;
-  currentPrice: string;
-  participationPoints: number;
-  participationFee: string;
-  countdown: {
-    hours: number;
-    minutes: number;
-    seconds: number;
-    milliseconds: number;
-  };
+  tournamentId: string;
+  updatedAt: string;
+  vip: boolean;
+  __v: number;
+  _id: string;
 }
 
 const NextTournamentCard = ({
-  productImage,
-  gameIcon,
+  image,
   title,
-  rating,
-  reviews,
-  gameName,
-  duration,
-  currentPrice,
-  participationPoints,
-  participationFee,
-  countdown,
+  name,
+  game,
+  length,
+  startingPrice,
+  fee,
+  status,
+  textForBanner,
+  tournamentId,
+  updatedAt,
+  vip,
+  __v,
+  _id,
+ 
 }: NextTournamentCardProps) => {
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300 items-center">
@@ -45,8 +60,8 @@ const NextTournamentCard = ({
       <div className="relative border-gray-200 pt-10 xl:pt-16 px-8 flex flex-col items-center">
         <div>
           <Image
-            src={productImage}
-            alt="Tournament Product"
+            src={image}
+            alt={title}
             width={349}
             height={200}
             objectFit="cover"
@@ -56,7 +71,7 @@ const NextTournamentCard = ({
           <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
         </Button>
     
-        <div className="flex flex-wrap items-center justify-center 2xl:gap-1 gap-2 2xl:justify-between mt-3 xl:mt-12">
+        {/* <div className="flex flex-wrap items-center justify-center 2xl:gap-1 gap-2 2xl:justify-between mt-3 xl:mt-12">
           <div className="text-center text-[#1C1B1D]">
             <div className="border border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
               {countdown.hours}
@@ -85,7 +100,7 @@ const NextTournamentCard = ({
             <p className="text-xs hidden xl:block">Mili Seconds</p>
             <p className="text-xs xl:hidden block">Mili Sec</p>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Right Column - Tournament Info */}
@@ -102,7 +117,7 @@ const NextTournamentCard = ({
           </h2>
         </div>
         <div className="inline-block bg-primary text-white text-xs xl:text-sm px-2 sm:px-3 py-1 rounded-full ">
-          Bargain or Discount Tournament
+         {name}
         </div>
 
         {/* Product Title */}
@@ -111,9 +126,11 @@ const NextTournamentCard = ({
         {/* Rating */}
         <div className="flex items-center gap-1">
           <div className="flex text-primary text-lg xl:text-2xl">
-            {"★".repeat(rating)}
+            {/* {"★".repeat(rating)} */}
+            {"★".repeat(3)}
           </div>
-          <span className="text-sm text-gray-500">({reviews})</span>
+          {/* <span className="text-sm text-gray-500">({reviews})</span> */}
+          <span className="text-sm text-gray-500">({5})</span>
         </div>
 
         {/* Game Info */}
@@ -126,11 +143,11 @@ const NextTournamentCard = ({
             <div>
               <div className="flex items-center gap-1">
                 <p className="text-lg xl:text-lg font-bold">Game:</p>
-                <p className="text-primary text-lg xl:text-lg font-bold">{gameName}</p>
+                <p className="text-primary text-lg xl:text-lg font-bold">{game}</p>
               </div>
               <div className="flex w-max items-center gap-1 text-card-foreground ">
                 <p className="text-sm">Duration:</p>
-                <p className="text-sm">{duration}</p>
+                <p className="text-sm">{length || "N/A"}</p>
               </div>
             </div>
           </div>

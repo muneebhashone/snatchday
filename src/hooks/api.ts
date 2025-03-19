@@ -35,6 +35,7 @@ import {
   updateProfile,
   upComingTournament,
   getTournamentById,
+  participateTournament,
 } from "../lib/api";
 import { TournamentFormData} from "@/types/admin";
 
@@ -357,3 +358,12 @@ export const useCurrentOffers = () => {
     queryFn: CurrenOffers,
   });
 };
+
+
+export const useParticipateTournament = () => {
+  return useMutation({
+    mutationFn: (id: string) => participateTournament(id),
+  });
+};
+
+
