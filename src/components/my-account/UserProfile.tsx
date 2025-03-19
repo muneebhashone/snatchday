@@ -1,6 +1,6 @@
 "use client"
-import React from "react";
-import { Loader2, User } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Loader2, User, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -15,15 +15,100 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import VipMembershipModal from "./VipMembershipModal";
 import CollectPointsModal from "./CollectPointsModal";
-import { useGetMyProfile } from "@/hooks/api";
-import Loading from "@/app/loading";
+import { useGetMyProfile, useUpdateProfile } from "@/hooks/api";
 import { formatDate } from "@/lib/utils";
+import { toast } from "sonner";
+import Image from "next/image";
+import { z } from "zod";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {  useUserContext } from "@/context/userContext";
+
+const profileSchema = z.object({
+  salutation: z.string().nonempty("Salutation is required"),
+  title: z.string().optional(),
+  username: z.string().nonempty("Username is required"),
+  lastName: z.string().nonempty("Last name is required"),
+  firstName: z.string().nonempty("First name is required"),
+  street: z.string().optional(),
+  zip: z.string().optional(),
+  location: z.string().optional(),
+  country: z.string().optional(),
+  // federalState: z.string().nonempty("Federal state is required"),
+  email: z.string().email("Invalid email").nonempty("Email is required"),
+});
 
 const UserProfile = () => {
+  const {user ,setUserData}=useUserContext()
+  const { register, handleSubmit, formState: { errors }, control, setValue, reset } = useForm({
+    resolver: zodResolver(profileSchema)
+  });
+ 
+   const {data:myProfile,isLoading,refetch}=useGetMyProfile()
 
-   const {data:myProfile,isLoading}=useGetMyProfile()
-   console.log(myProfile?.data?.wallet?.discountPoints,"myProfile")
-  return (
+
+   const {mutateAsync:updateProfile,isPending}=useUpdateProfile()
+   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  
+  
+   const handleImageChange =  (event: React.ChangeEvent<HTMLInputElement>) => {
+     const file = event.target.files?.[0];
+     if (file) {
+       setSelectedImage(file);
+       const formData = new FormData();
+       formData.append("image", file);
+        updateProfile(formData, {
+         onSuccess: (data:any) => {
+          setUserData({...user,image:data?.image})
+
+           toast.success("Profile picture updated successfully");
+           refetch(); 
+         },
+         onError: (error: any) => {
+           toast.error(error.response.data.message || "Something went wrong");
+         }
+       });
+     }
+   };
+   
+
+   const onSubmit = async (profileData: z.infer<typeof profileSchema>) => {
+     const formData = new FormData();
+     Object.entries(profileData).forEach(([key, value]) => formData.append(key, value || ""));
+     await updateProfile(formData, {
+       onSuccess: () => {
+        refetch()
+
+          toast.success("Profile updated successfully");
+       },
+       onError: (error: any) => {
+         toast.error(error.response.data.message || "Something went wrong");
+       }
+     }); 
+     
+   };
+
+   useEffect(() => {
+    if (myProfile?.data?.user) {
+      reset({
+        salutation: myProfile.data.user.salutation,
+        title: myProfile.data.user.title,
+        username: myProfile.data.user.username || myProfile.data.user.name,
+        lastName: myProfile.data.user.lastName,
+        firstName: myProfile.data.user.firstName,
+        street: myProfile.data.user.street,
+        zip: myProfile.data.user.zip,
+        location: myProfile.data.user.location,
+        country: myProfile.data.user.country,
+        // federalState: myProfile.data.user.federalState,
+        email: myProfile.data.user.email,
+      });
+    }
+  }, [myProfile, reset]);
+
+
+
+   return (
   <>
     {isLoading ?
     <div className="flex items-center justify-center h-screen">
@@ -38,18 +123,56 @@ const UserProfile = () => {
         {/* Profile Information */}
         <div className="w-full flex items-start justify-between gap-12 p-6 bg-gray-50 rounded-xl">
           {/* Profile Image */}
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center relative">
             <div className="w-32 h-32 rounded-full overflow-hidden bg-white border-4 border-gray-100 shadow-sm flex items-center justify-center">
-              <User className="w-16 h-16 text-gray-400" />
+              {isPending ? (
+                <Loader2 className="animate-spin size-10" />
+              ) : myProfile?.data?.user?.image ? (
+                <Image 
+                  src={myProfile.data.user.image}
+                  alt="Profile" 
+                  className="w-full h-full object-cover" 
+                  width={128}
+                  height={128}
+                />
+              ) : selectedImage ? (
+                <>
+                  <Image 
+                    src={URL.createObjectURL(selectedImage)} 
+                    alt="Profile" 
+                    className="w-full h-full object-cover" 
+                    width={128}
+                    height={128}
+                  />
+                  <button
+                    className="absolute z-10 top-0 bg-orange-500 right-4 rounded-full p-1 shadow-md"
+                    onClick={() => setSelectedImage(null)}
+                  >
+                    <X className="size-4 text-white"/>
+                  </button>
+                </>
+              ) : (
+                <User className="w-16 h-16 text-gray-400" />
+              )}
             </div>
-            <button className="text-primary hover:text-primary mt-3 text-sm font-medium">
+            <button
+              className="text-primary hover:text-primary mt-3 text-sm font-medium"
+              onClick={() => document.getElementById('file-input')?.click()}
+            >
               Change Profile Picture
             </button>
+            <input
+              id="file-input"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
           </div>
 
           <div className="flex-1 space-y-6">
             <div className="flex items-center gap-2">
-              <span className="text-xl font-semibold capitalize ">{myProfile?.data?.user?.name || "N/A"}</span>
+              <span className="text-xl font-semibold capitalize ">{ myProfile?.data?.user?.username || myProfile?.data?.user?.username || "N/A"}</span>
             </div>
 
             <div className="flex items-center gap-2 text-gray-600">
@@ -277,25 +400,37 @@ const UserProfile = () => {
 
           {/* Profile Content */}
           <TabsContent value="profile" className="mt-6 mb-12">
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">Salutation *</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Mister" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="mr">Mister</SelectItem>
-                      <SelectItem value="mrs">Mrs</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Controller
+                    name="salutation"
+                    control={control}
+                    render={({ field }) => (
+                      <Select {...field} onValueChange={(value) => field.onChange(value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Salutation" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="mr">Mister</SelectItem>
+                          <SelectItem value="mrs">Mrs</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.salutation && <span className="text-red-500">{errors.salutation.message}</span>}
                 </div>
 
                 <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">Title</Label>
-                  <Select>
-                    <SelectTrigger>
+                <Controller
+                  name="title"
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field} onValueChange={(value) => field.onChange(value)}>
+                      <SelectTrigger>
                       <SelectValue placeholder="-- Please select --" />
                     </SelectTrigger>
                     <SelectContent>
@@ -303,45 +438,55 @@ const UserProfile = () => {
                       <SelectItem value="prof">Prof.</SelectItem>
                     </SelectContent>
                   </Select>
+                  )}
+                />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label className="text-foreground font-medium text-lg">Username *</Label>
-                <Input defaultValue="Tester" />
+                <Input {...register("username")}  />
+                {errors.username && <span className="text-red-500">{errors.username.message}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-foreground font-medium text-lg">Last name *</Label>
-                  <Input defaultValue="Test" />
-                </div>
+                
                 <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">First name *</Label>
-                  <Input defaultValue="Tester" />
+                  <Input {...register("firstName")}  />
+                  {errors.firstName && <span>{errors.firstName.message}</span>}
                 </div>
+                <div className="space-y-2">
+                <Label className="text-foreground font-medium text-lg">Last name *</Label>
+                <Input {...register("lastName")}  />
+                {errors.lastName && <span className="text-red-500">{errors.lastName.message}</span>}
               </div>
+              </div>
+            
 
               <div className="space-y-2">
                 <Label className="text-foreground font-medium text-lg">Street *</Label>
-                <Input defaultValue="Teststr.10" />
+                <Input {...register("street")}  />
+                {errors.street && <span className="text-red-500">{errors.street.message}</span>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">Zip code *</Label>
-                  <Input defaultValue="121671" />
+                  <Input {...register("zip")} defaultValue="" />Last
+                  {errors.zip && <span className="text-red-500">{errors.zip.message}</span>}
                 </div>
                 <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">Location *</Label>
-                  <Input defaultValue="Berlin" />
+                  <Input {...register("location")} defaultValue="Berlin" />
+                  {errors.location && <span className="text-red-500">{errors.location.message}</span>}
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">Country *</Label>
-                  <Select>
+                  <Select {...register("country")}>
                     <SelectTrigger>
                       <SelectValue placeholder="Germany" />
                     </SelectTrigger>
@@ -350,28 +495,37 @@ const UserProfile = () => {
                       <SelectItem value="at">Austria</SelectItem>
                     </SelectContent>
                   </Select>
+                  {errors.country && <span className="text-red-500">{errors.country.message}</span>}
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">Federal State *</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Berlin" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="berlin">Berlin</SelectItem>
-                      <SelectItem value="hamburg">Hamburg</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <Controller
+                    name="federalState"
+                    control={control}
+                    render={({ field }) => (
+                      <Select {...field} onValueChange={(value) => field.onChange(value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Federal State" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="berlin">Berlin</SelectItem>
+                          <SelectItem value="hamburg">Hamburg</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.federalState && <span className="text-red-500">{errors.federalState.message}</span>}
+                </div> */}
               </div>
 
               <div className="space-y-2">
                 <Label className="text-foreground font-medium text-lg">E-mail *</Label>
-                <Input defaultValue="testen@tester.de" />
+                <Input {...register("email")} defaultValue="testen@tester.de" />
+                {errors.email && <span className="text-red-500">{errors.email.message}</span>}
               </div>
 
               <div className="flex items-center space-x-2">
-                <Checkbox id="newsletter" />
+                <Checkbox id="newsletter"  />
                 <label htmlFor="newsletter" className="text-card-foreground font-medium">
                   Yes, I would like to be informed about tournaments, special
                   offers and news and subscribe to the newsletter
@@ -379,7 +533,7 @@ const UserProfile = () => {
               </div>
 
               <div className="flex items-center justify-end gap-4 mt-6">
-                <Button className="bg-primary">SAVE</Button>
+                <Button type="submit"  disabled={isPending} className="bg-primary"> {isPending ? "Saving..." : "SAVE"}</Button>
                 <Button variant="outline">CHANGE PASSWORD</Button>
                 <Button variant="destructive">DELETE ACCOUNT</Button>
               </div>
@@ -395,7 +549,8 @@ const UserProfile = () => {
         </Tabs>
       </div>
     </div>
-    </>}
+    </>
+    }
     </>
   );
 };

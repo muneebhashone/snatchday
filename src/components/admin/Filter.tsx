@@ -39,12 +39,10 @@ const Filter = () => {
   
   const filters = getFilters?.data
   const categories = getCategories?.data.categories || []
-  console.log("categories", categories)
-  console.log("filters[9]", filters)
+
 
   // Function to get category name by ID
   const getCategoryName = (categoryId: string) => {
-    console.log("categoryId", categoryId)
     const category = categories.find((cat: Category) => cat._id === categoryId)
     return category ? category.displayName || category.name : 'Unknown Category'
   }
@@ -89,7 +87,7 @@ const Filter = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filters?.map((filter: Filter) => (
+                {filters?.sort((a: Filter, b: Filter) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((filter: Filter) => (
                   <TableRow key={filter._id} className="hover:bg-gray-50">
                     <TableCell>{filter.name}</TableCell>
                     <TableCell>

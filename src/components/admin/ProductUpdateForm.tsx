@@ -153,7 +153,7 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
       price: product.price,
       discounts: product.discounts?.length > 0 ? product.discounts.map(d => `${d.amount}:${d.type}:${d.customerGroup}:${d.price}`).join(', ') : '',
       attributes: Object.keys(product.attributes || {}),
-      categoryIds: product.categoryIds[0] || '',
+      categoryIds: product.categoryIds[0]?._id || '',
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,

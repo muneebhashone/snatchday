@@ -3,78 +3,53 @@ import React, { useEffect } from "react";
 import Image, { StaticImageData } from "next/image";
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-interface ProductCardProps {
-  id?: string;
-  title: string;
-  price: string;
-  rating: number;
-  isNew?: boolean;
-  isSale?: boolean;
-  article: string;
-  attributes: Record<string, unknown>;
-  barcodeEAN: string;
-  categoryIds: Array<Record<string, unknown>>;
-  colors: string[];
-  company: string;
-  createdAt: string;
-  discounts: Array<Record<string, unknown>>;
-  description: string;
-  images: Array<string | StaticImageData>;
-  isActive: boolean;
-  isFeatured: boolean;
-  liscenseKey: string;
-  metaDescription: string;
-  metaKeywords: string;
-  metaTitle: string;
-  name: string;
-  noStockMessage: string;
-  relatedProducts: string[];
-  requireShipping: boolean;
-  sku: string;
-  stock: number;
-  type: string;
-}
+import { ICurrentOfferProduct } from "@/types";
 
 const roundToTwoDecimals = (value: number): number => {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 };
 
 const ProductCard = ({
-  id,
-  images,
-  title,
-  price,
-  rating,
-  isNew,
-  isSale,
-  name,
-  metaTitle,
   article,
   attributes,
-  discounts,
   barcodeEAN,
   categoryIds,
   colors,
   company,
   createdAt,
-  
-}: ProductCardProps) => {
+  description,
+  discounts,
+  images,
+  isActive,
+  isFeatured,
+  liscenseKey,
+  metaDescription,
+  metaKeywords,
+  metaTitle,
+  name,
+  noStockMessage,
+  price,
+  relatedProducts,
+  requireShipping,
+  sku,
+  stock,
+  type,
+  updatedAt,
+  __v,
+  _id,
+}: ICurrentOfferProduct) => {
   const router = useRouter();
-
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     // const urlTitle = encodeURIComponent(
     //   title.toLowerCase().replace(/\s+/g, "-")
     // );
-    router.push(`/product-listing/${id}`);
+    router.push(`/product-listing/${_id}`);
   };
 
-
-
   return (
-    <div className="bg-white rounded-3xl border border-gray-200 hover:border-primary p-6 relative group hover:shadow-lg transition-all duration-300">
+    <div className="bg-white rounded-3xl border border-gray-200 hover:border-primary p-6 relative group hover:shadow-lg transition-all duration-300 min-w-full h-[450px]">
       {/* VAT Badge */}
       <div className="absolute right-0 top-0 bg-gray-100 rounded rounded-tr-3xl px-3 py-1">
         <p className="text-sm text-gray-500">19%</p>
@@ -86,11 +61,11 @@ const ProductCard = ({
         {images?.length > 0 && (
           <Image
             src={images[0]}
-            alt={title}
+            alt={name}
             width={300}
             height={200}
-          className="w-full h-[200px] object-contain group-hover:scale-105 transition-transform duration-300"
-        />
+            className="w-full h-[200px] object-contain group-hover:scale-105 transition-transform duration-300"
+          />
         )}
       </div>
 
@@ -113,16 +88,20 @@ const ProductCard = ({
               {"★".repeat(3)}
               {"☆".repeat(5 - 3)}
             </div>
-            <span className="text-sm text-gray-500">({rating || 4})</span>
+            {/* <span className="text-sm text-gray-500">({rating || 4})</span> */}
+            <span className="text-sm text-gray-500">({4})</span>
           </div>
-           <div className="flex items-center gap-2">
-           <span className="text-2xl  text-gray-400 font-semibold line-through">
-            {price}€
-          </span>
-          <span className="text-2xl font-semibold text-card-foreground">
-            {discounts?.length > 0 ? roundToTwoDecimals(price - (price * discounts[0].price) / 100) : price}€
-          </span>
-           </div>
+          <div className="flex items-center gap-2">
+            <span className="text-2xl  text-gray-400 font-semibold line-through">
+              {price}€
+            </span>
+            <span className="text-2xl font-semibold text-card-foreground">
+              {discounts?.length > 0
+                ? roundToTwoDecimals(price - (price * discounts[0].price) / 100)
+                : price}
+              €
+            </span>
+          </div>
         </div>
 
         {/* Add to Cart Button */}
@@ -135,7 +114,7 @@ const ProductCard = ({
           </button>
 
           {/* Sale Badge */}
-          {isSale && (
+          {type === "SALE" && (
             <div>
               <span className="bg-orange-500 text-white px-4 py-1 rounded-full text-sm">
                 SALE
@@ -144,7 +123,7 @@ const ProductCard = ({
           )}
 
           {/* New Badge */}
-          {isNew && (
+          {type === "NEW" && (
             <div>
               <span className="bg-[#8D4CC4] text-white px-4 py-1 rounded-full text-sm">
                 NEW
