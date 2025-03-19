@@ -166,9 +166,10 @@ export const cancelTournament = async (id: string) => {
   return response.data;
 };  
 
-export const manageTournament = async (id: string, data: TournamentFormData) => {
+export const manageTournament = async ( data: TournamentFormData) => {
+  console.log(data, "data")
   const response = await axiosInstance.patch<ResponseTournament>(
-    `/tournament/manage/${id}`,
+    "/tournament/manage",
     data
   );
   return response.data;

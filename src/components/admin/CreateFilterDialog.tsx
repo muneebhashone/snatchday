@@ -41,7 +41,7 @@ interface Category {
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  value: z.array(z.string()).min(1, "At least one value is required"),
+  value: z.array(z.string().refine(val => !val.includes('-'), "Negative values are not allowed")).min(1, "At least one value is required"),
   category: z.string().min(1, "Category is required"),
 })
 

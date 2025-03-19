@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { CheckCircle, Trash } from "lucide-react";
 import { EditTournamentDialog } from "./EditTournamentDialog";
+import Link from "next/link";
 
 interface FilterParams {
   limit?: string;
@@ -205,7 +206,12 @@ const AllTournaments = () => {
           </Select>
         </div>
       </div>
-
+      <div className="flex justify-end">
+        <Button>
+          <Link href="/admin/tournament/create-tournament">Create Tournament</Link>
+        </Button>
+      </div>
+    
       <div className="rounded-md border">
         <Table>
           <TableHeader>
