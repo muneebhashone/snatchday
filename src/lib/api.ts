@@ -306,3 +306,8 @@ export const shareTournament = async (id: string,email:string) => {
 };
 
 
+export const getParticipants = async (id: string) => {
+  const response = await axiosInstance.get(`/tournament/participants/${id}`);
+  return response.data;
+};
+

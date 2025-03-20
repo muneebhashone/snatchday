@@ -37,6 +37,7 @@ import {
   getTournamentById,
   participateTournament,
   shareTournament,
+  getParticipants,
 } from "../lib/api";
 import { TournamentFormData} from "@/types/admin";
 
@@ -370,6 +371,14 @@ export const useParticipateTournament = () => {
 export const useShareTournament = () => {
   return useMutation({
     mutationFn: ({id,email}:{id:string,email:string}) => shareTournament(id,email),
+  });
+};
+
+
+export const useGetParticipants = (id: string) => {
+  return useQuery({
+    queryKey: ['participants', id],
+    queryFn: () => getParticipants(id),
   });
 };
 

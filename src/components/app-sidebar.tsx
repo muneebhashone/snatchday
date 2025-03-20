@@ -74,6 +74,7 @@ const navItems = [
         url: "/admin/tournament/create-tournament",
         icon: <Plus className="h-4 w-4" />,
       },
+
     ],
   },
   {

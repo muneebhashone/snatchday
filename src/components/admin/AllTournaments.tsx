@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle, Trash } from "lucide-react";
+import {  Users } from "lucide-react";
 import { EditTournamentDialog } from "./EditTournamentDialog";
 import Link from "next/link";
 
@@ -73,7 +73,6 @@ const AllTournaments = () => {
   const queryClient = useQueryClient();
 
   const { data: getTournaments, isLoading } = useGetTournaments(filters);
-  console.log(getTournaments);
   //   const { mutate: deleteTournament } = useDeleteTournament();
   const { mutate: cancelTournament } = useCancelTournament();
 
@@ -206,7 +205,7 @@ const AllTournaments = () => {
           </Select>
         </div>
       </div>
-      <div className="flex justify-end">
+      <div className="flex justify-end my-2">
         <Button>
           <Link href="/admin/tournament/create-tournament">Create Tournament</Link>
         </Button>
@@ -261,6 +260,7 @@ const AllTournaments = () => {
                   </span>
                 </TableCell>
                 <TableCell>
+                  <>
                   <div className="flex gap-2">
                     <EditTournamentDialog tournament={tournament} />
                     <Button
@@ -274,7 +274,14 @@ const AllTournaments = () => {
                         <p>Active</p>
                       )}
                     </Button>
+                    <Link href={`/admin/tournament/${tournament._id}`}>
+                    <Button variant="ghost" size="icon">
+                      <Users className="h-4 w-4" />
+                    </Button>
+                  </Link>
                   </div>
+                 
+                  </>
                 </TableCell>
               </TableRow>
             ))}

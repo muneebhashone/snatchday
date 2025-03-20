@@ -222,3 +222,20 @@ export interface CurrentOfferResponse {
   };
   isLoading?: boolean;
 }
+
+
+export interface User {
+  _id: string;
+  name: string;
+  username: string;
+  image: string;
+  email: string;
+  game: string;
+  startingPrice: number;
+  numberOfParticipants: number;
+  start: string;
+  length: number;
+  vip: boolean;
+
+}
+
