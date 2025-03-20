@@ -6,86 +6,82 @@ import { Separator } from "./ui/separator";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import { ShareIcon } from "./icons/icon";
-
+import gameIcon from "@/app/images/graphiccard.png"
+import NotFoundImage from "@/app/images/notfoundProduct.jpg"
+import { calculateCountdown } from "@/lib/utils";
+import { start } from "repl";
+import CountdownDisplay from "./CountdownProps";
 interface NextTournamentCardProps {
-  productImage: StaticImageData;
-  gameIcon: StaticImageData;
+  id: string;
+  article: string;
+  category: string[];
+  createdAt: string;
+  end: string;
+  fee: number | string;
+  game: string;
+  image: string;
+  length: number;
+  metaDescription: string;
+  metaKeywords: string;
+  metaTitle: string;
+  name: string;
+  numberOfParticipants: number;
+  numberOfPieces: number;
+  participants: any[];
+  priceReduction: number;
+  resubmissions: number;
+  start: string;
+  startingPrice: number;
+  status: string;
+  textForBanner: string;
   title: string;
-  rating: number;
-  reviews: number;
-  gameName: string;
-  duration: string;
-  currentPrice: string;
-  participationPoints: number;
-  participationFee: string;
-  countdown: {
-    hours: number;
-    minutes: number;
-    seconds: number;
-    milliseconds: number;
-  };
+  tournamentId: string;
+  updatedAt: string;
+  vip: boolean;
+  __v: number;
+  _id: string;
 }
 
 const NextTournamentCard = ({
-  productImage,
-  gameIcon,
+  id,
+  image,
   title,
-  rating,
-  reviews,
-  gameName,
-  duration,
-  currentPrice,
-  participationPoints,
-  participationFee,
-  countdown,
+  name,
+  game,
+  length,
+  startingPrice,
+  fee,
+  numberOfParticipants,
+  start,
+  status,
+  textForBanner,
+  tournamentId,
+  updatedAt,
+  vip,
+  __v,
+  _id,
+ 
 }: NextTournamentCardProps) => {
+
+  console.log(typeof fee,"fee")
+
+  const countDown=calculateCountdown(start)
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300 items-center">
       {/* Left Column - Product Image */}
       <div className="relative border-gray-200 pt-10 xl:pt-16 px-8 flex flex-col items-center">
         <div>
           <Image
-            src={productImage}
-            alt="Tournament Product"
+            src={image && (image.startsWith('/') || image.startsWith('http')) ? image : NotFoundImage.src}
+            alt={title}
             width={349}
             height={200}
             objectFit="cover"
+           
           />
         </div>
-        <Button className="flex items-center justify-center xl:hidden absolute top-3 right-3 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
-          <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
-        </Button>
-    
-        <div className="flex flex-wrap items-center justify-center 2xl:gap-1 gap-2 2xl:justify-between mt-3 xl:mt-12">
-          <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-              {countdown.hours}
-            </div>
-            <p className="text-xs hidden xl:block">Hours</p>
-            <p className="xl:hidden block text-xs">Hrs</p>
-          </div>
-          <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-              {countdown.minutes}
-            </div>
-            <p className="text-xs hidden xl:block">Minutes</p>
-            <p className="text-xs xl:hidden block">Min</p>
-          </div>
-          <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-              {countdown.seconds}
-            </div>
-            <p className="text-xs hidden xl:block">Seconds</p>
-            <p className="text-xs xl:hidden block">Sec</p>
-          </div>
-          <div className="text-center text-[#1C1B1D]">
-            <div className="border border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-              {countdown.milliseconds}
-            </div>
-            <p className="text-xs hidden xl:block">Mili Seconds</p>
-            <p className="text-xs xl:hidden block">Mili Sec</p>
-          </div>
-        </div>
+        <CountdownDisplay countdown={countDown} />  
+
       </div>
 
       {/* Right Column - Tournament Info */}
@@ -98,11 +94,11 @@ const NextTournamentCard = ({
         <div className="mb-3">
           <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-normal">
             Tournament ID :
-            <span className="text-primary"> 1234567890</span>
+            <span className="text-primary"> {tournamentId}</span>
           </h2>
         </div>
         <div className="inline-block bg-primary text-white text-xs xl:text-sm px-2 sm:px-3 py-1 rounded-full ">
-          Bargain or Discount Tournament
+         {name}
         </div>
 
         {/* Product Title */}
@@ -111,9 +107,11 @@ const NextTournamentCard = ({
         {/* Rating */}
         <div className="flex items-center gap-1">
           <div className="flex text-primary text-lg xl:text-2xl">
-            {"★".repeat(rating)}
+            {/* {"★".repeat(rating)} */}
+            {"★".repeat(3)}
           </div>
-          <span className="text-sm text-gray-500">({reviews})</span>
+          {/* <span className="text-sm text-gray-500">({reviews})</span> */}
+          <span className="text-sm text-gray-500">({5})</span>
         </div>
 
         {/* Game Info */}
@@ -122,22 +120,26 @@ const NextTournamentCard = ({
           <div className="flex items-center justify-start gap-2 w-max">
             <div className="w-12 xl:w-16 h-12 xl:h-16 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
               <Image className="" src={gameIcon} alt="Game Icon" width={40} height={37} />
+              <Button className="flex items-center justify-center xl:hidden absolute top-3 right-3 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
+          <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
+        </Button>
+           
             </div>
             <div>
               <div className="flex items-center gap-1">
                 <p className="text-lg xl:text-lg font-bold">Game:</p>
-                <p className="text-primary text-lg xl:text-lg font-bold">{gameName}</p>
+                <p className="text-primary text-lg xl:text-lg font-bold">{game}</p>
               </div>
               <div className="flex w-max items-center gap-1 text-card-foreground ">
                 <p className="text-sm">Duration:</p>
-                <p className="text-sm">{duration}</p>
+                <p className="text-sm">{length || "N/A"}</p>
               </div>
             </div>
           </div>
           {/* <div className="flex w-max xl:w-full justify-start xl:flex-col xl:gap-0 gap-3 xl:w-max"> */}
           <div className="flex w-max justify-start items-center xl:flex-col xl:gap-0 gap-3 ">
             <p className="text-sm sm:text-lg"> Participants</p>
-            <p className="text-sm sm:text-normal">0 To 200</p>
+            <p className="text-sm sm:text-normal">0 To {numberOfParticipants}</p>
           </div>
         </div>
 
@@ -151,7 +153,7 @@ const NextTournamentCard = ({
                   Current price:
                 </p>
                 <p className="text-primary text-xl font-bold">
-                  {currentPrice}€
+                  {startingPrice}€
                 </p>
               </div>
               <p className="text-xs sm:text-sm text-card-foreground">
@@ -167,7 +169,7 @@ const NextTournamentCard = ({
                   Participation fee:
                 </p>
                 <p className="text-card-foreground font-normal text-sm xl:text-normal">
-                  {participationPoints} points / {participationFee}€
+                  {fee} points / {fee}€
                 </p>
               </div>
             </div>
@@ -177,7 +179,7 @@ const NextTournamentCard = ({
         <div className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between">
           <div className="flex items-center gap-2">
             <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
-              <Link href="/tournament-detail">To The Tournament</Link>
+              <Link href={`/tournament-detail?id=${id}`}>To The Tournament</Link>
             </Button>
             <div className="bg-orange-200 rounded-full h-6 w-6 flex items-center justify-center">
             <ShareIcon/>

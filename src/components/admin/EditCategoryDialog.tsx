@@ -26,6 +26,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { useQueryClient } from "@tanstack/react-query"
+import Image from "next/image"
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 interface Category {
@@ -193,9 +195,11 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
                   </FormControl>
                   {previewUrl && (
                     <div className="relative aspect-square w-40 rounded-lg overflow-hidden border mt-2">
-                      <img
+                      <Image
                         src={previewUrl}
                         alt="Category preview"
+                        width={100}
+                        height={100}
                         className="object-cover w-full h-full"
                       />
                     </div>
@@ -212,7 +216,7 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
                 <FormItem>
                   <FormLabel>Parent Category ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Parent category ID (optional)" {...field} />
+                    <Input disabled placeholder="Parent category ID (optional)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

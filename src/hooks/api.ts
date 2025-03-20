@@ -33,6 +33,10 @@ import {
   RecommendProduct,
   CurrenOffers,
   updateProfile,
+  upComingTournament,
+  getTournamentById,
+  participateTournament,
+  shareTournament,
 } from "../lib/api";
 import { TournamentFormData} from "@/types/admin";
 
@@ -291,8 +295,7 @@ export const useCancelTournament = () => {
 
 export const useManageTournament = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) =>
-      manageTournament(id, data),
+    mutationFn: ({ data }: { data: TournamentFormData }) => manageTournament( data),
   });
 };
 
@@ -303,10 +306,26 @@ export const useGetTournaments = (params: TournamentParams) => {
   });
 };
 
+
+export const useUpComingTournament = () => {
+  return useQuery({
+    queryKey: ['upComingTournament'],
+    queryFn: () => upComingTournament(),
+  });
+};
+
+
+export const useGetTournamentById = (id: string) => {
+  return useQuery({
+    queryKey: ['tournament', id],
+    queryFn: () => getTournamentById(id),
+  });
+};
+
 export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (formData: FormData) => updateProfile(formData),
-  });
+  }); 
 };
 
 //Compare Products
@@ -324,6 +343,7 @@ export const useGetCompareProducts = () => {
   });
 };
 
+
 //Recommend Product
 export const useRecommendProduct = () => {
   return useMutation({
@@ -338,3 +358,18 @@ export const useCurrentOffers = () => {
     queryFn: CurrenOffers,
   });
 };
+
+
+export const useParticipateTournament = () => {
+  return useMutation({
+    mutationFn: (id: string) => participateTournament(id),
+  });
+};
+
+
+export const useShareTournament = () => {
+  return useMutation({
+    mutationFn: ({id,email}:{id:string,email:string}) => shareTournament(id,email),
+  });
+};
+

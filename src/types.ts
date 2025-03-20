@@ -1,4 +1,3 @@
-import { CategoryFormData } from '@/types';
 export interface ProductFormData {
   name: string;
   description?: string;
@@ -148,45 +147,78 @@ export interface ComapreProduct {
   metaKeywords: string;
   metaTitle: string;
   name: string;
-  noStockMessage: string;
-  price: number;
-  relatedProducts: string[];
-  requireShipping: boolean;
-  sku: string;
-  stock: number;
-  type: string;
-  updatedAt: string; // ISO date string
-  __v: number;
-  _id: string;
+  numberOfParticipants: number;
+  numberOfPieces: number;
+  participants: any[]; 
+  priceReduction: number;
+  resubmissions: number;
+  start: Date;
+  startingPrice: number;
+  status: string;
+  textForBanner: string;
+  title: string;
+  updatedAt: string; 
+  vip: boolean;
+  __v: number; 
+  _id: string; 
 }
 
-//current offers
-export interface ICurrentOfferProduct {
-  article: string;
-  attributes: Record<string, any>;
-  barcodeEAN: string;
-  categoryIds: string[];
-  colors: string[];
-  company: string;
-  createdAt: string;
-  description: string;
-  discounts: Record<string, any>[];
-  images: string[];
-  isActive: boolean;
-  isFeatured: boolean;
-  liscenseKey: string;
+export interface Tournament {
+  _id: string;
+  name: string;
+  title: string;
+  textForBanner: string;
+  metaTitle: string;
   metaDescription: string;
   metaKeywords: string;
-  metaTitle: string;
-  name: string;
-  noStockMessage: string;
-  price: number;
-  relatedProducts: string[];
-  requireShipping: boolean;
-  sku: string;
-  stock: number;
-  type: "NEW" | "SALE";
-  updatedAt: string;
-  __v: number;
-  _id: string;
+  article: string;
+  startingPrice: number;
+  image: string;
+  priceReduction: number;
+  numberOfPieces: number;
+  game: string;
+  start: string;
+  length: number;
+  fee: number;
+  numberOfParticipants: number;
+  vip: boolean;
+}
+
+export interface TournamentDetailResponse {
+  success: boolean;
+  data: {
+    _id: string;
+    name: string;
+    title: string;
+    textForBanner: string;
+    metaTitle: string;
+    metaDescription: string;
+    metaKeywords: string;
+    article: string;
+    startingPrice: number;
+    image: string;
+    priceReduction: number;
+    numberOfPieces: number;
+    game: string;
+    start: string;
+    length: number;
+    fee: number;
+    numberOfParticipants: number;
+    vip: boolean;
+    resubmissions: number;
+    end: string;
+  };
+}
+export interface TournamentResponse {
+  success: boolean;
+  data: Tournament[];
+  
+}
+
+export interface CurrentOfferResponse {
+  success: boolean;
+  data: {
+    products: ProductFormData[];
+  };
+  isLoading?: boolean;
 }

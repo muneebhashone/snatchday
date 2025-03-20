@@ -17,6 +17,8 @@ export default function Home() {
   const { scrollYProgress } = useScroll();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
   
+
+
   // Hide scroll indicator after user has scrolled a bit
   useEffect(() => {
     const handleScroll = () => {

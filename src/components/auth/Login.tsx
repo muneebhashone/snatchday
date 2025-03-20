@@ -27,12 +27,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUserContext } from "@/context/userContext";
 import { useRouter } from "next/navigation";
+import GredientButton from "../GredientButton";
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const Login = () => {
+interface LoginProps {
+  type?: string
+}
+
+const Login = ({ type }: LoginProps) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -141,7 +146,8 @@ const Login = () => {
     <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
       <DialogTrigger asChild>
         <div className="cursor-pointer">
-          <User className="h-6 w-6" />
+          {type === "TournamentRegister" ? "Login"   : type === "Register" ? <GredientButton buttonText="Register for free" onClick={()=>setIsRegisterOpen(true)}   /> : <User className="h-6 w-6" />}
+         
         </div>
       </DialogTrigger>
       <DialogContent className="max-w-[682px] p-0">

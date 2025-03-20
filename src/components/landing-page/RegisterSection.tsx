@@ -3,8 +3,10 @@ import GredientButton from "../GredientButton";
 import PrimaryHeading from "../PrimaryHeading";
 import Image from "next/image";
 import registersectionimage from "@/app/images/registersectionimage.png";
-
+import Login from "../auth/Login";
+import { useUserContext } from "@/context/userContext";
 const RegisterSection = () => {
+  const { user } = useUserContext();
   return (
     <section className="px-4 bg-[radial-gradient(ellipse_at_center,_#FDF9F7,_#F9F2EE)] h-max 2xl:h-[700px]">
       <div className="container max-w-[1920px] ml-auto">
@@ -26,7 +28,7 @@ const RegisterSection = () => {
               <span className="text-primary">Read More</span>
             </p>
             <div className="mt-10">
-              <GredientButton buttonText="Register For Free" />
+               {!user && <Login type="Register"  />}
             </div>
           </div>
 
