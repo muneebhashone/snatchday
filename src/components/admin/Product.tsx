@@ -92,8 +92,15 @@ export function Product() {
   
   
 
+  // const handleFilterChange = (key: keyof FilterParams, value: string) => {
+  //   setFilters(prev => ({ ...prev, [key]: value }));
+  // };
+
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
+    setFilters(prev => ({
+      ...prev,
+      [key]: key === 'price' ? value.split(',') : value,
+    }));
   };
 
 
@@ -104,7 +111,8 @@ export function Product() {
           <label className="text-sm font-medium mb-2 block">Price Range</label>
           <Input
             placeholder="min,max (e.g., 10,100)"
-            value={filters.price?.join(',')}
+            // value={filters.price?.join(',')}
+            value={Array.isArray(filters.price) ? filters.price.join(',') : ''}
             onChange={(e) => handleFilterChange('price', e.target.value)}
           />
         </div>

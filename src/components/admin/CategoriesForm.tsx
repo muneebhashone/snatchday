@@ -32,9 +32,7 @@ import { useQueryClient } from "@tanstack/react-query"
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
-  image: z.instanceof(File).refine((file) => file.size > 0, {
-    message: "Image file is required",
-  }),
+  image: z.custom<File>((v) => v instanceof File, "Please upload an image"),
   parentCategoryId: z.string().optional(),
   shop: z.boolean(),
   above: z.boolean(),
@@ -71,8 +69,8 @@ export default function CategoriesForm() {
       const url = URL.createObjectURL(file)
       setPreviewUrl(url)
       
-      // Update form
-      form.setValue('image', file)
+      // Update form with the File object
+      form.setValue('image', file, { shouldValidate: true })
     }
   }
 
@@ -82,19 +80,12 @@ export default function CategoriesForm() {
 
       // Append all form fields to FormData
       Object.entries(values).forEach(([key, value]) => {
-        if (key === 'image') {
-          const file = value as File
-          if (file) {
-            formData.append('image', file)
-          } else {
-            console.error("Image file is not available")
-          }
+        if (key === 'image' && value instanceof File) {
+          formData.append('image', value)
         } else if (value !== undefined && value !== null) {
           formData.append(key, value.toString())
         }
       })
-
-   
 
       createCategory(formData, {
         onSuccess: () => {

@@ -295,8 +295,7 @@ export const useCancelTournament = () => {
 
 export const useManageTournament = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) =>
-      manageTournament(id, data),
+    mutationFn: ({ data }: { data: TournamentFormData }) => manageTournament( data),
   });
 };
 

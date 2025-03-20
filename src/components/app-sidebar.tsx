@@ -69,11 +69,11 @@ const navItems = [
         url: "/admin/tournament",
         icon: <List className="h-4 w-4" />,
       },
-      // {
-      //   title: "Create Tournament",
-      //   url: "/admin/tournament/create",
-      //   icon: <Plus className="h-4 w-4" />,
-      // },
+      {
+        title: "Create Tournament",
+        url: "/admin/tournament/create-tournament",
+        icon: <Plus className="h-4 w-4" />,
+      },
     ],
   },
   {
