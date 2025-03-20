@@ -9,7 +9,6 @@ const page = () => {
      const {data:participants,isLoading} = useGetParticipants(id as string)
   return (
    <AdminLayout>
-    <h1>Tournament Details</h1>
     <Participants data={participants?.data} isLoading={isLoading} />
    </AdminLayout>
   )
