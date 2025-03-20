@@ -177,7 +177,7 @@ export const useUpdateFilter = () => {
   });
 };
 
-interface ProductFilters {
+export interface ProductFilters {
   price?: string[];
   limit?: string;
   offset?: string;
