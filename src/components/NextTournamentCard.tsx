@@ -102,7 +102,7 @@ const NextTournamentCard = ({
         </div>
 
         {/* Product Title */}
-        <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D]">{title}</p>
+        <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D]">{name}</p>
 
         {/* Rating */}
         <div className="flex items-center gap-1">

@@ -30,10 +30,11 @@ import { useSearchParams } from "next/navigation";
 import {
   useCurrentOffers,
   useGetTournamentById,
-  useGetTournaments,
+  useUpComingTournament,
 } from "@/hooks/api";
 import { CurrentOfferResponse } from "@/types";
 import { useUserContext } from "@/context/userContext";
+import { Loader2 } from "lucide-react";
 
 const TournamentDetailPage = () => {
   const id = useSearchParams().get("id");
@@ -41,12 +42,9 @@ const TournamentDetailPage = () => {
   const { data: tournament, isLoading,refetch:refetchTournament } = useGetTournamentById(id);
   const { data: currentOffers, isLoading: isLoadingCurrentOffers } =
     useCurrentOffers();
-  const products: CurrentOfferResponse = currentOffers?.data.products;
+  const offerproducts: CurrentOfferResponse = currentOffers?.data.products;
 
-  const { data: tournaments } = useGetTournaments({
-    limit: "1000",
-    offset: "0",
-  });
+  const { data: tournaments, isLoading: isUpComingTournamentLoading } = useUpComingTournament();
 
 const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id);
   // const displayProducts = [
@@ -265,9 +263,7 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
   // Filter out current tournament and past tournaments
   const filteredNextTournaments = tournaments?.data?.filter(
     (nextTournament) => {
-      const now = new Date();
-      const tournamentDate = new Date(nextTournament.start);
-      return tournamentDate > now && nextTournament._id !== id; // Add ID check
+      return nextTournament._id !== id; // Add ID check
     }
   );
 
@@ -336,7 +332,11 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
               Tournaments
             </span>
           </h2>
-
+         {isUpComingTournamentLoading ? (
+          <div className="text-center text-gray-500 flex justify-center items-center h-full">
+            <Loader2 className="w-10 h-10 animate-spin" />
+          </div>
+         ) : (
           <Carousel
             opts={{
               align: "start",
@@ -371,6 +371,7 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
             <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-8" />
             <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-8" />
           </Carousel>
+        )}
         </div>
         <div>
           <div className="px-4 md:px-12 py-20 bg-[#F9F9F9]">
@@ -384,6 +385,11 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
             </div>
 
             <div className="max-w-[1920px] mx-auto mt-10">
+              {isLoadingCurrentOffers ? (
+                <div className="text-center text-gray-500 flex justify-center items-center h-full">
+                  <Loader2 className="w-10 h-10 animate-spin" />
+                </div>
+              ) : (
               <Carousel
                 opts={{
                   align: "start",
@@ -394,7 +400,7 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
                 className="w-full relative"
               >
                 <CarouselContent className="-ml-2 md:-ml-4">
-                  {products?.map((product, index) => (
+                  {offerproducts?.map((product, index) => (
                     <CarouselItem
                       key={index}
                       className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
@@ -406,6 +412,7 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
                 <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
                 <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
               </Carousel>
+              )}
             </div>
           </div>
         </div>
