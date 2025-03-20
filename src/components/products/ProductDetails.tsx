@@ -122,7 +122,7 @@ const ProductDetails = ({
   const roundToTwoDecimals = (value: number): number => {
     return Math.round(value * 100) / 100;
   };
-  const productExist = compareProducts?.data.products.some(
+  const productExist = compareProducts?.data?.products?.some(
     (pro) => pro._id === params.id
   );
 

@@ -266,7 +266,7 @@ export const RecommendProduct = async (data: IRecommendProduct) => {
 };
 
 //Current Offers
-export const CurrenOffers = async () => {
+export const CurrenOffers= async () => {
   const response = await axiosInstance.get("/product/?currentOffer=true");
   return response.data;
 };
@@ -299,4 +299,12 @@ export const participateTournament = async (id: string) => {
   const response = await axiosInstance.patch(`/tournament/participate/${id}`);
   return response.data;
 };
+
+
+export const shareTournament = async (id: string,email:string) => {
+  
+  const response = await axiosInstance.post(`/tournament/share/${id}`,{email});
+  return response.data;
+};
+
 

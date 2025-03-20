@@ -13,25 +13,26 @@ import { ShareArrowIcon, TaxIcon } from "./icons/icon";
 import { TournamentDetailResponse } from "@/types";
 import Loading from "@/app/loading";
 import { Loader2 } from "lucide-react";
-import { useGetProductById, useParticipateTournament } from "@/hooks/api";
+import { useGetProductById, useParticipateTournament, useShareTournament } from "@/hooks/api";
 import CountdownDisplay from "./CountdownProps";
 import { calculateCountdown } from "@/lib/utils";
 import { toast } from "sonner";
 import { useUserContext } from "@/context/userContext";
 import Login from "@/components/auth/Login";
+import { ShareTournamentModal } from "@/components/ShareTournamentModal";
 
 
 
 
 
-const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: TournamentDetailResponse, isLoading: boolean  }) => {
+const TournamentDetailHero = ({ tournamentData, isLoading ,hasParticipated,refetchTournament}: { tournamentData: TournamentDetailResponse, isLoading: boolean ,hasParticipated:boolean,refetchTournament:()=>void }) => {
     const {data:product, isLoading:productLoading}=useGetProductById(tournamentData?.data?.article)
     const [selectedImage, setSelectedImage] = useState(0);
     const {user}=useUserContext()
-
   const { mutate: participateTournament ,isPending} = useParticipateTournament();
-
+ const { mutate: shareTournament ,isPending:isSharePending} = useShareTournament();
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
 
   const openLoginModal = () => {
     setLoginModalOpen(true);
@@ -66,9 +67,9 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
     if (user) {
       if (tournamentData?.data?._id) {
         participateTournament(tournamentData?.data?._id, {
-          onSuccess: (data) => {
-            console.log(data,"data")
-            toast.success("Participation successful");
+          onSuccess: () => {
+            toast.success("Participated successfully");
+            refetchTournament()
           },
           onError: (error: any) => {
             console.error("Participation failed:", error);
@@ -80,6 +81,19 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
       openLoginModal();
     }
   };
+
+  // const handleShare = () => {
+  //   if (user) {
+  //     shareTournament({id:tournamentData?.data?._id,email:user.email}, {
+  //       onSuccess: () => {
+  //         toast.success("Tournament shared successfully");  
+  //       },
+  //       onError: (error: any) => {
+  //         console.error("Sharing failed:", error);
+  //         toast.error(error?.message);
+  //       }
+  //     });
+  //   }
   
 
 
@@ -202,11 +216,12 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
               }}
               className=" w-[285px] h-[83px] text-2xl font-bold flex items-center justify-between"
             >
-              <div onClick={handleParticipate} className="ml-8 flex items-center gap-4">
+              <div onClick={hasParticipated ? null : handleParticipate} className="ml-8 flex items-center gap-4">
                 
                   <>
                     {isPending ? "Registering..." : (
                       <>
+                      {hasParticipated ? <span>Participated</span> : <>
                         <Image
                           src={crown}
                           width={45}
@@ -214,15 +229,20 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
                           alt="crown"
                           className=""
                         />
-                        {user ? <span>  Register</span> : <span   onClick={openLoginModal}> <Login type="TournamentRegister" /></span>}
+                        
+                          {user ? <span>  Register</span> : <span   onClick={openLoginModal}> <Login type="TournamentRegister" /></span>}
+                        </>}
                       </>
                     )}
                   </>
                 
               </div>
-              <Image src={questionmark} alt="" />
+              {hasParticipated ? "": <Image src={questionmark} alt="" />}
             </Button>
-            <div className="text-gray-300 py-7 px-6 rounded-full shadow-[3px_3px_8px_#BFB3CA]">
+            <div 
+              className="text-gray-300 py-7 px-6 rounded-full shadow-[3px_3px_8px_#BFB3CA] cursor-pointer"
+              onClick={() => setShareModalOpen(true)}
+            >
               <ShareArrowIcon />
             </div>
           </div>
@@ -272,10 +292,16 @@ const TournamentDetailHero = ({ tournamentData, isLoading }: { tournamentData: T
 
        </>}
       </div>{" "}
-    
+
+      <ShareTournamentModal
+      tournamentId={tournamentData?.data?._id}
+      open={isShareModalOpen}
+      onClose={() => setShareModalOpen(false)}
+    />
   
     </div>
 
+   
   
   
   

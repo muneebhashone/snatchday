@@ -214,3 +214,11 @@ export interface TournamentResponse {
   data: Tournament[];
   
 }
+
+export interface CurrentOfferResponse {
+  success: boolean;
+  data: {
+    products: ProductFormData[];
+  };
+  isLoading?: boolean;
+}

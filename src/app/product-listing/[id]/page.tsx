@@ -34,13 +34,18 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Loader from "@/components/Loader";
-import { useGetProductById } from "@/hooks/api";
+import { useGetProductById, useGetTournaments } from "@/hooks/api";
 import { useParams } from "next/navigation";
 
 const ProductContent = () => {
   const params = useParams();
   const id = params.id 
   const {data: productData, isLoading} = useGetProductById(id as string);
+  const { data: tournaments } = useGetTournaments({
+    limit: "1000",
+    offset: "0",
+  });
+
 
   const productData1  = {
     title: `Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27) - 4710886045649`,
@@ -226,6 +231,16 @@ const ProductContent = () => {
   ];
   const [openModal, setopenModal] = useState(false);
 
+
+
+  const filteredNextTournaments = tournaments?.data?.filter(
+    (nextTournament) => {
+      const now = new Date();
+      const tournamentDate = new Date(nextTournament.start);
+      return tournamentDate > now && nextTournament._id !== id; // Add ID check
+    }
+  );
+
   // <div className="relative">
   {
     /* <div className="text-lg font-semibold absolute top-[60vh] right-0 mr-2">
@@ -310,20 +325,25 @@ const ProductContent = () => {
             className="w-full relative"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
-              {nextTournaments.map((tournament, index) => (
+              {filteredNextTournaments?.map((tournament, index) => (
                 <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2">
-                  <NextTournamentCard
-                    productImage={tournament.productImage}
-                    gameIcon={tournament.gameIcon}
+                   <NextTournamentCard
+                    id={tournament._id}
+                    image={tournament.image}
                     title={tournament.title}
-                    rating={tournament.rating}
-                    reviews={tournament.reviews}
-                    gameName={tournament.gameName}
-                    duration={tournament.duration}
-                    currentPrice={tournament.currentPrice}
-                    participationPoints={tournament.participationPoints}
-                    participationFee={tournament.participationFee}
-                    countdown={tournament.countdown}
+                    name={tournament.name}
+                    game={tournament.game}
+                    length={tournament.length}
+                    startingPrice={tournament.startingPrice}
+                    fee={tournament.fee}
+                    start={tournament.start}
+                    numberOfParticipants={tournament.numberOfParticipants}
+                    status={tournament.status}
+                    textForBanner={tournament.textForBanner}
+                    tournamentId={"23456722"}
+                    updatedAt={tournament.updatedAt}
+                    vip={tournament.vip}
+                    __v={tournament.__v}
                   />
                 </CarouselItem>
               ))}
@@ -341,7 +361,7 @@ const ProductContent = () => {
               </span>
             </h2>
           </div>
-
+          {productData?.data?.relatedProducts?.length > 0 ? (
           <Carousel
             opts={{
               align: "start",
@@ -350,7 +370,7 @@ const ProductContent = () => {
             className="w-full max-w-[1920px] mx-auto px-12"
           >
             <CarouselContent>
-              {displayProducts.map((product, index) => (
+              {productData?.data?.relatedProducts?.map((product, index) => (
                 <CarouselItem
                   key={index}
                   className="md:basis-1/2 lg:basis-1/4 xl:basis-1/5"
@@ -362,6 +382,11 @@ const ProductContent = () => {
             <CarouselPrevious className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
             <CarouselNext className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
           </Carousel>
+          ) : (
+            <div className="text-center text-gray-500">
+              similar products not found
+            </div>
+          )}
         </div>
       </div>
       <div className="pb-60">

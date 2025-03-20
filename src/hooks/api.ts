@@ -36,6 +36,7 @@ import {
   upComingTournament,
   getTournamentById,
   participateTournament,
+  shareTournament,
 } from "../lib/api";
 import { TournamentFormData} from "@/types/admin";
 
@@ -366,4 +367,10 @@ export const useParticipateTournament = () => {
   });
 };
 
+
+export const useShareTournament = () => {
+  return useMutation({
+    mutationFn: ({id,email}:{id:string,email:string}) => shareTournament(id,email),
+  });
+};
 
