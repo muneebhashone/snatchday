@@ -28,6 +28,7 @@ import { useUpComingTournament } from "@/hooks/api";
 import { TournamentResponse } from "@/types";
 import CountdownDisplay from "../CountdownProps";
 import { calculateCountdown } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 const tournaments = [
   {
     title: "Bargain or Discount Tournament",
@@ -120,7 +121,7 @@ const HeroSection = () => {
   const [key, setKey] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const { data: upComingTournament } = useUpComingTournament();
+  const { data: upComingTournament,isLoading:isUpComingTournamentLoading } = useUpComingTournament();
 
   console.log(upComingTournament, "upComingTournament");
   // Set isLoaded to true after component mounts
@@ -296,11 +297,16 @@ const HeroSection = () => {
   
 
   return (
-    <motion.section 
-      className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10"
-      initial="hidden"
-      animate={isLoaded ? "visible" : "hidden"}
-      variants={pageEntranceVariants}
+    isUpComingTournamentLoading ? (
+      <div className="my-40  flex items-center justify-center">
+          <Loader2 className="animate-spin size-18" />
+      </div>
+    ) : (
+      <motion.section 
+        className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10"
+        initial="hidden"
+        animate={isLoaded ? "visible" : "hidden"}
+        variants={pageEntranceVariants}
     >
       {/* Background Image with animation */}
       <motion.div
@@ -322,7 +328,7 @@ const HeroSection = () => {
       {/* Floating Images */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="relative w-full h-full">
-          {images.map((image, index) => (
+          {images?.map((image, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, scale: 0 }}
@@ -553,6 +559,7 @@ const HeroSection = () => {
       </div>
       <PermotionalSection />
     </motion.section>
+    )
   );
 };
 
