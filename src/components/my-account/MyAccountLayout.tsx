@@ -5,9 +5,11 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 import tournament from "@/app/images/tournament.png";
 import Image from "next/image";
 import AccountSidebar from "@/components/my-account/AccountSidebar";
+import { useGetMyProfile } from "@/hooks/api";
 
 
 const MyAccountLayout = ({ children }: { children: React.ReactNode }) => {
+  const {data:myProfile}=useGetMyProfile()
   return (
     <ClientLayout>
       <div className="container max-w-[1920px] mx-auto px-4 py-28">
@@ -21,7 +23,7 @@ const MyAccountLayout = ({ children }: { children: React.ReactNode }) => {
             unoptimized
           />
 
-          <AccountSidebar />
+          <AccountSidebar Userprofile={myProfile?.data?.user} />
 
           {/* Main Content */}
           <div className="lg:col-span-9 rounded-3xl relative bg-white shadow-xl mb-28">

@@ -17,7 +17,7 @@ export function CreateCategoryDialog() {
          Add Category
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl">
+      <DialogContent className="max-w-4xl max-h-[70vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Category</DialogTitle>
           <DialogDescription>

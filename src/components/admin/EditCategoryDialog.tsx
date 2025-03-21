@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Edit } from "lucide-react"
 import { useState } from "react"
-import { useUpdateCategory } from "@/hooks/api"
+import { useGetCategories, useGetCategoryById, useUpdateCategory } from "@/hooks/api"
 import { toast } from "sonner"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -26,6 +26,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { useQueryClient } from "@tanstack/react-query"
+import Image from "next/image"
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 interface Category {
   _id: string;
@@ -61,6 +64,12 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
   const [previewUrl, setPreviewUrl] = useState<string>(category.image)
   const { mutate: updateCategory } = useUpdateCategory()
   const queryClient = useQueryClient()
+
+
+  const { data: getCategories } = useGetCategories()
+  const categories = getCategories?.data?.categories
+
+  console.log(category,"category")
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -186,9 +195,11 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
                   </FormControl>
                   {previewUrl && (
                     <div className="relative aspect-square w-40 rounded-lg overflow-hidden border mt-2">
-                      <img
+                      <Image
                         src={previewUrl}
                         alt="Category preview"
+                        width={100}
+                        height={100}
                         className="object-cover w-full h-full"
                       />
                     </div>
@@ -198,19 +209,45 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
               )}
             />
 
-            <FormField
+            {/* <FormField
               control={form.control}
               name="parentCategoryId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Parent Category ID</FormLabel>
                   <FormControl>
-                    <Input placeholder="Parent category ID (optional)" {...field} />
+                    <Input disabled placeholder="Parent category ID (optional)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
+            <FormField
+            control={form.control}
+            name="parentCategoryId"
+            defaultValue={category.parentCategory}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Parent Category ID</FormLabel>
+                <FormControl>
+                  {/* <Input placeholder="Parent category ID (optional)" {...field} /> */}
+                  <Select onValueChange={field.onChange} defaultValue={category.parentCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select parent category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category: Category) => (
+                        <SelectItem key={category._id} value={category._id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
             <FormField
               control={form.control}

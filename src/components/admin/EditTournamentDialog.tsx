@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Edit } from "lucide-react";
-import { useManageTournament } from "@/hooks/api";
+import { useGetTournaments, useManageTournament } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
 const formSchema = z.object({
   id: z.string().min(1, "ID is required"),
@@ -64,6 +64,7 @@ const formSchema = z.object({
     .min(1, "Number of pieces must be at least 1"),
   game: z.string().min(1, "Game must be selected"),
   start: z.string().min(1, "Start date must be selected"),
+  end: z.string().min(1, "End date must be selected"),
   length: z.coerce.number().min(1, "Length must be at least 1"),
   fee: z.coerce.number().min(0, "Fee must be positive"),
   numberOfParticipants: z.coerce
@@ -74,7 +75,7 @@ const formSchema = z.object({
 });
 
 interface Tournament {
-  id: string;
+  _id: string;
   name: string;
   title: string;
   textForBanner: string;
@@ -87,6 +88,7 @@ interface Tournament {
   numberOfPieces: number;
   game: string;
   start: string;
+  end: string;
   length: number;
   fee: number;
   numberOfParticipants: number;
@@ -101,7 +103,7 @@ export function EditTournamentDialog({
   tournament: Tournament;
 }) {
   const { mutate: manageTournament } = useManageTournament();
-//   console.log(tournament, "tournament");
+ 
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -121,6 +123,7 @@ export function EditTournamentDialog({
       numberOfPieces: tournament.numberOfPieces,
       game: tournament.game,
       start: tournament.start,
+      end: tournament.end,
       length: tournament.length,
       fee: tournament.fee,
       numberOfParticipants: tournament.numberOfParticipants,
@@ -130,8 +133,9 @@ export function EditTournamentDialog({
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values, "values");
     try {
-    manageTournament(values, {
+    manageTournament({ data: values }, {
       onSuccess: () => {
         toast.success("Tournament updated successfully");
         queryClient.invalidateQueries({ queryKey: ['tournaments'] });
@@ -287,6 +291,38 @@ export function EditTournamentDialog({
                 )}
               />
 
+              <FormField
+                control={form.control}
+                name="end"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>End Date</FormLabel>
+                    <Popover> 
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                            {field.value ? (
+                              format(new Date(field.value), "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value ? new Date(field.value) : undefined}
+                          onSelect={(date) => field.onChange(date?.toISOString())}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="startingPrice"

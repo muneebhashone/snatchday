@@ -7,34 +7,101 @@ import { Button } from "./ui/button";
 import crown from "@/app/images/crown.png";
 import questionmark from "@/app/images/qustionmark.png";
 import { ShareArrowIcon, TaxIcon } from "./icons/icon";
-import image1 from "@/app/images/lastSectionImage1.png";
-import image2 from "@/app/images/lastSectionImage2.png";
-import image3 from "@/app/images/lastSectionImage3.png";
+// import image1 from "@/app/images/lastSectionImage1.png";
+// import image2 from "@/app/images/lastSectionImage2.png";
+// import image3 from "@/app/images/lastSectionImage3.png";
+import { TournamentDetailResponse } from "@/types";
+import Loading from "@/app/loading";
+import { Loader2 } from "lucide-react";
+import { useGetProductById, useParticipateTournament, useShareTournament } from "@/hooks/api";
+import CountdownDisplay from "./CountdownProps";
+import { calculateCountdown } from "@/lib/utils";
+import { toast } from "sonner";
+import { useUserContext } from "@/context/userContext";
+import Login from "@/components/auth/Login";
+import { ShareTournamentModal } from "@/components/ShareTournamentModal";
 
-const TournamentDetailHero = () => {
-  //   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const images = [image2, image1, image3];
-  const time = [
-    {
-      timer: "24",
-      timerText: "Days",
-    },
-    {
-      timer: "48",
-      timerText: "Hours",
-    },
-    {
-      timer: "37",
-      timerText: "Minutes",
-    },
-    {
-      timer: "19",
-      timerText: "Seconds",
-    },
-  ];
+
+
+
+
+const TournamentDetailHero = ({ tournamentData, isLoading ,hasParticipated,refetchTournament}: { tournamentData: TournamentDetailResponse, isLoading: boolean ,hasParticipated:boolean,refetchTournament:()=>void }) => {
+    const {data:product, isLoading:productLoading}=useGetProductById(tournamentData?.data?.article)
+    const [selectedImage, setSelectedImage] = useState(0);
+    const {user}=useUserContext()
+  const { mutate: participateTournament ,isPending} = useParticipateTournament();
+ const { mutate: shareTournament ,isPending:isSharePending} = useShareTournament();
+  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
+
+  const openLoginModal = () => {
+    setLoginModalOpen(true);
+  };
+
+  const closeLoginModal = () => {
+    setLoginModalOpen(false);
+  };
+
+  // const images = [image2, image1, image3];
+  // const time = [
+  //   {
+  //     timer: "24",
+  //     timerText: "Days",
+  //   },
+  //   {
+  //     timer: "48",
+  //     timerText: "Hours",
+  //   },
+  //   {
+  //     timer: "37",
+  //     timerText: "Minutes",
+  //   },
+  //   {
+  //     timer: "19",
+  //     timerText: "Seconds",
+  //   },
+  // ];
+
+
+  const handleParticipate = () => {
+    if (user) {
+      if (tournamentData?.data?._id) {
+        participateTournament(tournamentData?.data?._id, {
+          onSuccess: () => {
+            toast.success("Participated successfully");
+            refetchTournament()
+          },
+          onError: (error: any) => {
+            console.error("Participation failed:", error);
+            toast.error(error?.message);
+          }
+        });
+      }
+    } else {
+      openLoginModal();
+    }
+  };
+
+  // const handleShare = () => {
+  //   if (user) {
+  //     shareTournament({id:tournamentData?.data?._id,email:user.email}, {
+  //       onSuccess: () => {
+  //         toast.success("Tournament shared successfully");  
+  //       },
+  //       onError: (error: any) => {
+  //         console.error("Sharing failed:", error);
+  //         toast.error(error?.message);
+  //       }
+  //     });
+  //   }
+  
+
+
   return (
-    <div className="relative h-max">
+    
+       
+
+<div className="relative h-max">
       <Image
         className="absolute top-0 z-[-1]"
         src={bg}
@@ -42,17 +109,25 @@ const TournamentDetailHero = () => {
       />
       {/* {/ left side /} */}
       <div className="px-48 pt-28 pb-6 grid grid-cols-7 z-100 border-b border-b-[#e9f0ff]">
+       {isLoading ? <div className="col-span-7 flex justify-center items-center h-screen">
+        <Loader2 className="animate-spin" />
+       </div> :<>
         <div className="col-span-4 flex gap-2 flex-col">
           <button className="py-[6px] bg-primary rounded-full px-5 text-white font-semibold w-max">
             Tournament ID: 1641
           </button>
           <h1 className="text-[48px] text-[#1C1B1D] font-extrabold leading-[70px]">
-            Acer Aspire 3 A315-35 - Intel Pentium Silver N6000
+            {tournamentData?.data?.name}
           </h1>
           <p className="text-[24px]">
             Tournament starts on{" "}
-            <span className="text-primary font-extrabold text-[25px]">01.02.2025 at 18:31.</span> Check-out
-            time: <span className="text-primary font-extrabold text-[25px]">18:21</span>
+            <span className="text-primary font-extrabold text-[25px]">
+              {new Date(tournamentData?.data?.start).toLocaleDateString()}
+            </span> at 
+            <span className="text-primary font-extrabold text-[25px]">
+              {new Date(tournamentData?.data?.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>. Check-out
+            time: <span className="text-primary font-extrabold text-[25px]">{new Date(tournamentData?.data?.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </p>
           <div className=" flex flex-col gap-2 border pl-2 w-max border-primary">
             <div className="flex gap-5 w-max mt-7 ">
@@ -63,7 +138,7 @@ const TournamentDetailHero = () => {
                 <div className="mr-14 flex flex-col justify-center">
                   <h1 className="text-xl font-bold leading-7">Game</h1>
                   <h1 className="text-3xl text-primary font-bold leading-7">PowerBlocks</h1>
-                  <p className="text-lg">Duration: 3:00 minutes</p>
+                  <p className="text-lg">Duration: {tournamentData?.data?.length || "N/A"} minutes</p>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -71,7 +146,7 @@ const TournamentDetailHero = () => {
                   <p>
                     Aktueller Preis{" "}
                     <h2 className="text-white text-[34px] font-extrabold">
-                      201,65€
+                      {tournamentData?.data?.startingPrice || "N/A"}
                     </h2>
                   </p>
                 </div>
@@ -83,14 +158,14 @@ const TournamentDetailHero = () => {
             </div>
             <div className="flex gap-6 mt-3">
               <p className=" rounded-full px-8 py-1 text-[21px] underline underline-offset-8 decoration-gray-300 decoration-[3px]">
-                Participation fee: <span className="text-primary">250</span>{" "}
-                points / <span className="text-primary">2 .50€</span>
+                Participation fee: <span className="text-primary">{tournamentData?.data?.fee || "N/A"}</span>{" "}
+                points / <span className="text-primary">{(tournamentData?.data?.fee * 0.01).toFixed(2)}€</span>
               </p>
               {/* <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold">
               50<span className="text-primary">€</span> Gunstiger
             </h3> */}
               <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold text-primary">
-                Already Saved: 50€
+                Already Saved: {(tournamentData?.data?.numberOfParticipants > 0 ? (tournamentData?.data?.numberOfParticipants - 1) * 5 : 0)}€ 
               </h3>
             </div>
             <div className="flex gap-3 items-center justify-start">
@@ -105,7 +180,7 @@ const TournamentDetailHero = () => {
                 <div className=" flex flex-col border-r border-r-gray-300 px-5 ">
                   <p>Participants:</p>
                   <p className="text-[21px]">
-                    0 of <span className="text-primary">200</span>
+                    0 of <span className="text-primary">{tournamentData?.data?.numberOfParticipants || "N/A"}</span>
                   </p>
                 </div>
                 <div className=" flex flex-col px-5">
@@ -141,19 +216,33 @@ const TournamentDetailHero = () => {
               }}
               className=" w-[285px] h-[83px] text-2xl font-bold flex items-center justify-between"
             >
-              <div className="ml-8 flex items-center gap-4">
-                <Image
-                  src={crown}
-                  width={45}
-                  height={45}
-                  alt="crown"
-                  className=""
-                />
-                Register
+              <div onClick={hasParticipated ? null : handleParticipate} className="ml-8 flex items-center gap-4">
+                
+                  <>
+                    {isPending ? "Registering..." : (
+                      <>
+                      {hasParticipated ? <span>Participated</span> : <>
+                        <Image
+                          src={crown}
+                          width={45}
+                          height={45}
+                          alt="crown"
+                          className=""
+                        />
+                        
+                          {user ? <span>  Register</span> : <span   onClick={openLoginModal}> <Login type="TournamentRegister" /></span>}
+                        </>}
+                      </>
+                    )}
+                  </>
+                
               </div>
-              <Image src={questionmark} alt="" />
+              {hasParticipated ? "": <Image src={questionmark} alt="" />}
             </Button>
-            <div className="text-gray-300 py-7 px-6 rounded-full shadow-[3px_3px_8px_#BFB3CA]">
+            <div 
+              className="text-gray-300 py-7 px-6 rounded-full shadow-[3px_3px_8px_#BFB3CA] cursor-pointer"
+              onClick={() => setShareModalOpen(true)}
+            >
               <ShareArrowIcon />
             </div>
           </div>
@@ -161,9 +250,12 @@ const TournamentDetailHero = () => {
         {/* {/ right side /} */}
         <div className="col-span-3 ml-10">
           <div className="flex flex-col">
+              {productLoading ? <div className="flex justify-center items-center h-screen">
+              <Loader2 className="animate-spin" />
+            </div> : <>
             <div className="bg-transparent p-8 h-[550px] w-[550px]">
               <Image
-                src={images[selectedImage]}
+                src={product?.data?.images[selectedImage]}
                 alt="Product"
                 width={500}
                 height={500}
@@ -171,7 +263,7 @@ const TournamentDetailHero = () => {
               />
             </div>
             <div className="flex gap-7 items-center justify-center">
-              {images.map((image, index) => (
+              {product?.data?.images?.map((image : string, index : number) => (
                 <div
                   key={index}
                   className={`flex items-center justify-center p-2 rounded-xl border w-[100px] h-[92px] cursor-pointer transition-all duration-300 ${selectedImage === index
@@ -189,33 +281,32 @@ const TournamentDetailHero = () => {
                   />
                 </div>
               ))}
-            </div>
+            
+              </div>
+            </>}
           </div>
           <div className="flex items-center justify-center gap-1 md:gap-4 relative z-10 mt-10">
-            {time?.map((item) => {
-              return (
-                <div
-                  key={item.timer}
-                  className="text-center flex flex-col items-center text-xs lg:text-lg "
-                >
-                  <div
-                    className={`bg-opacity-50 text-md sm:w-max lg:text-[45px] border px-2 lg:px-6 py-1 lg:py-4 mb-2 ${item.timerText === "Days" &&
-                      "border border-primary"
-                      }`}
-                  >
-                    <h1 className={`${item.timerText === "Days" &&
-                      "text-primary"}`}>{item.timer}</h1>
-                  </div>
-
-                  <p className="text-sm">{item.timerText}</p>
-                </div>
-              );
-            })}
+             <CountdownDisplay countdown={calculateCountdown(tournamentData?.data?.start)} />
           </div>
         </div>
+
+       </>}
       </div>{" "}
+
+      <ShareTournamentModal
+      tournamentId={tournamentData?.data?._id}
+      open={isShareModalOpen}
+      onClose={() => setShareModalOpen(false)}
+    />
+  
     </div>
+
+   
+  
+  
+  
   );
 };
+
 
 export default TournamentDetailHero;

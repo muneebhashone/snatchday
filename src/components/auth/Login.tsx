@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, X, LogOut } from "lucide-react";
+import { User, X, LogOut, Loader2 } from "lucide-react";
 import { FacebookIcon } from "../icons/icon";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
@@ -20,25 +20,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {  useAuthApi, useLogout } from "@/hooks/api";
+import {  useAuthApi, useGetMyProfile, useLogout } from "@/hooks/api";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useUserContext } from "@/context/userContext";
 import { useRouter } from "next/navigation";
+import GredientButton from "../GredientButton";
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const Login = () => {
+interface LoginProps {
+  type?: string
+}
+
+const Login = ({ type }: LoginProps) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {user,setUserData,logout}=useUserContext()
   const router=useRouter()
   const { mutate: login, isPending } = useAuthApi();
+  const {data:myProfile,isPending:isMyProfilePending}=useGetMyProfile()
   const {mutate:Userlogout}=useLogout()
   const {
     register,
@@ -108,13 +114,13 @@ const Login = () => {
   if (isRegisterOpen) {
     return <Register onBack={handleBackToLogin} />;
   }
-
+ 
 
   if (isLoggedIn) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-          <p className="text-lg font-medium text-card-foreground">{user?.user?.name}</p>
+          <p className="text-lg font-medium text-card-foreground">{ isMyProfilePending ? <Loader2 className="animate-spin" /> : myProfile?.data?.user?.username || myProfile?.data?.user?.name }</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-36 mt-6">
           <Link href="/my-account/my-profile">
@@ -140,7 +146,8 @@ const Login = () => {
     <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
       <DialogTrigger asChild>
         <div className="cursor-pointer">
-          <User className="h-6 w-6" />
+          {type === "TournamentRegister" ? "Login"   : type === "Register" ? <GredientButton buttonText="Register for free" onClick={()=>setIsRegisterOpen(true)}   /> : <User className="h-6 w-6" />}
+         
         </div>
       </DialogTrigger>
       <DialogContent className="max-w-[682px] p-0">

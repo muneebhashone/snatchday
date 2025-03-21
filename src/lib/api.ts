@@ -9,6 +9,7 @@ import {
   ResponseTournament,
   CategoryFormData,
   ComapreProduct,
+  TournamentDetailResponse,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -169,12 +170,10 @@ export const cancelTournament = async (id: string) => {
   return response.data;
 };
 
-export const manageTournament = async (
-  id: string,
-  data: TournamentFormData
-) => {
+export const manageTournament = async ( data: TournamentFormData) => {
+  console.log(data, "data")
   const response = await axiosInstance.patch<ResponseTournament>(
-    `/tournament/manage/${id}`,
+    "/tournament/manage",
     data
   );
   return response.data;
@@ -203,20 +202,20 @@ export const resetPassword = async (data: ResetPasswordTypes) => {
 };
 
 export type TournamentParams = {
-  limit: string;
-  offset: string;
-  sort_attr: string;
-  sort: string;
-  name: string;
-  from: string;
-  until: string;
-  game: string;
-  fee: string;
-  vip: string;
-  product: string;
-  startingPrice: string;
-  category: string;
-  status: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  from?: string;
+  until?: string;
+  game?: string;
+  fee?: string;
+  vip?: string;
+  product?: string;
+  startingPrice?: string;
+  category?: string;
+  status?: string;
 };
 
 export const getTournaments = async (params: TournamentParams) => {
@@ -262,7 +261,7 @@ export const RecommendProduct = async (data: IRecommendProduct) => {
 };
 
 //Current Offers
-export const CurrenOffers = async () => {
+export const CurrenOffers= async () => {
   const response = await axiosInstance.get("/product/?currentOffer=true");
   return response.data;
 };
@@ -284,7 +283,44 @@ export const getCustomers = async (params) => {
   return response.data;
 };
 
+export const upComingTournament = async () => {
+  const response = await axiosInstance.get<ResponseTournament[]>("/tournament/upcoming");
+  return response.data;
+};
+
+
+export const getTournamentById = async (id: string): Promise<TournamentDetailResponse> => {
+  const response = await axiosInstance.get<TournamentDetailResponse>(`/tournament/get/${id}`);
+  return response.data;
+};
+
 // export const getWallet = async () => {
 //   const response = await axiosInstance.get<WalletTypes>('/wallet');
 //   return response.data;
 // };
+
+
+export const updateProfile = async (formData: FormData) => {
+  const response = await axiosInstance.put('/auth/updateMe', formData);
+  return response.data;
+};
+
+
+export const participateTournament = async (id: string) => {
+  const response = await axiosInstance.patch(`/tournament/participate/${id}`);
+  return response.data;
+};
+
+
+export const shareTournament = async (id: string,email:string) => {
+  
+  const response = await axiosInstance.post(`/tournament/share/${id}`,{email});
+  return response.data;
+};
+
+
+export const getParticipants = async (id: string) => {
+  const response = await axiosInstance.get(`/tournament/participants/${id}`);
+  return response.data;
+};
+

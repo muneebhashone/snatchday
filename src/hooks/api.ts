@@ -34,8 +34,14 @@ import {
   CurrenOffers,
   NewsletterMail,
   getCustomers,
+  updateProfile,
+  upComingTournament,
+  getTournamentById,
+  participateTournament,
+  shareTournament,
+  getParticipants,
 } from "../lib/api";
-import { TournamentFormData } from "@/types/admin";
+import { TournamentFormData} from "@/types/admin";
 
 import {
   CategoryFormData,
@@ -98,13 +104,13 @@ export const useRegister = () => {
   });
 };
 
-export const useFilteredItems = (filters: Record<string, string>) => {
-  return useQuery({
-    queryKey: ["items", filters], // Dynamic query key based on filters
-    queryFn: () => filterItems(filters),
-    enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
-  });
-};
+// export const useFilteredItems = (filters: Record<string, string>) => {
+//   return useQuery({
+//     queryKey: ["items", filters], // Dynamic query key based on filters
+//     queryFn: () => filterItems(filters),
+//     enabled: Object.keys(filters).length > 0, // Only fetch if filters are provided
+//   });
+// };
 
 // export const useProducts = () => {
 //   return useQuery({
@@ -114,8 +120,8 @@ export const useFilteredItems = (filters: Record<string, string>) => {
 // };
 
 export const useCreateProduct = () => {
-  return useMutation<ProductFormData>({
-    mutationFn: createProduct,
+  return useMutation<ProductFormData, unknown, FormData>({
+    mutationFn: (formData: FormData) => createProduct(formData),
   });
 };
 
@@ -292,8 +298,7 @@ export const useCancelTournament = () => {
 
 export const useManageTournament = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: TournamentFormData }) =>
-      manageTournament(id, data),
+    mutationFn: ({ data }: { data: TournamentFormData }) => manageTournament( data),
   });
 };
 
@@ -302,6 +307,28 @@ export const useGetTournaments = (params: TournamentParams) => {
     queryKey: ["tournaments", params],
     queryFn: () => getTournaments(params),
   });
+};
+
+
+export const useUpComingTournament = () => {
+  return useQuery({
+    queryKey: ['upComingTournament'],
+    queryFn: () => upComingTournament(),
+  });
+};
+
+
+export const useGetTournamentById = (id: string) => {
+  return useQuery({
+    queryKey: ['tournament', id],
+    queryFn: () => getTournamentById(id),
+  });
+};
+
+export const useUpdateProfile = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => updateProfile(formData),
+  }); 
 };
 
 //Compare Products
@@ -318,6 +345,7 @@ export const useGetCompareProducts = () => {
     queryFn: getCompareProducts,
   });
 };
+
 
 //Recommend Product
 export const useRecommendProduct = () => {
@@ -348,3 +376,25 @@ export const useCustomers = (filters) => {
     queryFn: () => getCustomers(filters),
   });
 };
+
+export const useParticipateTournament = () => {
+  return useMutation({
+    mutationFn: (id: string) => participateTournament(id),
+  });
+};
+
+
+export const useShareTournament = () => {
+  return useMutation({
+    mutationFn: ({id,email}:{id:string,email:string}) => shareTournament(id,email),
+  });
+};
+
+
+export const useGetParticipants = (id: string) => {
+  return useQuery({
+    queryKey: ['participants', id],
+    queryFn: () => getParticipants(id),
+  });
+};
+
