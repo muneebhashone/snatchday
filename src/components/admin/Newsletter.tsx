@@ -39,10 +39,6 @@ const Newsletter = () => {
                   <TableRow key={newsletter._id}>
                     <TableCell>{newsletter.email || "N/A"}</TableCell>
                     <TableCell>
-                      {new Date(newsletter.subscribedAt).toLocaleDateString() ||
-                        "N/A"}
-                    </TableCell>
-                    <TableCell>
                       {new Date(newsletter.createdAt).toLocaleDateString() ||
                         "N/A"}
                     </TableCell>
