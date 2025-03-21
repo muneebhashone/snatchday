@@ -236,6 +236,7 @@ export const useGetProductById = (id: string) => {
     enabled: !!id,
   });
 };
+// console.log("aaa")
 
 export const useGetNewsletters = (filters?: NewsletterFilters) => {
   return useQuery({
