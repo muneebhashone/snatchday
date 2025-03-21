@@ -186,7 +186,7 @@ export const getNewsletters = async (params?: {
   sort?: string;
 }) => {
   const response = await axiosInstance.get<NewsletterTypes>(
-    "/newsletter/subscribers",
+    "/newsletter",
     {
       params,
     }
@@ -235,7 +235,7 @@ export const getFilterById = async (id: string) => {
 };
 
 export const subscribeNewsletter = async (email: string) => {
-  const response = await axiosInstance.post("/newsletter/subscribe", { email });
+  const response = await axiosInstance.post("/newsletter", { email });
   return response.data;
 };
 

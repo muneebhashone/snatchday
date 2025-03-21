@@ -13,6 +13,8 @@ import { NewsletterTypes } from "@/types";
 
 const Newsletter = () => {
   const { data: newsletters, isLoading, isError } = useGetNewsletters();
+
+  console.log(newsletters, "newsletters");
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold">Newsletters</h1>
@@ -28,9 +30,7 @@ const Newsletter = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Subscribed At</TableHead>
                   <TableHead>Created At</TableHead>
                 </TableRow>
               </TableHeader>
