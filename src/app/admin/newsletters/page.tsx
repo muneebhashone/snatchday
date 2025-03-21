@@ -1,13 +1,13 @@
-import AdminLayout from '@/components/admin/AdminLayout'
-import React from 'react'
-import Newsletter from '@/components/admin/Newsletter'
+import AdminLayout from "@/components/admin/AdminLayout";
+import React from "react";
+import Newsletter from "@/components/admin/Newsletter";
 
 const page = () => {
   return (
     <AdminLayout>
-    <Newsletter />
+      <Newsletter />
     </AdminLayout>
-  )
-}
+  );
+};
 
-export default page
+export default page;

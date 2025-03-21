@@ -32,6 +32,8 @@ import {
   getCompareProducts,
   RecommendProduct,
   CurrenOffers,
+  NewsletterMail,
+  getCustomers,
   updateProfile,
   upComingTournament,
   getTournamentById,
@@ -183,7 +185,7 @@ export const useUpdateFilter = () => {
   });
 };
 
-interface ProductFilters {
+export interface ProductFilters {
   price?: string[];
   limit?: string;
   offset?: string;
@@ -360,6 +362,20 @@ export const useCurrentOffers = () => {
   });
 };
 
+//newsletter mail
+export const useNewsletterMail = () => {
+  return useMutation({
+    mutationFn: NewsletterMail,
+  });
+};
+
+//customers
+export const useCustomers = (filters) => {
+  return useQuery({
+    queryKey: ["customers"],
+    queryFn: () => getCustomers(filters),
+  });
+};
 
 export const useParticipateTournament = () => {
   return useMutation({
