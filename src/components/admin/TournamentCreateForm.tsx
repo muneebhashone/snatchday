@@ -41,40 +41,76 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 const formSchema = z.object({
-  name: z.string({ required_error: "Name is required" }).min(3, "Name must be at least 3 characters"),
-  title: z.string({ required_error: "Title is required" }).min(3, "Title must be at least 3 characters"),
-  textForBanner: z.string({ required_error: "Banner text is required" }).min(3, "Banner text must be at least 3 characters"),
-  metaTitle: z.string({ required_error: "Meta title is required" }).min(3, "Meta title must be at least 3 characters"),
-  metaDescription: z.string({ required_error: "Meta description is required" }).min(3, "Meta description must be at least 3 characters"),
-  metaKeywords: z.string({ required_error: "Meta keywords are required" }).min(3, "Meta keywords must be at least 3 characters"),
-  article: z.string({ required_error: "Product selection is required" }).min(1, "Please select a product"),
-  startingPrice: z.coerce.number({ required_error: "Starting price is required" }).min(0, "Starting price must be positive"),
-  priceReduction: z.coerce.number({ required_error: "Price reduction is required" }).min(0, "Price reduction must be positive"),
-  numberOfPieces: z.coerce.number({ required_error: "Number of pieces is required" }).min(1, "Number of pieces must be at least 1"),
-  game: z.string({ required_error: "Game selection is required" }).min(1, "Game must be selected"),
-  start: z.string({ required_error: "Start date is required" }).min(1, "Start date must be selected"),
-  end: z.string({ required_error: "End date is required" }).min(1, "End date must be selected"),
-  length: z.coerce.number({ required_error: "Length is required" }).min(1, "Length must be at least 1"),
-  fee: z.coerce.number({ required_error: "Fee is required" }).min(0, "Fee must be positive"),
-  numberOfParticipants: z.coerce.number({ required_error: "Number of participants is required" }).min(1, "Number of participants must be at least 1"),
+  name: z
+    .string({ required_error: "Name is required" })
+    .min(3, "Name must be at least 3 characters"),
+  title: z
+    .string({ required_error: "Title is required" })
+    .min(3, "Title must be at least 3 characters"),
+  textForBanner: z
+    .string({ required_error: "Banner text is required" })
+    .min(3, "Banner text must be at least 3 characters"),
+  metaTitle: z
+    .string({ required_error: "Meta title is required" })
+    .min(3, "Meta title must be at least 3 characters"),
+  metaDescription: z
+    .string({ required_error: "Meta description is required" })
+    .min(3, "Meta description must be at least 3 characters"),
+  metaKeywords: z
+    .string({ required_error: "Meta keywords are required" })
+    .min(3, "Meta keywords must be at least 3 characters"),
+  article: z
+    .string({ required_error: "Product selection is required" })
+    .min(1, "Please select a product"),
+  startingPrice: z.coerce
+    .number({ required_error: "Starting price is required" })
+    .min(0, "Starting price must be positive"),
+  priceReduction: z.coerce
+    .number({ required_error: "Price reduction is required" })
+    .min(0, "Price reduction must be positive"),
+  numberOfPieces: z.coerce
+    .number({ required_error: "Number of pieces is required" })
+    .min(1, "Number of pieces must be at least 1"),
+  game: z
+    .string({ required_error: "Game selection is required" })
+    .min(1, "Game must be selected"),
+  start: z
+    .string({ required_error: "Start date is required" })
+    .min(1, "Start date must be selected"),
+  end: z
+    .string({ required_error: "End date is required" })
+    .min(1, "End date must be selected"),
+  length: z.coerce
+    .number({ required_error: "Length is required" })
+    .min(1, "Length must be at least 1"),
+  fee: z.coerce
+    .number({ required_error: "Fee is required" })
+    .min(0, "Fee must be positive"),
+  numberOfParticipants: z.coerce
+    .number({ required_error: "Number of participants is required" })
+    .min(1, "Number of participants must be at least 1"),
   vip: z.boolean(),
-  resubmissions: z.coerce.number({ required_error: "Resubmissions is required" }).min(0, "Resubmissions must be positive"),
+  resubmissions: z.coerce
+    .number({ required_error: "Resubmissions is required" })
+    .min(0, "Resubmissions must be positive"),
   image: z.string(),
 });
 
-const TournamentCreateForm = ({productId}: {productId?: string}) => {
+const TournamentCreateForm = ({ productId }: { productId?: string }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
-  
-  console.log(pathname, "pathname")
+
+  console.log(pathname, "pathname");
   const { mutate: createTournament, isPending } = useCreateTournament();
-  const {data: getProducts} = useGetProducts();
+  const { data: getProducts } = useGetProducts();
   const products = getProducts?.data?.products || [];
 
-  const product = getProducts?.data?.products?.find((product: any) => product._id === productId);
+  const product = getProducts?.data?.products?.find(
+    (product: any) => product._id === productId
+  );
   const productImage = product?.images[0];
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -103,7 +139,7 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
   useEffect(() => {
     if (product) {
       form.setValue("name", product.name);
-      form.setValue("title", product.title); 
+      form.setValue("title", product.title);
       form.setValue("article", product._id);
       form.setValue("startingPrice", product.price);
       form.setValue("image", product.images[0] || "");
@@ -115,7 +151,7 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
       createTournament(values, {
         onSuccess: () => {
           toast.success("Tournament created successfully");
-          queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+          queryClient.invalidateQueries({ queryKey: ["tournaments"] });
           form.reset();
           router.push("/admin/tournament");
         },
@@ -131,7 +167,8 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
     }
   };
 
-  const productSelectField = pathname === "/admin/tournament/create-tournament" && (
+  const productSelectField = pathname ===
+    "/admin/tournament/create-tournament" && (
     <FormField
       control={form.control}
       name="article"
@@ -141,17 +178,19 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
             Select Product
             <span className="text-red-500">*</span>
           </FormLabel>
-          <Select 
+          <Select
             onValueChange={(value) => {
               field.onChange(value);
-              const selectedProduct = products.find((p: any) => p._id === value);
+              const selectedProduct = products.find(
+                (p: any) => p._id === value
+              );
               if (selectedProduct) {
                 form.setValue("name", selectedProduct.name);
                 form.setValue("title", selectedProduct.title);
                 form.setValue("startingPrice", selectedProduct.price);
                 form.setValue("image", selectedProduct.images[0] || "");
               }
-            }} 
+            }}
             value={field.value}
           >
             <FormControl>
@@ -161,8 +200,8 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
             </FormControl>
             <SelectContent>
               {products.map((product: any) => (
-                <SelectItem 
-                  key={product._id} 
+                <SelectItem
+                  key={product._id}
                   value={product._id}
                   className="flex items-center gap-2"
                 >
@@ -192,14 +231,14 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Create Tournament</h1>
-      
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Basic Information */}
             <div className="space-y-6">
               {productSelectField}
-              
+
               <FormField
                 control={form.control}
                 name="name"
@@ -318,7 +357,10 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
                     Game
                     <span className="text-red-500">*</span>
                   </FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a game" />
@@ -365,7 +407,9 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value ? new Date(field.value) : undefined}
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
                         onSelect={(date) => field.onChange(date?.toISOString())}
                         disabled={(date) =>
                           date < new Date() || date < new Date("1900-01-01")
@@ -410,7 +454,9 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value ? new Date(field.value) : undefined}
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
                         onSelect={(date) => field.onChange(date?.toISOString())}
                         disabled={(date) =>
                           date < new Date() || date < new Date("1900-01-01")
@@ -568,7 +614,10 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="keyword1, keyword2, keyword3" {...field} />
+                    <Input
+                      placeholder="keyword1, keyword2, keyword3"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -576,7 +625,11 @@ const TournamentCreateForm = ({productId}: {productId?: string}) => {
             />
           </div>
 
-          <Button type="submit" className="w-full hover:bg-primary" disabled={isPending}>
+          <Button
+            type="submit"
+            className="w-full hover:bg-primary"
+            disabled={isPending}
+          >
             {isPending ? "Creating..." : "Create Tournament"}
           </Button>
         </form>

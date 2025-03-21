@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Table,
   TableBody,
@@ -10,14 +9,20 @@ import {
 } from "@/components/ui/table";
 import { useGetNewsletters } from "@/hooks/api";
 import { NewsletterTypes } from "@/types";
+import { Button } from "../ui/button";
 
 const Newsletter = () => {
   const { data: newsletters, isLoading, isError } = useGetNewsletters();
-
-  console.log(newsletters, "newsletters");
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold">Newsletters</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Newsletters</h1>
+        <a href="/admin/newsletters/send">
+          <Button className="hover:bg-primary hover:border border-primary">
+            Send
+          </Button>
+        </a>
+      </div>
       <div className="bg-white rounded-md shadow-sm">
         {isLoading ? (
           <div className="p-8 text-center">Loading newsletters...</div>

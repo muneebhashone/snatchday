@@ -64,13 +64,13 @@ const ComparisonPage = () => {
         setIsRemove("");
       },
     });
-    console.log(`Removing product ${productId} from comparison`);
+    // console.log(`Removing product ${productId} from comparison`);
   };
 
   const pathName = usePathname();
   const path1 = pathName.split("/");
   const path = path1[1].split("-");
-  console.log(path, "path");
+  // console.log(path, "path");
   return (
     <ClientLayout>
       <main className="container mx-auto mt-40 mb-52 p-4">
