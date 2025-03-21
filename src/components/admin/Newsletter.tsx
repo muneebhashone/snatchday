@@ -13,7 +13,6 @@ import { Button } from "../ui/button";
 
 const Newsletter = () => {
   const { data: newsletters, isLoading, isError } = useGetNewsletters();
-  console.log(newsletters, "newsletters");
   return (
     <div className="p-6">
       <div className="flex items-center justify-between">
@@ -36,9 +35,7 @@ const Newsletter = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Subscribed At</TableHead>
                   <TableHead>Created At</TableHead>
                 </TableRow>
               </TableHeader>
@@ -46,10 +43,6 @@ const Newsletter = () => {
                 {newsletters?.data?.map((newsletter: NewsletterTypes) => (
                   <TableRow key={newsletter._id}>
                     <TableCell>{newsletter.email || "N/A"}</TableCell>
-                    <TableCell>
-                      {new Date(newsletter.subscribedAt).toLocaleDateString() ||
-                        "N/A"}
-                    </TableCell>
                     <TableCell>
                       {new Date(newsletter.createdAt).toLocaleDateString() ||
                         "N/A"}
