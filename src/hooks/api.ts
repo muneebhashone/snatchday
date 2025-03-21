@@ -32,6 +32,8 @@ import {
   getCompareProducts,
   RecommendProduct,
   CurrenOffers,
+  NewsletterMail,
+  getCustomers,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
@@ -329,5 +331,20 @@ export const useCurrentOffers = () => {
   return useQuery({
     queryKey: ["currentProducts"],
     queryFn: CurrenOffers,
+  });
+};
+
+//newsletter mail
+export const useNewsletterMail = () => {
+  return useMutation({
+    mutationFn: NewsletterMail,
+  });
+};
+
+//customers
+export const useCustomers = (filters) => {
+  return useQuery({
+    queryKey: ["customers"],
+    queryFn: () => getCustomers(filters),
   });
 };

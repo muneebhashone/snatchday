@@ -186,12 +186,9 @@ export const getNewsletters = async (params?: {
   sort_attr?: string;
   sort?: string;
 }) => {
-  const response = await axiosInstance.get<NewsletterTypes>(
-    "/newsletter/subscribers",
-    {
-      params,
-    }
-  );
+  const response = await axiosInstance.get<NewsletterTypes>("/newsletter", {
+    params,
+  });
   return response.data;
 };
 
@@ -236,7 +233,7 @@ export const getFilterById = async (id: string) => {
 };
 
 export const subscribeNewsletter = async (email: string) => {
-  const response = await axiosInstance.post("/newsletter/subscribe", { email });
+  const response = await axiosInstance.post("/newsletter", { email });
   return response.data;
 };
 
@@ -270,6 +267,22 @@ export const CurrenOffers = async () => {
   return response.data;
 };
 
+//newsletter Mail
+export const NewsletterMail = async (data: {
+  subject: any;
+  message: any;
+  type: any;
+}) => {
+  // console.log(data, "data for newsletter mail");
+  const response = await axiosInstance.post("newsletter/mail", data);
+  return response.data;
+};
+
+// customers
+export const getCustomers = async (params) => {
+  const response = await axiosInstance.get("/customer", { params });
+  return response.data;
+};
 
 // export const getWallet = async () => {
 //   const response = await axiosInstance.get<WalletTypes>('/wallet');
