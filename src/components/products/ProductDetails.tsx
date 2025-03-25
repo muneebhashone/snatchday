@@ -234,9 +234,28 @@ const ProductDetails = ({
             {/* Price */}
 
             <div className="mt-3">
-              <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
+              {discounts?.length > 0 ? (
+                <div className="flex items-center gap-2">
+                  <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D] line-through">
+                    <span className="text-foreground">{price}</span>€
+                  </h2>
+                  <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
+                    {discounts.map((discounts, i) => (
+                      <span key={i} className="text-foreground">
+                        {price - discounts?.price }
+                      </span>
+                    ))}
+                    €
+                  </h2>
+                </div>
+              ) : (
+                <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
+                  <span className="text-foreground">{price}</span>€
+                </h2>
+              )}
+              {/* <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
                 <span className="text-foreground">{price}</span>€
-              </h2>
+              </h2> */}
               <span className="text-sm text-card-foreground flex items-center gap-1">
                 <VatIcon /> incl.
                 <span className="text-[#444444] font-bold">19% VAT</span>, plus

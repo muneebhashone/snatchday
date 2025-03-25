@@ -1,7 +1,9 @@
 import React from "react";
 import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
 
 interface FeaturedProductCardProps {
+  _id: string;
   title: string;
   name: string;
   price: string;
@@ -13,10 +15,11 @@ interface FeaturedProductCardProps {
   isSale?: boolean;
   isNew?: boolean;
   discounts: string;
-  discount:string
+  discount: string;
 }
 
 const FeaturedProductsCard = ({
+  _id,
   title,
   name,
   discounts,
@@ -41,21 +44,25 @@ const FeaturedProductsCard = ({
       {/* Product Image */}
       <div className="mb-5 mt-7 pt-2">
         {images ? (
-          <Image
-            src={images[0]}
-            alt={title}
-            width={200}
-            height={200}
-            className="w-full h-[140px] object-contain group-hover:scale-105 transition-transform duration-300"
-          />
+          <Link href={`/product-listing/${_id}`}>
+            <Image
+              src={images[0]}
+              alt={title}
+              width={200}
+              height={200}
+              className="w-full h-[140px] object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+          </Link>
         ) : (
-          <Image
-            src={image}
-            alt={title}
-            width={200}
-            height={200}
-            className="w-full h-[140px] object-contain group-hover:scale-105 transition-transform duration-300"
-          />
+          <Link href={`/product-listing/${_id}`}>
+            <Image
+              src={image}
+              alt={title}
+              width={200}
+              height={200}
+              className="w-full h-[140px] object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+          </Link>
         )}
       </div>
 
