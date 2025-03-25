@@ -45,7 +45,7 @@ export interface Category {
   name: string;
   description: string;
   image: string;
-  parentCategoryId: string;
+  parentCategory: string;
   shop: boolean;
   above: boolean;
 }

@@ -10,13 +10,15 @@ export default function EditProductPage() {
   const productId = params.id as string;
   const { data: productsData } = useGetProducts();
   const products = productsData?.data?.products || [];
-  const product = products.find(p => p._id === productId);
-
+  const product = products.find((p) => p._id === productId);
+  console.log(product, "product for update");
   if (!product) {
     return <div className="p-6">Loading...</div>;
   }
 
-  return <AdminLayout>
-    <ProductUpdateForm product={product} />
-  </AdminLayout>;
+  return (
+    <AdminLayout>
+      <ProductUpdateForm product={product} />
+    </AdminLayout>
+  );
 }

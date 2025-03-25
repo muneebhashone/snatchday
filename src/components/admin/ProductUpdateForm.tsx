@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 import { toast } from "sonner";
-import { useUpdateProduct, useGetCategories, useGetFilters, useGetProducts } from "@/hooks/api";
+import {
+  useUpdateProduct,
+  useGetCategories,
+  useGetFilters,
+  useGetProducts,
+} from "@/hooks/api";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -27,10 +32,23 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useQueryClient } from "@tanstack/react-query";
-import { X } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { formatDate } from "@/lib/utils";
+import { Calendar } from "../ui/calendar";
+import { format, sub } from "date-fns";
+import { Checkbox } from "../ui/checkbox";
+
+const discountSchema = z.object({
+  // customerGroup: z.string().min(1, "Customer group cannot be empty"),
+  customerGroup: z.enum(["BASIC", "VIP"]),
+  price: z.number().nonnegative("Price must be 0 or greater"),
+  away: z.coerce.date().optional(),
+  until: z.coerce.date().optional(),
+});
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -40,7 +58,7 @@ const formSchema = z.object({
   colors: z.string().min(1, "Colors cannot be empty"),
   stock: z.number().min(0, "Stock must be 0 or greater"),
   price: z.number().min(0, "Price must be 0 or greater"),
-  discounts: z.string().optional(),
+  // discounts: z.string().optional(),
   attributes: z.any(),
   categoryIds: z.string().min(1, "Category is required"),
   type: z.enum(["NEW", "SALE"]),
@@ -55,6 +73,7 @@ const formSchema = z.object({
   relatedProducts: z.array(z.string()).default([]),
   requireShipping: z.boolean(),
   liscenseKey: z.string().min(1, "License key cannot be empty"),
+  discounts: z.array(discountSchema).optional(),
 });
 
 interface Category {
@@ -94,7 +113,7 @@ interface FilterResponse {
 interface DiscountItem {
   amount: number;
   type: "PERCENTAGE";
-  customerGroup: string;
+  customerGroup: "BASIC" | "VIP";
   price: number;
 }
 
@@ -124,17 +143,25 @@ interface Product {
   liscenseKey: string;
 }
 
-export default function ProductUpdateForm({ product }: { product: Product}) {
+export default function ProductUpdateForm({ product }: { product: Product }) {
+  const [applyDiscounts, setApplyDiscounts] = useState(false);
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [previewUrls, setPreviewUrls] = useState<string[]>(product.images || []);
+  const [previewUrls, setPreviewUrls] = useState<string[]>(
+    product.images || []
+  );
   const { mutate: updateProduct } = useUpdateProduct();
-  const { data: categoriesData } = useGetCategories() as { data: CategoryResponse };
+  const { data: categoriesData } = useGetCategories() as {
+    data: CategoryResponse;
+  };
   const { data: productsData } = useGetProducts() as { data: ProductResponse };
   const { data: filtersData } = useGetFilters() as { data: FilterResponse };
   const params = useParams();
   const productId = params.id as string;
-  const [selectedFilter, setSelectedFilters] = useState<Record<string, string[]>>(
+  const [selectedFilter, setSelectedFilters] = useState<
+    Record<string, string[]>
+  >(
     Object.entries(product.attributes || {}).reduce((acc, [key, value]) => {
       acc[key] = Array.isArray(value) ? value : [value];
       return acc;
@@ -148,12 +175,12 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
       description: product.description,
       company: product.company,
       images: null,
-      colors: product.colors.join(', '),
+      colors: product.colors.join(", "),
       stock: product.stock,
       price: product.price,
-      discounts: product.discounts?.length > 0 ? product.discounts.map(d => `${d.amount}:${d.type}:${d.customerGroup}:${d.price}`).join(', ') : '',
+      discounts: product.discounts || [],
       attributes: Object.keys(product.attributes || {}),
-      categoryIds: product.categoryIds[0]?._id || '',
+      categoryIds: product.categoryIds[0]?._id || "",
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
@@ -169,85 +196,111 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
     },
   });
 
+  const { fields, append, remove, replace } = useFieldArray({
+    control: form.control,
+    name: "discounts",
+  });
+  useEffect(() => {
+    if (product?.discounts) {
+      replace(product.discounts);
+    }
+  }, [product]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
       // Clear previous previews that are blob URLs
-      previewUrls.forEach(url => {
-        if (url.startsWith('blob:')) {
+      previewUrls.forEach((url) => {
+        if (url.startsWith("blob:")) {
           URL.revokeObjectURL(url);
         }
       });
-      
+
       // Create new previews
-      const urls = Array.from(files).map(file => URL.createObjectURL(file));
-      setPreviewUrls([...previewUrls.filter(url => !url.startsWith('blob:')), ...urls]);
-      
+      const urls = Array.from(files).map((file) => URL.createObjectURL(file));
+      setPreviewUrls([
+        ...previewUrls.filter((url) => !url.startsWith("blob:")),
+        ...urls,
+      ]);
+
       // Update form
-      form.setValue('images', files);
+      form.setValue("images", files);
     }
+  };
+
+  const onSubmit2 = (value) => {
+    console.log(value, "submitted value");
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       const formData = new FormData();
-      
-      for (const [key, value] of Object.entries(values)) {
-        if (key === 'images' && value instanceof FileList) {
-          Array.from(value).forEach((file) => {
-            formData.append('images', file);
-          });
-        } else if (key === 'categoryIds') {
-          formData.append('categoryIds', JSON.stringify([value]));
-        } else if (key === 'colors') {
-          const colorsArray = value.split(',').map(color => color.trim()).filter(Boolean);
-          formData.append('colors', JSON.stringify(colorsArray));
-        } else if (key === 'attributes') {
-          const attributesObject = Object.entries(selectedFilter).reduce((acc, [filterName, filterValues]) => {
-            filterValues.forEach(value => {
-              acc[filterName] = value;
-            });
-            return acc;
-          }, {} as Record<string, string>);
-          formData.append('attributes', JSON.stringify(attributesObject));
-        } else if (key === 'relatedProducts') {
-          formData.append('relatedProducts', JSON.stringify(value));
-        } else if (key === 'discounts' && typeof value === 'string' && value) {
-          const discountsArray = value.split(',').map(discount => {
-            const [amount, type, customerGroup, price] = discount.split(':').map(v => v.trim());
-            return {
-              amount: parseFloat(amount),
-              type: type || 'PERCENTAGE',
-              customerGroup: customerGroup || 'ALL',
-              price: parseFloat(price)
-            };
-          }).filter(d => !isNaN(d.amount) && !isNaN(d.price));
 
-          formData.append('discounts', JSON.stringify(discountsArray));
+      if (removedImages.length > 0) {
+        formData.append("removedImages", JSON.stringify(removedImages));
+      }
+
+      for (const [key, value] of Object.entries(values)) {
+        if (key === "images" && value instanceof FileList) {
+          Array.from(value).forEach((file) => {
+            formData.append("images", file);
+          });
+        } else if (key === "categoryIds") {
+          formData.append("categoryIds", JSON.stringify([value]));
+        } else if (key === "colors") {
+          const colorsArray = value
+            .split(",")
+            .map((color) => color.trim())
+            .filter(Boolean);
+          formData.append("colors", JSON.stringify(colorsArray));
+        } else if (key === "attributes") {
+          const attributesObject = Object.entries(selectedFilter).reduce(
+            (acc, [filterName, filterValues]) => {
+              filterValues.forEach((value) => {
+                acc[filterName] = value;
+              });
+              return acc;
+            },
+            {} as Record<string, string>
+          );
+          formData.append("attributes", JSON.stringify(attributesObject));
+        } else if (key === "relatedProducts") {
+          formData.append("relatedProducts", JSON.stringify(value));
+        } else if (key === "discounts" && Array.isArray(value)) {
+          if (value.length > 0) {
+            formData.append("discounts", JSON.stringify(value));
+          } else {
+            formData.append("discounts", "[]"); // Explicitly send an empty array
+          }
         } else if (value !== undefined && value !== null) {
           formData.append(key, value.toString());
         }
       }
 
-      updateProduct({ 
-        id: productId, 
-        data: formData as any
-      }, {
-        onSuccess: () => {
-          toast.success("Product updated successfully");
-          queryClient.invalidateQueries({ queryKey: ['products'] });
-          router.push('/admin/products');
+      updateProduct(
+        {
+          id: productId,
+          data: formData as any,
         },
-        onError: (error) => {
-          toast.error("Failed to update product");
-          console.error(error);
-        },
-      });
+        {
+          onSuccess: () => {
+            toast.success("Product updated successfully");
+            queryClient.invalidateQueries({ queryKey: ["products"] });
+            // router.push("/admin/products");
+          },
+          onError: (error) => {
+            toast.error("Failed to update product");
+            console.error(error);
+          },
+        }
+      );
     } catch (error) {
       toast.error("Failed to update product");
       console.error(error);
     }
   }
+
+  const [discountRemove, setDiscountRemove] = useState(false);
 
   return (
     <div className="p-6">
@@ -326,10 +379,13 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
                         type="button"
                         className="absolute top-0 right-0 bg-white rounded-full p-1 shadow"
                         onClick={() => {
-                          if (url.startsWith('blob:')) {
+                          if (url.startsWith("blob:")) {
                             URL.revokeObjectURL(url);
                           }
-                          setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+                          setRemovedImages((prev) => [...prev, url]);
+                          setPreviewUrls((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          );
                         }}
                       >
                         <X size={16} />
@@ -354,7 +410,9 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
                       type="number"
                       placeholder="0.00"
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -444,11 +502,13 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {categoriesData?.data?.categories?.map((category: Category) => (
-                      <SelectItem key={category._id} value={category._id}>
-                        {category.displayName || category.name}
-                      </SelectItem>
-                    ))}
+                    {categoriesData?.data?.categories?.map(
+                      (category: Category) => (
+                        <SelectItem key={category._id} value={category._id}>
+                          {category.displayName || category.name}
+                        </SelectItem>
+                      )
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -476,26 +536,204 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="discounts"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Discounts</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="amount:PERCENTAGE:customerGroup:price"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Enter discounts in format: amount:PERCENTAGE:customerGroup:price (e.g., 10:PERCENTAGE:ALL:90)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {fields.length > 0 && (
+            <div className="bg-gray-100 p-4 rounded-lg">
+              {fields.map((field, index) => (
+                <div key={field.id} className="mb-4">
+                  {/* Discount Type */}
+                  <div className="flex items-center justify-center gap-5">
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.customerGroup`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Discount Type</FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select discount type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="BASIC">Basic</SelectItem>
+                                <SelectItem value="VIP">VIP</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
+                    {/* Discount Price */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.price`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter discount price"
+                              type="number"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value ? Number(e.target.value) : ""
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-center gap-5">
+                    {/* Start Date */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.away`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col mt-5 flex-1">
+                          <FormLabel>Start Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className="w-full pl-3 text-left font-normal"
+                                >
+                                  {field.value
+                                    ? format(new Date(field.value), "PPP")
+                                    : "Pick a date"}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(date) =>
+                                  field.onChange(date?.toISOString())
+                                }
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* End Date */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.until`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col mt-5 flex-1">
+                          <FormLabel>End Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className="w-full pl-3 text-left font-normal"
+                                >
+                                  {field.value
+                                    ? format(new Date(field.value), "PPP")
+                                    : "Pick a date"}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(date) =>
+                                  field.onChange(date?.toISOString())
+                                }
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Remove Discount Button */}
+                  <Button
+                    type="button"
+                    className="mt-2 bg-red-500 text-white"
+                    onClick={() => remove(index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+
+              {/* Add Discount Button */}
+              <Button
+                type="button"
+                className="mt-4 bg-blue-500 text-white mr-2"
+                onClick={() => {
+                  const currentDiscounts = form.getValues("discounts") || [];
+                  form.setValue(
+                    "discounts",
+                    [
+                      ...currentDiscounts, // Keep existing discounts
+                      {
+                        customerGroup: "BASIC",
+                        price: 0,
+                        away: undefined,
+                        until: undefined,
+                      },
+                    ],
+                    {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    }
+                  );
+                }}
+              >
+                Add Discount
+              </Button>
+
+              {/* Submit Button */}
+              <Button
+                className="hover:bg-primary mx-auto self-center mt-4 justify-self-center"
+                type="button"
+                onClick={() => {
+                  setApplyDiscounts(false);
+                }}
+              >
+                Apply
+              </Button>
+            </div>
+          )}
           <FormField
             control={form.control}
             name="attributes"
@@ -507,9 +745,11 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
                     const currentValues = field.value || [];
                     if (!currentValues.includes(value)) {
                       field.onChange([...currentValues, value]);
-                      const filter = filtersData?.data?.find(f => f.name === value);
+                      const filter = filtersData?.data?.find(
+                        (f) => f.name === value
+                      );
                       if (filter) {
-                        setSelectedFilters(prevFilters => ({
+                        setSelectedFilters((prevFilters) => ({
                           ...prevFilters,
                           [filter.name]: filter.value,
                         }));
@@ -725,7 +965,10 @@ export default function ProductUpdateForm({ product }: { product: Product}) {
               <FormItem>
                 <FormLabel>No Stock Message</FormLabel>
                 <FormControl>
-                  <Input placeholder="Message to show when out of stock" {...field} />
+                  <Input
+                    placeholder="Message to show when out of stock"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

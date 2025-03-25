@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,6 +28,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { toast } from "sonner";
+import { serialize } from "v8";
+import { set } from "date-fns";
 
 const formSchema = z.object({
   subject: z.string().nonempty(),
@@ -41,16 +43,24 @@ const formSchema = z.object({
 type IForm = z.infer<typeof formSchema>;
 
 export default function NewsletterComposer() {
+  const observer = useRef<IntersectionObserver>();
+  const [showCustomers, setShowCustomers] = useState(false);
   const [selectedCustomers, setSelectedCustomers] = useState<
     { name: string; email: string }[]
   >([]);
-  const filters = {
-    limit: "20",
-    offset: "0",
+  const filter = {
+    limit: "10",
+    // offset: "0",
+    search: "",
   };
-  const { data: customers, isLoading } = useCustomers(filters);
-
-  console.log(customers?.data.customers, "customers");
+  const [filters, setFilter] = useState(filter);
+  const {
+    data: customers,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+  } = useCustomers(filters);
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -69,36 +79,61 @@ export default function NewsletterComposer() {
     isError,
   } = useNewsletterMail();
   const handleSubmit = (mail: IForm) => {
-    console.log(mail, "mail");
     const { subject, message, type } = mail;
     const payload: any = {
       subject,
       message,
       type,
     };
+    if (type === "customer") {
+      if (selectedCustomers.length > 0) {
+        payload.emails = selectedCustomers.map((c) => c.email);
+      } else {
+        toast.error("Please select customers");
+        return;
+      }
+    }
     if (mail.group) {
       payload.group = mail.group;
     }
-    console.log(payload, "mail jo send kr rha");
     newsletterMail(payload, {
       onSuccess: () => {
         toast.success("Send");
+        form.reset();
+        setSelectedCustomers([]);
       },
       onError: () => {
         toast.error("error");
       },
     });
   };
-  const customersList = [
-    { name: "Faraz Hashone", email: "faraz@gmail.com" },
-    { name: "Florian Zander", email: "florian@gmail.com" },
-    { name: "Marco Lorenz", email: "marco@gmail.com" },
-    { name: "Patrick Hofrichter", email: "patrick@gmail.com" },
-    { name: "Remy Kurgansky", email: "remy@gmail.com" },
-  ];
+  const lastElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage && isFetching) {
+          fetchNextPage();
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, fetchNextPage, hasNextPage, isFetching]
+  );
+  const onAdd = (customer) => {
+    const exist = selectedCustomers.find((c) => c.email === customer.email);
+    if (exist) return;
+    setSelectedCustomers((prev) => [
+      ...prev,
+      {
+        name: customer.name,
+        email: customer.email,
+      },
+    ]);
+    setShowCustomers(false);
+  };
   const path = usePathname();
   const pathLinks = path.split("/");
-  console.log(path.split("/"), "path");
   const [fromValue, setFromValue] = useState("standard");
   const [toValue, setToValue] = useState("all");
   if (isError) {
@@ -171,7 +206,6 @@ export default function NewsletterComposer() {
                           <Select
                             value={field.value}
                             onValueChange={(e) => {
-                              console.log(e);
                               return field.onChange(e);
                             }}
                           >
@@ -188,9 +222,9 @@ export default function NewsletterComposer() {
                               <SelectItem value="customer-group">
                                 Customer Group
                               </SelectItem>
-                              {/* <SelectItem value="customer">
-                                Selected Customer
-                              </SelectItem> */}
+                              <SelectItem value="customer">
+                                Selected Customers
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         )}
@@ -224,74 +258,78 @@ export default function NewsletterComposer() {
                       </div>
                     </div>
                   )}
-                  {/* {form.watch("type") === "customer" && (
+                  {form.watch("type") === "customer" && (
                     <div className="flex border-b">
                       <div className="w-[180px] flex items-center justify-end pr-4 py-3 text-sm font-medium">
-                        Select
+                        Customers
                       </div>
-                      <div className="flex-1 py-2 pr-4">
+                      <div className="flex-1 py-2 pr-4 relative">
                         <FormField
                           control={form.control}
                           name="group"
                           render={({ field }) => (
-                            <Select
-                              onValueChange={(email) => {
-                                const customer = customers?.data.customers.find(
-                                  (customer) => customer.email === email
-                                );
-                                if (customer) {
-                                  setSelectedCustomers((prev) => [
-                                    ...prev,
-                                    { name: customer.name, email: email },
-                                  ]);
-                                }
+                            <Input
+                              onChange={(e) => {
+                                setFilter((prevFilters) => ({
+                                  ...prevFilters,
+                                  search: e.target.value,
+                                }));
                               }}
-                            >
-                              <SelectTrigger className="w-full border-0 shadow-none focus:ring-0 h-9 rounded-none">
-                                <SelectValue placeholder="Select recipients" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {customers?.data.customers.map(
-                                  (customer, index) => (
-                                    <SelectItem
-                                      key={index}
-                                      value={customer.email}
-                                    >
-                                      {customer.name}
-                                    </SelectItem>
-                                  )
-                                )}
-                              </SelectContent>
-                            </Select>
+                              placeholder="customers...."
+                              onFocus={() => {
+                                setShowCustomers(true);
+                              }}
+                            />
                           )}
                         />
+                        {showCustomers && (
+                          <div className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto">
+                            {customers?.pages
+                              ?.flatMap((page) => page?.data?.customers)
+                              .map((customer) => (
+                                <div
+                                  ref={lastElementRef}
+                                  onClick={() => {
+                                    onAdd(customer);
+                                  }}
+                                  key={customer?.email}
+                                  className="text-sm cursor-pointer"
+                                >
+                                  {customer?.name}
+                                </div>
+                              ))}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  )} */}
+                  )}
                   {/* Display Customers */}
-                  {/* {form.watch("type") === "customer" &&
-                    selectedCustomers.length > 0 && (
-                      <div className="border p-3 mt-2 rounded bg-gray-100 flex flex-wrap gap-2">
-                        {selectedCustomers.map((customer) => (
-                          <div
-                            key={customer.name}
-                            className="bg-blue-500 text-white px-3 py-1 rounded flex items-center gap-2"
-                          >
-                            {customer.name}
-                            <X
-                              className="w-4 h-4 cursor-pointer"
-                              onClick={() =>
-                                setSelectedCustomers(
-                                  selectedCustomers.filter(
-                                    (c) => c.name !== customer.name
+                  {form.watch("type") === "customer" && (
+                    <div className="flex items-center justify-end pr-4">
+                      {selectedCustomers.length > 0 && (
+                        <div className="border p-3 mt-2 rounded bg-gray-100 flex flex-wrap gap-2 w-[88%]">
+                          {selectedCustomers.map((customer) => (
+                            <div
+                              key={customer.name}
+                              className="bg-blue-500 text-white px-3 py-1 rounded flex items-center gap-2"
+                            >
+                              {customer.name}
+                              <X
+                                className="w-4 h-4 cursor-pointer"
+                                onClick={() =>
+                                  setSelectedCustomers(
+                                    selectedCustomers.filter(
+                                      (c) => c.name !== customer.name
+                                    )
                                   )
-                                )
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )} */}
+                                }
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <FormField
                     control={form.control}
                     name="subject"
