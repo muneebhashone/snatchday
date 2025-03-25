@@ -674,17 +674,6 @@ export default function ProductsForm() {
               >
                 Add Discount
               </Button>
-
-              {/* Submit Button */}
-              <Button
-                className="hover:bg-primary mx-auto self-center mt-4 justify-self-center"
-                type="button"
-                onClick={() => {
-                  setApplyDiscounts(false);
-                }}
-              >
-                Apply
-              </Button>
             </div>
           )}
           <FormField

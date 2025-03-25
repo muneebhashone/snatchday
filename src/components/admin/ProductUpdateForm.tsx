@@ -536,7 +536,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             )}
           />
 
-          {fields.length > 0 && (
+          {fields.length > 0 ? (
             <div className="bg-gray-100 p-4 rounded-lg">
               {fields.map((field, index) => (
                 <div key={field.id} className="mb-4">
@@ -687,7 +687,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                   {/* Remove Discount Button */}
                   <Button
                     type="button"
-                    className="mt-2 bg-red-500 text-white"
+                    className="mt-2 bg-red-500 hover:bg-red-500 text-white"
                     onClick={() => remove(index)}
                   >
                     Remove
@@ -721,16 +721,180 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               >
                 Add Discount
               </Button>
+            </div>
+          ) : (
+            <div className="bg-gray-100 p-4 rounded-lg">
+              {fields.map((field, index) => (
+                <div key={field.id} className="mb-4">
+                  {/* Discount Type */}
+                  <div className="flex items-center justify-center gap-5">
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.customerGroup`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Discount Type</FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select discount type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="BASIC">Basic</SelectItem>
+                                <SelectItem value="VIP">VIP</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              {/* Submit Button */}
+                    {/* Discount Price */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.price`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter discount price"
+                              type="number"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value ? Number(e.target.value) : ""
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-center gap-5">
+                    {/* Start Date */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.away`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col mt-5 flex-1">
+                          <FormLabel>Start Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className="w-full pl-3 text-left font-normal"
+                                >
+                                  {field.value
+                                    ? format(new Date(field.value), "PPP")
+                                    : "Pick a date"}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(date) =>
+                                  field.onChange(date?.toISOString())
+                                }
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* End Date */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.until`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col mt-5 flex-1">
+                          <FormLabel>End Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className="w-full pl-3 text-left font-normal"
+                                >
+                                  {field.value
+                                    ? format(new Date(field.value), "PPP")
+                                    : "Pick a date"}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(date) =>
+                                  field.onChange(date?.toISOString())
+                                }
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Remove Discount Button */}
+                  <Button
+                    type="button"
+                    className="mt-2 bg-red-500 hover:bg-red-500 text-white"
+                    onClick={() => remove(index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+
+              {/* Add Discount Button */}
               <Button
-                className="hover:bg-primary mx-auto self-center mt-4 justify-self-center"
                 type="button"
-                onClick={() => {
-                  setApplyDiscounts(false);
-                }}
+                className="mt-4 bg-blue-500 hover:bg-blue-500 text-white mr-2"
+                onClick={() =>
+                  append({
+                    customerGroup: "BASIC",
+                    price: 0,
+                    away: undefined,
+                    until: undefined,
+                  })
+                }
               >
-                Apply
+                Add Discount
               </Button>
             </div>
           )}
