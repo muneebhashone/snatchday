@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {  Users } from "lucide-react";
+import { Users } from "lucide-react";
 import { EditTournamentDialog } from "./EditTournamentDialog";
 import Link from "next/link";
 
@@ -63,6 +63,7 @@ interface Tournament {
   resubmissions: number;
   image: string;
   productId: string;
+  end: string;
 }
 
 const AllTournaments = () => {
@@ -85,12 +86,12 @@ const AllTournaments = () => {
   const handleCancel = (id: string) => {
     cancelTournament(id, {
       onSuccess: () => {
-        toast.success('Tournament cancelled successfully');
-        queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+        toast.success("Tournament cancelled successfully");
+        queryClient.invalidateQueries({ queryKey: ["tournaments"] });
       },
       onError: () => {
-        toast.error('Failed to cancel tournament');
-      } 
+        toast.error("Failed to cancel tournament");
+      },
     });
   };
 
@@ -207,10 +208,12 @@ const AllTournaments = () => {
       </div>
       <div className="flex justify-end my-2">
         <Button>
-          <Link href="/admin/tournament/create-tournament">Create Tournament</Link>
+          <Link href="/admin/tournament/create-tournament">
+            Create Tournament
+          </Link>
         </Button>
       </div>
-    
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -261,26 +264,25 @@ const AllTournaments = () => {
                 </TableCell>
                 <TableCell>
                   <>
-                  <div className="flex gap-2">
-                    <EditTournamentDialog tournament={tournament} />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleCancel(tournament._id)}
-                    >
-                      {tournament.status === "cancelled" ? (
-                        <p>Cancelled</p>
-                      ) : (
-                        <p>Active</p>
-                      )}
-                    </Button>
-                    <Link href={`/admin/tournament/${tournament._id}`}>
-                    <Button variant="ghost" size="icon">
-                      <Users className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  </div>
-                 
+                    <div className="flex gap-2">
+                      <EditTournamentDialog tournament={tournament} />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleCancel(tournament._id)}
+                      >
+                        {tournament.status === "cancelled" ? (
+                          <p>Cancelled</p>
+                        ) : (
+                          <p>Active</p>
+                        )}
+                      </Button>
+                      <Link href={`/admin/tournament/${tournament._id}`}>
+                        <Button variant="ghost" size="icon">
+                          <Users className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
                   </>
                 </TableCell>
               </TableRow>
