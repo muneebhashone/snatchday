@@ -40,12 +40,12 @@ import { Loader2 } from "lucide-react";
 
 const ProductContent = () => {
   const params = useParams();
-  const id = params.id 
-  const {data: productData, isLoading} = useGetProductById(id as string);
-  const { data: tournaments, isLoading: isUpComingTournamentLoading } = useUpComingTournament();
+  const id = params.id;
+  const { data: productData, isLoading } = useGetProductById(id as string);
+  const { data: tournaments, isLoading: isUpComingTournamentLoading } =
+    useUpComingTournament();
 
-
-  const productData1  = {
+  const productData1 = {
     title: `Acer B277 Dbmiprczx - LED monitor - 68.6 cm (27) - 4710886045649`,
     images: [
       detailimage,
@@ -73,167 +73,11 @@ const ProductContent = () => {
     },
   };
 
-  const nextTournaments = [
-    {
-      productImage: laptop,
-      gameIcon: graphiccard,
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      rating: 5,
-      reviews: 5,
-      gameName: "Push It",
-      duration: "3:00 minutes",
-      currentPrice: "2.50",
-      participationPoints: 250,
-      participationFee: "2.50",
-      countdown: {
-        hours: 20,
-        minutes: 48,
-        seconds: 37,
-        milliseconds: 19,
-      },
-    },
-    {
-      productImage: laptop2,
-      gameIcon: graphiccard,
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      rating: 5,
-      reviews: 5,
-      gameName: "Push It",
-      duration: "3:00 minutes",
-      currentPrice: "2.50",
-      participationPoints: 250,
-      participationFee: "2.50",
-      countdown: {
-        hours: 20,
-        minutes: 48,
-        seconds: 37,
-        milliseconds: 19,
-      },
-    },
-    {
-      productImage: laptop,
-      gameIcon: graphiccard,
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      rating: 5,
-      reviews: 5,
-      gameName: "Push It",
-      duration: "3:00 minutes",
-      currentPrice: "2.50",
-      participationPoints: 250,
-      participationFee: "2.50",
-      countdown: {
-        hours: 20,
-        minutes: 48,
-        seconds: 37,
-        milliseconds: 19,
-      },
-    },
-    {
-      productImage: laptop2,
-      gameIcon: graphiccard,
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      rating: 5,
-      reviews: 5,
-      gameName: "Push It",
-      duration: "3:00 minutes",
-      currentPrice: "2.50",
-      participationPoints: 250,
-      participationFee: "2.50",
-      countdown: {
-        hours: 20,
-        minutes: 48,
-        seconds: 37,
-        milliseconds: 19,
-      },
-    },
-  ];
-
-  const displayProducts = [
-    {
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      price: "201,65",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "10%",
-      category: "Computer",
-      oldPrice: "201,65",
-    },
-    {
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      price: "201,65",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "10%",
-      category: "Computer",
-      oldPrice: "201,65",
-    },
-    {
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      price: "201,65",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "10%",
-      category: "Computer",
-      oldPrice: "201,65",
-    },
-    {
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      price: "201,65",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "10%",
-      category: "Computer",
-      oldPrice: "201,65",
-    },
-    {
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      price: "201,65",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "10%",
-      category: "Computer",
-      oldPrice: "201,65",
-    },
-    {
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      price: "201,65",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "10%",
-      category: "Computer",
-      oldPrice: "201,65",
-    },
-    {
-      title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-      price: "201,65",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "10%",
-      category: "Computer",
-      oldPrice: "201,65",
-    },
-  ];
   const [openModal, setopenModal] = useState(false);
-
-
 
   const filteredNextTournaments = tournaments?.data?.filter(
     (nextTournament) => {
-      return  nextTournament._id !== id; 
+      return nextTournament._id !== id;
     }
   );
 
@@ -318,41 +162,43 @@ const ProductContent = () => {
             </div>
           ) : (
             <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full relative"
-          >
-            <CarouselContent className="-ml-2 md:-ml-4">
-              {filteredNextTournaments?.map((tournament, index) => (
-                <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2">
-                   <NextTournamentCard
-                    id={tournament._id}
-                    image={tournament.image}
-                    title={tournament.title}
-                    name={tournament.name}
-                    game={tournament.game}
-                    length={tournament.length}
-                    startingPrice={tournament.startingPrice}
-                    fee={tournament.fee}
-                    start={tournament.start}
-                    numberOfParticipants={tournament.numberOfParticipants}
-                    status={tournament.status}
-                    textForBanner={tournament.textForBanner}
-                    tournamentId={"23456722"}
-                    updatedAt={tournament.updatedAt}
-                    vip={tournament.vip}
-                    __v={tournament.__v}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-8" />
-            <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-8" />
-          </Carousel>
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full relative"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {filteredNextTournaments?.map((tournament, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="pl-2 md:pl-4 md:basis-1/2"
+                  >
+                    <NextTournamentCard
+                      id={tournament._id}
+                      image={tournament.image}
+                      title={tournament.title}
+                      name={tournament.name}
+                      game={tournament.game}
+                      length={tournament.length}
+                      startingPrice={tournament.startingPrice}
+                      fee={tournament.fee}
+                      start={tournament.start}
+                      numberOfParticipants={tournament.numberOfParticipants}
+                      status={tournament.status}
+                      textForBanner={tournament.textForBanner}
+                      tournamentId={"23456722"}
+                      updatedAt={tournament.updatedAt}
+                      vip={tournament.vip}
+                      __v={tournament.__v}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-8" />
+              <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-8" />
+            </Carousel>
           )}
-         
         </div>
         <div className="py-10 bg-[#F9F9F9]">
           <div className="text-[48px] font-extrabold text-center capitalize mb-10">
@@ -364,26 +210,26 @@ const ProductContent = () => {
             </h2>
           </div>
           {productData?.data?.relatedProducts?.length > 0 ? (
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full max-w-[1920px] mx-auto px-12"
-          >
-            <CarouselContent>
-              {productData?.data?.relatedProducts?.map((product, index) => (
-                <CarouselItem
-                  key={index}
-                  className="md:basis-1/2 lg:basis-1/4 xl:basis-1/5"
-                >
-                  <FeaturedProductsCard {...product} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
-            <CarouselNext className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
-          </Carousel>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full max-w-[1920px] mx-auto px-12"
+            >
+              <CarouselContent>
+                {productData?.data?.relatedProducts?.map((product, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="md:basis-1/2 lg:basis-1/4 xl:basis-1/5"
+                  >
+                    <FeaturedProductsCard {...product} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white left-0" />
+              <CarouselNext className="w-16 h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white right-0" />
+            </Carousel>
           ) : (
             <div className="text-center text-gray-500">
               similar products not found

@@ -127,47 +127,6 @@ const ProductDetails = ({
   );
 
   // const handleClick = () => {
-  //   const productExist = compareProducts?.data.products.some(
-  //     (pro) => pro._id === params.id
-  //   );
-  //   if (compareProducts.data.products.length > 3 && !productExist) {
-  //     productIdForCompare(compareProducts.data.products[0]._id);
-  //     productIdForCompare(params.id as string, {
-  //       onSuccess: () => {
-  //         if (productExist) {
-  //           toast.warning("Product remove from compare list");
-  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
-  //         } else {
-  //           toast.success("product added for compare");
-  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
-  //         }
-  //       },
-  //       onError: (error) => {
-  //         toast.error("Failed to add for compare");
-  //         console.error(error);
-  //       },
-  //     });
-  //   } else {
-  //     productIdForCompare(params.id as string, {
-  //       onSuccess: () => {
-  //         if (productExist) {
-  //           toast.warning("Product remove from compare list");
-  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
-  //         } else {
-  //           toast.success("product added for compare");
-  //           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
-  //         }
-  //       },
-  //       onError: (error) => {
-  //         toast.error("Failed to add for compare");
-  //         console.error(error);
-  //       },
-  //     });
-  //   }
-  //   console.log(compareProducts.data.products, "compareProducts");
-  // };
-
-  // const handleClick = () => {
   //   productIdForCompare(params.id as string, {
   //     onSuccess: () => {
   //       toast.success("product added for compare");

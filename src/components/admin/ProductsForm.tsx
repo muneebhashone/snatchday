@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,12 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
+import { Checkbox } from "../ui/checkbox";
+import { cn } from "@/lib/utils"; // Adjust the import path as necessary
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "../ui/calendar";
+import { format } from "date-fns";
 
 interface Category {
   _id: string;
@@ -47,6 +52,14 @@ interface DiscountItem {
   price: number;
 }
 
+const discountSchema = z.object({
+  // customerGroup: z.string().min(1, "Customer group cannot be empty"),
+  customerGroup: z.enum(["BASIC", "VIP"]),
+  price: z.number().nonnegative("Price must be 0 or greater"),
+  away: z.coerce.date().optional(),
+  until: z.coerce.date().optional(),
+});
+
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
@@ -55,7 +68,6 @@ const formSchema = z.object({
   colors: z.string().min(1, "Colors cannot be empty"),
   stock: z.number().min(0, "Stock must be 0 or greater"),
   price: z.number().min(0, "Price must be 0 or greater"),
-  discounts: z.string().optional(),
   attributes: z.any(),
   categoryIds: z.string().min(1, "Category is required"),
   type: z.enum(["NEW", "SALE"]),
@@ -70,9 +82,12 @@ const formSchema = z.object({
   relatedProducts: z.array(z.string()).optional(),
   requireShipping: z.boolean(),
   liscenseKey: z.string().min(1, "License key cannot be empty"),
+  discounts: z.array(discountSchema).optional(),
 });
 
 export default function ProductsForm() {
+  // const [discounts, setDiscounts] = useState([{ customerGroup: "", price: 0 }]);
+  const [applyDiscounts, setApplyDiscounts] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const { mutate: createProduct, isPending } = useCreateProduct();
   const { data: getCategories } = useGetCategories();
@@ -80,6 +95,7 @@ export default function ProductsForm() {
   const { data: getProducts } = useGetProducts();
   const { data: filters } = useGetFilters();
 
+  console.log(applyDiscounts, "discounts");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,7 +105,6 @@ export default function ProductsForm() {
       colors: "",
       stock: 0,
       price: 0,
-      discounts: "",
       attributes: "",
       categoryIds: "",
       type: "NEW",
@@ -105,15 +120,17 @@ export default function ProductsForm() {
       requireShipping: false,
       liscenseKey: "",
       images: [],
+      discounts: [
+        { customerGroup: "", price: 0, away: undefined, until: undefined },
+      ],
     },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "discounts",
   });
 
   const [selectedFilter, setSelectedFilters] = useState<string | null>(null);
-
-
-
-
-
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -134,6 +151,7 @@ export default function ProductsForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setApplyDiscounts(false);
       const formData = new FormData();
       // Append all form fields to FormData
       Object.entries(values).forEach(([key, value]) => {
@@ -173,32 +191,23 @@ export default function ProductsForm() {
           formData.append("relatedProducts", JSON.stringify(productIds));
         } else if (key === "discounts") {
           try {
-            // Convert 'percentage:price' pairs to proper format
-            const discountsArray: DiscountItem[] = value
-              .split(",")
-              .map((discount: string) => {
-                const [amountStr, priceStr] = discount
-                  .split(":")
-                  .map((v) => v.trim());
-                const amount = parseFloat(amountStr);
-                const price = parseFloat(priceStr);
+            if (Array.isArray(value)) {
+              // Ensure each discount object has required fields before appending
+              const validDiscounts = value.filter(
+                (discount) =>
+                  discount.price &&
+                  discount.customerGroup &&
+                  discount.away &&
+                  discount.until
+              );
 
-                if (isNaN(amount) || isNaN(price)) {
-                  throw new Error(`Invalid discount format: ${discount}`);
-                }
-
-                return {
-                  amount,
-                  price,
-                  type: "PERCENTAGE" as const,
-                  customerGroup: "ALL",
-                };
-              })
-              .filter((d: DiscountItem) => d.amount > 0 && d.price > 0);
-
-            formData.append("discounts", JSON.stringify(discountsArray));
+              formData.append("discounts", JSON.stringify(validDiscounts));
+            } else {
+              console.error("Discounts field is not an array:", value);
+              formData.append("discounts", "[]"); // Fallback to an empty array
+            }
           } catch (error) {
-            console.error("Error parsing discounts:", error);
+            console.error("Error handling discounts:", error);
             formData.append("discounts", "[]");
           }
         } else if (key === "price" || key === "stock") {
@@ -248,7 +257,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="company"
@@ -262,7 +270,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="description"
@@ -276,7 +283,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="images"
@@ -322,7 +328,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -364,7 +369,6 @@ export default function ProductsForm() {
               )}
             />
           </div>
-
           <FormField
             control={form.control}
             name="type"
@@ -389,7 +393,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="isFeatured"
@@ -410,7 +413,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="categoryIds"
@@ -440,7 +442,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="metaTitle"
@@ -454,7 +455,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="article"
@@ -468,7 +468,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="colors"
@@ -488,26 +487,206 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              checked={applyDiscounts}
+              onCheckedChange={(checked) => setApplyDiscounts(checked === true)}
+              id="terms"
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Apply Discounts
+            </label>
+          </div>
+          {applyDiscounts && (
+            <div className="bg-gray-100 p-4 rounded-lg">
+              {fields.map((field, index) => (
+                <div key={field.id} className="mb-4">
+                  {/* Discount Type */}
+                  <div className="flex items-center justify-center gap-5">
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.customerGroup`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Discount Type</FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select discount type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="BASIC">Basic</SelectItem>
+                                <SelectItem value="VIP">VIP</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-          <FormField
-            control={form.control}
-            name="discounts"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Discounts </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter discounts"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Enter discounts separated by commas (e.g., customerGroup:discount rate, Vip:200)
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                    {/* Discount Price */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.price`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Discount</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter discount price"
+                              type="number"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value ? Number(e.target.value) : ""
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-center gap-5">
+                    {/* Start Date */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.away`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col mt-5 flex-1">
+                          <FormLabel>Start Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className="w-full pl-3 text-left font-normal"
+                                >
+                                  {field.value
+                                    ? format(new Date(field.value), "PPP")
+                                    : "Pick a date"}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(date) =>
+                                  field.onChange(date?.toISOString())
+                                }
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* End Date */}
+                    <FormField
+                      control={form.control}
+                      name={`discounts.${index}.until`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col mt-5 flex-1">
+                          <FormLabel>End Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className="w-full pl-3 text-left font-normal"
+                                >
+                                  {field.value
+                                    ? format(new Date(field.value), "PPP")
+                                    : "Pick a date"}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={
+                                  field.value
+                                    ? new Date(field.value)
+                                    : undefined
+                                }
+                                onSelect={(date) =>
+                                  field.onChange(date?.toISOString())
+                                }
+                                disabled={(date) => date < new Date()}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Remove Discount Button */}
+                  <Button
+                    type="button"
+                    className="mt-2 bg-red-500 text-white"
+                    onClick={() => remove(index)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))}
+
+              {/* Add Discount Button */}
+              <Button
+                type="button"
+                className="mt-4 bg-blue-500 text-white mr-2"
+                onClick={() =>
+                  append({
+                    customerGroup: "BASIC",
+                    price: 0,
+                    away: undefined,
+                    until: undefined,
+                  })
+                }
+              >
+                Add Discount
+              </Button>
+
+              {/* Submit Button */}
+              <Button
+                className="hover:bg-primary mx-auto self-center mt-4 justify-self-center"
+                type="button"
+                onClick={() => {
+                  setApplyDiscounts(false);
+                }}
+              >
+                Apply
+              </Button>
+            </div>
+          )}
           <FormField
             control={form.control}
             name="attributes"
@@ -585,7 +764,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="metaDescription"
@@ -599,7 +777,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="metaKeywords"
@@ -616,7 +793,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="sku"
@@ -630,7 +806,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="barcodeEAN"
@@ -644,7 +819,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="noStockMessage"
@@ -661,7 +835,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="relatedProducts"
@@ -732,7 +905,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="requireShipping"
@@ -753,7 +925,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
             name="liscenseKey"
@@ -767,7 +938,6 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-
           <div className="flex justify-end">
             <Button type="submit">
               {isPending ? "Creating..." : "Create Product"}
@@ -778,3 +948,146 @@ export default function ProductsForm() {
     </div>
   );
 }
+
+// {applyDiscounts && (
+//   <div className="bg-gray-100 p-4 rounded-lg">
+//     <FormField
+//       control={form.control}
+//       name={`discounts.${0}.customerGroup`}
+//       render={({ field }) => (
+//         <FormItem>
+//           <FormLabel>Discount Type</FormLabel>
+//           <FormControl>
+//             <Select
+//               onValueChange={field.onChange}
+//               value={field.value}
+//             >
+//               <SelectTrigger>
+//                 <SelectValue placeholder="Select discount type" />
+//               </SelectTrigger>
+//               <SelectContent>
+//                 <SelectItem value="basic">Basic</SelectItem>
+//                 <SelectItem value="VIP">VIP</SelectItem>
+//               </SelectContent>
+//             </Select>
+//           </FormControl>
+//           <FormMessage />
+//         </FormItem>
+//       )}
+//     />
+
+//     {/* Discount Price Input */}
+//     <FormField
+//       control={form.control}
+//       name={`discounts.${0}.price`}
+//       render={({ field }) => (
+//         <FormItem>
+//           <FormLabel>Discount</FormLabel>
+//           <FormControl>
+//             <Input placeholder="Enter discount price" {...field} />
+//           </FormControl>
+//           <FormMessage />
+//         </FormItem>
+//       )}
+//     />
+
+//     {/* Start Date */}
+//     <FormField
+//       control={form.control}
+//       name={`discounts.${index}.away`}
+//       render={({ field }) => (
+//         <FormItem className="flex flex-col mt-5">
+//           <FormLabel>Start Date</FormLabel>
+//           <Popover>
+//             <PopoverTrigger asChild>
+//               <FormControl>
+//                 <Button
+//                   variant={"outline"}
+//                   className={cn(
+//                     "w-full pl-3 text-left font-normal",
+//                     !field.value && "text-muted-foreground"
+//                   )}
+//                 >
+//                   {field.value
+//                     ? format(new Date(field.value), "PPP")
+//                     : "Pick a date"}
+//                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+//                 </Button>
+//               </FormControl>
+//             </PopoverTrigger>
+//             <PopoverContent className="w-auto p-0" align="start">
+//               <Calendar
+//                 mode="single"
+//                 selected={
+//                   field.value ? new Date(field.value) : undefined
+//                 }
+//                 onSelect={(date) =>
+//                   field.onChange(date?.toISOString())
+//                 }
+//                 disabled={(date) => date < new Date()}
+//                 initialFocus
+//               />
+//             </PopoverContent>
+//           </Popover>
+//           <FormMessage />
+//         </FormItem>
+//       )}
+//     />
+
+//     {/* End Date */}
+//     <FormField
+//       control={form.control}
+//       name={`discounts.${0}.until`}
+//       render={({ field }) => (
+//         <FormItem className="flex flex-col mt-5">
+//           <FormLabel>End Date</FormLabel>
+//           <Popover>
+//             <PopoverTrigger asChild>
+//               <FormControl>
+//                 <Button
+//                   variant={"outline"}
+//                   className={cn(
+//                     "w-full pl-3 text-left font-normal",
+//                     !field.value && "text-muted-foreground"
+//                   )}
+//                 >
+//                   {field.value
+//                     ? format(new Date(field.value), "PPP")
+//                     : "Pick a date"}
+//                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+//                 </Button>
+//               </FormControl>
+//             </PopoverTrigger>
+//             <PopoverContent className="w-auto p-0" align="start">
+//               <Calendar
+//                 mode="single"
+//                 selected={
+//                   field.value ? new Date(field.value) : undefined
+//                 }
+//                 onSelect={(date) =>
+//                   field.onChange(date?.toISOString())
+//                 }
+//                 disabled={(date) => date < new Date()}
+//                 initialFocus
+//               />
+//             </PopoverContent>
+//           </Popover>
+//           <FormMessage />
+//         </FormItem>
+//       )}
+//     />
+
+//     {/* Submit Button */}
+//     <Button
+//       className="hover:bg-primary mx-auto self-center mt-4 justify-self-center"
+//       type="button"
+//       onClick={(e) => {
+//         e.preventDefault();
+//         console.log(form.getValues(), "form");
+//         setApplyDiscounts(false);
+//       }}
+//     >
+//       Apply
+//     </Button>
+//   </div>
+// )}

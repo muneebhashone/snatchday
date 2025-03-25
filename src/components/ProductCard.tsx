@@ -4,6 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import { Heart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ICurrentOfferProduct } from "@/types";
+import Link from "next/link";
 
 const roundToTwoDecimals = (value: number): number => {
   return Math.round((value + Number.EPSILON) * 100) / 100;
@@ -59,13 +60,15 @@ const ProductCard = ({
       {/* Product Image */}
       <div className="mb-6 pt-4">
         {images?.length > 0 && (
-          <Image
-            src={images[0]}
-            alt={name}
-            width={300}
-            height={200}
-            className="w-full h-[200px] object-contain group-hover:scale-105 transition-transform duration-300"
-          />
+          <Link href={`/product-listing/${_id}`}>
+            <Image
+              src={images[0]}
+              alt={name}
+              width={300}
+              height={200}
+              className="w-full h-[200px] object-contain group-hover:scale-105 transition-transform duration-300"
+            />
+          </Link>
         )}
       </div>
 

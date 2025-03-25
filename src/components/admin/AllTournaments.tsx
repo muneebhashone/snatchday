@@ -216,7 +216,7 @@ const AllTournaments = () => {
           <TableHeader>
             <TableRow>
               <TableHead>Image</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead>Tournament Title</TableHead>
               <TableHead>Game</TableHead>
               <TableHead>Starting Price</TableHead>
               <TableHead>Participants</TableHead>
@@ -240,7 +240,7 @@ const AllTournaments = () => {
                     </div>
                   )}
                 </TableCell>
-                <TableCell>{tournament.name}</TableCell>
+                <TableCell>{tournament.title}</TableCell>
                 <TableCell>{tournament.game}</TableCell>
                 <TableCell>${tournament.startingPrice}</TableCell>
                 <TableCell>{tournament.numberOfParticipants}</TableCell>

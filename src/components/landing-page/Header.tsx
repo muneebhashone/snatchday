@@ -131,84 +131,90 @@ const Header = () => {
             <NavigationMenuList className="">
               <NavigationMenuItem className="">
                 <NavigationMenuTrigger className="bg-primary hover:bg-primary data-[state=open]:bg-primary">
-                    {isLoading ? <Loader2  className="w-4 h-4 animate-spin" /> : (
-                  <Hamburger />
-                )}
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Hamburger />
+                  )}
                 </NavigationMenuTrigger>
-            
-                  <NavigationMenuContent className="border-t border-gray-100">
-                    <div className="max-w-[1920px] mx-auto p-8">
-                      <div className="grid grid-cols-12 gap-8 w-screen">
-                        {/* Categories List */}
-                        {isLoading ? (
-                          <div className="flex justify-center items-center h-full w-full">
-                            <span className="text-lg font-medium"><Loader2  className="w-4 h-4 animate-spin" /></span>
+
+                <NavigationMenuContent className="border-t border-gray-100">
+                  <div className="max-w-[1920px] mx-auto p-8">
+                    <div className="grid grid-cols-12 gap-8 w-screen">
+                      {/* Categories List */}
+                      {isLoading ? (
+                        <div className="flex justify-center items-center h-full w-full">
+                          <span className="text-lg font-medium">
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="col-span-8">
+                            <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                              {data?.data?.categories
+                                ?.filter(
+                                  (category: Category) =>
+                                    category.above &&
+                                    category.parentCategory === null
+                                )
+                                .map((category: Category) => {
+                                  // const Icon = category.icon;
+                                  return (
+                                    <div key={category._id} className="group">
+                                      <Link
+                                        href={`/product-listing?category=${category._id}`}
+                                        className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                      >
+                                        {/* <Icon className="w-4 h-4" /> */}
+                                        {category.name}
+                                      </Link>
+                                      <ul className="space-y-2">
+                                        {category.subCategories.map(
+                                          (subcategory: SubCategory, index) => (
+                                            <li
+                                              key={index}
+                                              onMouseEnter={() =>
+                                                setCategoryImage(
+                                                  subcategory.image
+                                                )
+                                              }
+                                            >
+                                              <Link
+                                                href={`/product-listing?category=${subcategory._id}`}
+                                                className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                              >
+                                                {subcategory?.name || "N/A"}
+                                              </Link>
+                                            </li>
+                                          )
+                                        )}
+                                      </ul>
+                                    </div>
+                                  );
+                                })}
+                            </div>
                           </div>
-                        ) : (
-                           <>
-                           <div className="col-span-8">
-                           <div className="grid grid-cols-3 gap-x-8 gap-y-6">
-                             {data?.data?.categories
-                               ?.filter((category: Category) => !category.above)
-                               .map((category: Category) => {
-                                 // const Icon = category.icon;
-                                 return (
-                                   <div key={category._id} className="group">
-                                     <Link
-                                       href={`/product-listing?category=${category._id}`}
-                                       className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
-                                     >
-                                       {/* <Icon className="w-4 h-4" /> */}
-                                       {category.name}
-                                     </Link>
-                                     <ul className="space-y-2">
-                                       {category.subCategories.map(
-                                         (subcategory: SubCategory, index) => (
-                                           <li
-                                             key={index}
-                                             onMouseEnter={() =>
-                                               setCategoryImage(
-                                                 subcategory.image
-                                               )
-                                             }
-                                           >
-                                             <Link
-                                               href={`/product-listing?category=${subcategory._id}`}
-                                               className="text-gray-500 hover:text-primary transition-colors block text-sm"
-                                             >
-                                               {subcategory?.name || "N/A"}
-                                             </Link>
-                                           </li>
-                                         )
-                                       )}
-                                     </ul>
-                                   </div>
-                                 );
-                               })}
-                           </div>
-                         </div>
- 
-                         {/* Category Image */}
-                         <div className="col-span-4">
-                           {categoryImage && (
-                             <div className="relative h-full w-full">
-                               <Image
-                                 src={categoryImage}
-                                 alt="Category preview"
-                                 fill
-                                 className="object-contain w-10 h-10"
-                                 unoptimized
-                               />
-                             </div>
-                           )}
-                         </div>
-                           </>
-                        )}
-                       
-                      </div>
+
+                          {/* Category Image */}
+                          <div className="col-span-4">
+                            {categoryImage && (
+                              <div className="relative h-full w-full">
+                                <Image
+                                  src={categoryImage}
+                                  alt="Category preview"
+                                  fill
+                                  className="object-contain w-10 h-10"
+                                  unoptimized
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
-                  </NavigationMenuContent>
-                
+                  </div>
+                </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
           </NavigationMenu>

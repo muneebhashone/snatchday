@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useInfiniteQuery } from "@tanstack/react-query";
 import {
   fetchItemById,
   authMutation,
@@ -41,7 +41,7 @@ import {
   shareTournament,
   getParticipants,
 } from "../lib/api";
-import { TournamentFormData} from "@/types/admin";
+import { TournamentFormData } from "@/types/admin";
 
 import {
   CategoryFormData,
@@ -298,7 +298,8 @@ export const useCancelTournament = () => {
 
 export const useManageTournament = () => {
   return useMutation({
-    mutationFn: ({ data }: { data: TournamentFormData }) => manageTournament( data),
+    mutationFn: ({ data }: { data: TournamentFormData }) =>
+      manageTournament(data),
   });
 };
 
@@ -309,18 +310,16 @@ export const useGetTournaments = (params: TournamentParams) => {
   });
 };
 
-
 export const useUpComingTournament = () => {
   return useQuery({
-    queryKey: ['upComingTournament'],
+    queryKey: ["upComingTournament"],
     queryFn: () => upComingTournament(),
   });
 };
 
-
 export const useGetTournamentById = (id: string) => {
   return useQuery({
-    queryKey: ['tournament', id],
+    queryKey: ["tournament", id],
     queryFn: () => getTournamentById(id),
   });
 };
@@ -328,7 +327,7 @@ export const useGetTournamentById = (id: string) => {
 export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (formData: FormData) => updateProfile(formData),
-  }); 
+  });
 };
 
 //Compare Products
@@ -345,7 +344,6 @@ export const useGetCompareProducts = () => {
     queryFn: getCompareProducts,
   });
 };
-
 
 //Recommend Product
 export const useRecommendProduct = () => {
@@ -371,9 +369,14 @@ export const useNewsletterMail = () => {
 
 //customers
 export const useCustomers = (filters) => {
-  return useQuery({
-    queryKey: ["customers"],
-    queryFn: () => getCustomers(filters),
+  return useInfiniteQuery({
+    queryKey: ["customers", filters],
+    queryFn: ({ pageParam = 1 }) =>
+      getCustomers({ ...filters, offset: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPafes) => {
+      return lastPage.length === 10 ? allPafes.length + 1 : undefined;
+    },
   });
 };
 
@@ -383,18 +386,16 @@ export const useParticipateTournament = () => {
   });
 };
 
-
 export const useShareTournament = () => {
   return useMutation({
-    mutationFn: ({id,email}:{id:string,email:string}) => shareTournament(id,email),
+    mutationFn: ({ id, email }: { id: string; email: string }) =>
+      shareTournament(id, email),
   });
 };
-
 
 export const useGetParticipants = (id: string) => {
   return useQuery({
-    queryKey: ['participants', id],
+    queryKey: ["participants", id],
     queryFn: () => getParticipants(id),
   });
 };
-
