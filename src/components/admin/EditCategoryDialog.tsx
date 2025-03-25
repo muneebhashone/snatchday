@@ -76,7 +76,7 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
     defaultValues: {
       name: category.name,
       description: category.description,
-      parentCategoryId: category.parentCategory || undefined,
+      parentCategoryId: category.parentCategory || '',
       shop: category.shop,
       above: category.above,
     },
