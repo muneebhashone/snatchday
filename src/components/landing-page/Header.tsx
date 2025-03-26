@@ -27,17 +27,18 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useGetCategories, useGetMyProfile } from "@/hooks/api";
+import { useGetCart, useGetCategories, useGetMyProfile } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 // import iphone from '@/app/images/iphone.png'
 // import laptop1 from '@/app/images/laptop.png'
 // import laptop2 from '@/app/images/laptopv2.png'
 // import { StaticImageData } from "next/image";
 // import { useGetMyProfile } from "@/hooks/api";
-
+import { useRouter } from "next/navigation";
 import { categoryData, menu } from "@/dummydata";
 import { Category } from "@/types";
 import Loader from "../Loader";
+import { useCart } from "@/context/CartContext";
 
 // Define the Category interface
 
@@ -49,8 +50,9 @@ interface SubCategory {
 
 const Header = () => {
   const pathname = usePathname();
-
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { cartCount, setCartCount } = useCart();
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -103,6 +105,10 @@ const Header = () => {
     });
   };
 
+  const handleCartClick = () => {
+    setCartCount(0);
+    router.push("/order");
+  };
   // const { data: myprofile, isLoading } = useGetMyProfile();
 
   return (
@@ -366,16 +372,18 @@ const Header = () => {
           <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
             <Heart className="h-6 w-6 " />
           </button>
-          <button className="hover:text-primary bg-transparent p-0 text-[#888888] relative flex items-center gap-4 cursor-pointer">
+          <button onClick={handleCartClick} className="hover:text-primary bg-transparent p-0 text-[#888888] relative flex items-center gap-4 cursor-pointer">
             <ShoppingCart className="h-6 w-6" />
+            <span className="absolute -top-4 left-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {cartCount}
+            </span>
+            </button>
             <div className="text-sm text-foreground text-start">
               <p className="font-bold">Your Shopping Cart</p>
               <p className="text-sm text-primary font-bold">0.00 €</p>
             </div>
-            <span className="absolute -top-2 left-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              0
-            </span>
-          </button>
+            
+       
         </div>
 
         {/* {/ Mobile Icons /} */}
@@ -389,7 +397,7 @@ const Header = () => {
           <button className="hover:text-primary text-[#888888] relative">
             <ShoppingCart className="h-6 w-6" />
             <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              0
+              {0}
             </span>
           </button>
         </div>

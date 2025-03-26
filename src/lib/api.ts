@@ -324,3 +324,18 @@ export const getParticipants = async (id: string) => {
   return response.data;
 };
 
+export const getCart = async () => {
+  const response = await axiosInstance.get("/order/cart");
+  return response.data;
+};
+
+export const addToCart = async (id: string) => {
+  const response = await axiosInstance.post(`/order/cart`,{productId:id});
+  return response.data;
+};
+
+export const updateCart = async (id: string,quantity:number) => {
+  const response = await axiosInstance.patch(`/order/cart`,{productId:id,quantity});
+  return response.data;
+};
+

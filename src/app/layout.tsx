@@ -7,6 +7,7 @@ import { Providers } from "./provider";
 import { AuthProvider } from "@/components/context/authContext";
 import { UserContextProvider } from "@/context/userContext";
 import { Toaster } from "sonner";
+import { CartProvider } from "@/context/CartContext";
 const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
   variable: "--font-hanken-grotesk",
@@ -35,10 +36,12 @@ export default function RootLayout({
       >
         <UserContextProvider>
            <AuthProvider>
+            <CartProvider>
             <Providers>
               <Suspense fallback={<Loading />}>{children}</Suspense>
               <Toaster />
           </Providers>
+          </CartProvider>
           </AuthProvider>
         </UserContextProvider>
       </body>

@@ -40,6 +40,9 @@ import {
   participateTournament,
   shareTournament,
   getParticipants,
+  getCart,
+  addToCart,
+  updateCart,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
@@ -400,3 +403,23 @@ export const useGetParticipants = (id: string) => {
     queryFn: () => getParticipants(id),
   });
 };
+
+export const useGetCart = () => {
+  return useQuery({
+    queryKey: ["cart"],
+    queryFn: getCart,
+  });
+};
+
+export const useAddToCart = () => {
+  return useMutation({
+    mutationFn: (id: string) => addToCart(id),
+  });
+};
+
+export const useUpdateCart = () => {
+  return useMutation({
+    mutationFn: ({ id, quantity }: { id: string; quantity: number }) => updateCart(id, quantity),
+  });
+};
+
