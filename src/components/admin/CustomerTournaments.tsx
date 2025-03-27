@@ -15,6 +15,8 @@ import React, { useState } from "react";
 import imageForOpinion from "../admin/../../app/images/duel.png";
 import imageForOpinion2 from "../admin/../../app/images/duel2.png";
 import { Loader, LucideEye } from "lucide-react";
+import Link from "next/link";
+import { EditTournamentDialog } from "./EditTournamentDialog";
 
 const CustomerTournaments = () => {
   const [page, setPage] = useState(0);
@@ -102,9 +104,12 @@ const CustomerTournaments = () => {
               </TableCell>
               <TableCell className="">coming soon..</TableCell>
               <TableCell className="">
-                <div className="w-7 h-7 p-[5px] rounded-md bg-primary text-white flex items-center justify-center">
-                  <LucideEye />
-                </div>
+                <EditTournamentDialog
+                  tournament={{
+                    ...tournament,
+                    article: tournament.article.name,
+                  }}
+                />
               </TableCell>
             </TableRow>
           ))}

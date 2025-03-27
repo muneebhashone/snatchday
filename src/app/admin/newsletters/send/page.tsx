@@ -51,7 +51,9 @@ export default function NewsletterComposer() {
   const filter = {
     limit: 10,
     search: "",
+    offset:10
   };
+
   const [filters, setFilter] = useState(filter);
   const {
     data: customers,
@@ -60,6 +62,13 @@ export default function NewsletterComposer() {
     hasNextPage,
     isFetching,
   } = useCustomers(filters);
+
+  console.log({hasNextPage})
+
+
+
+
+
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -71,6 +80,9 @@ export default function NewsletterComposer() {
       list: [""],
     },
   });
+
+
+
   const {
     mutate: newsletterMail,
     isPending,
@@ -108,10 +120,13 @@ export default function NewsletterComposer() {
   };
   const lastElementRef = useCallback(
     (node: HTMLDivElement) => {
+      console.log(node)
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasNextPage && isFetching) {
+        console.log({entries})
+        if (entries[0].isIntersecting && hasNextPage) {
+          console.log("FETCHING NEXT PAGE")
           fetchNextPage();
         }
       });
@@ -282,18 +297,20 @@ export default function NewsletterComposer() {
                           )}
                         />
                         {showCustomers && (
-                          <div className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto">
+                          <div
+                          ref={lastElementRef}
+                
+                          className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto">
                             {customers?.pages
                               ?.flatMap((page) => page?.data?.customers)
                               .flatMap((data) =>
-                                data?.data.map((customer) => (
+                                data?.data.map((customer , idx) => (
                                   <div
-                                    ref={lastElementRef}
                                     onClick={() => {
                                       onAdd(customer);
                                     }}
-                                    key={customer?.email}
-                                    className="text-sm cursor-pointer"
+                                    key={`${customer?.email}-${idx}  `}
+                                    className="text-sm cursor-pointer bg-red-200"
                                   >
                                     {customer?.name}
                                   </div>

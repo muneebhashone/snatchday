@@ -72,7 +72,21 @@ const CustomerOrdersDataList = () => {
               </TableCell>
               <TableCell>{order?.cartObject.total}</TableCell>
               <TableCell>{order?.cartObject.subTotal}</TableCell>
-              <TableCell>{order?.status}</TableCell>
+              <TableCell>
+                <span
+                  className={`px-4 py-2 rounded-full ${
+                    order?.status === "pending"
+                      ? "bg-primary text-white"
+                      : order?.status === "paid"
+                      ? "bg-green-800 text-white"
+                      : order?.status === "cancelled"
+                      ? "bg-red-600 text-white"
+                      : "border border-gray-300 shadow-sm text-foreground"
+                  }`}
+                >
+                  {order?.status}
+                </span>
+              </TableCell>
               <TableCell className="">
                 <div className="w-7 h-7 p-[5px] rounded-md bg-primary text-white flex items-center justify-center">
                   <LucideEye />
