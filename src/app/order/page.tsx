@@ -52,6 +52,7 @@ const checkoutSchema = z
 
 const CartTable = () => {
   const { data: cart, isLoading, refetch } = useGetCart();
+  console.log(cart, "cart");
   const { mutateAsync: updateCart, isPending } = useUpdateCart();
   const { data: points, isLoading: isPointsLoading } = useGetPoints();
   const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
@@ -95,7 +96,6 @@ const CartTable = () => {
   };
 
   const onSubmit = async (data: any) => {
-    console.log(data, "data");
 
     // Check for maximum limits and wallet balance
     const maxSnapPoints = points?.data?.maxSnapPoints || 0;
@@ -188,8 +188,8 @@ const CartTable = () => {
               />
               <h2 className="text-2xl font-bold">Shopping Cart</h2>
             </div>
-            {cart?.data?.cart?.length === 0 ? (
-              <p className="text-center text-gray-500">Your cart is empty</p>
+            {(!cart || !cart.data || !cart.data.cart || cart.data.cart.length === 0) ? (
+              <p className="text-center my-5 text-gray-500">Your cart is empty</p>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
@@ -257,8 +257,6 @@ const CartTable = () => {
 
             {/* Form Section */}
             <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
-              <h3 className="text-xl font-bold">Please choose next step</h3>
-
               {/* Row for Select Box and Input Field */}
               <div className="flex w-full items-center mt-2">
                 <select
@@ -346,7 +344,7 @@ const CartTable = () => {
               <div className="mt-6 flex justify-end w-full">
                 <Button
                   type="submit"
-                  disabled={isCheckoutPending}
+                  disabled={isCheckoutPending || !cart || !cart.data || !cart.data.cart || cart.data.cart.length === 0}
                   className="bg-[#F37835] text-white px-5 py-2 rounded-md hover:bg-[#FF9900]"
                 >
                   {isCheckoutPending ? "Processing..." : "Proceed to Checkout"}
