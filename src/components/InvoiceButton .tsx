@@ -2,9 +2,12 @@ import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import InvoicePDF from "./InvoicePDF";
 import { File } from "lucide-react";
 const InvoiceButton = ({ orderDetails }: { orderDetails: any }) => {
+    console.log(orderDetails, "orderDetails-pdf")
   return (
     <div>
-    
+    {/* <PDFViewer width="100%" height="600px">
+        <InvoicePDF orderDetails={orderDetails} />
+      </PDFViewer> */}
 
       {/* Download PDF Button */}
       <PDFDownloadLink

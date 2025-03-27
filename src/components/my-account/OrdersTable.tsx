@@ -43,7 +43,9 @@ const OrdersTable = () => {
   return (
     <div className="p-20">
       <h2 className="text-2xl font-bold mb-10">My Orders</h2>
-      <Table className="border">
+  
+
+       <Table className="border">
         <TableHeader className="rounded-t-3xl">
           <TableRow className="rounded-t-3xl">
             <TableHead className="w-[100px]">order number</TableHead>
@@ -86,7 +88,7 @@ const OrdersTable = () => {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center">
-                  <InvoiceButton orderDetails={order?.data} />
+                  <InvoiceButton orderDetails={order} />
                 </TableCell>
               </TableRow>
             ))
@@ -105,7 +107,7 @@ const OrdersTable = () => {
         <p className="text-sm text-foreground">
           Showing {pagination.offset + 1} to {Math.min(pagination.offset + pagination.limit, orders?.data?.total)} of {orders?.data?.total} (1 page(s))
         </p>
-      </div>
+      </div> 
     </div>
   );
 };
