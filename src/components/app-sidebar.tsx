@@ -24,7 +24,8 @@ import {
   Plus,
   List,
   Newspaper,
-  Trophy
+  Trophy,
+  Gift
 } from "lucide-react"
 import {
   Collapsible,
@@ -103,6 +104,25 @@ const navItems = [
     url: "/admin/newsletters",
     icon: <Newspaper className="h-4 w-4" />,
   },
+  {
+    title: "Voucher",
+    
+    icon: <Gift className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Vouchers",
+        url: "/admin/vouchers",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Voucher",
+        url: "/admin/vouchers/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
+    
+      
+  },  
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

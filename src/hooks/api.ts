@@ -40,6 +40,13 @@ import {
   participateTournament,
   shareTournament,
   getParticipants,
+  vouchers,
+  VoucherData,
+  CreateVoucherData,
+  getVouchers,
+  deleteVoucher,
+  updateVoucher,
+  getVoucherById,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
@@ -186,7 +193,7 @@ export const useUpdateFilter = () => {
 };
 
 export interface ProductFilters {
-  price?: string[];
+  price?: string;
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -398,5 +405,38 @@ export const useGetParticipants = (id: string) => {
   return useQuery({
     queryKey: ["participants", id],
     queryFn: () => getParticipants(id),
+  });
+};
+
+export const useCreateVoucher = () => {
+  return useMutation({
+    mutationFn: (data: CreateVoucherData) => vouchers(data),
+  });
+};
+
+export const useGetVouchers = () => {
+  return useQuery({
+    queryKey: ["vouchers"],
+    queryFn: getVouchers,
+  });
+};
+
+export const useDeleteVoucher = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteVoucher(id),
+  });
+};
+
+export const useUpdateVoucher = (id: string) => {
+  return useMutation({
+    mutationFn: (data: VoucherData) => updateVoucher(id, data),
+  });
+};
+
+export const useGetVoucherById = (id: string) => {
+  return useQuery({
+    queryKey: ["voucher", id],
+    queryFn: () => getVoucherById(id),
+    enabled: !!id,
   });
 };
