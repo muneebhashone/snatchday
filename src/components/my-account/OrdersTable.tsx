@@ -10,6 +10,7 @@ import {
 import { Eye } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { formatDate } from "date-fns";
 
 interface Order {
   orderNumber: string;
@@ -78,7 +79,7 @@ const orders: Order[] = [
   },
 ];
 
-const OrdersTable = () => {
+const OrdersTable = ({ orders, isLoading }: { orders: Order[], isLoading: boolean }) => {
   return (
     <div className="p-20">
       <h2 className="text-2xl font-bold mb-10">My Orders</h2>
@@ -97,14 +98,23 @@ const OrdersTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order.orderNumber}>
-              <TableCell>{order.orderNumber}</TableCell>
-              <TableCell>{order.date}</TableCell>
-              <TableCell className="max-w-[400px]">{order.article}</TableCell>
-              <TableCell className="text-center">{order.number}</TableCell>
-              <TableCell className="text-right">{order.subtotal}</TableCell>
-              <TableCell className="text-right">{order.totalAmount}</TableCell>
+           
+          {
+           isLoading ? (
+            <TableRow>
+              <TableCell colSpan={10} className="text-center">
+                Loading...
+              </TableCell>
+            </TableRow>
+           ) : (
+             orders?.data?.orders.map((order,index) => (
+            <TableRow key={index}>
+              <TableCell>{order?.orderNumber || "N/A"}</TableCell>
+              <TableCell>{formatDate(order?.createdAt || "", "dd/MM/yyyy")}</TableCell>
+              <TableCell className="max-w-[400px]">{order?.cartObject?.cart?.map((item:any)=>item?.product?.article) || "N/A"}</TableCell>
+              <TableCell className="text-center">{order?.orderNumber || "N/A"}</TableCell>
+              <TableCell className="text-right">{`${order?.cartObject?.subTotal}€` || "N/A"}</TableCell>
+              <TableCell className="text-right">{`${order?.cartObject?.total}€` || "N/A"}</TableCell>
               <TableCell>
                 <div
                   className={`text-center rounded-md py-1 px-2 
@@ -120,7 +130,7 @@ const OrdersTable = () => {
                 </div>
               </TableCell>
               <TableCell className="text-center">
-                <Link href={`/orders/${order.orderNumber}`}>
+                <Link href={`/orders/${order?._id}`}>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -156,8 +166,9 @@ const OrdersTable = () => {
                   </Link>
                 )}
               </TableCell>
-            </TableRow>
-          ))}
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
       <div className="p-4 border-t">

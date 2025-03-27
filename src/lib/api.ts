@@ -10,6 +10,8 @@ import {
   CategoryFormData,
   ComapreProduct,
   TournamentDetailResponse,
+  CheckoutTypes,
+  PlaceOrder,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -339,3 +341,28 @@ export const updateCart = async (id: string,quantity:number) => {
   return response.data;
 };
 
+export const getPoints = async () => {
+  const response = await axiosInstance.get("/web-settings/points");
+  return response.data;
+};
+
+export const checkout = async (data: CheckoutTypes) => {
+  const response = await axiosInstance.post("/order/checkout", data);
+  return response.data;
+};
+
+export const placeOrderApi = async (data: PlaceOrder) => {
+  console.log(data, "data from api");
+  const response = await axiosInstance.post(`/order/order`, data);
+  return response.data;
+};
+
+export const getMyOrders = async () => {
+  const response = await axiosInstance.get(`/order/order`);
+  return response.data;
+};
+
+export const getOrderById = async (id: string) => {
+  const response = await axiosInstance.get(`/order/order/${id}`);
+  return response.data;
+};

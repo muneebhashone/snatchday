@@ -105,8 +105,10 @@ const ProductDetails = ({
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const { mutate: addToCart ,isPending:isAddingToCart} = useAddToCart();
-    const {user}=useUserContext()
+  const { mutate: addToCart , isPending: isAddToCartPending} = useAddToCart();
+   
+  
+  const {user}=useUserContext()
   const handleIncrement = () => {
     setQuantity((prev) => prev + 1);
   };
@@ -266,12 +268,13 @@ const handleAddToCart = () => {
                     <span className="text-foreground">{price}</span>€
                   </h2>
                   <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
-                    {discounts.map((discounts, i) => (
+                    {discounts.map((discount, i) => (
                       <span key={i} className="text-foreground">
-                        {price - discounts?.price }
+                        {Number(price) - Number(discount?.price) > 0 
+                          ? (Number(price) - Number(discount?.price)).toFixed(2) 
+                          : "0.00"}
                       </span>
-                    ))}
-                    €
+                    ))}€
                   </h2>
                 </div>
               ) : (
@@ -385,13 +388,13 @@ const handleAddToCart = () => {
                     <div>
                       <button 
                         onClick={handleAddToCart} 
-                        disabled={!user || isAddingToCart}
+                        disabled={!user || isAddToCartPending}
                         className={`gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full w-64 h-14 ${
                           user ? 'hover:opacity-90' : 'opacity-50 cursor-not-allowed'
                         }`}
                       >
                         <ShoppingCartIcon size={28} className="mr-2" />
-                        {isAddingToCart ? 'Adding...' : 'Add to Cart'}
+                       {isAddToCartPending ? "adding..." : "Add to Cart"}
                       </button>
                     </div>
                   </TooltipTrigger>

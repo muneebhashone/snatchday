@@ -2,12 +2,15 @@
 import React, { createContext, useContext, useState } from "react";
 
 const CartContext = createContext(null);
+interface CartProviderProps {
+  children: React.ReactNode;
+}   
 
-export const CartProvider = ({ children }) => {
+export const CartProvider = ({ children }: CartProviderProps) => {
   const [cartCount, setCartCount] = useState(0);
-
+  const [cartData, setCartData] = useState(null);
   return (
-    <CartContext.Provider value={{ cartCount, setCartCount }}>
+    <CartContext.Provider value={{ cartCount, setCartCount, cartData, setCartData }}>
       {children}
     </CartContext.Provider>
   );

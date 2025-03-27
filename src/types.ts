@@ -239,3 +239,36 @@ export interface User {
 
 }
 
+export interface CheckoutTypes {
+  cartId: string;
+  snapPoints: number;
+  discountPoints: number;
+  voucherCode: string;
+}
+
+export interface PlaceOrder {
+  cartObjectFromCheckout: Record<string, any>;
+  billingDetails: {
+    firstName?: string;
+    lastName?: string;
+    vatId?: string;
+    email?: string;
+    street?: string;
+    city?: string;
+    zip?: string;
+    country?: string;
+    federalState?: string;
+  };
+  shippingDetails: {
+    firstName?: string;
+    lastName?: string;
+    vatId?: string;
+    email?: string;
+    street?: string;
+    city?: string;
+    zip?: string;
+    country?: string;
+    federalState?: string;
+  };
+}
+

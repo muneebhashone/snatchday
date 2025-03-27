@@ -43,12 +43,19 @@ import {
   getCart,
   addToCart,
   updateCart,
+  getPoints,
+  checkout,
+  getMyOrders,
+  getOrderById,
+  placeOrderApi,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
 import {
   CategoryFormData,
+  CheckoutTypes,
   FilterFormData,
+  PlaceOrder,
   ProductFormData,
   ResetPasswordTypes,
 } from "@/types";
@@ -420,6 +427,40 @@ export const useAddToCart = () => {
 export const useUpdateCart = () => {
   return useMutation({
     mutationFn: ({ id, quantity }: { id: string; quantity: number }) => updateCart(id, quantity),
+  });
+};
+
+export const useGetPoints = () => {
+  return useQuery({
+    queryKey: ["points"],
+    queryFn: getPoints,
+  });
+};
+
+export const useCheckout = () => {
+  return useMutation({
+    mutationFn: (data: CheckoutTypes) => checkout(data),
+  });
+};
+
+
+export const usePlaceOrder = () => {
+  return useMutation({
+    mutationFn: (data: PlaceOrder) => placeOrderApi(data),
+  });
+};
+
+export const useGetMyOrders = () => {
+  return useQuery({
+    queryKey: ["myOrders"],
+    queryFn: getMyOrders,
+  });
+};
+
+export const useGetOrderById = (id: string) => {
+  return useQuery({
+    queryKey: ["order", id],
+    queryFn: () => getOrderById(id),
   });
 };
 

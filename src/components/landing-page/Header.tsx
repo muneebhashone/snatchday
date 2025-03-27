@@ -56,6 +56,8 @@ const Header = () => {
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+ const {data:myprofile, isLoading:isMyProfileLoading}=useGetMyProfile()
+
 
   const [userPoints] = useState({
     snapPoints: 4875,
@@ -106,7 +108,6 @@ const Header = () => {
   };
 
   const handleCartClick = () => {
-    setCartCount(0);
     router.push("/order");
   };
   // const { data: myprofile, isLoading } = useGetMyProfile();
@@ -417,18 +418,23 @@ const Header = () => {
             align="start"
             sideOffset={42}
           >
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
+            {isMyProfileLoading ? (
+              <div className="flex justify-center items-center h-full w-full">
+                <Loader2 className="w-4 h-4 animate-spin" />
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
                   <span className="text-gray-600">Snap Points</span>
                   <span className="text-primary font-bold">
-                    {userPoints.snapPoints}
+                    {myprofile?.data?.wallet?.snapPoints}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">Equivalent Value</span>
                   <span className="text-primary font-medium">
-                    {userPoints.snapPoints / 100}€
+                    {myprofile?.data?.wallet?.snapPoints / 100}€
                   </span>
                 </div>
               </div>
@@ -437,17 +443,18 @@ const Header = () => {
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600">Discount Points</span>
                   <span className="text-primary font-bold">
-                    {userPoints.discountPoints}
+                    {myprofile?.data?.wallet?.discountPoints}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-500">Equivalent Value</span>
                   <span className="text-primary font-medium">
-                    {userPoints.discountPoints / 100}€
+                    {myprofile?.data?.wallet?.discountPoints / 100}€
                   </span>
                 </div>
               </div>
             </div>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
