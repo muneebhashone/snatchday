@@ -69,7 +69,7 @@ const EarlyAccess = () => {
             <Input
               {...form.register("email")}
               placeholder="Enter Email Address"
-              className="w-full border text-sm md:text-lg border-primary rounded-lg md:h-16 pl-4 md:pl-12 mt-5"
+              className="w-full border text-sm text-black md:text-lg border-primary rounded-lg md:h-16 pl-4 md:pl-12 mt-5"
             />
             {form.formState.errors.email && (
               <p className="text-red-500 mt-1">{form.formState.errors.email.message}</p>

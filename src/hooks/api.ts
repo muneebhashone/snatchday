@@ -45,6 +45,13 @@ import {
   updateCustomer,
   getCustomerTournaments,
   getCustomerOrdersData,
+  vouchers,
+  VoucherData,
+  CreateVoucherData,
+  getVouchers,
+  deleteVoucher,
+  updateVoucher,
+  getVoucherById,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
@@ -191,7 +198,7 @@ export const useUpdateFilter = () => {
 };
 
 export interface ProductFilters {
-  price?: string[];
+  price?: string;
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -241,6 +248,7 @@ export const useGetProductById = (id: string) => {
     enabled: !!id,
   });
 };
+// console.log("aaa")
 
 export const useGetNewsletters = (filters?: NewsletterFilters) => {
   return useQuery({
@@ -374,15 +382,22 @@ export const useNewsletterMail = () => {
 
 //customers
 export const useCustomers = (filters) => {
+  console.log({filters})
   return useInfiniteQuery({
     queryKey: ["customers", filters],
-    queryFn: ({ pageParam = 0 }) =>
-      getCustomers({ ...filters, offset: pageParam }),
+    queryFn: ({ pageParam }) => {
+      console.log({pageParam})
+      return getCustomers({ ...filters, offset: pageParam })
+    },
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      // return lastPage.length === 10 ? allPafes.length + 1 : undefined;
-      const nextSkip = lastPage.skip + lastPage.limit;
-      return nextSkip < lastPage.total ? nextSkip : undefined;
+    getNextPageParam: (lastPage , allPages) => {
+      console.log({lastPage})
+      console.log({allPages})
+      const customers = lastPage.data.customers[0].data
+      const total =  lastPage.data.customers[0].total[0].total
+      console.log({total, customers})
+      return customers.length < 10 ? undefined : filters.offset
+
     },
   });
 };
@@ -443,5 +458,38 @@ export const useGetParticipants = (id: string) => {
   return useQuery({
     queryKey: ["participants", id],
     queryFn: () => getParticipants(id),
+  });
+};
+
+export const useCreateVoucher = () => {
+  return useMutation({
+    mutationFn: (data: CreateVoucherData) => vouchers(data),
+  });
+};
+
+export const useGetVouchers = () => {
+  return useQuery({
+    queryKey: ["vouchers"],
+    queryFn: getVouchers,
+  });
+};
+
+export const useDeleteVoucher = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteVoucher(id),
+  });
+};
+
+export const useUpdateVoucher = (id: string) => {
+  return useMutation({
+    mutationFn: (data: VoucherData) => updateVoucher(id, data),
+  });
+};
+
+export const useGetVoucherById = (id: string) => {
+  return useQuery({
+    queryKey: ["voucher", id],
+    queryFn: () => getVoucherById(id),
+    enabled: !!id,
   });
 };

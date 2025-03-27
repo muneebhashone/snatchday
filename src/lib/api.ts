@@ -72,56 +72,25 @@ export const createCategory = async (formData: FormData) => {
   return response.data;
 };
 
-export const getCategories = async () => {
-  const response = await axiosInstance.get<Category[]>("/category");
-  return response.data;
-};
+export interface ProductResponse {
+  data: {
+    products: Array<{
+      _id: string;
+      name: string;
+      // ... other product fields
+    }>;
+  };
+}
 
-export const getCategoryById = async (id: string) => {
-  const response = await axiosInstance.get<Category>(`/category/${id}`);
-  return response.data;
-};
-
-export const updateCategory = async (id: string, data: CategoryFormData) => {
-  const response = await axiosInstance.patch<CategoryFormData>(
-    `/category/${id}`,
-    data
-  );
-  return response.data;
-};
-
-export const deleteCategory = async (id: string) => {
-  const response = await axiosInstance.delete<CategoryFormData>(
-    `/category/${id}`
-  );
-  return response.data;
-};
-
-export const createFilter = async (formData: FilterFormData) => {
-  const response = await axiosInstance.post<FilterFormData>(
-    "/filter",
-    formData
-  );
-  return response.data;
-};
-
-export const getFilters = async () => {
-  const response = await axiosInstance.get<FilterFormData[]>("/filter");
-  return response.data;
-};
-
-export const deleteFilter = async (id: string) => {
-  const response = await axiosInstance.delete<FilterFormData>(`/filter/${id}`);
-  return response.data;
-};
-
-export const updateFilter = async (id: string, data: FilterFormData) => {
-  const response = await axiosInstance.patch<FilterFormData>(
-    `/filter/${id}`,
-    data
-  );
-  return response.data;
-};
+export interface CategoryResponse {
+  data: {
+    categories: Array<{
+      _id: string;
+      name: string;
+      // ... other category fields
+    }>;
+  };
+}
 
 export const getProducts = async (params?: {
   price?: string;
@@ -133,7 +102,7 @@ export const getProducts = async (params?: {
   category?: string;
   type?: string;
 }) => {
-  const response = await axiosInstance.get<ProductFormData[]>("/product", {
+  const response = await axiosInstance.get<ProductResponse>("/product", {
     params,
   });
   return response.data;
@@ -376,3 +345,111 @@ export const getParticipants = async (id: string) => {
   const response = await axiosInstance.get(`/tournament/participants/${id}`);
   return response.data;
 };
+
+export interface CreateVoucherData {
+  code: string;
+  name: string;
+  type: "PERCENTAGE" | "FIXED";
+  estate: string;
+  value: number;
+  registered: boolean;
+  noShipping: boolean;
+  products: string[];
+  categories: string[];
+  from: string;
+  until: string;
+  noOfUsage: number;
+  usagePerUser: number;
+}
+
+export interface VoucherData extends Omit<CreateVoucherData, 'products'> {
+  _id: string;
+  products: Array<{
+    _id: string;
+    name: string;
+  }>;
+}
+
+export interface VoucherResponse {
+  data: VoucherData[];
+}
+
+export const vouchers = async (data: CreateVoucherData) => {
+  const response = await axiosInstance.post('/voucher', data);
+  return response.data;
+};
+
+export const getVouchers = async () => {
+  const response = await axiosInstance.get<VoucherResponse>('/voucher');
+  return response.data;
+};
+
+export const getVoucherById = async (id: string) => {
+  const response = await axiosInstance.get<VoucherData>(`/voucher/${id}`);
+  return response.data;
+};
+
+export const deleteVoucher = async (id: string) => {
+  const response = await axiosInstance.delete(`/voucher/${id}`);
+  return response.data;
+};
+
+export const updateVoucher = async (id: string, data: VoucherData) => {
+  const response = await axiosInstance.put(`/voucher/${id}`, data);
+  return response.data;
+};
+
+export const getCategories = async () => {
+  const response = await axiosInstance.get<CategoryResponse>("/category");
+  return response.data;
+};
+
+export const getCategoryById = async (id: string) => {
+  const response = await axiosInstance.get<Category>(`/category/${id}`);
+  return response.data;
+};
+
+export const updateCategory = async (id: string, data: CategoryFormData) => {
+  const response = await axiosInstance.patch<CategoryFormData>(
+    `/category/${id}`,
+    data
+  );
+  return response.data;
+};
+
+export const deleteCategory = async (id: string) => {
+  const response = await axiosInstance.delete<CategoryFormData>(
+    `/category/${id}`
+  );
+  return response.data;
+};
+
+export const createFilter = async (formData: FilterFormData) => {
+  const response = await axiosInstance.post<FilterFormData>(
+    "/filter",
+    formData
+  );
+  return response.data;
+};
+
+export const getFilters = async () => {
+  const response = await axiosInstance.get<FilterFormData[]>("/filter");
+  return response.data;
+};
+
+export const deleteFilter = async (id: string) => {
+  const response = await axiosInstance.delete<FilterFormData>(`/filter/${id}`);
+  return response.data;
+};
+
+export const updateFilter = async (id: string, data: FilterFormData) => {
+  const response = await axiosInstance.patch<FilterFormData>(
+    `/filter/${id}`,
+    data
+  );
+  return response.data;
+};
+
+
+
+
