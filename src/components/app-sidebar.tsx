@@ -89,8 +89,8 @@ const navItems = [
     icon: <ShoppingCart className="h-4 w-4" />,
   },
   {
-    title: "Users",
-    url: "/admin/users",
+    title: "Customers",
+    url: "/admin/customers",
     icon: <Users className="h-4 w-4" />,
   },
   {

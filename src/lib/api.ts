@@ -13,6 +13,7 @@ import {
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
+import { group } from "console";
 
 export const fetchItems = async () => {
   const response = await axiosInstance.get("/items");
@@ -170,8 +171,8 @@ export const cancelTournament = async (id: string) => {
   return response.data;
 };
 
-export const manageTournament = async ( data: TournamentFormData) => {
-  console.log(data, "data")
+export const manageTournament = async (data: TournamentFormData) => {
+  console.log(data, "data");
   const response = await axiosInstance.patch<ResponseTournament>(
     "/tournament/manage",
     data
@@ -261,7 +262,7 @@ export const RecommendProduct = async (data: IRecommendProduct) => {
 };
 
 //Current Offers
-export const CurrenOffers= async () => {
+export const CurrenOffers = async () => {
   const response = await axiosInstance.get("/product/?currentOffer=true");
   return response.data;
 };
@@ -283,14 +284,69 @@ export const getCustomers = async (params) => {
   return response.data;
 };
 
-export const upComingTournament = async () => {
-  const response = await axiosInstance.get<ResponseTournament[]>("/tournament/upcoming");
+export const getCustomer = async (
+  pageParams,
+  search,
+  group,
+  date,
+  isActive
+) => {
+  const limit = 10;
+  const response = await axiosInstance.get("/customer", {
+    params: {
+      limit,
+      offset: pageParams,
+      search,
+      group,
+      date,
+      isActive,
+    },
+  });
+  console.log(pageParams);
   return response.data;
 };
 
+export const getCustomerById = async (id) => {
+  const response = await axiosInstance.get(`/customer/${id}`);
+  return response.data;
+};
 
-export const getTournamentById = async (id: string): Promise<TournamentDetailResponse> => {
-  const response = await axiosInstance.get<TournamentDetailResponse>(`/tournament/get/${id}`);
+export const updateCustomer = async (id, params) => {
+  const response = await axiosInstance.put(`/customer/update/${id}`, params);
+  return response.data;
+};
+
+export const getCustomerTournaments = async (id, offset) => {
+  const limit = 5;
+  const response = await axiosInstance.get(`/customer/tournaments/${id}`, {
+    params: { limit, offset },
+  });
+  return response.data;
+};
+
+export const getCustomerOrdersData = async (page, status, user, date) => {
+  const limit = 10;
+  const response = await axiosInstance.get("order/order/get/all", {
+    params: { limit, offset:page, status, user, date },
+  });
+  return response.data;
+};
+
+//customer apis end
+
+export const upComingTournament = async () => {
+  const response = await axiosInstance.get<ResponseTournament[]>(
+    "/tournament/upcoming"
+  );
+  return response.data;
+};
+
+export const getTournamentById = async (
+  id: string
+): Promise<TournamentDetailResponse> => {
+  const response = await axiosInstance.get<TournamentDetailResponse>(
+    `/tournament/get/${id}`
+  );
   return response.data;
 };
 
@@ -299,28 +355,24 @@ export const getTournamentById = async (id: string): Promise<TournamentDetailRes
 //   return response.data;
 // };
 
-
 export const updateProfile = async (formData: FormData) => {
-  const response = await axiosInstance.put('/auth/updateMe', formData);
+  const response = await axiosInstance.put("/auth/updateMe", formData);
   return response.data;
 };
-
 
 export const participateTournament = async (id: string) => {
   const response = await axiosInstance.patch(`/tournament/participate/${id}`);
   return response.data;
 };
 
-
-export const shareTournament = async (id: string,email:string) => {
-  
-  const response = await axiosInstance.post(`/tournament/share/${id}`,{email});
+export const shareTournament = async (id: string, email: string) => {
+  const response = await axiosInstance.post(`/tournament/share/${id}`, {
+    email,
+  });
   return response.data;
 };
-
 
 export const getParticipants = async (id: string) => {
   const response = await axiosInstance.get(`/tournament/participants/${id}`);
   return response.data;
 };
-

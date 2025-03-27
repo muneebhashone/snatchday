@@ -49,8 +49,7 @@ export default function NewsletterComposer() {
     { name: string; email: string }[]
   >([]);
   const filter = {
-    limit: "10",
-    // offset: "0",
+    limit: 10,
     search: "",
   };
   const [filters, setFilter] = useState(filter);
@@ -286,18 +285,20 @@ export default function NewsletterComposer() {
                           <div className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto">
                             {customers?.pages
                               ?.flatMap((page) => page?.data?.customers)
-                              .map((customer) => (
-                                <div
-                                  ref={lastElementRef}
-                                  onClick={() => {
-                                    onAdd(customer);
-                                  }}
-                                  key={customer?.email}
-                                  className="text-sm cursor-pointer"
-                                >
-                                  {customer?.name}
-                                </div>
-                              ))}
+                              .flatMap((data) =>
+                                data?.data.map((customer) => (
+                                  <div
+                                    ref={lastElementRef}
+                                    onClick={() => {
+                                      onAdd(customer);
+                                    }}
+                                    key={customer?.email}
+                                    className="text-sm cursor-pointer"
+                                  >
+                                    {customer?.name}
+                                  </div>
+                                ))
+                              )}
                           </div>
                         )}
                       </div>
