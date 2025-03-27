@@ -8,7 +8,7 @@ import ClientLayout from "@/components/landing-page/ClientLayout";
 const OrderDetails = () => {
   const { id } = useParams();
   const { data: orderDetails, isLoading } = useGetOrderById(id as string);
-  console.log(orderDetails, "orderDetails");
+
 
   return (
     <ClientLayout>

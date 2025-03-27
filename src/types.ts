@@ -272,3 +272,81 @@ export interface PlaceOrder {
   };
 }
 
+
+export interface Order {
+  orderNumber: string;
+  createdAt: string; // Order creation date
+  updatedAt: string; // Order update date
+  status: "Paid" | "Complete" | "Canceled" | "pending"; // Possible order statuses
+  billingDetails: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    street: string;
+    city: string;
+    federalState: string;
+    country: string;
+    zip: string;
+    vatId: string;
+  };
+  shippingDetails: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    street: string;
+    city: string;
+    federalState: string;
+    country: string;
+    zip: string;
+    vatId: string;
+  };
+  cartObject: {
+    cart: Array<{
+      product: {
+        article: string;
+        attributes: Record<string, string>; // To capture additional attributes
+        barcodeEAN: string;
+        categoryIds: string[];
+        colors: string[];
+        company: string;
+        createdAt: string;
+        description: string;
+        discounts: Array<{
+          customerGroup: string;
+          price: number;
+          away: string;
+          until: string;
+          _id: string;
+        }>;
+        images: string[];
+        isActive: boolean;
+        isFeatured: boolean;
+        liscenseKey: string;
+        metaDescription: string;
+        metaKeywords: string;
+        metaTitle: string;
+        name: string;
+        noStockMessage: string;
+        price: number;
+        purchases: number;
+        relatedProducts: string[];
+        requireShipping: boolean;
+        sku: string;
+        stock: number;
+        type: string;
+        updatedAt: string;
+        views: number;
+        _id: string;
+      };
+      quantity: number;
+      totalPrice: number;
+    }>;
+    subTotal: number;
+    total: number;
+    appliedDiscount: number;
+  };
+  invoice?: boolean;
+  voucherDiscount: number;
+  voucherId?: string | null;
+  history: Array<any>; // Adjust as needed based on the structure of history
+}
