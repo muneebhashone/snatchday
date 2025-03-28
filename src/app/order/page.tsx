@@ -44,7 +44,7 @@ const checkoutSchema = z
   .object({
     snapPoints: z.string().optional(),
     discountPoints: z.string().optional(),
-    voucherCode: z.string().nonempty({ message: "Voucher Code is required" }),
+    // voucherCode: z.string().nonempty({ message: "Voucher Code is required" }),
   })
   .refine((data) => data.snapPoints || data.discountPoints, {
     message: "required",
@@ -163,7 +163,7 @@ const CartTable = () => {
       cartId: cart?.data?._id,
       snapPoints: snapPoints,
       discountPoints: discountPoints,
-      voucherCode: Number(data.voucherCode) || "",
+      voucherCode: watchVoucher("voucherCode") || "",
     };
 
     checkout(payload, {
@@ -360,7 +360,7 @@ const CartTable = () => {
                 )}
               </div>
 
-              <div className="mt-2">
+              {/* <div className="mt-2">
                 <label className="block my-2">Voucher Code:</label>
                 <input
                   type="text"
@@ -373,7 +373,7 @@ const CartTable = () => {
                     {errors.voucherCode.message}
                   </p>
                 )}
-              </div>
+              </div> */}
 
               {/* Summary Section */}
               <div className="mt-6 p-4 border-t">

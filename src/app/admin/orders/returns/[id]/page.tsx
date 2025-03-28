@@ -165,7 +165,7 @@ const ReturnDetailsPage = () => {
                 <thead>
                   <tr className="bg-gray-200">
                     <th className="border p-2">Created</th>
-                    <th className="border p-2">Status</th>
+                    <th className="border p-2 ">Status</th>
                     <th className="border p-2">Comment</th>
                   </tr>
                 </thead>
@@ -175,7 +175,7 @@ const ReturnDetailsPage = () => {
                       item?.customerInformed ? (
                         <tr key={item.id}>
                           <td className="border p-2">{formatDate(item?.date || "", "dd/MM/yyyy")}</td>
-                          <td className="border p-2">{item?.status}</td>
+                          <td className="border p-2 capitalize">{item?.status}</td>
                           <td className="border truncate p-2">
                             {item?.remarks}
                           </td>

@@ -12,6 +12,7 @@ import { Eye } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { formatDate } from "date-fns";
+import { useDebounce } from "@/hooks/useDebounce";
 // import InvoiceButton from "../InvoiceButton";
 import { useGetMyReturns } from "@/hooks/api";
 
@@ -23,11 +24,16 @@ const ReturnOrdersTable = () => {
     articleId: "",
   });
 
+  const debouncedFilters = {
+    status: useDebounce(filters.status, 3000), 
+    orderNumber: useDebounce(filters.orderNumber, 3000), 
+    articleId: useDebounce(filters.articleId, 3000), 
+  };
 
   const { data: returns, isLoading } = useGetMyReturns({
     limit: pagination.limit,
     offset: pagination.offset,
-    ...filters,
+    ...debouncedFilters, 
   });
 
   const handleFilterChange = (e) => {
@@ -74,6 +80,7 @@ const ReturnOrdersTable = () => {
             className="border p-2 ml-2"
           >
             <option value="">Select Status</option>
+            <option value="waiting">Waiting for product</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
             <option value="canceled">Canceled</option>

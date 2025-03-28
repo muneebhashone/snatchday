@@ -152,7 +152,7 @@ const OrderDetails = () => {
             </CardContent>
 
             <CardContent className="mt-4 border p-4">
-              <h3 className="font-bold">Previous course</h3>
+              <h3 className="font-bold capitalize">Previous course</h3>
               <table className="w-full border-collapse border border-gray-300 mt-2">
                 <thead>
                   <tr className="bg-gray-200">

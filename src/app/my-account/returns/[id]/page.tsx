@@ -176,7 +176,7 @@ const ReturnDetailsPage = () => {
                       <td className="border p-2">
                         {formatDate(item?.date || "", "dd/MM/yyyy")}
                       </td>
-                      <td className="border p-2">{item?.status}</td>
+                      <td className="border p-2 capitalize">{item?.status}</td>
                       <td className="border truncate p-2">{item?.remarks}</td>
                     </tr>
                   ) : null // Skip rendering if customerInformed is false

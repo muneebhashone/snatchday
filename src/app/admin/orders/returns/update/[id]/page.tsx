@@ -132,7 +132,7 @@ export default function ReturnHistory() {
             <TableRow key={index}>
               <TableCell className="font-medium">{formatDate(item?.date || "", "dd/MM/yyyy")}</TableCell>
               <TableCell>{item?.remarks}</TableCell>
-              <TableCell>{item?.status}</TableCell>
+              <TableCell className="capitalize">{item?.status}</TableCell>
               <TableCell>{item?.customerInformed ? "Yes" : "No"}</TableCell>
             </TableRow>
             ))}
@@ -174,6 +174,7 @@ export default function ReturnHistory() {
                                Wating for Product                            </SelectItem>
                             <SelectItem value="pending">Pending</SelectItem>
                             <SelectItem value="complete">Completed</SelectItem>
+                            <SelectItem value="cancelled">Cancelled</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
