@@ -1,13 +1,13 @@
 "use client";
 import MyAccountLayout from "@/components/my-account/MyAccountLayout";
-import OrdersTable from "@/components/my-account/OrdersTable";
+import ReturnOrdersTable from "@/components/my-account/ReturnOrdersTable";
 import React from "react";
 
 const page = () => {
 
   return (
     <MyAccountLayout>
-      <OrdersTable  />
+      <ReturnOrdersTable />
     </MyAccountLayout>
   );
 };

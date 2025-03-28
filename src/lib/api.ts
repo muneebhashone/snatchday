@@ -1,4 +1,4 @@
-import { TournamentFormData } from "@/types/admin";
+import { ReturnOrderTypes, TournamentFormData } from "@/types/admin";
 import axiosInstance from "./axios";
 import {
   ProductFormData,
@@ -10,6 +10,8 @@ import {
   CategoryFormData,
   ComapreProduct,
   TournamentDetailResponse,
+  CheckoutTypes,
+  PlaceOrder,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -319,10 +321,10 @@ export const getOrders = async (pageParams, status, date) => {
   return response.data;
 };
 
-export const getOrderById = async (id) => {
-  const response = await axiosInstance.get(`/order/order/${id}`);
-  return response.data;
-};
+// export const getOrderById = async (id) => {
+//   const response = await axiosInstance.get(`/order/order/${id}`);
+//   return response.data;
+// };
 // order api end
 
 export const upComingTournament = async () => {
@@ -365,6 +367,67 @@ export const shareTournament = async (id: string, email: string) => {
 
 export const getParticipants = async (id: string) => {
   const response = await axiosInstance.get(`/tournament/participants/${id}`);
+  return response.data;
+};
+
+export const getCart = async () => {
+  const response = await axiosInstance.get("/order/cart");
+  return response.data;
+};
+
+export const addToCart = async (id: string) => {
+  const response = await axiosInstance.post(`/order/cart`,{productId:id});
+  return response.data;
+};
+
+export const updateCart = async (id: string,quantity:number) => {
+  const response = await axiosInstance.patch(`/order/cart`,{productId:id,quantity});
+  return response.data;
+};
+
+export const getPoints = async () => {
+  const response = await axiosInstance.get("/web-settings/points");
+  return response.data;
+};
+
+export const checkout = async (data: CheckoutTypes) => {
+  const response = await axiosInstance.post("/order/checkout", data);
+  return response.data;
+};
+
+export const placeOrderApi = async (data: PlaceOrder) => {
+  console.log(data, "data from api");
+  const response = await axiosInstance.post(`/order/order`, data);
+  return response.data;
+};
+
+export const getMyOrders = async () => {
+  const response = await axiosInstance.get(`/order/order`);
+  return response.data;
+};
+
+export const getOrderById = async (id: string) => {
+  const response = await axiosInstance.get(`/order/order/${id}`);
+  return response.data;
+};
+
+export const returnOrder = async (data: ReturnOrderTypes) => {
+  const response = await axiosInstance.post(`/return`, data);
+  return response.data;
+};
+
+export const getMyReturns = async(params) => {
+  const response = await axiosInstance.get(`/return`, { params });
+  return response.data;
+};
+
+export const getReturnById = async (id: string) => {
+  const response = await axiosInstance.get(`/return/${id}`);
+  return response.data;
+};
+
+export const applyVoucher = async (data: {code:string}) => {
+  const response = await axiosInstance.post(`/order/apply-Voucher`, data);
   return response.data;
 };
 

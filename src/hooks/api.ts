@@ -40,6 +40,18 @@ import {
   participateTournament,
   shareTournament,
   getParticipants,
+  getCart,
+  addToCart,
+  updateCart,
+  getPoints,
+  checkout,
+  getMyOrders,
+  getOrderById,
+  placeOrderApi,
+  returnOrder,
+  getMyReturns,
+  getReturnById,
+  applyVoucher,
   getCustomer,
   getCustomerById,
   updateCustomer,
@@ -53,13 +65,14 @@ import {
   updateVoucher,
   getVoucherById,
   getOrders,
-  getOrderById,
 } from "../lib/api";
-import { TournamentFormData } from "@/types/admin";
+import { TournamentFormData , ReturnOrderTypes } from "@/types/admin";
 
 import {
   CategoryFormData,
+  CheckoutTypes,
   FilterFormData,
+  PlaceOrder,
   ProductFormData,
   ResetPasswordTypes,
 } from "@/types";
@@ -481,6 +494,84 @@ export const useGetParticipants = (id: string) => {
   });
 };
 
+export const useGetCart = () => {
+  return useQuery({
+    queryKey: ["cart"],
+    queryFn: getCart,
+  });
+};
+
+export const useAddToCart = () => {
+  return useMutation({
+    mutationFn: (id: string) => addToCart(id),
+  });
+};
+
+export const useUpdateCart = () => {
+  return useMutation({
+    mutationFn: ({ id, quantity }: { id: string; quantity: number }) => updateCart(id, quantity),
+  });
+};
+
+export const useGetPoints = () => {
+  return useQuery({
+    queryKey: ["points"],
+    queryFn: getPoints,
+  });
+};
+
+export const useCheckout = () => {
+  return useMutation({
+    mutationFn: (data: CheckoutTypes) => checkout(data),
+  });
+};
+
+
+export const usePlaceOrder = () => {
+  return useMutation({
+    mutationFn: (data: PlaceOrder) => placeOrderApi(data),
+  });
+};
+
+export const useGetMyOrders = () => {
+  return useQuery({
+    queryKey: ["myOrders"],
+    queryFn: getMyOrders,
+  });
+};
+
+// export const useGetOrderById = (id: string) => {
+//   return useQuery({
+//     queryKey: ["order", id],
+//     queryFn: () => getOrderById(id),
+//   });
+// };
+
+export const useReturnOrder = () => {
+  return useMutation({
+    mutationFn: (data: ReturnOrderTypes) => returnOrder(data),
+  });
+};
+
+export const useGetMyReturns = (params) => {
+  return useQuery({
+    queryKey: ["myReturns", params],
+    queryFn: () => getMyReturns(params),
+  });
+};
+
+export const useGetReturnById = (id: string) => {
+  return useQuery({
+    queryKey: ["return", id],
+    queryFn: () => getReturnById(id),
+  });
+};
+
+export const useApplyVoucher = () => {
+  return useMutation({
+    mutationFn: (data: { code: string }) => applyVoucher(data),
+  });
+};
 export const useCreateVoucher = () => {
   return useMutation({
     mutationFn: (data: CreateVoucherData) => vouchers(data),

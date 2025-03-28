@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import {
   Heart,
@@ -27,6 +27,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 import RecommendProductModal from "../RecommendProductModal";
+import { useAddToCart } from "@/hooks/api";
+import { useUserContext } from "@/context/userContext";
+import { useCart } from "@/context/CartContext";
 
 // interface ProductDetailsProps {
 //   title: string;
@@ -93,6 +96,8 @@ const ProductDetails = ({
   isLoading,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { setCartCount } = useCart();
+
   const params = useParams();
   const queryClient = useQueryClient();
   const { data: compareProducts } = useGetCompareProducts();
@@ -100,6 +105,10 @@ const ProductDetails = ({
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
+  const { mutate: addToCart , isPending: isAddToCartPending} = useAddToCart();
+   
+  
+  const {user}=useUserContext()
   const handleIncrement = () => {
     setQuantity((prev) => prev + 1);
   };
@@ -156,6 +165,7 @@ const ProductDetails = ({
       productIdForCompare(params.id as string, {
         onSuccess: () => {
           toast.success("product added for compare");
+          
           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
         },
         onError: (error) => {
@@ -166,6 +176,24 @@ const ProductDetails = ({
     }
     console.log(compareProducts.data.products, "compareProducts");
   };
+
+const handleAddToCart = () => {
+  addToCart(params.id as string, {
+    onSuccess: () => {
+      toast.success("product added to cart");
+      setCartCount(prevCount => prevCount + 1); 
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error) => {
+      toast.error("Failed to add to cart");
+      console.error(error);
+    },
+  });
+}
+
+
+
+
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
       <div className="rounded-3xl p-8 relative z-10">
@@ -240,12 +268,13 @@ const ProductDetails = ({
                     <span className="text-foreground">{price}</span>€
                   </h2>
                   <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
-                    {discounts.map((discounts, i) => (
+                    {discounts.map((discount, i) => (
                       <span key={i} className="text-foreground">
-                        {price - discounts?.price }
+                        {Number(price) - Number(discount?.price) > 0 
+                          ? (Number(price) - Number(discount?.price)).toFixed(2) 
+                          : "0.00"}
                       </span>
-                    ))}
-                    €
+                    ))}€
                   </h2>
                 </div>
               ) : (
@@ -353,10 +382,29 @@ const ProductDetails = ({
 
             {/* Action Buttons */}
             <div className="flex gap-4 mt-6 items-center">
-              <button className="gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full w-64 h-14 hover:opacity-90">
-                <ShoppingCartIcon size={28} className="mr-2" />
-                Add to Cart
-              </button>
+              <TooltipProvider>
+                <Tooltip delayDuration={100}>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <button 
+                        onClick={handleAddToCart} 
+                        disabled={!user || isAddToCartPending}
+                        className={`gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full w-64 h-14 ${
+                          user ? 'hover:opacity-90' : 'opacity-50 cursor-not-allowed'
+                        }`}
+                      >
+                        <ShoppingCartIcon size={28} className="mr-2" />
+                       {isAddToCartPending ? "adding..." : "Add to Cart"}
+                      </button>
+                    </div>
+                  </TooltipTrigger>
+                  {!user && (
+                    <TooltipContent className="bg-gray-700 text-white">
+                      <p>Please login first to add items to cart</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
               <button className="w-64 h-14 bg-white text-card-foreground shadow-xl flex items-center justify-center text-lg rounded-full hover:bg-gray-50">
                 {/* <Heart size={28} className="mr-2" /> */}
                 Play For It
