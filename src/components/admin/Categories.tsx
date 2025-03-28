@@ -56,10 +56,10 @@ const Categories = () => {
         <div className='flex gap-2'>
           <CreateCategoryDialog />
           {/* <Button variant="ghost" size="icon" className="bg-red-500 text-white hover:bg-red-600 transition-colors">
-            <Delete className='w-4 h-4'/>
+              <Delete className='w-4 h-4'/>
           </Button> */}
+          </div>
         </div>
-      </div>
 
       <div className="bg-white rounded-md shadow-sm">
         {isLoading ? (
@@ -68,11 +68,11 @@ const Categories = () => {
           <div className="p-8 text-center text-red-500">Error loading categories</div>
         ) : (
           <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
+          <Table>
+            <TableHeader>
+              <TableRow>
                   {/* <TableHead className="w-[40px]">
-                    <input type="checkbox" className="rounded border-gray-300" />
+                  <input type="checkbox" className="rounded border-gray-300" />
                   </TableHead> */}
                   <TableHead>Name</TableHead>
                   <TableHead>Display Name</TableHead>
@@ -80,9 +80,9 @@ const Categories = () => {
                   <TableHead>Status</TableHead>
                   <TableHead>Created At</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
                 {categories?.map((category: CategoryType) => (
                   <TableRow key={category._id} className="hover:bg-gray-50">
                     {/* <TableCell>
@@ -91,22 +91,22 @@ const Categories = () => {
                     <TableCell>{category.name}</TableCell>
                     <TableCell>{category.displayName}</TableCell>
                     <TableCell className='max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap'>{category.description}</TableCell>
-                    <TableCell>
+                  <TableCell>
                       <span className={`px-2 py-1 rounded-full text-xs ${
                         category.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                       }`}>
                         {category.isActive ? 'Active' : 'Inactive'}
                       </span>
-                    </TableCell>
+                  </TableCell>
                     <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell className="text-right">
+                  <TableCell className="text-right">
                       <EditCategoryDialog category={category} />
                       <Button onClick={() => handleDelete(category._id)} variant="ghost" size="icon" className="text-red-500 hover:text-red-600 transition-colors">
                         <Trash className='w-4 h-4' />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
                 {!categories?.length && (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8 text-gray-500">
@@ -114,8 +114,8 @@ const Categories = () => {
                     </TableCell>
                   </TableRow>
                 )}
-              </TableBody>
-            </Table>
+            </TableBody>
+          </Table>
           </div>
         )}
       </div>

@@ -103,7 +103,7 @@ export function EditTournamentDialog({
   tournament: Tournament;
 }) {
   const { mutate: manageTournament } = useManageTournament();
- 
+
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -135,17 +135,20 @@ export function EditTournamentDialog({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values, "values");
     try {
-    manageTournament({ data: values }, {
-      onSuccess: () => {
-        toast.success("Tournament updated successfully");
-        queryClient.invalidateQueries({ queryKey: ['tournaments'] });
-        setOpen(false);
-      },
-      onError: (error) => {
-        toast.error("Failed to update tournament");
-        console.error(error);
-      }
-    });
+      manageTournament(
+        { data: values },
+        {
+          onSuccess: () => {
+            toast.success("Tournament updated successfully");
+            queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+            setOpen(false);
+          },
+          onError: (error) => {
+            toast.error("Failed to update tournament");
+            console.error(error);
+          },
+        }
+      );
       setOpen(false);
     } catch (error) {
       toast.error("Failed to update tournament");
@@ -297,10 +300,16 @@ export function EditTournamentDialog({
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>End Date</FormLabel>
-                    <Popover> 
+                    <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
-                          <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
                             {field.value ? (
                               format(new Date(field.value), "PPP")
                             ) : (
@@ -313,8 +322,12 @@ export function EditTournamentDialog({
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => field.onChange(date?.toISOString())}
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          onSelect={(date) =>
+                            field.onChange(date?.toISOString())
+                          }
                           initialFocus
                         />
                       </PopoverContent>

@@ -28,8 +28,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { toast } from "sonner";
-import { serialize } from "v8";
-import { set } from "date-fns";
 
 const formSchema = z.object({
   subject: z.string().nonempty(),
@@ -49,18 +47,21 @@ export default function NewsletterComposer() {
     { name: string; email: string }[]
   >([]);
   const filter = {
-    limit: "10",
-    // offset: "0",
+    limit: 10,
     search: "",
+    offset: 0,
   };
+
   const [filters, setFilter] = useState(filter);
   const {
     data: customers,
     isLoading,
     fetchNextPage,
     hasNextPage,
-    isFetching,
   } = useCustomers(filters);
+
+  // console.log(hasNextPage, isLoading, fetchNextPage);
+
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,6 +73,7 @@ export default function NewsletterComposer() {
       list: [""],
     },
   });
+
   const {
     mutate: newsletterMail,
     isPending,
@@ -109,16 +111,19 @@ export default function NewsletterComposer() {
   };
   const lastElementRef = useCallback(
     (node: HTMLDivElement) => {
+      // console.log(node);
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && hasNextPage && isFetching) {
+        // console.log({ entries });
+        if (entries[0].isIntersecting && hasNextPage) {
+          console.log("FETCHING NEXT PAGE");
           fetchNextPage();
         }
       });
       if (node) observer.current.observe(node);
     },
-    [isLoading, fetchNextPage, hasNextPage, isFetching]
+    [isLoading, fetchNextPage, hasNextPage]
   );
   const onAdd = (customer) => {
     const exist = selectedCustomers.find((c) => c.email === customer.email);
@@ -134,8 +139,6 @@ export default function NewsletterComposer() {
   };
   const path = usePathname();
   const pathLinks = path.split("/");
-  const [fromValue, setFromValue] = useState("standard");
-  const [toValue, setToValue] = useState("all");
   if (isError) {
     return <div>{`Error Occured: ${error}`}</div>;
   } else {
@@ -270,6 +273,7 @@ export default function NewsletterComposer() {
                           render={({ field }) => (
                             <Input
                               onChange={(e) => {
+                                console.log(e.target.value);
                                 setFilter((prevFilters) => ({
                                   ...prevFilters,
                                   search: e.target.value,
@@ -283,21 +287,25 @@ export default function NewsletterComposer() {
                           )}
                         />
                         {showCustomers && (
-                          <div className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto">
+                          <div
+                            ref={lastElementRef}
+                            className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto"
+                          >
                             {customers?.pages
                               ?.flatMap((page) => page?.data?.customers)
-                              .map((customer) => (
-                                <div
-                                  ref={lastElementRef}
-                                  onClick={() => {
-                                    onAdd(customer);
-                                  }}
-                                  key={customer?.email}
-                                  className="text-sm cursor-pointer"
-                                >
-                                  {customer?.name}
-                                </div>
-                              ))}
+                              .flatMap((data) =>
+                                data?.data.map((customer, idx) => (
+                                  <div
+                                    onClick={() => {
+                                      onAdd(customer);
+                                    }}
+                                    key={`${customer?.email}-${idx}  `}
+                                    className="text-sm cursor-pointer"
+                                  >
+                                    {customer?.name}
+                                  </div>
+                                ))
+                              )}
                           </div>
                         )}
                       </div>

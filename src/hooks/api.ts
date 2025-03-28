@@ -40,6 +40,20 @@ import {
   participateTournament,
   shareTournament,
   getParticipants,
+  getCustomer,
+  getCustomerById,
+  updateCustomer,
+  getCustomerTournaments,
+  getCustomerOrdersData,
+  vouchers,
+  VoucherData,
+  CreateVoucherData,
+  getVouchers,
+  deleteVoucher,
+  updateVoucher,
+  getVoucherById,
+  getOrders,
+  getOrderById,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
@@ -186,7 +200,7 @@ export const useUpdateFilter = () => {
 };
 
 export interface ProductFilters {
-  price?: string[];
+  price?: string;
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -370,17 +384,83 @@ export const useNewsletterMail = () => {
 
 //customers
 export const useCustomers = (filters) => {
+  // console.log({filters})
   return useInfiniteQuery({
     queryKey: ["customers", filters],
-    queryFn: ({ pageParam = 1 }) =>
-      getCustomers({ ...filters, offset: pageParam }),
+    queryFn: ({ pageParam }) => {
+      // console.log({pageParam})
+      // return getCustomers({ ...filters, offset: pageParam });
+      return getCustomers({ ...filters, offset: pageParam });
+    },
     initialPageParam: 1,
-    getNextPageParam: (lastPage, allPafes) => {
-      return lastPage.length === 10 ? allPafes.length + 1 : undefined;
+    getNextPageParam: (lastPage, allPages) => {
+      // console.log({lastPage})
+      // console.log({allPages})
+      const customers = lastPage.data.customers[0].data;
+      const total = lastPage.data.customers[0].total[0].total;
+      // console.log({total, customers})
+      return customers.length < 10 ? undefined : filters.offset;
     },
   });
 };
 
+export const useCustomersPagination = (page, search, group, date, isActive) => {
+  return useQuery({
+    queryKey: ["customers", page, search, group, date, isActive],
+    queryFn: () => getCustomer(page, search, group, date, isActive),
+  });
+};
+
+export const useGetCustomerById = (id) => {
+  return useQuery({
+    queryKey: ["customer"],
+    queryFn: () => getCustomerById(id),
+  });
+};
+
+export const useUpdateCustomer = (id) => {
+  return useMutation({
+    mutationFn: (body) => updateCustomer(id, body),
+    onMutate: (data) => {
+      console.log(data, "data");
+    },
+  });
+};
+
+export const useGetCustomerTournaments = (id, offset) => {
+  return useQuery({
+    queryKey: ["customerTournaments", offset],
+    queryFn: () => getCustomerTournaments(id, offset),
+  });
+};
+
+export const useGetCustomerOrdersData = (page, status, user, date) => {
+  return useQuery({
+    queryKey: ["customerOrdersData"],
+    queryFn: () => getCustomerOrdersData(page, status, user, date),
+  });
+};
+
+//customer apis end
+
+// order api
+
+// export const useGetOrders = (limit,offset,) => {};
+export const useGetOrders = (page, status, date) => {
+  return useQuery({
+    queryKey: ["customers", page, status, date],
+    queryFn: () => getOrders(page, status, date),
+  });
+};
+
+export const useGetOrderById = (id) => {
+  return useQuery({
+    queryKey: ["order"],
+    queryFn: () => getOrderById(id),
+  });
+};
+
+// order api end
 export const useParticipateTournament = () => {
   return useMutation({
     mutationFn: (id: string) => participateTournament(id),
@@ -398,5 +478,38 @@ export const useGetParticipants = (id: string) => {
   return useQuery({
     queryKey: ["participants", id],
     queryFn: () => getParticipants(id),
+  });
+};
+
+export const useCreateVoucher = () => {
+  return useMutation({
+    mutationFn: (data: CreateVoucherData) => vouchers(data),
+  });
+};
+
+export const useGetVouchers = () => {
+  return useQuery({
+    queryKey: ["vouchers"],
+    queryFn: getVouchers,
+  });
+};
+
+export const useDeleteVoucher = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteVoucher(id),
+  });
+};
+
+export const useUpdateVoucher = (id: string) => {
+  return useMutation({
+    mutationFn: (data: VoucherData) => updateVoucher(id, data),
+  });
+};
+
+export const useGetVoucherById = (id: string) => {
+  return useQuery({
+    queryKey: ["voucher", id],
+    queryFn: () => getVoucherById(id),
+    enabled: !!id,
   });
 };
