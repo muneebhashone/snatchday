@@ -91,7 +91,9 @@ export default function OrdersList() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={null}>Select</SelectItem>
+                    <SelectItem value={null} disabled>
+                      Select Status
+                    </SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="dispatch">Dispatch</SelectItem>
