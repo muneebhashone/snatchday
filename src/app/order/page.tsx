@@ -387,13 +387,27 @@ const CartTable = () => {
                     <span>-{cart?.data?.appliedDiscount.toFixed(2)}€</span>
                   </div>
                 )}
+                {watchVoucher("voucherCode") && (
                 <div className="flex justify-between text-lg font-semibold text-green-600">
                   <span>Voucher Discount:</span>
                   <span>
                     -{applyvocherResponse?.data?.voucherDiscount || 0}€
                   </span>
                 </div>
-                <div className="flex justify-between text-lg font-semibold">
+                )}
+                {watch("snapPoints") && (
+              <div className="flex justify-between text-lg font-semibold">
+              <span>Snap Points:</span>
+              <span>{watch("snapPoints")/10}€</span>
+              </div>
+              )}
+              {watch("discountPoints") && (
+              <div className="flex justify-between text-lg font-semibold">
+              <span>Discount Points:</span>
+              <span>{watch("discountPoints")/10}€</span>
+              </div>
+              )}
+              <div className="flex justify-between text-lg font-semibold">
                   <span>19% VAT:</span>
                   <span>
                     {(

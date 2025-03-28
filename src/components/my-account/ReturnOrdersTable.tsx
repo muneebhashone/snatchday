@@ -116,7 +116,7 @@ const ReturnOrdersTable = () => {
                         : "bg-green-700 text-white"
                     }`}
                   >
-                    {returnItem.status || "N/A"}
+                    {returnItem.status === "waiting" ? "waiting for product" : returnItem.status || "N/A"}
                   </div>
                 </TableCell>
                 <TableCell>

@@ -125,7 +125,7 @@ const ReturnOrderModal = ({
                 control={control}
                 render={({ field }) => (
                   <select id="demand" {...field} className="border rounded p-2">
-                    <option value="">Select an option</option>
+                    <option value="" disabled selected  >Select an option</option>
                     <option value="refund">Refund</option>
                     <option value="exchange">Exchange</option>
                   </select>
