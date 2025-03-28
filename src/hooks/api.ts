@@ -65,8 +65,9 @@ import {
   updateVoucher,
   getVoucherById,
   getOrders,
+  updateReturnHistory,
 } from "../lib/api";
-import { TournamentFormData , ReturnOrderTypes } from "@/types/admin";
+import { TournamentFormData , ReturnOrderTypes, UpdateReturnTypes } from "@/types/admin";
 
 import {
   CategoryFormData,
@@ -533,10 +534,10 @@ export const usePlaceOrder = () => {
   });
 };
 
-export const useGetMyOrders = () => {
+export const useGetMyOrders = (params) => {
   return useQuery({
-    queryKey: ["myOrders"],
-    queryFn: getMyOrders,
+    queryKey: ["myOrders", params],
+    queryFn: () => getMyOrders(params),
   });
 };
 
@@ -602,5 +603,11 @@ export const useGetVoucherById = (id: string) => {
     queryKey: ["voucher", id],
     queryFn: () => getVoucherById(id),
     enabled: !!id,
+  });
+};
+
+export const useUpdateReturnHistory = () => {
+  return useMutation({
+    mutationFn: ({id,data}:{id:string,data:UpdateReturnTypes}) => updateReturnHistory(id,data),
   });
 };

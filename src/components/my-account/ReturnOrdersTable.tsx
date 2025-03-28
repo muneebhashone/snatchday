@@ -23,12 +23,12 @@ const ReturnOrdersTable = () => {
     articleId: "",
   });
 
+
   const { data: returns, isLoading } = useGetMyReturns({
     limit: pagination.limit,
     offset: pagination.offset,
     ...filters,
   });
-  console.log(returns,"returns11user");
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -85,7 +85,7 @@ const ReturnOrdersTable = () => {
         <TableHeader className="rounded-t-3xl">
           <TableRow className="rounded-t-3xl">
             <TableHead>Article</TableHead>
-            <TableHead className="w-[100px]">Order Number</TableHead>
+            <TableHead className="w-[100px]">Order No</TableHead>
             <TableHead>Return Number</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Date Created</TableHead>

@@ -41,3 +41,12 @@ export interface ReturnOrderTypes {
   ]
 }
 
+export interface UpdateReturnTypes {
+
+    status: string;
+    date: string;
+    remarks: string;
+    customerInformed: boolean;
+  
+}
+
