@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Loader, LucideEye, ReceiptEuroIcon } from "lucide-react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 
 const CustomerOrdersDataList = () => {
   const params = useParams();
@@ -88,9 +89,9 @@ const CustomerOrdersDataList = () => {
                 </span>
               </TableCell>
               <TableCell className="">
-                <div className="w-7 h-7 p-[5px] rounded-md bg-primary text-white flex items-center justify-center">
+                <Link href={`/admin/orders/${order?._id}`} className="w-7 h-7 p-[5px] rounded-md bg-primary text-white flex items-center justify-center">
                   <LucideEye />
-                </div>
+                </Link>
               </TableCell>
               <TableCell className="">
                 <div className="w-7 h-7 p-[5px] rounded-md bg-primary text-white flex items-center justify-center">

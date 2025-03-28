@@ -5,7 +5,12 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { useUpdateVoucher, useGetVoucherById, useGetProducts, useGetCategories } from "@/hooks/api";
+import {
+  useUpdateVoucher,
+  useGetVoucherById,
+  useGetProducts,
+  useGetCategories,
+} from "@/hooks/api";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -37,7 +42,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Loader2 } from "lucide-react";
 
-
 const formSchema = z.object({
   code: z.string().min(3, "Code must be at least 3 characters"),
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -49,8 +53,12 @@ const formSchema = z.object({
   products: z.array(z.string()),
   categories: z.array(z.string()),
   expiryDate: z.date().optional(),
-  minOrderValue: z.coerce.number().min(0, "Minimum order value must be positive"),
-  maxUses: z.coerce.number().min(0, "Maximum uses must be positive"),
+  // minOrderValue: z.coerce
+  //   .number()
+  //   .min(0, "Minimum order value must be positive"),
+  // maxUses: z.coerce.number().min(0, "Maximum uses must be positive"),
+  from: z.coerce.date(),
+  until: z.coerce.date(),
 });
 
 interface EditVoucherFormProps {
@@ -63,19 +71,17 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   const { data: voucherResponse } = useGetVoucherById(voucherId);
   const { data: productsResponse } = useGetProducts();
   const { data: categoriesResponse } = useGetCategories();
-  
+
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
 
   const voucher = voucherResponse?.data;
 
-
-
-
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      from: voucher?.from || "",
+      until: voucher?.until || "",
       code: voucher?.code || "",
       name: voucher?.name || "",
       type: voucher?.type || "FIXED",
@@ -85,14 +91,16 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
       noShipping: voucher?.noShipping || false,
       products: voucher?.products || [],
       categories: voucher?.categories || [],
-      minOrderValue: voucher?.minOrderValue || 0,
-      maxUses: voucher?.maxUses || 0,
+      // minOrderValue: voucher?.minOrderValue || 0,
+      // maxUses: voucher?.maxUses || 0,
     },
   });
 
   useEffect(() => {
     if (voucher) {
       form.reset({
+        from: voucher.from,
+        until: voucher.until,
         code: voucher.code,
         name: voucher.name,
         type: voucher.type,
@@ -102,9 +110,11 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         noShipping: voucher.noShipping,
         products: voucher.products || [],
         categories: voucher.categories || [],
-        expiryDate: voucher.expiryDate ? new Date(voucher.expiryDate) : undefined,
-        minOrderValue: voucher.minOrderValue,
-        maxUses: voucher.maxUses,
+        expiryDate: voucher.expiryDate
+          ? new Date(voucher.expiryDate)
+          : undefined,
+        // minOrderValue: voucher.minOrderValue,
+        // maxUses: voucher.maxUses,
       });
     }
   }, [voucher, form]);
@@ -116,9 +126,10 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   const isCategoriesSelected = watchCategories.length > 0;
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // console.log(values)
     updateVoucher(
-      { ...values, id: voucherId },
-      { 
+      { ...values },
+      {
         onSuccess: () => {
           toast.success("Voucher updated successfully");
           router.push("/admin/voucher");
@@ -140,347 +151,371 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   }
 
   return (
-  
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="code"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Voucher Code</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter voucher code" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter voucher name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Code
+                  <span className="text-red-500">*</span>
+                </FormLabel>
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select voucher type" />
-                  </SelectTrigger>
+                  <Input placeholder="Enter voucher code" {...field} />
                 </FormControl>
-                <SelectContent>
-                  <SelectItem value="FIXED">Fixed Amount</SelectItem>
-                  <SelectItem value="PERCENTAGE">Percentage</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="estate"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Estate</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter estate" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Name
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter voucher name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="value"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Value</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter voucher value"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="expiryDate"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Expiry Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Type
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select voucher type" />
+                    </SelectTrigger>
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date < new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
+                  <SelectContent>
+                    <SelectItem value="PERCENTAGE">Percentage</SelectItem>
+                    <SelectItem value="FIXED">Fixed Amount</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="estate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Estate</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter estate" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="products"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Products
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={(value) => {
+                      const currentValues = field.value || [];
+                      if (!currentValues.includes(value)) {
+                        field.onChange([...currentValues, value]);
+                      }
+                    }}
+                    disabled={isCategoriesSelected}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select products" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products.map((product) => (
+                        <SelectItem key={product._id} value={product._id}>
+                          {product.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                {field.value?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {field.value.map((productId) => {
+                      const product = products.find((p) => p._id === productId);
+                      return (
+                        <div
+                          key={productId}
+                          className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                        >
+                          <span className="text-sm">{product?.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              field.onChange(
+                                field.value.filter((id) => id !== productId)
+                              );
+                            }}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="categories"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Categories
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={(value) => {
+                      const currentValues = field.value || [];
+                      if (!currentValues.includes(value)) {
+                        field.onChange([...currentValues, value]);
+                      }
+                    }}
+                    disabled={isProductsSelected}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select categories" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category._id} value={category._id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                {field.value?.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {field.value.map((categoryId) => {
+                      const category = categories.find(
+                        (c) => c._id === categoryId
+                      );
+                      return (
+                        <div
+                          key={categoryId}
+                          className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                        >
+                          <span className="text-sm">{category?.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              field.onChange(
+                                field.value.filter((id) => id !== categoryId)
+                              );
+                            }}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="value"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Value
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    placeholder="Enter value"
+                    {...field}
+                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="minOrderValue"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Minimum Order Value</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter minimum order value"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="registered"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>Registered Users Only</FormLabel>
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="maxUses"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Maximum Uses</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  placeholder="Enter maximum uses"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="noShipping"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel>No Shipping</FormLabel>
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
-        <FormField
-          control={form.control}
-          name="registered"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>Registered Users Only</FormLabel>
-                <FormDescription>
-                  Only registered users can use this voucher
-                </FormDescription>
-              </div>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="noShipping"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel>No Shipping</FormLabel>
-                <FormDescription>
-                  This voucher cannot be used for shipping costs
-                </FormDescription>
-              </div>
-            </FormItem>
-          )}
-        />
-
-<FormField
-                control={form.control}
-                name="products"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1">
-                      Products
-                      <span className="text-red-500">*</span>
-                    </FormLabel>
+        <div className="grid grid-cols-2 gap-6">
+          <FormField
+            control={form.control}
+            name="from"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Valid From
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
                     <FormControl>
-                      <Select
-                        onValueChange={(value) => {
-                          const currentValues = field.value || [];
-                          if (!currentValues.includes(value)) {
-                            field.onChange([...currentValues, value]);
-                          }
-                        }}
-                        disabled={isCategoriesSelected}
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select products" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {products.map((product) => (
-                            <SelectItem key={product._id} value={product._id}>
-                              {product.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {field.value ? (
+                          format(new Date(field.value), "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
                     </FormControl>
-                    {field.value?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {field.value.map((productId) => {
-                          const product = products.find(
-                            (p) => p._id === productId
-                          );
-                          return (
-                            <div
-                              key={productId}
-                              className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
-                            >
-                              <span className="text-sm">{product?.name}</span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  field.onChange(
-                                    field.value.filter((id) => id !== productId)
-                                  );
-                                }}
-                                className="text-muted-foreground hover:text-foreground"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={(date) => field.onChange(date?.toISOString())}
+                      disabled={(date) =>
+                        date < new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              <FormField
-                control={form.control}
-                name="categories"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-1">
-                      Categories
-                      <span className="text-red-500">*</span>
-                    </FormLabel>
+          <FormField
+            control={form.control}
+            name="until"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1">
+                  Valid Until
+                  <span className="text-red-500">*</span>
+                </FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
                     <FormControl>
-                      <Select
-                        onValueChange={(value) => {
-                          const currentValues = field.value || [];
-                          if (!currentValues.includes(value)) {
-                            field.onChange([...currentValues, value]);
-                          }
-                        }}
-                        disabled={isProductsSelected}
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
                       >
-                        <SelectTrigger>
-                        <SelectValue placeholder="Select categories" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category._id} value={category._id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        {field.value ? (
+                          format(new Date(field.value), "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
                     </FormControl>
-                    {field.value?.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {field.value.map((categoryId) => {
-                          const category = categories.find(
-                            (c) => c._id === categoryId
-                          );
-                          return (
-                            <div
-                              key={categoryId}
-                              className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
-                            >
-                              <span className="text-sm">{category?.name}</span>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  field.onChange(
-                                    field.value.filter((id) => id !== categoryId)
-                                  );
-                                }}
-                                className="text-muted-foreground hover:text-foreground"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value ? new Date(field.value) : undefined}
+                      onSelect={(date) => field.onChange(date?.toISOString())}
+                      disabled={(date) =>
+                        date < new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-        <Button type="submit" disabled={isPending}>
-          {isPending && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
-          Update Voucher
-        </Button>
+        <div className="flex justify-end space-x-4 pt-6">
+          <Button
+            className="hover:bg-primary"
+            type="submit"
+            disabled={isPending}
+          >
+            {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Update Voucher
+          </Button>
+        </div>
       </form>
     </Form>
-  
   );
 }

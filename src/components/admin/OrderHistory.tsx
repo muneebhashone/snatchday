@@ -135,13 +135,12 @@ export default function OrderHistory() {
           </TableHeader>
           <TableBody>
             {order?.data.history.map((odr) => (
-              //   console.log(odr);
               <TableRow key={odr}>
                 <TableCell className="font-medium text-center">
                   {odr?.date.split("T")[0]}
                 </TableCell>
                 <TableCell className="text-center">{odr.remarks}</TableCell>
-                <TableCell className="text-center">{odr.status}</TableCell>
+                <TableCell className="text-center capitalize">{odr.status}</TableCell>
                 <TableCell className="text-center">
                   {odr.customerInformed ? "yes" : "no"}
                 </TableCell>
