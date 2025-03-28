@@ -30,17 +30,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const userData = JSON.parse(user);
       setUser(userData);
       
-      if (userData.role === 'admin') {
+      if (userData.user.role === 'admin') {
         if (window.location.pathname === '/admin/login' || window.location.pathname === '/') {
           router.push("/admin");
         }
-      } else {
-        if (window.location.pathname.startsWith('/admin')) {
-          router.push("/"); 
-        }
       }
     } else {
-      const allowedPaths = ['/forgot-password', '/otp', "/reset-password", '/admin/login']; 
+      // No user logged in
+      const allowedPaths = ['/forgot-password', '/otp',"/reset-password", '/admin/login']; 
       if (!allowedPaths.includes(window.location.pathname) && window.location.pathname.startsWith('/admin') && !window.location.pathname.includes('/admin/login')) {
         router.push("/admin/login");
       }

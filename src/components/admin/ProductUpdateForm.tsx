@@ -215,14 +215,14 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           URL.revokeObjectURL(url);
         }
       });
-
+      
       // Create new previews
       const urls = Array.from(files).map((file) => URL.createObjectURL(file));
       setPreviewUrls([
         ...previewUrls.filter((url) => !url.startsWith("blob:")),
         ...urls,
       ]);
-
+      
       // Update form
       form.setValue("images", files);
     }
@@ -283,15 +283,15 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           data: formData as any,
         },
         {
-          onSuccess: () => {
-            toast.success("Product updated successfully");
+        onSuccess: () => {
+          toast.success("Product updated successfully");
             queryClient.invalidateQueries({ queryKey: ["products"] });
             // router.push("/admin/products");
-          },
-          onError: (error) => {
-            toast.error("Failed to update product");
-            console.error(error);
-          },
+        },
+        onError: (error) => {
+          toast.error("Failed to update product");
+          console.error(error);
+        },
         }
       );
     } catch (error) {
@@ -307,33 +307,33 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       <h2 className="text-2xl font-bold mb-6">Update Product</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
                   <Input placeholder="Product name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="company"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company</FormLabel>
-                <FormControl>
+            <FormField
+              control={form.control}
+              name="company"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Company</FormLabel>
+                  <FormControl>
                   <Input placeholder="Company name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
           <FormField
             control={form.control}
@@ -364,17 +364,17 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                   />
                 </FormControl>
                 <div className="flex gap-4 my-2">
-                  {previewUrls.map((url, index) => (
+                    {previewUrls.map((url, index) => (
                     <div
                       key={index}
                       className="relative aspect-square w-20 h-20 rounded-lg overflow-hidden border"
                     >
-                      <Image
-                        src={url}
-                        alt={`Preview ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
+                        <Image
+                          src={url}
+                          alt={`Preview ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
                       <button
                         type="button"
                         className="absolute top-0 right-0 bg-white rounded-full p-1 shadow"
@@ -390,9 +390,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       >
                         <X size={16} />
                       </button>
-                    </div>
-                  ))}
-                </div>
+                      </div>
+                    ))}
+                  </div>
                 <FormMessage />
               </FormItem>
             )}

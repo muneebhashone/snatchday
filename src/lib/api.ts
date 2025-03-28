@@ -15,6 +15,7 @@ import {
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
+import { group } from "console";
 
 export const fetchItems = async () => {
   const response = await axiosInstance.get("/items");
@@ -73,56 +74,25 @@ export const createCategory = async (formData: FormData) => {
   return response.data;
 };
 
-export const getCategories = async () => {
-  const response = await axiosInstance.get<Category[]>("/category");
-  return response.data;
-};
+export interface ProductResponse {
+  data: {
+    products: Array<{
+      _id: string;
+      name: string;
+      // ... other product fields
+    }>;
+  };
+}
 
-export const getCategoryById = async (id: string) => {
-  const response = await axiosInstance.get<Category>(`/category/${id}`);
-  return response.data;
-};
-
-export const updateCategory = async (id: string, data: CategoryFormData) => {
-  const response = await axiosInstance.patch<CategoryFormData>(
-    `/category/${id}`,
-    data
-  );
-  return response.data;
-};
-
-export const deleteCategory = async (id: string) => {
-  const response = await axiosInstance.delete<CategoryFormData>(
-    `/category/${id}`
-  );
-  return response.data;
-};
-
-export const createFilter = async (formData: FilterFormData) => {
-  const response = await axiosInstance.post<FilterFormData>(
-    "/filter",
-    formData
-  );
-  return response.data;
-};
-
-export const getFilters = async () => {
-  const response = await axiosInstance.get<FilterFormData[]>("/filter");
-  return response.data;
-};
-
-export const deleteFilter = async (id: string) => {
-  const response = await axiosInstance.delete<FilterFormData>(`/filter/${id}`);
-  return response.data;
-};
-
-export const updateFilter = async (id: string, data: FilterFormData) => {
-  const response = await axiosInstance.patch<FilterFormData>(
-    `/filter/${id}`,
-    data
-  );
-  return response.data;
-};
+export interface CategoryResponse {
+  data: {
+    categories: Array<{
+      _id: string;
+      name: string;
+      // ... other category fields
+    }>;
+  };
+}
 
 export const getProducts = async (params?: {
   price?: string;
@@ -134,7 +104,7 @@ export const getProducts = async (params?: {
   category?: string;
   type?: string;
 }) => {
-  const response = await axiosInstance.get<ProductFormData[]>("/product", {
+  const response = await axiosInstance.get<ProductResponse>("/product", {
     params,
   });
   return response.data;
@@ -172,8 +142,8 @@ export const cancelTournament = async (id: string) => {
   return response.data;
 };
 
-export const manageTournament = async ( data: TournamentFormData) => {
-  console.log(data, "data")
+export const manageTournament = async (data: TournamentFormData) => {
+  console.log(data, "data");
   const response = await axiosInstance.patch<ResponseTournament>(
     "/tournament/manage",
     data
@@ -263,7 +233,7 @@ export const RecommendProduct = async (data: IRecommendProduct) => {
 };
 
 //Current Offers
-export const CurrenOffers= async () => {
+export const CurrenOffers = async () => {
   const response = await axiosInstance.get("/product/?currentOffer=true");
   return response.data;
 };
@@ -285,14 +255,91 @@ export const getCustomers = async (params) => {
   return response.data;
 };
 
-export const upComingTournament = async () => {
-  const response = await axiosInstance.get<ResponseTournament[]>("/tournament/upcoming");
+export const getCustomer = async (
+  pageParams,
+  search,
+  group,
+  date,
+  isActive
+) => {
+  const limit = 10;
+  const response = await axiosInstance.get("/customer", {
+    params: {
+      limit,
+      offset: pageParams,
+      search,
+      group,
+      date,
+      isActive,
+    },
+  });
+  console.log(pageParams);
   return response.data;
 };
 
+export const getCustomerById = async (id) => {
+  const response = await axiosInstance.get(`/customer/${id}`);
+  return response.data;
+};
 
-export const getTournamentById = async (id: string): Promise<TournamentDetailResponse> => {
-  const response = await axiosInstance.get<TournamentDetailResponse>(`/tournament/get/${id}`);
+export const updateCustomer = async (id, params) => {
+  const response = await axiosInstance.put(`/customer/update/${id}`, params);
+  return response.data;
+};
+
+export const getCustomerTournaments = async (id, offset) => {
+  const limit = 5;
+  const response = await axiosInstance.get(`/customer/tournaments/${id}`, {
+    params: { limit, offset },
+  });
+  return response.data;
+};
+
+export const getCustomerOrdersData = async (page, status, user, date) => {
+  const limit = 10;
+  const response = await axiosInstance.get("order/order/get/all", {
+    params: { limit, offset: page, status, user, date },
+  });
+  return response.data;
+};
+
+//customer apis end
+
+// order api
+
+export const getOrders = async (pageParams, status, date) => {
+  const limit = 10;
+  const response = await axiosInstance.get("/order/order/get/all", {
+    params: {
+      limit,
+      offset: pageParams,
+      status,
+      date,
+    },
+  });
+  console.log(pageParams);
+  return response.data;
+};
+
+// export const getOrderById = async (id) => {
+//   const response = await axiosInstance.get(`/order/order/${id}`);
+//   return response.data;
+// };
+// order api end
+
+export const upComingTournament = async () => {
+  const response = await axiosInstance.get<ResponseTournament[]>(
+    "/tournament/upcoming"
+  );
+  return response.data;
+};
+
+export const getTournamentById = async (
+  id: string
+): Promise<TournamentDetailResponse> => {
+  const response = await axiosInstance.get<TournamentDetailResponse>(
+    `/tournament/get/${id}`
+  );
   return response.data;
 };
 
@@ -301,25 +348,22 @@ export const getTournamentById = async (id: string): Promise<TournamentDetailRes
 //   return response.data;
 // };
 
-
 export const updateProfile = async (formData: FormData) => {
-  const response = await axiosInstance.put('/auth/updateMe', formData);
+  const response = await axiosInstance.put("/auth/updateMe", formData);
   return response.data;
 };
-
 
 export const participateTournament = async (id: string) => {
   const response = await axiosInstance.patch(`/tournament/participate/${id}`);
   return response.data;
 };
 
-
-export const shareTournament = async (id: string,email:string) => {
-  
-  const response = await axiosInstance.post(`/tournament/share/${id}`,{email});
+export const shareTournament = async (id: string, email: string) => {
+  const response = await axiosInstance.post(`/tournament/share/${id}`, {
+    email,
+  });
   return response.data;
 };
-
 
 export const getParticipants = async (id: string) => {
   const response = await axiosInstance.get(`/tournament/participants/${id}`);
@@ -387,3 +431,106 @@ export const applyVoucher = async (data: {code:string}) => {
   return response.data;
 };
 
+export interface CreateVoucherData {
+  code: string;
+  name: string;
+  type: "PERCENTAGE" | "FIXED";
+  estate: string;
+  value: number;
+  registered: boolean;
+  noShipping: boolean;
+  products: string[];
+  categories: string[];
+  from: string;
+  until: string;
+  noOfUsage: number;
+  usagePerUser: number;
+}
+
+export interface VoucherData extends Omit<CreateVoucherData, "products"> {
+  _id: string;
+  products: Array<{
+    _id: string;
+    name: string;
+  }>;
+}
+
+export interface VoucherResponse {
+  data: VoucherData[];
+}
+
+export const vouchers = async (data: CreateVoucherData) => {
+  const response = await axiosInstance.post("/voucher", data);
+  return response.data;
+};
+
+export const getVouchers = async () => {
+  const response = await axiosInstance.get<VoucherResponse>("/voucher");
+  return response.data;
+};
+
+export const getVoucherById = async (id: string) => {
+  const response = await axiosInstance.get<VoucherData>(`/voucher/${id}`);
+  return response.data;
+};
+
+export const deleteVoucher = async (id: string) => {
+  const response = await axiosInstance.delete(`/voucher/${id}`);
+  return response.data;
+};
+
+export const updateVoucher = async (id: string, data: VoucherData) => {
+  const response = await axiosInstance.put(`/voucher/${id}`, data);
+  return response.data;
+};
+
+export const getCategories = async () => {
+  const response = await axiosInstance.get<CategoryResponse>("/category");
+  return response.data;
+};
+
+export const getCategoryById = async (id: string) => {
+  const response = await axiosInstance.get<Category>(`/category/${id}`);
+  return response.data;
+};
+
+export const updateCategory = async (id: string, data: CategoryFormData) => {
+  const response = await axiosInstance.patch<CategoryFormData>(
+    `/category/${id}`,
+    data
+  );
+  return response.data;
+};
+
+export const deleteCategory = async (id: string) => {
+  const response = await axiosInstance.delete<CategoryFormData>(
+    `/category/${id}`
+  );
+  return response.data;
+};
+
+export const createFilter = async (formData: FilterFormData) => {
+  const response = await axiosInstance.post<FilterFormData>(
+    "/filter",
+    formData
+  );
+  return response.data;
+};
+
+export const getFilters = async () => {
+  const response = await axiosInstance.get<FilterFormData[]>("/filter");
+  return response.data;
+};
+
+export const deleteFilter = async (id: string) => {
+  const response = await axiosInstance.delete<FilterFormData>(`/filter/${id}`);
+  return response.data;
+};
+
+export const updateFilter = async (id: string, data: FilterFormData) => {
+  const response = await axiosInstance.patch<FilterFormData>(
+    `/filter/${id}`,
+    data
+  );
+  return response.data;
+};

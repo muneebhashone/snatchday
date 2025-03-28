@@ -1,12 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["res.cloudinary.com", "encrypted-tbn0.gstatic.com"],
+    domains: [
+      "res.cloudinary.com",
+      "encrypted-tbn0.gstatic.com,",
+      "images.unsplash.com",
+    ],
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
       },
     ],
   },
