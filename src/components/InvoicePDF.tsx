@@ -1,6 +1,7 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 import LOGOURL from "../app/images/logo.png";
+import { formatDate } from "date-fns";
 
 const styles = StyleSheet.create({
   // Page-level styling
@@ -74,7 +75,9 @@ const styles = StyleSheet.create({
   tableHeaderText: { 
     flex: 1, 
     textAlign: "center", 
-    fontWeight: 'bold' 
+    fontWeight: 'bold' ,
+    fontSize: 10 
+
   },
   tableRow: { 
     flexDirection: "row", 
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
   },
   tableRowText: { 
     flex: 1, 
-    textAlign: "center", 
+    textAlign: "right", 
     fontSize: 10 
   },
 
@@ -109,6 +112,10 @@ const styles = StyleSheet.create({
   },
   totalValue: { 
     color: '#2980B9' 
+  },
+  tableRowImage: {
+    width: 30,
+    height: 30
   }
 });
 
@@ -172,17 +179,21 @@ const InvoicePDF: React.FC<InvoiceProps> = ({ orderDetails }) => {
         {/* Order Summary Table */}
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={styles.tableHeaderText}>Product</Text>
+            <Text style={styles.tableHeaderText}>Image</Text>
+            <Text style={styles.tableHeaderText}>Product Name</Text>
             <Text style={styles.tableHeaderText}>Qty</Text>
-            <Text style={styles.tableHeaderText}>Price</Text>
-            <Text style={styles.tableHeaderText}>Total</Text>
+            <Text style={styles.tableHeaderText}>Unit Price</Text>
+            <Text style={styles.tableHeaderText}>Total Price</Text>
+            <Text style={styles.tableHeaderText}>Created</Text>
           </View>
           {orderDetails?.cartObject?.cart?.map((item: any, index: number) => (
             <View key={index} style={styles.tableRow}>
+                <Image src={item?.product?.images[0]} style={styles.tableRowImage} />
               <Text style={styles.tableRowText}>{item?.product?.name || "N/A"}</Text>
               <Text style={styles.tableRowText}>{item?.quantity || "N/A"}</Text>
-              <Text style={styles.tableRowText}>{item?.product?.price || "N/A"} €</Text>
+              <Text style={styles.tableRowText}>{item?.unitPrice || "N/A"} €</Text>
               <Text style={styles.tableRowText}>{(item?.totalPrice) || "N/A"} €</Text>
+              <Text style={styles.tableRowText}>{formatDate(item?.product?.createdAt || "", "dd/MM/yyyy") || "N/A"}</Text>
             </View>
           ))}
         </View>

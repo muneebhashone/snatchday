@@ -26,3 +26,18 @@ export interface TournamentFormData {
 //   createdAt: string;
 //   updatedAt: string;
 // } 
+
+
+export interface ReturnOrderTypes {
+  orderNumber: string;
+  productsData: [
+    {
+      product: string;
+      quantity: number;
+      reason: string;
+      demand: string;
+      description: string;
+    }
+  ]
+}
+

@@ -1,4 +1,4 @@
-import { TournamentFormData } from "@/types/admin";
+import { ReturnOrderTypes, TournamentFormData } from "@/types/admin";
 import axiosInstance from "./axios";
 import {
   ProductFormData,
@@ -366,3 +366,24 @@ export const getOrderById = async (id: string) => {
   const response = await axiosInstance.get(`/order/order/${id}`);
   return response.data;
 };
+
+export const returnOrder = async (data: ReturnOrderTypes) => {
+  const response = await axiosInstance.post(`/return`, data);
+  return response.data;
+};
+
+export const getMyReturns = async(params) => {
+  const response = await axiosInstance.get(`/return`, { params });
+  return response.data;
+};
+
+export const getReturnById = async (id: string) => {
+  const response = await axiosInstance.get(`/return/${id}`);
+  return response.data;
+};
+
+export const applyVoucher = async (data: {code:string}) => {
+  const response = await axiosInstance.post(`/order/apply-Voucher`, data);
+  return response.data;
+};
+

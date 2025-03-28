@@ -69,9 +69,15 @@ const OrdersTable = () => {
           ) : (
             orders?.data?.orders.map((order, index) => (
               <TableRow key={index}>
-                <TableCell>{order?.orderNumber || "N/A"}</TableCell>
+                 <TableCell>{order?.orderNumber || "N/A"}</TableCell>
                 <TableCell>{formatDate(order?.createdAt || "", "dd/MM/yyyy")}</TableCell>
-                <TableCell className="max-w-[400px]">{order?.cartObject?.cart?.map((item) => item?.product?.article) || "N/A"}</TableCell>
+                <TableCell className="">
+                  <ul className="p-0 m-0">
+                    {order?.cartObject?.cart?.map((item) => (
+                      <li key={item?.product?.id}>{item?.product?.article}</li>
+                    )) || "N/A"}
+                  </ul>
+                </TableCell>
                 <TableCell className="text-center">{order?.orderNumber || "N/A"}</TableCell>
                 <TableCell className="text-right">{`${order?.cartObject?.subTotal}€` || "N/A"}</TableCell>
                 <TableCell className="text-right">{`${order?.cartObject?.total}€` || "N/A"}</TableCell>
@@ -79,14 +85,14 @@ const OrdersTable = () => {
                   <div className={`text-center capitalize rounded-md py-1 px-2 ${order.status === "Paid" ? "bg-green-700 text-white" : order.status === "Complete" ? "bg-green-700 text-white" : "bg-primary text-white"}`}>
                     {order.status || "N/A"}
                   </div>
-                </TableCell>
-                <TableCell className="text-center">
+                </TableCell> 
+                 <TableCell className="text-center">
                   <Link href={`/orders/${order?._id}`}>
                     <Button variant="ghost" size="icon" className="hover:bg-gray-100">
                       <Eye className="h-5 w-5 text-foreground" />
                     </Button>
                   </Link>
-                </TableCell>
+                </TableCell> 
                 <TableCell className="text-center">
                   <InvoiceButton orderDetails={order} />
                 </TableCell>

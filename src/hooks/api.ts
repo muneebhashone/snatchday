@@ -48,8 +48,12 @@ import {
   getMyOrders,
   getOrderById,
   placeOrderApi,
+  returnOrder,
+  getMyReturns,
+  getReturnById,
+  applyVoucher,
 } from "../lib/api";
-import { TournamentFormData } from "@/types/admin";
+import { TournamentFormData , ReturnOrderTypes } from "@/types/admin";
 
 import {
   CategoryFormData,
@@ -464,3 +468,28 @@ export const useGetOrderById = (id: string) => {
   });
 };
 
+export const useReturnOrder = () => {
+  return useMutation({
+    mutationFn: (data: ReturnOrderTypes) => returnOrder(data),
+  });
+};
+
+export const useGetMyReturns = (params) => {
+  return useQuery({
+    queryKey: ["myReturns", params],
+    queryFn: () => getMyReturns(params),
+  });
+};
+
+export const useGetReturnById = (id: string) => {
+  return useQuery({
+    queryKey: ["return", id],
+    queryFn: () => getReturnById(id),
+  });
+};
+
+export const useApplyVoucher = () => {
+  return useMutation({
+    mutationFn: (data: { code: string }) => applyVoucher(data),
+  });
+};
