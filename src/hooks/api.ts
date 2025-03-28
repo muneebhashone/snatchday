@@ -52,6 +52,8 @@ import {
   deleteVoucher,
   updateVoucher,
   getVoucherById,
+  getOrders,
+  getOrderById,
 } from "../lib/api";
 import { TournamentFormData } from "@/types/admin";
 
@@ -382,22 +384,22 @@ export const useNewsletterMail = () => {
 
 //customers
 export const useCustomers = (filters) => {
-  console.log({filters})
+  // console.log({filters})
   return useInfiniteQuery({
     queryKey: ["customers", filters],
     queryFn: ({ pageParam }) => {
-      console.log({pageParam})
-      return getCustomers({ ...filters, offset: pageParam })
+      // console.log({pageParam})
+      // return getCustomers({ ...filters, offset: pageParam });
+      return getCustomers({ ...filters, offset: pageParam });
     },
     initialPageParam: 1,
-    getNextPageParam: (lastPage , allPages) => {
-      console.log({lastPage})
-      console.log({allPages})
-      const customers = lastPage.data.customers[0].data
-      const total =  lastPage.data.customers[0].total[0].total
-      console.log({total, customers})
-      return customers.length < 10 ? undefined : filters.offset
-
+    getNextPageParam: (lastPage, allPages) => {
+      // console.log({lastPage})
+      // console.log({allPages})
+      const customers = lastPage.data.customers[0].data;
+      const total = lastPage.data.customers[0].total[0].total;
+      // console.log({total, customers})
+      return customers.length < 10 ? undefined : filters.offset;
     },
   });
 };
@@ -441,6 +443,24 @@ export const useGetCustomerOrdersData = (page, status, user, date) => {
 
 //customer apis end
 
+// order api
+
+// export const useGetOrders = (limit,offset,) => {};
+export const useGetOrders = (page, status, date) => {
+  return useQuery({
+    queryKey: ["customers", page, status, date],
+    queryFn: () => getOrders(page, status, date),
+  });
+};
+
+export const useGetOrderById = (id) => {
+  return useQuery({
+    queryKey: ["order"],
+    queryFn: () => getOrderById(id),
+  });
+};
+
+// order api end
 export const useParticipateTournament = () => {
   return useMutation({
     mutationFn: (id: string) => participateTournament(id),

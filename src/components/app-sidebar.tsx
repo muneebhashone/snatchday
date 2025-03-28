@@ -1,6 +1,6 @@
-"use client"
-import * as React from "react"
-import { VersionSwitcher } from "@/components/version-switcher"
+"use client";
+import * as React from "react";
+import { VersionSwitcher } from "@/components/version-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -25,14 +25,16 @@ import {
   List,
   Newspaper,
   Trophy,
-  Gift
-} from "lucide-react"
+  Gift,
+  ListOrdered,
+} from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { useState } from "react"
+} from "@/components/ui/collapsible";
+import { useState } from "react";
+import { ReturnIcon } from "./icons/icon";
 
 const navItems = [
   {
@@ -75,7 +77,6 @@ const navItems = [
         url: "/admin/tournament/create-tournament",
         icon: <Plus className="h-4 w-4" />,
       },
-
     ],
   },
   {
@@ -85,9 +86,21 @@ const navItems = [
   },
 
   {
-    title: "Orders",
+    title: "Sale",
     url: "/admin/orders",
     icon: <ShoppingCart className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "Orders",
+        url: "/admin/orders",
+        icon: <ListOrdered className="h-4 w-4" />,
+      },
+      {
+        title: "Returns",
+        url: "/admin/returns",
+        icon: <ReturnIcon />,
+      },
+    ],
   },
   {
     title: "Customers",
@@ -106,7 +119,7 @@ const navItems = [
   },
   {
     title: "Voucher",
-    
+
     icon: <Gift className="h-4 w-4" />,
     subItems: [
       {
@@ -120,19 +133,18 @@ const navItems = [
         icon: <Plus className="h-4 w-4" />,
       },
     ],
-    
-      
-  },  
-]
+  },
+];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const pathname =
+    typeof window !== "undefined" ? window.location.pathname : "";
   const [openItems, setOpenItems] = useState<string[]>([]);
 
   const toggleItem = (title: string) => {
-    setOpenItems(prev => 
-      prev.includes(title) 
-        ? prev.filter(item => item !== title)
+    setOpenItems((prev) =>
+      prev.includes(title)
+        ? prev.filter((item) => item !== title)
         : [...prev, title]
     );
   };
@@ -142,10 +154,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader className=" bg-black text-primary">
         {/* <VersionSwitcher /> */}
         <div className="bg-black text-primaryrounded-lg">
-    {/* <Image src={logo} alt="logo" width={200} height={200} className="w-full h-full"/> */}
-    <p className="text-2xl font-bold">Snatch Day</p>
-    <p className="text-sm text-gray-500">Admin</p>
-  </div>
+          {/* <Image src={logo} alt="logo" width={200} height={200} className="w-full h-full"/> */}
+          <p className="text-2xl font-bold">Snatch Day</p>
+          <p className="text-sm text-gray-500">Admin</p>
+        </div>
       </SidebarHeader>
       <SidebarContent className="py-6 bg-black text-white">
         <SidebarGroup>
@@ -167,7 +179,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             {item.icon}
                             <span>{item.title}</span>
                           </div>
-                          <ChevronDown className={`h-4 w-4 transition-transform ${openItems.includes(item.title) ? 'transform rotate-180' : ''}`} />
+                          <ChevronDown
+                            className={`h-4 w-4 transition-transform ${
+                              openItems.includes(item.title)
+                                ? "transform rotate-180"
+                                : ""
+                            }`}
+                          />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="pl-8 mt-2 space-y-2">
@@ -179,7 +197,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             tooltip={subItem.title}
                             className="[&[data-active]]:bg-primary [&[data-active]]:text-white text-white rounded-md m-0"
                           >
-                            <a href={subItem.url} className="flex items-center gap-3">
+                            <a
+                              href={subItem.url}
+                              className="flex items-center gap-3"
+                            >
                               {subItem.icon}
                               <span>{subItem.title}</span>
                             </a>
@@ -188,13 +209,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       </CollapsibleContent>
                     </Collapsible>
                   ) : (
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       isActive={pathname === item.url}
                       tooltip={item.title}
-                      className={`text-xl text-white py-7 ${pathname === item.url ? 'data-[active]:bg-primary data-[active]:text-white' : 'text-foreground bg-transparent'} hover:bg-primary hover:text-white rounded-md`}
+                      className={`text-xl text-white py-7 ${
+                        pathname === item.url
+                          ? "data-[active]:bg-primary data-[active]:text-white"
+                          : "text-foreground bg-transparent"
+                      } hover:bg-primary hover:text-white rounded-md`}
                     >
-                      <a href={item.url} className="flex items-center gap-3 text-white">
+                      <a
+                        href={item.url}
+                        className="flex items-center gap-3 text-white"
+                      >
                         {item.icon}
                         <span>{item.title}</span>
                       </a>
@@ -208,5 +236,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

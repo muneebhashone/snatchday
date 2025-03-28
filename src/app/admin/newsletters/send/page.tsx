@@ -28,8 +28,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { toast } from "sonner";
-import { serialize } from "v8";
-import { set } from "date-fns";
 
 const formSchema = z.object({
   subject: z.string().nonempty(),
@@ -51,7 +49,7 @@ export default function NewsletterComposer() {
   const filter = {
     limit: 10,
     search: "",
-    offset:10
+    offset: 0,
   };
 
   const [filters, setFilter] = useState(filter);
@@ -60,14 +58,9 @@ export default function NewsletterComposer() {
     isLoading,
     fetchNextPage,
     hasNextPage,
-    isFetching,
   } = useCustomers(filters);
 
-  console.log({hasNextPage})
-
-
-
-
+  // console.log(hasNextPage, isLoading, fetchNextPage);
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
@@ -80,8 +73,6 @@ export default function NewsletterComposer() {
       list: [""],
     },
   });
-
-
 
   const {
     mutate: newsletterMail,
@@ -120,19 +111,19 @@ export default function NewsletterComposer() {
   };
   const lastElementRef = useCallback(
     (node: HTMLDivElement) => {
-      console.log(node)
+      // console.log(node);
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
-        console.log({entries})
+        // console.log({ entries });
         if (entries[0].isIntersecting && hasNextPage) {
-          console.log("FETCHING NEXT PAGE")
+          console.log("FETCHING NEXT PAGE");
           fetchNextPage();
         }
       });
       if (node) observer.current.observe(node);
     },
-    [isLoading, fetchNextPage, hasNextPage, isFetching]
+    [isLoading, fetchNextPage, hasNextPage]
   );
   const onAdd = (customer) => {
     const exist = selectedCustomers.find((c) => c.email === customer.email);
@@ -148,8 +139,6 @@ export default function NewsletterComposer() {
   };
   const path = usePathname();
   const pathLinks = path.split("/");
-  const [fromValue, setFromValue] = useState("standard");
-  const [toValue, setToValue] = useState("all");
   if (isError) {
     return <div>{`Error Occured: ${error}`}</div>;
   } else {
@@ -284,6 +273,7 @@ export default function NewsletterComposer() {
                           render={({ field }) => (
                             <Input
                               onChange={(e) => {
+                                console.log(e.target.value);
                                 setFilter((prevFilters) => ({
                                   ...prevFilters,
                                   search: e.target.value,
@@ -298,19 +288,19 @@ export default function NewsletterComposer() {
                         />
                         {showCustomers && (
                           <div
-                          ref={lastElementRef}
-                
-                          className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto">
+                            ref={lastElementRef}
+                            className="border p-3 mt-2 flex flex-col rounded bg-gray-100 gap-2 absolute z-10 w-full top-10 h-[200px] overflow-y-auto"
+                          >
                             {customers?.pages
                               ?.flatMap((page) => page?.data?.customers)
                               .flatMap((data) =>
-                                data?.data.map((customer , idx) => (
+                                data?.data.map((customer, idx) => (
                                   <div
                                     onClick={() => {
                                       onAdd(customer);
                                     }}
                                     key={`${customer?.email}-${idx}  `}
-                                    className="text-sm cursor-pointer bg-red-200"
+                                    className="text-sm cursor-pointer"
                                   >
                                     {customer?.name}
                                   </div>

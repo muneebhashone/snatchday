@@ -7,31 +7,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useCustomersPagination } from "@/hooks/api";
+import { useGetOrders } from "@/hooks/api";
 import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export function CustomeListTable({
-  search,
-  group,
+export function OrdersListTable({
+  status,
   date,
-  isActive,
 }: {
-  search: string;
-  group: string;
+  status: string;
   date: string;
-  isActive: string;
 }) {
   const [page, setPage] = useState(0);
   const skip = 10;
-  const { data: customers, isLoading } = useCustomersPagination(
-    page,
-    search,
-    group,
-    date,
-    isActive
-  );
+  const { data: customers, isLoading } = useGetOrders(page, status, date);
+
+  customers?.data.orders.map((order) => console.log(order.orderNumber));
+  console.log(customers?.data.total, "total");
   return isLoading ? (
     <div className="flex items-center justify-center">
       <Loader size={25} className="animate-spin text-primary" />
@@ -41,35 +34,29 @@ export function CustomeListTable({
       <TableHeader>
         <TableRow className="border border-primary">
           <TableHead className="text-primary font-bold w-[100px]">
-            Name
+            Order No.
           </TableHead>
-          <TableHead className="text-primary font-bold">E-mail</TableHead>
-          <TableHead className="text-primary font-bold">
-            Customer group
-          </TableHead>
+          <TableHead className="text-primary font-bold">Customer</TableHead>
           <TableHead className="text-primary font-bold">Status</TableHead>
-          <TableHead className="text-primary font-bold">IP</TableHead>
+          <TableHead className="text-primary font-bold">Sums</TableHead>
           <TableHead className="text-primary font-bold">Created</TableHead>
-          <TableHead className="text-primary font-bold">Points</TableHead>
+          <TableHead className="text-primary font-bold">Last Update</TableHead>
           <TableHead className="text-primary font-bold text-right">
             Actions
           </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {customers?.data?.customers[0].data?.map((customer) => (
-          <TableRow className="" key={customer.name}>
-            <TableCell className="font-bold">{customer.name}</TableCell>
-            <TableCell className="">{customer.email}</TableCell>
-            <TableCell>{customer.group}</TableCell>
-            <TableCell>{customer.isActive ? "Active" : "inActive"}</TableCell>
-            <TableCell className="">{customer.ip}</TableCell>
-            <TableCell className="">
-              {customer.createdAt.split("T")[0]}
-            </TableCell>
-            <TableCell className="">{customer.wallet.snapPoints}</TableCell>
+        {customers?.data?.orders?.map((order) => (
+          <TableRow className="" key={order.orderNumber}>
+            <TableCell className="font-bold">{order.orderNumber}</TableCell>
+            <TableCell className="">{order.billingDetails.firstName}</TableCell>
+            <TableCell>{order.status}</TableCell>
+            <TableCell>{order.cartObject.total}</TableCell>
+            <TableCell className="">{order.createdAt.split("T")[0]}</TableCell>
+            <TableCell className="">{order.updatedAt?.split("T")[0]}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">
-              <Link href={`/admin/customers/${customer._id}`}>
+              <Link href={`/admin/orders/${order._id}`}>
                 <Edit className="text-primary" />
               </Link>
               <Link href={`#`}>
@@ -95,9 +82,7 @@ export function CustomeListTable({
             </button>
             {Array.from(
               {
-                length: Math.ceil(
-                  (customers?.data?.customers[0]?.total[0]?.total || 0) / skip
-                ),
+                length: Math.ceil((customers?.data?.total || 0) / skip),
               },
               (_, index) => {
                 return (
@@ -115,20 +100,12 @@ export function CustomeListTable({
             )}
             <button
               className={`${
-                page + skip >=
-                  (customers?.data?.customers[0]?.total[0]?.total || 0) &&
-                "text-gray-300"
+                page + skip >= (customers?.data?.total || 0) && "text-gray-300"
               }`}
-              disabled={
-                page + skip >=
-                (customers?.data?.customers[0]?.total[0]?.total || 0)
-              }
+              disabled={page + skip >= (customers?.data?.total || 0)}
               onClick={() => {
                 setPage((prev) =>
-                  Math.min(
-                    prev + skip,
-                    (customers?.data?.customers[0]?.total[0]?.total || 0) - page
-                  )
+                  Math.min(prev + skip, customers?.data?.total - page)
                 );
               }}
             >

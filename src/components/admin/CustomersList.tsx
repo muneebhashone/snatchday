@@ -59,7 +59,7 @@ export default function CustomersList() {
     console.log("Form Submitted:", values);
     setSearch(values.customerName);
     setGroup(values.customerGroup);
-    setDate(null);
+    setDate(values.created);
     setActive(values.status);
   };
 

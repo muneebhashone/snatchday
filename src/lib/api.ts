@@ -296,12 +296,34 @@ export const getCustomerTournaments = async (id, offset) => {
 export const getCustomerOrdersData = async (page, status, user, date) => {
   const limit = 10;
   const response = await axiosInstance.get("order/order/get/all", {
-    params: { limit, offset:page, status, user, date },
+    params: { limit, offset: page, status, user, date },
   });
   return response.data;
 };
 
 //customer apis end
+
+// order api
+
+export const getOrders = async (pageParams, status, date) => {
+  const limit = 10;
+  const response = await axiosInstance.get("/order/order/get/all", {
+    params: {
+      limit,
+      offset: pageParams,
+      status,
+      date,
+    },
+  });
+  console.log(pageParams);
+  return response.data;
+};
+
+export const getOrderById = async (id) => {
+  const response = await axiosInstance.get(`/order/order/${id}`);
+  return response.data;
+};
+// order api end
 
 export const upComingTournament = async () => {
   const response = await axiosInstance.get<ResponseTournament[]>(
@@ -362,7 +384,7 @@ export interface CreateVoucherData {
   usagePerUser: number;
 }
 
-export interface VoucherData extends Omit<CreateVoucherData, 'products'> {
+export interface VoucherData extends Omit<CreateVoucherData, "products"> {
   _id: string;
   products: Array<{
     _id: string;
@@ -375,12 +397,12 @@ export interface VoucherResponse {
 }
 
 export const vouchers = async (data: CreateVoucherData) => {
-  const response = await axiosInstance.post('/voucher', data);
+  const response = await axiosInstance.post("/voucher", data);
   return response.data;
 };
 
 export const getVouchers = async () => {
-  const response = await axiosInstance.get<VoucherResponse>('/voucher');
+  const response = await axiosInstance.get<VoucherResponse>("/voucher");
   return response.data;
 };
 
@@ -449,7 +471,3 @@ export const updateFilter = async (id: string, data: FilterFormData) => {
   );
   return response.data;
 };
-
-
-
-
