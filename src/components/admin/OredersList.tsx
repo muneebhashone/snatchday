@@ -46,8 +46,8 @@ export default function OrdersList() {
   const router = useRouter();
 
   const clearFileds = () => {
+    // router.refresh();
     form.reset({ status: "", from: undefined, until: undefined });
-    router.push("/admin/orders");
   };
 
   const onSubmit = (values: any) => {
@@ -83,15 +83,15 @@ export default function OrdersList() {
                 <FormLabel>Status</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value || null}
+                  defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select Status" />
+                      <SelectValue  />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={null} disabled>
+                    <SelectItem value={undefined} disabled>
                       Select Status
                     </SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>

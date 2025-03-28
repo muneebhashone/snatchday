@@ -88,6 +88,7 @@ export default function OrderHistory() {
       onSuccess: () => {
         toast.success("Order updated successfully");
         queryClient.invalidateQueries({ queryKey: ["order"] });
+        form.reset();
       },
       onError: (error) => {
         toast.error(`Failed to update order: ${error.message}`);
@@ -140,7 +141,9 @@ export default function OrderHistory() {
                   {odr?.date.split("T")[0]}
                 </TableCell>
                 <TableCell className="text-center">{odr.remarks}</TableCell>
-                <TableCell className="text-center capitalize">{odr.status}</TableCell>
+                <TableCell className="text-center capitalize">
+                  {odr.status}
+                </TableCell>
                 <TableCell className="text-center">
                   {odr.customerInformed ? "yes" : "no"}
                 </TableCell>
