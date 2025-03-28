@@ -14,9 +14,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import ClientLayout from "@/components/landing-page/ClientLayout";
-import { Product } from "@/components/admin/Product";
+
+import AdminLayout from "@/components/admin/AdminLayout";
 // import { Badge } from '@/components/ui/badge';
 
 const ReturnDetailsPage = () => {
@@ -40,7 +39,7 @@ const ReturnDetailsPage = () => {
   if (isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="w-16 h-16 animate-pulse text-blue-500" />
+        <Loader2 className="w-16 h-16 animate-pulse text-primary" />
       </div>
     );
 
@@ -54,10 +53,11 @@ const ReturnDetailsPage = () => {
     );
 
   const returnData = data?.data;
+  console.log(returnData,"returnData");
 
   return (
-    <ClientLayout>
-      <div className="my-32 w-[1400px] mx-auto px-4 py-24">
+    <AdminLayout>
+      <div className="my-4 w-[1400px] mx-auto px-4 py-8">
         <div className="flex items-center mb-6">
           <h1 className="text-3xl font-bold flex items-center">
             <Package className="mr-3 text-blue-600" />
@@ -74,11 +74,14 @@ const ReturnDetailsPage = () => {
                   <Info className="mr-2 text-blue-600" />
                   Return Information
                 </div>
+                <div>
+                    <span className="font-bold">Status:</span>
                 <span
                   className={`${getStatusColor(returnData?.status)} capitalize`}
                 >
-                  {returnData?.status || "N/A"}
+                 { returnData?.status || "N/A"}
                 </span>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -106,6 +109,7 @@ const ReturnDetailsPage = () => {
                     </span>
                   </p>
                 </div>
+              
               </div>
             </CardContent>
           </Card>
@@ -122,15 +126,11 @@ const ReturnDetailsPage = () => {
               {returnData?.productsData?.map((item, index) => (
                 <div key={index} className="mb-4 pb-4 border-b last:border-b-0">
                   <div className="flex items-start space-x-4">
+                    
                     <div className="flex-1 space-y-2">
                       <h4 className="font-semibold">Product Details</h4>
                       <p className="text-sm text-gray-500">
-                        <Image
-                          src={item?.product.images[0]}
-                          alt={item?.product.description}
-                          width={50}
-                          height={50}
-                        />
+                     <Image src={item?.product.images[0]} alt={item?.product.description} width={50} height={50} />
                       </p>
                       <p className="text-sm text-gray-500">
                         <strong>Name:</strong> {item?.product.name}
@@ -141,16 +141,16 @@ const ReturnDetailsPage = () => {
                       <p className="text-sm text-gray-500">
                         <strong>Quantity:</strong> {item?.quantity}
                       </p>
-                      <p className="text-sm  my-4 text-gray-500">
-                        <strong>Reason :</strong> {item?.reason}
+                      <p className="text-sm my-4 text-gray-500">
+                        <strong>Reason:</strong> {item?.reason}
                       </p>
                       <p className="text-sm text-gray-500">
-                        <strong>Price:</strong> {item?.product.price}
+                        <strong>Price:</strong> {item?.product.price.toFixed()}€
                       </p>
                       <p className="text-sm text-gray-500">
-                        <strong>Description:</strong>{" "}
-                        {item?.product.description}
+                        <strong>Created:</strong> {formatDate(item?.product?.createdAt || "", "dd/MM/yyyy")}
                       </p>
+                       
                     </div>
                   </div>
                 </div>
@@ -158,41 +158,40 @@ const ReturnDetailsPage = () => {
             </CardContent>
           </Card>
         </div>
+
         <div className="my-6">
-          <h3 className="font-bold">Previous course</h3>
-          <table className="w-full border-collapse border border-gray-300 mt-2">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Created</th>
-                <th className="border p-2">Status</th>
-                <th className="border p-2">Comment</th>
-              </tr>
-            </thead>
-            <tbody>
-              {returnData?.history && returnData.history.length > 0 ? (
-                returnData?.history.map((item) =>
-                  item?.customerInformed ? (
-                    <tr key={item.id}>
-                      <td className="border p-2">
-                        {formatDate(item?.date || "", "dd/MM/yyyy")}
-                      </td>
-                      <td className="border p-2">{item?.status}</td>
-                      <td className="border truncate p-2">{item?.remarks}</td>
+            <h3 className="font-bold">Previous course</h3>
+              <table className="w-full border-collapse border border-gray-300 mt-2">
+                <thead>
+                  <tr className="bg-gray-200">
+                    <th className="border p-2">Created</th>
+                    <th className="border p-2">Status</th>
+                    <th className="border p-2">Comment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {returnData?.history && returnData.history.length > 0 ? (
+                    returnData?.history.map((item) => (
+                      item?.customerInformed ? (
+                        <tr key={item.id}>
+                          <td className="border p-2">{formatDate(item?.date || "", "dd/MM/yyyy")}</td>
+                          <td className="border p-2">{item?.status}</td>
+                          <td className="border truncate p-2">
+                            {item?.remarks}
+                          </td>
+                        </tr>
+                      ) : null // Skip rendering if customerInformed is false
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="text-center">No previous course found</td>
                     </tr>
-                  ) : null // Skip rendering if customerInformed is false
-                )
-              ) : (
-                <tr>
-                  <td colSpan={3} className="text-center">
-                    No previous course found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                  )}
+                </tbody>
+              </table>
         </div>
       </div>
-    </ClientLayout>
+    </AdminLayout>
   );
 };
 

@@ -166,7 +166,7 @@ const OrderDetails = () => {
                     orderDetails?.data?.history.map((item) => (
                       item?.customerInformed ? (
                         <tr key={item.id}>
-                          <td className="border p-2">{formatDate(item?.createdAt || "", "dd/MM/yyyy")}</td>
+                          <td className="border p-2">{formatDate(item?.date || "", "dd/MM/yyyy")}</td>
                           <td className="border p-2">{item?.status}</td>
                           <td className="border truncate p-2">
                             {item?.remarks}

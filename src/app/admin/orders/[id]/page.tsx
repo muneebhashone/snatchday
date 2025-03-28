@@ -1,8 +1,22 @@
 "use client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import OrderHistory from "@/components/admin/OrderHistory";
+import OrderItemsTable from "@/components/admin/OrderItemTable";
+import { ProfileIcon } from "@/components/icons/icon";
 import { Card } from "@/components/ui/card";
 import { useGetOrderById } from "@/hooks/api";
-import { Calendar, CarrotIcon, CreditCard, Truck } from "lucide-react";
+import {
+  Calendar,
+  CarrotIcon,
+  CircleEllipsis,
+  CreditCard,
+  Ellipsis,
+  Info,
+  Plus,
+  RefreshCcw,
+  Truck,
+  User,
+} from "lucide-react";
 import { useParams } from "next/navigation";
 import React from "react";
 
@@ -15,16 +29,17 @@ const Page = () => {
     <AdminLayout>
       <div>
         <div className="grid grid-cols-3 gap-4">
-          <Card className="py-2 px-4 flex flex-col gap-2">
-            <div className="flex gap-4 items-center">
-              <CarrotIcon />
-              <h1>Order details</h1>
+          {/* order details */}
+          <Card className="py-2 px-4 flex flex-col gap-2 shadow-md">
+            <div className="flex gap-4 items-center pb-1 border-b">
+              <Info />
+              <h1 className="font-bold text-primary">Order details</h1>
             </div>
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4 items-center ">
               <div className="bg-primary p-2 rounded-sm">
                 <CarrotIcon className="text-white" size={15} />
               </div>
-              <p>Snatch Day</p>
+              <p className="text-primary">Snatch Day</p>
             </div>
             <div className="flex gap-4 items-center">
               <div className="bg-primary p-2 rounded-sm">
@@ -45,9 +60,67 @@ const Page = () => {
               <p>Free Shipping</p>
             </div>
           </Card>
-          <Card className="py-2 px-4 flex flex-col gap-2">hamza</Card>
-          <Card className="py-2 px-4 flex flex-col gap-2">hamza</Card>
+
+          {/* cusotmer details */}
+          <Card className="py-2 px-4 flex flex-col gap-2 shadow-md">
+            <div className="flex gap-4 items-center pb-1 border-b">
+              <User />
+              <h1 className="font-bold text-primary">Customer details</h1>
+            </div>
+            <div className="flex gap-4 items-center ">
+              <div className="bg-primary p-2 rounded-sm">
+                <User className="text-white" size={15} />
+              </div>
+              <p className="text-primary">
+                {order?.data.billingDetails.firstName}
+              </p>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="bg-primary p-2 rounded-sm">
+                <Calendar className="text-white" size={15} />
+              </div>
+              <p>{order?.data.updatedAt.split("T")[0]}</p>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="bg-primary p-2 rounded-sm">
+                <CreditCard className="text-white" size={15} />
+              </div>
+              <p>payment coming soon...</p>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="bg-primary p-2 rounded-sm">
+                <Truck className="text-white" size={15} />
+              </div>
+              <p>Free Shipping</p>
+            </div>
+          </Card>
+          <Card className="py-2 px-4 flex flex-col gap-2 shadow-md">
+            <div className="flex gap-4 items-center pb-1 border-b">
+              <CircleEllipsis />
+              <h1 className="font-bold text-primary">Options</h1>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="bg-primary p-2 rounded-sm">
+                <RefreshCcw className="text-white" size={15} />
+              </div>
+              <p>Invoice</p>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="bg-primary p-2 rounded-sm">
+                <Plus className="text-white" size={15} />
+              </div>
+              <p>Bonus Points</p>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="bg-primary p-2 rounded-sm">
+                <Plus className="text-white" size={15} />
+              </div>
+              <p>Partner</p>
+            </div>
+          </Card>
         </div>
+        <OrderItemsTable Order={order} />
+        <OrderHistory />
       </div>
     </AdminLayout>
   );

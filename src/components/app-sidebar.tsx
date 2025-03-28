@@ -97,7 +97,7 @@ const navItems = [
       },
       {
         title: "Returns",
-        url: "/admin/returns",
+        url: "/admin/orders/returns",
         icon: <ReturnIcon />,
       },
     ],

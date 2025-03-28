@@ -264,18 +264,18 @@ const handleAddToCart = () => {
             <div className="mt-3">
               {discounts?.length > 0 ? (
                 <div className="flex items-center gap-2">
-                  <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D] line-through">
+                  <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D] ">
                     <span className="text-foreground">{price}</span>€
                   </h2>
-                  <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
+                  {/* <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
                     {discounts.map((discount, i) => (
                       <span key={i} className="text-foreground">
                         {Number(price) - Number(discount?.price) > 0 
-                          ? (Number(price) - Number(discount?.price)).toFixed(2) 
+                          ? (Number(price) - Number(discount?.price)).toFixed() 
                           : "0.00"}
                       </span>
                     ))}€
-                  </h2>
+                  </h2> */}
                 </div>
               ) : (
                 <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
@@ -300,7 +300,7 @@ const handleAddToCart = () => {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 mt-4">
+            {/* <div className="flex items-center gap-3 mt-4">
               <span className="text-[#444444] font-bold">Quantity:</span>
               <div className="relative flex items-center">
                 <input
@@ -355,7 +355,7 @@ const handleAddToCart = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             {/* Discount Points */}
             <div className="mt-3">

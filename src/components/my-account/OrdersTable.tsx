@@ -26,6 +26,8 @@ const OrdersTable = () => {
     offset: pagination.offset,
   });
 
+  console.log(orders, "111111");
+
   const handleNextPage = () => {
     setPagination((prev) => ({
       ...prev,

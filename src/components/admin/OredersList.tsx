@@ -24,6 +24,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { OrdersListTable } from "./OrdersListTable";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   status: z.string().optional(),
@@ -42,9 +43,11 @@ export default function OrdersList() {
       until: undefined,
     },
   });
+  const router = useRouter();
 
   const clearFileds = () => {
-    form.reset({ status: null, from: undefined, until: undefined });
+    form.reset({ status: "", from: undefined, until: undefined });
+    router.push("/admin/orders");
   };
 
   const onSubmit = (values: any) => {
@@ -89,7 +92,7 @@ export default function OrdersList() {
                   </FormControl>
                   <SelectContent>
                     <SelectItem value={null}>Select</SelectItem>
-                    <SelectItem value="complete">Complete</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="dispatch">Dispatch</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>

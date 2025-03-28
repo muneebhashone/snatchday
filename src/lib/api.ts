@@ -1,4 +1,4 @@
-import { ReturnOrderTypes, TournamentFormData } from "@/types/admin";
+import { ReturnOrderTypes, TournamentFormData, UpdateReturnTypes } from "@/types/admin";
 import axiosInstance from "./axios";
 import {
   ProductFormData,
@@ -325,6 +325,21 @@ export const getOrders = async (pageParams, status, date) => {
 //   const response = await axiosInstance.get(`/order/order/${id}`);
 //   return response.data;
 // };
+// export const getOrderById = async (id) => {
+//   const response = await axiosInstance.get(`/order/order/${id}`);
+//   return response.data;
+// };
+
+export interface IFormData {
+  status;
+  remarks;
+  customerInformed;
+}
+
+export const PatchOrder = async (id, formData) => {
+  const response = await axiosInstance.patch(`order/order/${id}`, formData);
+  return response.data;
+};
 // order api end
 
 export const upComingTournament = async () => {
@@ -401,8 +416,8 @@ export const placeOrderApi = async (data: PlaceOrder) => {
   return response.data;
 };
 
-export const getMyOrders = async () => {
-  const response = await axiosInstance.get(`/order/order`);
+export const getMyOrders = async (params) => {
+  const response = await axiosInstance.get(`/order/order`, { params });
   return response.data;
 };
 
@@ -534,3 +549,16 @@ export const updateFilter = async (id: string, data: FilterFormData) => {
   );
   return response.data;
 };
+
+
+export const updateReturn = async (id: string, data: ReturnOrderTypes) => {
+  const response = await axiosInstance.patch(`/return/${id}`, data);
+  return response.data;
+};
+
+export const updateReturnHistory = async (id: string, data: UpdateReturnTypes) => {
+ console.log(data,id,"data from api")
+   const response = await axiosInstance.put(`/return/${id}`, data);
+  return response.data;
+};
+
