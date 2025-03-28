@@ -21,8 +21,14 @@ import { formatDate } from "date-fns";
       orderNumber: "",
       articleId: "",
     });
+
+    
+  const debouncedFilters = {
+    status: filters.status ,
+    orderNumber: useDebounce(filters.orderNumber, 3000), 
+    articleId: useDebounce(filters.articleId, 3000), 
+  };
   
-    const debouncedFilters = useDebounce(filters, 300);
   
     useEffect(() => {
       setPagination({ pageSize: 10, currentPage: 1 });
@@ -82,6 +88,7 @@ import { formatDate } from "date-fns";
             className="border p-2 ml-2"
           >
             <option value="">Select Status</option>
+            <option value="waiting">Waiting for product</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
             <option value="canceled">Canceled</option>
