@@ -66,6 +66,8 @@ import {
   getVoucherById,
   getOrders,
   updateReturnHistory,
+  PatchOrder,
+  IFormData,
 } from "../lib/api";
 import { TournamentFormData , ReturnOrderTypes, UpdateReturnTypes } from "@/types/admin";
 
@@ -471,6 +473,13 @@ export const useGetOrderById = (id) => {
   return useQuery({
     queryKey: ["order"],
     queryFn: () => getOrderById(id),
+  });
+};
+
+export const usePatchOrder = (id) => {
+  return useMutation({
+    // mutationKey: ["order"],
+    mutationFn: (formData: IFormData) => PatchOrder(id, formData),
   });
 };
 

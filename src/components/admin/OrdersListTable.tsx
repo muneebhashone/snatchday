@@ -52,7 +52,7 @@ export function OrdersListTable({
             <TableCell className="font-bold">{order.orderNumber}</TableCell>
             <TableCell className="">{order.billingDetails.firstName}</TableCell>
             <TableCell>{order.status}</TableCell>
-            <TableCell>{order.cartObject.total}</TableCell>
+            <TableCell>{order.cartObject.total.toFixed(2)}</TableCell>
             <TableCell className="">{order.createdAt.split("T")[0]}</TableCell>
             <TableCell className="">{order.updatedAt?.split("T")[0]}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">

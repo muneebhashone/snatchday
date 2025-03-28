@@ -325,6 +325,21 @@ export const getOrders = async (pageParams, status, date) => {
 //   const response = await axiosInstance.get(`/order/order/${id}`);
 //   return response.data;
 // };
+// export const getOrderById = async (id) => {
+//   const response = await axiosInstance.get(`/order/order/${id}`);
+//   return response.data;
+// };
+
+export interface IFormData {
+  status;
+  remarks;
+  customerInformed;
+}
+
+export const PatchOrder = async (id, formData) => {
+  const response = await axiosInstance.patch(`order/order/${id}`, formData);
+  return response.data;
+};
 // order api end
 
 export const upComingTournament = async () => {
