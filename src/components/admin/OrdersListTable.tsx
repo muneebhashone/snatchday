@@ -59,9 +59,9 @@ export function OrdersListTable({
               <Link href={`/admin/orders/${order._id}`}>
                 <Edit className="text-primary" />
               </Link>
-              <Link href={`#`}>
+              {/* <Link href={`#`}>
                 <Delete className="text-red-500" />
-              </Link>
+              </Link> */}
             </TableCell>
           </TableRow>
         ))}

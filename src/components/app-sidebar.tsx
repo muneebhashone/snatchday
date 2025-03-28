@@ -53,12 +53,12 @@ const navItems = [
     subItems: [
       {
         title: "All Products",
-        url: "/admin/Products",
+        url: "/admin/products",
         icon: <List className="h-4 w-4" />,
       },
       {
         title: "Create Product",
-        url: "/admin/Products/create",
+        url: "/admin/products/create",
         icon: <Plus className="h-4 w-4" />,
       },
     ],
@@ -124,12 +124,12 @@ const navItems = [
     subItems: [
       {
         title: "All Vouchers",
-        url: "/admin/vouchers",
+        url: "/admin/voucher",
         icon: <List className="h-4 w-4" />,
       },
       {
         title: "Create Voucher",
-        url: "/admin/vouchers/create",
+        url: "/admin/voucher/create",
         icon: <Plus className="h-4 w-4" />,
       },
     ],

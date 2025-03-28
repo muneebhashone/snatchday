@@ -60,7 +60,7 @@ const VoucherForm = () => {
   const { mutate: createVoucher, isPending } = useCreateVoucher();
   const { data: productsResponse } = useGetProducts();
   const { data: categoriesResponse } = useGetCategories();
-  
+
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
 
@@ -89,7 +89,7 @@ const VoucherForm = () => {
         onSuccess: () => {
           toast.success("Voucher created successfully");
           form.reset();
-          router.push("/admin/vouchers");
+          router.push("/admin/voucher");
         },
         onError: (error: Error) => {
           const errorMessage = error?.message || "Failed to create voucher";
@@ -113,9 +113,11 @@ const VoucherForm = () => {
     <div className="max-w-3xl mx-auto p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Create Voucher</h1>
-        <p className="text-muted-foreground">Create a new discount voucher for your customers</p>
+        <p className="text-muted-foreground">
+          Create a new discount voucher for your customers
+        </p>
       </div>
-      
+
       <div className="bg-card rounded-lg border p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -163,7 +165,10 @@ const VoucherForm = () => {
                       Type
                       <span className="text-red-500">*</span>
                     </FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select voucher type" />
@@ -184,22 +189,10 @@ const VoucherForm = () => {
                 name="estate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1">
-                      Estate
-                      <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select estate" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                        <SelectItem value="expired">Expired</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Estate</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter estate" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -289,7 +282,7 @@ const VoucherForm = () => {
                         disabled={isProductsSelected}
                       >
                         <SelectTrigger>
-                        <SelectValue placeholder="Select categories" />
+                          <SelectValue placeholder="Select categories" />
                         </SelectTrigger>
                         <SelectContent>
                           {categories.map((category) => (
@@ -316,7 +309,9 @@ const VoucherForm = () => {
                                 type="button"
                                 onClick={() => {
                                   field.onChange(
-                                    field.value.filter((id) => id !== categoryId)
+                                    field.value.filter(
+                                      (id) => id !== categoryId
+                                    )
                                   );
                                 }}
                                 className="text-muted-foreground hover:text-foreground"
@@ -343,9 +338,9 @@ const VoucherForm = () => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="Enter value" 
+                      <Input
+                        type="number"
+                        placeholder="Enter value"
                         {...field}
                         className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
@@ -422,8 +417,12 @@ const VoucherForm = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => field.onChange(date?.toISOString())}
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          onSelect={(date) =>
+                            field.onChange(date?.toISOString())
+                          }
                           disabled={(date) =>
                             date < new Date() || date < new Date("1900-01-01")
                           }
@@ -467,8 +466,12 @@ const VoucherForm = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value ? new Date(field.value) : undefined}
-                          onSelect={(date) => field.onChange(date?.toISOString())}
+                          selected={
+                            field.value ? new Date(field.value) : undefined
+                          }
+                          onSelect={(date) =>
+                            field.onChange(date?.toISOString())
+                          }
                           disabled={(date) =>
                             date < new Date() || date < new Date("1900-01-01")
                           }
@@ -491,9 +494,9 @@ const VoucherForm = () => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="Enter number of usage" 
+                      <Input
+                        type="number"
+                        placeholder="Enter number of usage"
                         {...field}
                         className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
@@ -513,9 +516,9 @@ const VoucherForm = () => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="Enter usage per user" 
+                      <Input
+                        type="number"
+                        placeholder="Enter usage per user"
                         {...field}
                         className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
@@ -527,8 +530,8 @@ const VoucherForm = () => {
             </div>
 
             <div className="flex justify-end space-x-4 pt-6">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => router.back()}
                 type="button"
               >
