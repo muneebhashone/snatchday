@@ -140,7 +140,7 @@ export default function ReturnHistory() {
                     {formatDate(item?.date || "", "dd/MM/yyyy")}
                   </TableCell>
                   <TableCell>{item?.remarks}</TableCell>
-                  <TableCell>{item?.status}</TableCell>
+                  <TableCell className="capitalize">{item?.status}</TableCell>
                   <TableCell>{item?.customerInformed ? "Yes" : "No"}</TableCell>
                 </TableRow>
               ))}

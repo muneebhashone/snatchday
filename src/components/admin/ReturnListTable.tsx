@@ -84,6 +84,7 @@ export function ReturnListTable() {
             className="border p-2 ml-2"
           >
             <option value="">Select Status</option>
+            <option value="waiting">Waiting for product</option>
             <option value="pending">Pending</option>
             <option value="completed">Completed</option>
             <option value="canceled">Canceled</option>
@@ -136,7 +137,7 @@ export function ReturnListTable() {
                         : "bg-green-700 text-white"
                     }`}
                   >
-                    {returnItem.status || "N/A"}
+                    <p className="capitalize">{returnItem.status || "N/A"}</p>
                   </div>
                 </TableCell>
                 <TableCell>
