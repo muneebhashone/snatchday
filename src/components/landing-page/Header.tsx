@@ -177,7 +177,26 @@ const Header = () => {
                                         {category.name}
                                       </Link>
                                       <ul className="space-y-2">
-                                        {category.subCategories.map(
+                                      {category.subCategories
+                                        .filter((cat) => cat.above)
+                                        .map((subcategory: SubCategory, index) => (
+                                          <li
+                                            key={index}
+                                            onMouseEnter={() =>
+                                              setCategoryImage(
+                                                subcategory.image
+                                              )
+                                            }
+                                          >
+                                            <Link
+                                              href={`/product-listing?category=${subcategory._id}`}
+                                              className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                            >
+                                              {subcategory?.name || "N/A"}
+                                            </Link>
+                                          </li>
+                                        ))}
+                                        {/* {category.subCategories.map(
                                           (subcategory: SubCategory, index) => (
                                             <li
                                               key={index}
@@ -195,7 +214,7 @@ const Header = () => {
                                               </Link>
                                             </li>
                                           )
-                                        )}
+                                        )} */}
                                       </ul>
                                     </div>
                                   );

@@ -1,10 +1,23 @@
 "use client";
 import React, { useEffect } from "react";
 import Image, { StaticImageData } from "next/image";
-import { Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Heart, ShoppingCartIcon } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { ICurrentOfferProduct } from "@/types";
 import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import { Button } from "./ui/button";
+import Login from "./auth/Login";
+import { useAddToCart } from "@/hooks/api";
+import { toast } from "sonner";
+import { useCart } from "@/context/CartContext";
+import { QueryClient } from "@tanstack/react-query";
+import { useUserContext } from "@/context/userContext";
 
 const roundToTwoDecimals = (value: number): number => {
   return Math.round((value + Number.EPSILON) * 100) / 100;
@@ -39,7 +52,12 @@ const ProductCard = ({
   __v,
   _id,
 }: ICurrentOfferProduct) => {
+  const params = useParams();
   const router = useRouter();
+  const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
+  const { setCartCount } = useCart();
+  const queryClient = new QueryClient();
+  const { user } = useUserContext();
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -47,6 +65,20 @@ const ProductCard = ({
     //   title.toLowerCase().replace(/\s+/g, "-")
     // );
     router.push(`/product-listing/${_id}`);
+  };
+
+  const handleAddToCart = () => {
+    addToCart(_id as string, {
+      onSuccess: () => {
+        toast.success("product added to cart");
+        setCartCount((prevCount) => prevCount + 1);
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
+      },
+      onError: (error) => {
+        toast.error("Failed to add to cart");
+        console.error(error);
+      },
+    });
   };
 
   return (
@@ -109,12 +141,42 @@ const ProductCard = ({
 
         {/* Add to Cart Button */}
         <div className="pt-2 flex justify-between items-center">
-          <button
+          {/* <button
             onClick={handleClick}
             className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
           >
             Add To Cart
-          </button>
+          </button> */}
+
+          <div className="flex gap-4 items-center">
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger asChild>
+                  <div>
+                    {user ? (
+                      <button
+                        onClick={handleAddToCart}
+                        disabled={isAddToCartPending}
+                        className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
+                      >
+                        {/* <ShoppingCartIcon size={28} className="mr-2" /> */}
+                        {isAddToCartPending ? "adding..." : "Add to Cart"}
+                      </button>
+                    ) : (
+                      <Button className="bg-transparent">
+                        <Login addToCart={true} smallAddtoCart={true} />
+                      </Button>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                {!user && (
+                  <TooltipContent className="bg-gray-700 text-white">
+                    <p>Please login first to add items to cart</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+          </div>
 
           {/* Sale Badge */}
           {type === "SALE" && (

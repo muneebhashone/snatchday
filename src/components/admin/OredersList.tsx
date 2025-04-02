@@ -19,12 +19,11 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { CalendarIcon, Filter, List } from "lucide-react";
+import { CalendarIcon, Filter, List, Rotate3d } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { OrdersListTable } from "./OrdersListTable";
-import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   status: z.string().optional(),
@@ -33,7 +32,7 @@ const formSchema = z.object({
 });
 
 export default function OrdersList() {
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState<string>("");
   const [date, setDate] = useState<string>();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -43,17 +42,15 @@ export default function OrdersList() {
       until: undefined,
     },
   });
-  const router = useRouter();
 
   const clearFileds = () => {
-    // router.refresh();
     form.reset({ status: "", from: undefined, until: undefined });
+    setStatus("");
+    setDate("");
   };
 
   const onSubmit = (values: any) => {
-    console.log("Form Submitted:", values);
     setStatus(values.status);
-
     if (values.from && values.until) {
       const endDate = new Date(values.until);
       endDate.setHours(23, 59, 0, 0);
@@ -83,17 +80,15 @@ export default function OrdersList() {
                 <FormLabel>Status</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
+                  defaultValue={undefined}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue  />
+                      <SelectValue placeholder="Select Status" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={undefined} disabled>
-                      Select Status
-                    </SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="dispatch">Dispatch</SelectItem>
@@ -192,9 +187,9 @@ export default function OrdersList() {
             <Button
               onClick={clearFileds}
               type="button"
-              className="bg-primary hover:bg-primary"
+              className="bg-[#007bff] hover:bg-[#007bff]"
             >
-              {/* <C /> */}
+              <Rotate3d />
               Clear
             </Button>
             <Button type="submit" className="bg-primary hover:bg-primary">

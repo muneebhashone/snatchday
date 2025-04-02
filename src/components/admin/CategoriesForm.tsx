@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
-import { useCreateCategory, useGetCategories } from "@/hooks/api"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { useCreateCategory, useGetCategories } from "@/hooks/api";
 import {
   Form,
   FormControl,
@@ -14,20 +14,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { useState } from "react"
-import Image from "next/image"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { Category } from "@/types"
-import { useQueryClient } from "@tanstack/react-query"
-
-
-
-
-
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
+import Image from "next/image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Category } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -36,14 +37,14 @@ const formSchema = z.object({
   parentCategoryId: z.string().optional(),
   shop: z.boolean(),
   above: z.boolean(),
-})
+});
 
 export default function CategoriesForm() {
-  const [previewUrl, setPreviewUrl] = useState<string>("")
-  const { mutate: createCategory, isPending } = useCreateCategory()
-  const { data: getCategories } = useGetCategories()
-  const categories = getCategories?.data?.categories
-  const queryClient = useQueryClient()
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const { mutate: createCategory, isPending } = useCreateCategory();
+  const { data: getCategories } = useGetCategories();
+  const categories = getCategories?.data?.categories;
+  const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,58 +55,58 @@ export default function CategoriesForm() {
       shop: false,
       above: false,
     },
-  })
+  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    
+    const file = e.target.files?.[0];
+
     if (file) {
       // Clear previous preview
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl)
+        URL.revokeObjectURL(previewUrl);
       }
-      
+
       // Create new preview
-      const url = URL.createObjectURL(file)
-      setPreviewUrl(url)
-      
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+
       // Update form with the File object
-      form.setValue('image', file, { shouldValidate: true })
+      form.setValue("image", file, { shouldValidate: true });
     }
-  }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const formData = new FormData()
+      const formData = new FormData();
 
       // Append all form fields to FormData
       Object.entries(values).forEach(([key, value]) => {
-        if (key === 'image' && value instanceof File) {
-          formData.append('image', value)
+        if (key === "image" && value instanceof File) {
+          formData.append("image", value);
         } else if (value !== undefined && value !== null) {
-          formData.append(key, value.toString())
+          formData.append(key, value.toString());
         }
-      })
+      });
 
       createCategory(formData, {
         onSuccess: () => {
-          toast.success("Category created successfully")
+          toast.success("Category created successfully");
           // Clear image preview
           if (previewUrl) {
-            URL.revokeObjectURL(previewUrl)
+            URL.revokeObjectURL(previewUrl);
           }
-          queryClient.invalidateQueries({ queryKey: ['categories'] });
-          setPreviewUrl("")
-          form.reset()
+          queryClient.invalidateQueries({ queryKey: ["categories"] });
+          setPreviewUrl("");
+          form.reset();
         },
         onError: (error) => {
-          toast.error("Failed to create category")
-          console.error(error)
-        }
-      })
+          toast.error("Failed to create category");
+          console.error(error);
+        },
+      });
     } catch (error) {
-      toast.error("Failed to create category")
-      console.error(error)
+      toast.error("Failed to create category");
+      console.error(error);
     }
   }
 
@@ -203,9 +204,7 @@ export default function CategoriesForm() {
               <FormItem className="flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
                   <FormLabel>Shop</FormLabel>
-                  <FormDescription>
-                    Is this a shop category?
-                  </FormDescription>
+                  <FormDescription>Is this a shop category?</FormDescription>
                 </div>
                 <FormControl>
                   <Switch
@@ -223,10 +222,8 @@ export default function CategoriesForm() {
             render={({ field }) => (
               <FormItem className="flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel>Make child Category</FormLabel>
-                  <FormDescription>
-                    Is this an above category?
-                  </FormDescription>
+                  <FormLabel>Show In Mega Menu</FormLabel>
+                  <FormDescription>Wanna show in mega menu?</FormDescription>
                 </div>
                 <FormControl>
                   <Switch
@@ -239,7 +236,8 @@ export default function CategoriesForm() {
           />
 
           <div className="flex justify-end">
-            <Button className="hover:bg-primary"
+            <Button
+              className="hover:bg-primary"
               type="submit"
               disabled={isPending}
             >
@@ -249,5 +247,5 @@ export default function CategoriesForm() {
         </form>
       </Form>
     </div>
-  )
+  );
 }
