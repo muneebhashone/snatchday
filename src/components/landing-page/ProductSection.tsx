@@ -9,13 +9,13 @@ import {
 } from "../ui/carousel";
 import MonthlyTournament from "./MonthlyTournament";
 import { useCurrentOffers } from "@/hooks/api";
-import { ICurrentOfferProduct } from "@/types";
+// import { ICurrentOfferProduct } from "@/types";
 import { Card, CardContent } from "../ui/card";
 import ProductCard from "../ProductCard";
 
 const ProductSection = () => {
   const { data: currentOffers, isLoading } = useCurrentOffers();
-  const products: ICurrentOfferProduct[] = currentOffers?.data.products;
+  const products= currentOffers?.data.products;
   // useEffect(() => {
   //   console.log(products,'prokjkjhkhjvhgcnv');
   // }, [products]);
