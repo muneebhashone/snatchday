@@ -27,6 +27,7 @@ import {
   Trophy,
   Gift,
   ListOrdered,
+  Gamepad,
 } from "lucide-react";
 import {
   Collapsible,
@@ -130,6 +131,23 @@ const navItems = [
       {
         title: "Create Voucher",
         url: "/admin/voucher/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
+  },
+  {
+    title: "Games",
+
+    icon: <Gamepad className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Games",
+        url: "/admin/games",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Games",
+        url: "/admin/games/create",
         icon: <Plus className="h-4 w-4" />,
       },
     ],

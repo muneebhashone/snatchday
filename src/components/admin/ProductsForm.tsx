@@ -150,6 +150,7 @@ export default function ProductsForm() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
     try {
       setApplyDiscounts(false);
       const formData = new FormData();

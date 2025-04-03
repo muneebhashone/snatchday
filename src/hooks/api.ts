@@ -68,8 +68,15 @@ import {
   updateReturnHistory,
   PatchOrder,
   IFormData,
+  CreateGame,
+  GetGames,
+  GetGamebyId,
 } from "../lib/api";
-import { TournamentFormData , ReturnOrderTypes, UpdateReturnTypes } from "@/types/admin";
+import {
+  TournamentFormData,
+  ReturnOrderTypes,
+  UpdateReturnTypes,
+} from "@/types/admin";
 
 import {
   CategoryFormData,
@@ -519,7 +526,8 @@ export const useAddToCart = () => {
 
 export const useUpdateCart = () => {
   return useMutation({
-    mutationFn: ({ id, quantity }: { id: string; quantity: number }) => updateCart(id, quantity),
+    mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
+      updateCart(id, quantity),
   });
 };
 
@@ -535,7 +543,6 @@ export const useCheckout = () => {
     mutationFn: (data: CheckoutTypes) => checkout(data),
   });
 };
-
 
 export const usePlaceOrder = () => {
   return useMutation({
@@ -617,6 +624,30 @@ export const useGetVoucherById = (id: string) => {
 
 export const useUpdateReturnHistory = () => {
   return useMutation({
-    mutationFn: ({id,data}:{id:string,data:UpdateReturnTypes}) => updateReturnHistory(id,data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateReturnTypes }) =>
+      updateReturnHistory(id, data),
   });
 };
+
+// games api start
+
+export const UseCreateGame = () => {
+  return useMutation({
+    mutationFn: CreateGame,
+  });
+};
+
+export const useGetGames = (page) => {
+  return useQuery({
+    queryKey: ["games"],
+    queryFn:()=> GetGames(page),
+  });
+};
+export const useGetGameById = (id) => {
+  return useQuery({
+    queryKey: ["game"],
+    queryFn:()=> GetGamebyId(id),
+  });
+};
+
+// games api end
