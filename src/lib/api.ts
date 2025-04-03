@@ -140,8 +140,7 @@ export const createTournament = async (data: TournamentFormData) => {
 
 export const cancelTournament = async (id: string) => {
   const response = await axiosInstance.patch<ResponseTournament>(
-    `/tournament/manage/${id}`,
-    {}
+    `/tournament/cancel/${id}`
   );
   return response.data;
 };
@@ -194,7 +193,7 @@ export type TournamentParams = {
   status?: string;
 };
 
-export const getTournaments = async (params: TournamentParams) => {
+export const getTournaments = async (params?: TournamentParams) => {
   const response = await axiosInstance.get<ResponseTournament[]>(
     "/tournament/get",
     { params }

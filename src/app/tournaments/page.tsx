@@ -1,3 +1,4 @@
+"use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
 import tournamenttrophy from "@/app/images/tournamenttrophy.png";
@@ -11,10 +12,12 @@ import laptop from "@/app/images/laptopv1.png";
 import laptop2 from "@/app/images/laptopv2.png";
 import graphiccard from "@/app/images/graphiccard.png";
 import headerbg from "@/app/images/tournamentbg.png";
-
+import { useGetTournaments } from "@/hooks/api";
 
 const page = () => {
-  const nextTournament = [
+  const { data: nextTournament } = useGetTournaments();
+  console.log(nextTournament, "nexttiyurnakme,hj");
+  const nextTournament1 = [
     {
       productImage: laptop,
       gameIcon: graphiccard,
@@ -24,13 +27,14 @@ const page = () => {
       gameName: "Push It",
       duration: "3:00 minutes",
       currentPrice: "2.50",
+      fee: "0.25",
       participationPoints: 250,
       participationFee: "2.50",
       countdown: {
         hours: 20,
         minutes: 48,
         seconds: 37,
-        milliseconds: 19,
+        days: 2,
       },
     },
     {
@@ -42,13 +46,14 @@ const page = () => {
       gameName: "Push It",
       duration: "3:00 minutes",
       currentPrice: "2.50",
+      fee: "0.25",
       participationPoints: 250,
       participationFee: "2.50",
       countdown: {
         hours: 20,
         minutes: 48,
         seconds: 37,
-        milliseconds: 19,
+        days: 3,
       },
     },
     {
@@ -60,13 +65,14 @@ const page = () => {
       gameName: "Push It",
       duration: "3:00 minutes",
       currentPrice: "2.50",
+      fee: "0.25",
       participationPoints: 250,
       participationFee: "2.50",
       countdown: {
         hours: 20,
         minutes: 48,
         seconds: 37,
-        milliseconds: 19,
+        days: 1,
       },
     },
     {
@@ -78,17 +84,17 @@ const page = () => {
       gameName: "Push It",
       duration: "3:00 minutes",
       currentPrice: "2.50",
+      fee: "0.25",
       participationPoints: 250,
       participationFee: "2.50",
       countdown: {
         hours: 20,
         minutes: 48,
         seconds: 37,
-        milliseconds: 19,
+        days: 2,
       },
     },
-  ]
-
+  ];
 
   return (
     <ClientLayout>
@@ -125,7 +131,7 @@ const page = () => {
 
           {/* Tournament Content */}
           <div className="py-5 sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-            {nextTournament.map((tournament, index) => (
+            {nextTournament?.data?.map((tournament, index) => (
               <NextTournamentCard key={index} {...tournament} />
             ))}
           </div>

@@ -341,7 +341,7 @@ export const useManageTournament = () => {
   });
 };
 
-export const useGetTournaments = (params: TournamentParams) => {
+export const useGetTournaments = (params?: TournamentParams) => {
   return useQuery({
     queryKey: ["tournaments", params],
     queryFn: () => getTournaments(params),
