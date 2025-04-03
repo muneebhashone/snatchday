@@ -108,22 +108,11 @@ export default function ReturnHistory() {
             <h2 className="text-lg font-medium">Return history</h2>
           </div>
         </div>
-
-        {/* <div className="p-4 border-b">
-        <Tabs defaultValue="course">
-          <TabsList className="grid w-full max-w-xs grid-cols-3">
-            <TabsTrigger value="course">Course</TabsTrigger>
-            <TabsTrigger value="refund">Refund points</TabsTrigger>
-            <TabsTrigger value="more">More</TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div> */}
-
         <div className="p-4 border-b">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px] text-primary">
+                <TableHead className="text-primary">
                   Created
                 </TableHead>
                 <TableHead className="text-primary">comment</TableHead>

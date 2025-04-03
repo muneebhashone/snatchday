@@ -8,6 +8,8 @@ import {
   Loader2,
   List,
   Loader,
+  PlusCircle,
+  MinusCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -22,7 +24,12 @@ import {
 } from "../ui/tooltip";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
-import { useCompareProducts, useGetCompareProducts } from "@/hooks/api";
+import {
+  useCompareProducts,
+  useGetCart,
+  useGetCompareProducts,
+  useUpdateCart,
+} from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Dialog, DialogTrigger } from "../ui/dialog";
@@ -46,7 +53,7 @@ import Login from "../auth/Login";
 // }
 
 interface ProductDetailsProps {
-  id?: string;
+  _id?: string;
   title: string;
   price: string;
   rating: number;
@@ -96,6 +103,8 @@ const ProductDetails = ({
   price,
   isLoading,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
+  const { data: addToCartData, refetch } = useGetCart();
+  const { mutateAsync: updateCart } = useUpdateCart();
   const [isOpen, setIsOpen] = useState(false);
   const { setCartCount } = useCart();
 
@@ -109,15 +118,15 @@ const ProductDetails = ({
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
 
   const { user } = useUserContext();
-  const handleIncrement = () => {
-    setQuantity((prev) => prev + 1);
-  };
+  // const handleIncrement = () => {
+  //   setQuantity((prev) => prev + 1);
+  // };
 
-  const handleDecrement = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
+  // const handleDecrement = () => {
+  //   if (quantity > 1) {
+  //     setQuantity((prev) => prev - 1);
+  //   }
+  // };
 
   if (isLoading) {
     return (
@@ -189,6 +198,23 @@ const ProductDetails = ({
         console.error(error);
       },
     });
+  };
+
+  const updateQuantity = (item, quantity) => {
+    updateCart(
+      { id: item as string, quantity: quantity },
+      {
+        onSuccess: () => {
+          toast.success("Cart Updated");
+          queryClient.invalidateQueries({ queryKey: ["cart"] });
+          refetch();
+        },
+        onError: (error) => {
+          toast.error("Failed to remove from cart");
+          console.error(error);
+        },
+      }
+    );
   };
 
   return (
@@ -383,7 +409,41 @@ const ProductDetails = ({
                 <Tooltip delayDuration={100}>
                   <TooltipTrigger asChild>
                     <div>
-                      {user ? (
+                      {addToCartData?.data?.cart?.find(
+                        (pro) => pro.product._id === params.id
+                      ) ? (
+                        <div className="flex gap-2 text-xl items-center">
+                          <PlusCircle
+                            size={35}
+                            className="text-green-800 cursor-pointer"
+                            onClick={() =>
+                              updateQuantity(
+                                params.id,
+                                addToCartData?.data?.cart?.find(
+                                  (pro) => pro.product._id === params.id
+                                ).quantity + 1
+                              )
+                            }
+                          />
+                          {
+                            addToCartData?.data?.cart?.find(
+                              (pro) => pro.product._id === params.id
+                            ).quantity
+                          }
+                          <MinusCircle
+                            size={35}
+                            className="text-red-600 cursor-pointer"
+                            onClick={() =>
+                              updateQuantity(
+                                params.id,
+                                addToCartData?.data?.cart?.find(
+                                  (pro) => pro.product._id === params.id
+                                ).quantity - 1
+                              )
+                            }
+                          />
+                        </div>
+                      ) : user ? (
                         <button
                           onClick={handleAddToCart}
                           disabled={isAddToCartPending}
