@@ -269,6 +269,9 @@ const AllTournaments = () => {
                       <Button
                         variant="ghost"
                         size="icon"
+                        // onClick={() => {
+                        //   console.log(tournament);
+                        // }}
                         onClick={() => handleCancel(tournament._id)}
                       >
                         {tournament.status === "cancelled" ? (
