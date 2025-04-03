@@ -1,52 +1,82 @@
 "use client";
-import React, { useEffect } from "react";
-import Image, { StaticImageData } from "next/image";
-import { Heart } from "lucide-react";
-import { useRouter } from "next/navigation";
+import React from "react";
+import Image from "next/image";
+import {
+  Heart,
+  MinusCircle,
+  MinusSquare,
+  PlusCircle,
+  PlusSquare,
+} from "lucide-react";
 import { ICurrentOfferProduct } from "@/types";
 import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import { Button } from "./ui/button";
+import Login from "./auth/Login";
+import { useAddToCart, useGetCart, useUpdateCart } from "@/hooks/api";
+import { toast } from "sonner";
+import { useCart } from "@/context/CartContext";
+import { QueryClient } from "@tanstack/react-query";
+import { useUserContext } from "@/context/userContext";
 
 const roundToTwoDecimals = (value: number): number => {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 };
 
 const ProductCard = ({
-  article,
-  attributes,
-  barcodeEAN,
-  categoryIds,
-  colors,
-  company,
-  createdAt,
-  description,
   discounts,
   images,
-  isActive,
-  isFeatured,
-  liscenseKey,
-  metaDescription,
-  metaKeywords,
-  metaTitle,
   name,
-  noStockMessage,
   price,
-  relatedProducts,
-  requireShipping,
-  sku,
-  stock,
   type,
-  updatedAt,
-  __v,
   _id,
 }: ICurrentOfferProduct) => {
-  const router = useRouter();
+  const { data: addToCartData, refetch } = useGetCart();
+  const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
+  const { mutateAsync: updateCart } = useUpdateCart();
+  const { setCartCount } = useCart();
+  const queryClient = new QueryClient();
+  const { user } = useUserContext();
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // const urlTitle = encodeURIComponent(
-    //   title.toLowerCase().replace(/\s+/g, "-")
-    // );
-    router.push(`/product-listing/${_id}`);
+  const prooo = addToCartData?.data?.cart?.filter(
+    (pro) => pro.product._id === _id
+  );
+  console.log(prooo, "prooo1");
+
+  const handleAddToCart = () => {
+    addToCart(_id as string, {
+      onSuccess: () => {
+        toast.success("product added to cart");
+        setCartCount((prevCount) => prevCount + 1);
+        queryClient.invalidateQueries({ queryKey: ["cart"] });
+        refetch();
+      },
+      onError: (error) => {
+        toast.error("Failed to add to cart");
+        console.error(error);
+      },
+    });
+  };
+  const updateQuantity = (item, quantity) => {
+    updateCart(
+      { id: item as string, quantity: quantity },
+      {
+        onSuccess: () => {
+          toast.success("Cart Updated");
+          queryClient.invalidateQueries({ queryKey: ["cart"] });
+          refetch();
+        },
+        onError: (error) => {
+          toast.error("Failed to remove from cart");
+          console.error(error);
+        },
+      }
+    );
   };
 
   return (
@@ -71,7 +101,6 @@ const ProductCard = ({
           </Link>
         )}
       </div>
-
       {/* Product Info */}
       <div className="space-y-4">
         {/* Title */}
@@ -106,15 +135,68 @@ const ProductCard = ({
             </span>
           </div>
         </div>
-
         {/* Add to Cart Button */}
         <div className="pt-2 flex justify-between items-center">
-          <button
-            onClick={handleClick}
-            className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
-          >
-            Add To Cart
-          </button>
+          <div className="flex gap-4 items-center">
+            <TooltipProvider>
+              <Tooltip delayDuration={100}>
+                <TooltipTrigger asChild>
+                  <div>
+                    {addToCartData?.data?.cart?.find(
+                      (pro) => pro.product._id === _id
+                    ) ? (
+                      <div className="flex gap-2">
+                        <PlusCircle
+                          className="text-green-800 cursor-pointer"
+                          onClick={() =>
+                            updateQuantity(
+                              _id,
+                              addToCartData?.data?.cart?.find(
+                                (pro) => pro.product._id === _id
+                              ).quantity + 1
+                            )
+                          }
+                        />
+                        {
+                          addToCartData?.data?.cart?.find(
+                            (pro) => pro.product._id === _id
+                          ).quantity
+                        }
+                        <MinusCircle
+                          className="text-red-600 cursor-pointer"
+                          onClick={() =>
+                            updateQuantity(
+                              _id,
+                              addToCartData?.data?.cart?.find(
+                                (pro) => pro.product._id === _id
+                              ).quantity - 1
+                            )
+                          }
+                        />
+                      </div>
+                    ) : user ? (
+                      <button
+                        onClick={handleAddToCart}
+                        disabled={isAddToCartPending}
+                        className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
+                      >
+                        {isAddToCartPending ? "adding..." : "Add to Cart"}
+                      </button>
+                    ) : (
+                      <Button className="bg-transparent">
+                        <Login addToCart={true} smallAddtoCart={true} />
+                      </Button>
+                    )}
+                  </div>
+                </TooltipTrigger>
+                {!user && (
+                  <TooltipContent className="bg-gray-700 text-white">
+                    <p>Please login first to add items to cart</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+          </div>
 
           {/* Sale Badge */}
           {type === "SALE" && (

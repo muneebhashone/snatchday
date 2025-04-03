@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { ChevronRight } from "lucide-react";
 import {
   Carousel,
@@ -7,53 +7,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
-import MonthlyTournament from "./MonthlyTournament";
 import { useCurrentOffers } from "@/hooks/api";
-import { ICurrentOfferProduct } from "@/types";
 import { Card, CardContent } from "../ui/card";
 import ProductCard from "../ProductCard";
 
 const ProductSection = () => {
   const { data: currentOffers, isLoading } = useCurrentOffers();
-  const products: ICurrentOfferProduct[] = currentOffers?.data.products;
-  // useEffect(() => {
-  //   console.log(products,'prokjkjhkhjvhgcnv');
-  // }, [products]);
-  // const products = [
-  //   {
-  //     image: laptop,
-  //     title: "Dicota SmartSkin Laptop Sleeve 14.1 - Notebook-Tasche - 35.8",
-  //     price: "29,32",
-  //     rating: 5,
-  //     isNew: true,
-  //     isSale: false,
-  //   },
-  //   {
-  //     image: laptop,
-  //     title: "HP ENVY Laptop 15-ep1074ng - Intel Core i7 11800H / 2.3 GHz",
-  //     price: "2.152,76",
-  //     rating: 5,
-  //     isSale: true,
-  //     isNew: false,
-  //   },
-  //   {
-  //     image: laptop,
-  //     title: "HP ENVY Laptop 15-ep1077ng - Intel Core i7 11800H / 2.3 GHz",
-  //     price: "2.382,92",
-  //     rating: 5,
-  //     isNew: true,
-  //     isSale: false,
-  //   },
-  //   {
-  //     image: laptop,
-  //     title: "HP Laptop 15-dw3424ng - Intel Pentium Gold 7505 - FreeDOS 3.0",
-  //     price: "468,06",
-  //     rating: 5,
-  //     isNew: true,
-  //     isSale: false,
-  //   },
-  // ];
-
+  const products = currentOffers?.data.products;
   return (
     <section className="py-10">
       <div className="container max-w-[1920px] mx-auto px-5 md:px-20">
@@ -98,12 +58,6 @@ const ProductSection = () => {
           <CarouselPrevious className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -left-24" />
           <CarouselNext className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -right-24" />
         </Carousel>
-
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {products?.map((product, index) => (
-                  <ProductCard key={index} {...product} />
-                ))}
-              </div> */}
       </div>
     </section>
   );

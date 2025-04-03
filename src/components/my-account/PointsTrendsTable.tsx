@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Table,
@@ -230,21 +231,12 @@ const PointsTrendsTable = () => {
           <p className="text-sm text-foreground">
             Showing 1 to 10 of 10 (1 page(s))
           </p>
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious href="#" />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="#" isActive>
-                  1
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext href="#" />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+          <Pagination
+            totalItems={10}
+            itemsPerPage={10}
+            currentPage={1}
+            onPageChange={(page) => console.log("Page changed to:", page)}
+          />
         </div>
       </div>
     </div>

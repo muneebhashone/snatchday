@@ -83,7 +83,7 @@ export function CustomeListTable({
         <TableRow>
           <TableCell colSpan={8} className="text-center">
             <button
-              className={`${
+              className={`border px-2 py-1 mr-2 ${
                 page === 0 ? "text-gray-300 cursor-not-allowed" : ""
               }`}
               disabled={page === 0}
@@ -103,7 +103,7 @@ export function CustomeListTable({
                 return (
                   <button
                     key={index}
-                    className={`page-indicator m-1 ${
+                    className={`page-indicator m-1 mr-2 ${
                       index === page / skip ? "bg-primary px-2 text-white" : ""
                     }`}
                     onClick={() => setPage(index * skip)}
@@ -114,7 +114,7 @@ export function CustomeListTable({
               }
             )}
             <button
-              className={`${
+              className={`border px-2 py-1 ml-2 ${
                 page + skip >=
                   (customers?.data?.customers[0]?.total[0]?.total || 0) &&
                 "text-gray-300"

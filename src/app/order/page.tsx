@@ -8,8 +8,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import Image from "next/image";
 import logo from "@/app/images/logo.png";
@@ -21,23 +19,21 @@ import {
   useGetPoints,
   useUpdateCart,
 } from "@/hooks/api";
-import { Loader2 } from "lucide-react";
+import { DeleteIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
-import { error } from "console";
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-}
+// interface CartItem {
+//   id: string;
+//   name: string;
+//   price: number;
+//   quantity: number;
+//   image: string;
+// }
 
 // Define the Zod schema for the checkout payload
 const checkoutSchema = z
@@ -206,6 +202,21 @@ const CartTable = () => {
       }
     );
   };
+  const removeItem = async (item) => {
+    await updateCart(
+      { id: item.product._id, quantity: 0 },
+      {
+        onSuccess: () => {
+          toast.success(`${item?.product?.name} removed from cart`);
+          refetch();
+        },
+        onError: (error) => {
+          console.log(error);
+          toast.error("Error occured see in console");
+        },
+      }
+    );
+  };
 
   return (
     <ClientLayout>
@@ -291,6 +302,13 @@ const CartTable = () => {
                         </TableCell>
                         <TableCell className="text-right font-semibold">
                           {(item?.product?.price * item?.quantity).toFixed(2)}€
+                        </TableCell>
+                        <TableCell>
+                          <DeleteIcon
+                            size={30}
+                            onClick={() => removeItem(item)}
+                            className="cursor-pointer text-red-600 hover:bg-red-600 hover:text-white p-1 rounded"
+                          />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -388,26 +406,26 @@ const CartTable = () => {
                   </div>
                 )}
                 {watchVoucher("voucherCode") && (
-                <div className="flex justify-between text-lg font-semibold text-green-600">
-                  <span>Voucher Discount:</span>
-                  <span>
-                    -{applyvocherResponse?.data?.voucherDiscount || 0}€
-                  </span>
-                </div>
+                  <div className="flex justify-between text-lg font-semibold text-green-600">
+                    <span>Voucher Discount:</span>
+                    <span>
+                      -{applyvocherResponse?.data?.voucherDiscount || 0}€
+                    </span>
+                  </div>
                 )}
                 {watch("snapPoints") && (
-              <div className="flex justify-between text-lg font-semibold">
-              <span>Snap Points:</span>
-              <span>{watch("snapPoints")/10}€</span>
-              </div>
-              )}
-              {watch("discountPoints") && (
-              <div className="flex justify-between text-lg font-semibold">
-              <span>Discount Points:</span>
-              <span>{watch("discountPoints")/10}€</span>
-              </div>
-              )}
-              <div className="flex justify-between text-lg font-semibold">
+                  <div className="flex justify-between text-lg font-semibold">
+                    <span>Snap Points:</span>
+                    <span>{watch("snapPoints") / 10}€</span>
+                  </div>
+                )}
+                {watch("discountPoints") && (
+                  <div className="flex justify-between text-lg font-semibold">
+                    <span>Discount Points:</span>
+                    <span>{watch("discountPoints") / 10}€</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-lg font-semibold">
                   <span>19% VAT:</span>
                   <span>
                     {(

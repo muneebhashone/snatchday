@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -82,15 +83,15 @@ const MonthlyTournament = () => {
                 alt="Tournament Image"
               />
             </div>
-              <div className="absolute top-20 -right-48 w-full h-full">
-                <Image
-                  src={monthlyimage}
-                  width={500}
-                  height={500}
-                  alt="Tournament Image"
-                  className="object-contain"
-                />
-              </div>
+            <div className="absolute top-20 -right-48 w-full h-full">
+              <Image
+                src={monthlyimage}
+                width={500}
+                height={500}
+                alt="Tournament Image"
+                className="object-contain"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -1,4 +1,8 @@
-import { ReturnOrderTypes, TournamentFormData, UpdateReturnTypes } from "@/types/admin";
+import {
+  ReturnOrderTypes,
+  TournamentFormData,
+  UpdateReturnTypes,
+} from "@/types/admin";
 import axiosInstance from "./axios";
 import {
   ProductFormData,
@@ -391,12 +395,15 @@ export const getCart = async () => {
 };
 
 export const addToCart = async (id: string) => {
-  const response = await axiosInstance.post(`/order/cart`,{productId:id});
+  const response = await axiosInstance.post(`/order/cart`, { productId: id });
   return response.data;
 };
 
-export const updateCart = async (id: string,quantity:number) => {
-  const response = await axiosInstance.patch(`/order/cart`,{productId:id,quantity});
+export const updateCart = async (id: string, quantity: number) => {
+  const response = await axiosInstance.patch(`/order/cart`, {
+    productId: id,
+    quantity,
+  });
   return response.data;
 };
 
@@ -431,7 +438,7 @@ export const returnOrder = async (data: ReturnOrderTypes) => {
   return response.data;
 };
 
-export const getMyReturns = async(params) => {
+export const getMyReturns = async (params) => {
   const response = await axiosInstance.get(`/return`, { params });
   return response.data;
 };
@@ -441,7 +448,7 @@ export const getReturnById = async (id: string) => {
   return response.data;
 };
 
-export const applyVoucher = async (data: {code:string}) => {
+export const applyVoucher = async (data: { code: string }) => {
   const response = await axiosInstance.post(`/order/apply-Voucher`, data);
   return response.data;
 };
@@ -550,15 +557,42 @@ export const updateFilter = async (id: string, data: FilterFormData) => {
   return response.data;
 };
 
-
 export const updateReturn = async (id: string, data: ReturnOrderTypes) => {
   const response = await axiosInstance.patch(`/return/${id}`, data);
   return response.data;
 };
 
-export const updateReturnHistory = async (id: string, data: UpdateReturnTypes) => {
- console.log(data,id,"data from api")
-   const response = await axiosInstance.put(`/return/${id}`, data);
+export const updateReturnHistory = async (
+  id: string,
+  data: UpdateReturnTypes
+) => {
+  console.log(data, id, "data from api");
+  const response = await axiosInstance.put(`/return/${id}`, data);
   return response.data;
 };
 
+// games api start
+
+export const CreateGame = async (data) => {
+  const response = await axiosInstance.post("/game", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const GetGames = async (offset) => {
+  const limit = 10;
+  const response = await axiosInstance.get("/game", {
+    params: { limit, offset },
+  });
+  return response.data;
+};
+export const GetGamebyId = async (id) => {
+  const limit = 10;
+  const response = await axiosInstance.get(`/game/${id}`);
+  return response.data;
+};
+
+// games api end
