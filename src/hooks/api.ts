@@ -68,6 +68,8 @@ import {
   updateReturnHistory,
   PatchOrder,
   IFormData,
+  addToWishList,
+  wishList,
 } from "../lib/api";
 import { TournamentFormData , ReturnOrderTypes, UpdateReturnTypes } from "@/types/admin";
 
@@ -618,5 +620,18 @@ export const useGetVoucherById = (id: string) => {
 export const useUpdateReturnHistory = () => {
   return useMutation({
     mutationFn: ({id,data}:{id:string,data:UpdateReturnTypes}) => updateReturnHistory(id,data),
+  });
+};
+
+export const useWishList = () => {
+  return useQuery({
+    queryKey: ["wishlist"],
+    queryFn: wishList,
+  });
+};
+
+export const useAddToWishList = () => {
+  return useMutation({
+    mutationFn: (id: string) => addToWishList(id),
   });
 };

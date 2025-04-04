@@ -18,7 +18,7 @@ import {
 } from "./ui/tooltip";
 import { Button } from "./ui/button";
 import Login from "./auth/Login";
-import { useAddToCart, useGetCart, useUpdateCart } from "@/hooks/api";
+import { useAddToCart, useGetCart, useUpdateCart, useAddToWishList } from "@/hooks/api";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import { QueryClient } from "@tanstack/react-query";
@@ -40,8 +40,21 @@ const ProductCard = ({
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
   const { mutateAsync: updateCart } = useUpdateCart();
   const { setCartCount } = useCart();
+  const { mutate: addToWishList } = useAddToWishList();
   const queryClient = new QueryClient();
   const { user } = useUserContext();
+
+  const handleWishList = (id: string) => {
+    addToWishList(id, {
+      onSuccess: () => {
+        toast.success("product added to wishlist");
+      },
+      onError: (error) => {
+        toast.error("Failed to add to wishlist");
+        console.error(error);
+      },
+    });
+  };
 
   const prooo = addToCartData?.data?.cart?.filter(
     (pro) => pro.product._id === _id
@@ -108,7 +121,7 @@ const ProductCard = ({
           <p className="text-xl text-card-foreground font-light line-clamp-1 overflow-hidden text-ellipsis">
             {name}
           </p>
-          <button className="rounded-full bg-[#F5F5F5] p-4 hover:bg-gray-100 transition-colors">
+          <button onClick={() => handleWishList(_id)} className="rounded-full bg-[#F5F5F5] p-4 hover:bg-gray-100 transition-colors">
             <Heart className="w-6 h-6 text-gray-400 hover:text-orange-500" />
           </button>
         </div>
