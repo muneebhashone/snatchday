@@ -71,6 +71,8 @@ import {
   CreateGame,
   GetGames,
   GetGamebyId,
+  DeleteGame,
+  UpdateGame,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -407,21 +409,16 @@ export const useNewsletterMail = () => {
 
 //customers
 export const useCustomers = (filters) => {
-  // console.log({filters})
   return useInfiniteQuery({
     queryKey: ["customers", filters],
     queryFn: ({ pageParam }) => {
-      // console.log({pageParam})
       // return getCustomers({ ...filters, offset: pageParam });
       return getCustomers({ ...filters, offset: pageParam });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      // console.log({lastPage})
-      // console.log({allPages})
       const customers = lastPage.data.customers[0].data;
       const total = lastPage.data.customers[0].total[0].total;
-      // console.log({total, customers})
       return customers.length < 10 ? undefined : filters.offset;
     },
   });
@@ -466,9 +463,8 @@ export const useGetCustomerOrdersData = (page, status, user, date) => {
 
 //customer apis end
 
-// order api
+// order api start
 
-// export const useGetOrders = (limit,offset,) => {};
 export const useGetOrders = (page, status, date) => {
   return useQuery({
     queryKey: ["customers", page, status, date],
@@ -485,7 +481,6 @@ export const useGetOrderById = (id) => {
 
 export const usePatchOrder = (id) => {
   return useMutation({
-    // mutationKey: ["order"],
     mutationFn: (formData: IFormData) => PatchOrder(id, formData),
   });
 };
@@ -640,13 +635,23 @@ export const UseCreateGame = () => {
 export const useGetGames = (page) => {
   return useQuery({
     queryKey: ["games"],
-    queryFn:()=> GetGames(page),
+    queryFn: () => GetGames(page),
   });
 };
 export const useGetGameById = (id) => {
   return useQuery({
     queryKey: ["game"],
-    queryFn:()=> GetGamebyId(id),
+    queryFn: () => GetGamebyId(id),
+  });
+};
+export const useUpdateGame = (id) => {
+  return useMutation({
+    mutationFn: (data: FormData) => UpdateGame(id, data),
+  });
+};
+export const useDeleteGame = () => {
+  return useMutation({
+    mutationFn: (id) => DeleteGame(id),
   });
 };
 

@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format } from "date-fns";
 import { useCreateTournament, useGetProducts } from "@/hooks/api";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -34,11 +33,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { TimePickerInput } from "../ui/TimePickerInput";
+import { TimePickerDemo } from "../ui/TimePicker1";
+import { toast } from "sonner";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
 
 const formSchema = z.object({
   name: z
@@ -94,16 +104,22 @@ const formSchema = z.object({
     .number({ required_error: "Resubmissions is required" })
     .min(0, "Resubmissions must be positive"),
   image: z.string(),
+  // startTime: z.string(),
+  // endTime: z
+  //   .string({ required_error: "End time is required" })
+  //   .refine((val) => !isNaN(Date.parse(val)), "Invalid time format"),
 });
 
 const TournamentCreateForm = ({ productId }: { productId?: string }) => {
+  const [value, setValue] = useState("");
+  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
 
   console.log(pathname, "pathname");
   const { mutate: createTournament, isPending } = useCreateTournament();
-  const { data: getProducts } = useGetProducts();
+  const { data: getProducts } = useGetProducts({limit: `100000`});
   const products = getProducts?.data?.products || [];
 
   const product = getProducts?.data?.products?.find(
@@ -133,6 +149,8 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
       vip: false,
       resubmissions: 0,
       image: productImage || "",
+      // startTime: undefined,
+      // endTime: undefined,
     },
   });
 
@@ -146,21 +164,28 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
     }
   }, [product, form]);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values) => {
     try {
-      createTournament(values, {
-        onSuccess: () => {
-          toast.success("Tournament created successfully");
-          queryClient.invalidateQueries({ queryKey: ["tournaments"] });
-          form.reset();
-          router.push("/admin/tournament");
+      createTournament(
+        {
+          ...values,
+          article: value,
         },
-        onError: (error: Error) => {
-          const errorMessage = error?.message || "Failed to create tournament";
-          toast.error(errorMessage);
-          console.error("Error creating tournament:", error);
-        },
-      });
+        {
+          onSuccess: () => {
+            toast.success("Tournament created successfully");
+            queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+            form.reset();
+            router.push("/admin/tournament");
+          },
+          onError: (error: Error) => {
+            const errorMessage =
+              error?.message || "Failed to create tournament";
+            toast.error(errorMessage);
+            console.error("Error creating tournament:", error);
+          },
+        }
+      );
     } catch (error) {
       console.error("Form submission error:", error);
       toast.error("Failed to submit form");
@@ -175,53 +200,81 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
       render={({ field }) => (
         <FormItem>
           <FormLabel className="flex items-center gap-1">
-            Select Product
+            Article
             <span className="text-red-500">*</span>
           </FormLabel>
-          <Select
-            onValueChange={(value) => {
-              field.onChange(value);
-              const selectedProduct = products.find(
-                (p: any) => p._id === value
-              );
-              if (selectedProduct) {
-                form.setValue("name", selectedProduct.name);
-                form.setValue("title", selectedProduct.title);
-                form.setValue("startingPrice", selectedProduct.price);
-                form.setValue("image", selectedProduct.images[0] || "");
-              }
-            }}
-            value={field.value}
-          >
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a product" />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {products.map((product: any) => (
-                <SelectItem
-                  key={product._id}
-                  value={product._id}
-                  className="flex items-center gap-2"
-                >
-                  <div className="flex items-center gap-2">
-                    {product.images[0] && (
-                      <div className="relative w-8 h-8 rounded overflow-hidden">
-                        <Image
-                          src={product.images[0]}
-                          alt={product.name}
-                          fill
-                          className="object-cover"
+
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button className="w-[200px] justify-between hover:bg-primary">
+                {field.value
+                  ? products.find(
+                      (product: any) => product.name === field.value
+                    )?.name || "Select a product"
+                  : "Select a product"}
+                <ChevronsUpDown className="opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[200px] p-0">
+              <Command>
+                <CommandInput placeholder="Search product..." className="h-9" />
+                <CommandList>
+                  <CommandEmpty>No product found.</CommandEmpty>
+                  <CommandGroup>
+                    {products.map((product: any) => (
+                      <CommandItem
+                        key={product._id}
+                        value={product.title}
+                        onSelect={(currentValue) => {
+                          field.onChange(currentValue);
+                          const selectedProduct = products.find(
+                            (p: any) => p.name === currentValue
+                          );
+                          console.log(selectedProduct, "selectedProduct");
+                          if (selectedProduct) {
+                            form.setValue("name", selectedProduct.name);
+                            form.setValue("title", selectedProduct.title);
+                            form.setValue(
+                              "startingPrice",
+                              selectedProduct.price
+                            );
+                            form.setValue(
+                              "image",
+                              selectedProduct.images[0] || ""
+                            );
+                            setValue(selectedProduct._id);
+                          }
+                          setOpen(false);
+                        }}
+                      >
+                        <div className="flex items-center gap-2">
+                          {product.images[0] && (
+                            <div className="relative w-8 h-8 rounded overflow-hidden">
+                              <Image
+                                src={product.images[0]}
+                                alt={product.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <span>{product.name}</span>
+                        </div>
+                        <Check
+                          className={cn(
+                            "ml-auto",
+                            field.value === product._id
+                              ? "opacity-100"
+                              : "opacity-0"
+                          )}
                         />
-                      </div>
-                    )}
-                    <span>{product.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
           <FormMessage />
         </FormItem>
       )}
@@ -240,6 +293,7 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
               {productSelectField}
 
               <FormField
+              disabled={true}
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -294,6 +348,7 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
             {/* Pricing and Numbers */}
             <div className="space-y-6">
               <FormField
+              disabled={true}
                 control={form.control}
                 name="startingPrice"
                 render={({ field }) => (
@@ -343,39 +398,38 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="game"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-1">
+                      Game
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a game" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="powerblocks">PowerBlocks</SelectItem>
+                        <SelectItem value="pushit">Push It</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
 
           {/* Game and Tournament Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="game"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-1">
-                    Game
-                    <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a game" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="powerblocks">PowerBlocks</SelectItem>
-                      <SelectItem value="pushit">Push It</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="start"
@@ -422,7 +476,20 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                 </FormItem>
               )}
             />
-
+            <FormField
+              control={form.control}
+              name="start"
+              render={({ field }) => (
+                <FormItem>
+                  <TimePickerDemo
+                    date={field.value ? new Date(field.value) : undefined}
+                    setDate={(onchange) => {
+                      field.onChange(onchange?.toISOString());
+                    }}
+                  />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="end"
@@ -466,6 +533,20 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                     </PopoverContent>
                   </Popover>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="end"
+              render={({ field }) => (
+                <FormItem>
+                  <TimePickerDemo
+                    date={field.value ? new Date(field.value) : undefined}
+                    setDate={(onchange) => {
+                      field.onChange(onchange?.toISOString());
+                    }}
+                  />
                 </FormItem>
               )}
             />

@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useCancelTournament, useGetTournaments } from "@/hooks/api";
+import {
+  useCancelTournament,
+  useGetProducts,
+  useGetTournaments,
+} from "@/hooks/api";
 import {
   Table,
   TableBody,
@@ -24,6 +28,7 @@ import {
 import { Users } from "lucide-react";
 import { EditTournamentDialog } from "./EditTournamentDialog";
 import Link from "next/link";
+import Image from "next/image";
 
 interface FilterParams {
   limit?: string;
@@ -72,6 +77,8 @@ const AllTournaments = () => {
     offset: "0",
   });
   const queryClient = useQueryClient();
+  const { data: getProducts } = useGetProducts({ limit: `100000` });
+  const products = getProducts?.data?.products || [];
 
   const { data: getTournaments, isLoading } = useGetTournaments(filters);
   //   const { mutate: deleteTournament } = useDeleteTournament();
@@ -94,24 +101,6 @@ const AllTournaments = () => {
       },
     });
   };
-
-  //   const handleDelete = async (id: string) => {
-  //     try {
-  //       await deleteTournament(id, {
-  //         onSuccess: () => {
-  //           toast.success('Tournament deleted successfully');
-  //         },
-  //         onError: (error) => {
-  //           toast.error('Failed to delete tournament');
-  //           console.error(error);
-  //         }
-  //       });
-  //     } catch (error) {
-  //       console.error('Error deleting tournament:', error);
-  //       toast.error('Failed to delete tournament');
-  //     }
-  //   };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -222,6 +211,7 @@ const AllTournaments = () => {
               <TableHead>Tournament Title</TableHead>
               <TableHead>Game</TableHead>
               <TableHead>Starting Price</TableHead>
+              <TableHead>Calculated Amount</TableHead>
               <TableHead>Participants</TableHead>
               <TableHead>Start Date</TableHead>
               <TableHead>Length (min)</TableHead>
@@ -235,10 +225,12 @@ const AllTournaments = () => {
                 <TableCell>
                   {tournament.image && (
                     <div className="relative h-16 w-16">
-                      <img
+                      <Image
+                        width={64}
+                        height={64}
                         src={tournament.image}
                         alt={tournament.name}
-                        className="rounded-md object-cover w-full h-full"
+                        className="rounded-md object-contain w-full h-full"
                       />
                     </div>
                   )}
@@ -246,7 +238,15 @@ const AllTournaments = () => {
                 <TableCell>{tournament.title}</TableCell>
                 <TableCell>{tournament.game}</TableCell>
                 <TableCell>${tournament.startingPrice}</TableCell>
-                <TableCell>{tournament.numberOfParticipants}</TableCell>
+                <TableCell>
+                  ${tournament.priceReduction * tournament.participants?.length}
+                </TableCell>
+                <TableCell>
+                  <p>
+                    {tournament.participants?.length} /{" "}
+                    {tournament.numberOfParticipants}
+                  </p>
+                </TableCell>
                 <TableCell>
                   {new Date(tournament.start).toLocaleDateString()}
                 </TableCell>
@@ -265,7 +265,10 @@ const AllTournaments = () => {
                 <TableCell>
                   <>
                     <div className="flex gap-2">
-                      <EditTournamentDialog tournament={tournament} />
+                      <EditTournamentDialog
+                        products={products}
+                        tournament={tournament}
+                      />
                       <Button
                         variant="ghost"
                         size="icon"

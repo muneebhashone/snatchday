@@ -593,5 +593,17 @@ export const GetGamebyId = async (id) => {
   const response = await axiosInstance.get(`/game/${id}`);
   return response.data;
 };
+export const UpdateGame = async (id, data) => {
+  const response = await axiosInstance.patch(`/game/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+export const DeleteGame = async (id) => {
+  const response = await axiosInstance.delete(`/game/${id}`);
+  return response.data;
+}
 
 // games api end

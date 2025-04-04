@@ -2,20 +2,16 @@
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
 import tournamenttrophy from "@/app/images/tournamenttrophy.png";
-
 import React from "react";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";
 import TournamentFilter from "@/components/tournaments/TournamentFilter";
 import { Button } from "@/components/ui/button";
 import NextTournamentCard from "@/components/NextTournamentCard";
-import laptop from "@/app/images/laptopv1.png";
-import laptop2 from "@/app/images/laptopv2.png";
-import graphiccard from "@/app/images/graphiccard.png";
 import headerbg from "@/app/images/tournamentbg.png";
-import { useUpComingTournament } from "@/hooks/api";
+import { useGetTournaments } from "@/hooks/api";
 
 const Page = () => {
-  const { data: nextTournament } = useUpComingTournament();
+  const { data: nextTournament } = useGetTournaments();
 
   return (
     <ClientLayout>
