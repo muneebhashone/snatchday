@@ -115,11 +115,6 @@ const navItems = [
     icon: <Settings className="h-4 w-4" />,
   },
   {
-    title: "Wishlist",
-    url: "/admin/wishlist",
-    icon: <Heart className="h-4 w-4" />,
-  },
-  {
     title: "Newsletters",
     url: "/admin/newsletters",
     icon: <Newspaper className="h-4 w-4" />,
