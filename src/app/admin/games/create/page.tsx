@@ -24,6 +24,7 @@ import {
 import { UseCreateGame } from "@/hooks/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Value } from "@radix-ui/react-select";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -59,6 +60,7 @@ type IForm = z.infer<typeof FormSchema>;
 
 const Page = () => {
   const { mutate: createGame } = UseCreateGame();
+  const router = useRouter();
   const form = useForm<IForm>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -95,6 +97,8 @@ const Page = () => {
     createGame(formData, {
       onSuccess: () => {
         toast.success("Game has been created successfully");
+        form.reset();
+        router.push("/admin/games");
       },
       onError: (error) => {
         console.log(error, "error");
@@ -293,31 +297,6 @@ const Page = () => {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="randomLevels"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Random Levels</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="suitableTraining"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="suitableTraining"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Random Levels?
-                        </label>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
             </div>
 
             <div className="grid md:grid-cols-3 gap-5 my-5">

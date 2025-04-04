@@ -9,19 +9,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useGetGames } from "@/hooks/api";
+import { useDeleteGame, useGetGames } from "@/hooks/api";
 import React, { useState } from "react";
-import { FileEdit, Loader } from "lucide-react";
+import { Delete, FileEdit, Loader } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 const Page = () => {
+  const { mutate: deleteGame } = useDeleteGame();
   const router = useRouter();
   const [page, setPage] = useState(0);
   const skip = 10;
   const { data: games, isLoading } = useGetGames(page);
   console.log(games);
+
+  const onDelete = async (id) => {
+    deleteGame(id, {
+      onSuccess: () => {
+        toast.success("Game deleted successfully");
+        router.refresh();
+      },
+      onError: (error) => {
+        console.log(error);
+        toast.error(`Error deleting game ${error.message}`);
+      },
+    });
+  };
 
   return (
     <AdminLayout>
@@ -97,7 +111,13 @@ const Page = () => {
                     onClick={() => {
                       router.push(`/admin/games/${game._id}`);
                     }}
-                    className="cursor-pointer"
+                    className="cursor-pointer text-white px-1 rounded ml-2 bg-primary"
+                  />
+                  <Delete
+                    onClick={() => {
+                      onDelete(game?._id);
+                    }}
+                    className="cursor-pointer text-white px-1 rounded ml-2 bg-red-600"
                   />
                 </TableCell>
               </TableRow>

@@ -78,7 +78,8 @@ const NextTournamentCard = ({
             alt={title}
             width={349}
             height={200}
-            objectFit="cover"
+            className="rounded-t-xl rounded-b-none w-[349px] h-[200px] object-contain"
+            objectFit="contain"
           />
         </div>
         <CountdownDisplay countdown={countDown} />

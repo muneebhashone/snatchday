@@ -38,196 +38,22 @@ import { Loader2 } from "lucide-react";
 
 const TournamentDetailPage = () => {
   const id = useSearchParams().get("id");
-  const {user}=useUserContext()
-  const { data: tournament, isLoading,refetch:refetchTournament } = useGetTournamentById(id);
+  const { user } = useUserContext();
+  const {
+    data: tournament,
+    isLoading,
+    refetch: refetchTournament,
+  } = useGetTournamentById(id);
   const { data: currentOffers, isLoading: isLoadingCurrentOffers } =
     useCurrentOffers();
   const offerproducts: CurrentOfferResponse = currentOffers?.data.products;
 
-  const { data: tournaments, isLoading: isUpComingTournamentLoading } = useUpComingTournament();
+  const { data: tournaments, isLoading: isUpComingTournamentLoading } =
+    useUpComingTournament();
 
-const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id);
-  // const displayProducts = [
-  //   {
-  //     title: "14 - AMD Ryzen 9 3 GHz - Win 11",
-  //     price: "2.644",
-  //     oldPrice: "2.694",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: true,
-  //     isNew: false,
-  //     discount: "€99",
-  //     category: "computer",
-  //   },
-  //   {
-  //     title: "ZOTAC GAMING GeForce RTX 3050 AMP - Grafikkarten",
-  //     price: "319,80",
-  //     oldPrice: "334,80",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: false,
-  //     isNew: true,
-  //     discount: "€99",
-  //     category: "computer",
-  //   },
-  //   {
-  //     title: "SanDisk Extreme - Flash-Speicherkarte (microSDXC)",
-  //     price: "31,40",
-  //     oldPrice: "31,40",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: true,
-  //     discount: "€99",
-  //     category: "computer",
-  //   },
-  //   {
-  //     title: "Razer Blade 14 - AMD Ryzen 9 6900HX / 3.3 GHz - Win 11",
-  //     price: "2.644",
-  //     oldPrice: "2.694",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: false,
-  //     isNew: true,
-  //     discount: "€99",
-  //     category: "computer",
-  //   },
-  //   {
-  //     title: "Canon CLI-551 C/M/Y/BK Multipack - 4er-Pack - Schwarz",
-  //     price: "52,44",
-  //     oldPrice: "64,44",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: true,
-  //     discount: "€99",
-  //     category: "elektro",
-  //   },
-
-  //   {
-  //     title: "ZOTAC GAMING GeForce RTX 3050 AMP - Grafikkarten",
-  //     price: "319,80",
-  //     oldPrice: "334,80",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: false,
-  //     isNew: true,
-  //     discount: "€99",
-  //     category: "computer",
-  //   },
-  //   {
-  //     title: "SanDisk Extreme - Flash-Speicherkarte (microSDXC)",
-  //     price: "31,40",
-  //     oldPrice: "31,40",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: true,
-  //     discount: "€99",
-  //     category: "computer",
-  //   },
-  //   {
-  //     title: "Razer Blade 14 - AMD Ryzen 9 6900HX / 3.3 GHz - Win 11",
-  //     price: "2.644",
-  //     oldPrice: "2.694",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: false,
-  //     isNew: true,
-  //     discount: "€99",
-  //     category: "computer",
-  //   },
-  //   {
-  //     title: "Canon CLI-551 C/M/Y/BK Multipack - 4er-Pack - Schwarz",
-  //     price: "52,44",
-  //     oldPrice: "64,44",
-  //     rating: 5,
-  //     reviews: 5,
-  //     image: graphiccard,
-  //     isSale: true,
-  //     discount: "€99",
-  //     category: "elektro",
-  //   },
-  // ];
-  // const nextTournaments = [
-  //   {
-  //     productImage: laptop,
-  //     gameIcon: graphiccard,
-  //     title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-  //     rating: 5,
-  //     reviews: 5,
-  //     gameName: "Push It",
-  //     duration: "3:00 minutes",
-  //     currentPrice: "2.50",
-  //     participationPoints: 250,
-  //     participationFee: "2.50",
-  //     countdown: {
-  //       hours: 20,
-  //       minutes: 48,
-  //       seconds: 37,
-  //       milliseconds: 19,
-  //     },
-  //   },
-  //   {
-  //     productImage: laptop2,
-  //     gameIcon: graphiccard,
-  //     title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-  //     rating: 5,
-  //     reviews: 5,
-  //     gameName: "Push It",
-  //     duration: "3:00 minutes",
-  //     currentPrice: "2.50",
-  //     participationPoints: 250,
-  //     participationFee: "2.50",
-  //     countdown: {
-  //       hours: 20,
-  //       minutes: 48,
-  //       seconds: 37,
-  //       milliseconds: 19,
-  //     },
-  //   },
-  //   {
-  //     productImage: laptop,
-  //     gameIcon: graphiccard,
-  //     title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-  //     rating: 5,
-  //     reviews: 5,
-  //     gameName: "Push It",
-  //     duration: "3:00 minutes",
-  //     currentPrice: "2.50",
-  //     participationPoints: 250,
-  //     participationFee: "2.50",
-  //     countdown: {
-  //       hours: 20,
-  //       minutes: 48,
-  //       seconds: 37,
-  //       milliseconds: 19,
-  //     },
-  //   },
-  //   {
-  //     productImage: laptop2,
-  //     gameIcon: graphiccard,
-  //     title: "Acer Aspi  re 3 A315-35- Intel Pentium Silver N6000",
-  //     rating: 5,
-  //     reviews: 5,
-  //     gameName: "Push It",
-  //     duration: "3:00 minutes",
-  //     currentPrice: "2.50",
-  //     participationPoints: 250,
-  //     participationFee: "2.50",
-  //     countdown: {
-  //       hours: 20,
-  //       minutes: 48,
-  //       seconds: 37,
-  //       milliseconds: 19,
-  //     },
-  //   },
-  // ];
+  const hasParticipated = tournament?.data?.participants?.includes(
+    user?.user?._id
+  );
 
   const howToEnterSteps = [
     {
@@ -332,46 +158,49 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
               Tournaments
             </span>
           </h2>
-         {isUpComingTournamentLoading ? (
-          <div className="text-center text-gray-500 flex justify-center items-center h-full">
-            <Loader2 className="w-10 h-10 animate-spin" />
-          </div>
-         ) : (
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full relative"
-          >
-            <CarouselContent className="-ml-2 md:-ml-4">
-              {filteredNextTournaments?.map((tournament, index) => (
-                <CarouselItem key={index} className="pl-2 md:pl-4 md:basis-1/2">
-                  <NextTournamentCard
-                    id={tournament._id}
-                    image={tournament.image}
-                    title={tournament.title}
-                    name={tournament.name}
-                    game={tournament.game}
-                    length={tournament.length}
-                    startingPrice={tournament.startingPrice}
-                    fee={tournament.fee}
-                    start={tournament.start}
-                    numberOfParticipants={tournament.numberOfParticipants}
-                    status={tournament.status}
-                    textForBanner={tournament.textForBanner}
-                    tournamentId={"23456722"}
-                    updatedAt={tournament.updatedAt}
-                    vip={tournament.vip}
-                    __v={tournament.__v}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-8" />
-            <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-8" />
-          </Carousel>
-        )}
+          {isUpComingTournamentLoading ? (
+            <div className="text-center text-gray-500 flex justify-center items-center h-full">
+              <Loader2 className="w-10 h-10 animate-spin" />
+            </div>
+          ) : (
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              className="w-full relative"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {filteredNextTournaments?.map((tournament, index) => (
+                  <CarouselItem
+                    key={index}
+                    className="pl-2 md:pl-4 md:basis-1/2"
+                  >
+                    <NextTournamentCard
+                      id={tournament._id}
+                      image={tournament.image}
+                      title={tournament.title}
+                      name={tournament.name}
+                      game={tournament.game}
+                      length={tournament.length}
+                      startingPrice={tournament.startingPrice}
+                      fee={tournament.fee}
+                      start={tournament.start}
+                      numberOfParticipants={tournament.numberOfParticipants}
+                      status={tournament.status}
+                      textForBanner={tournament.textForBanner}
+                      tournamentId={"23456722"}
+                      updatedAt={tournament.updatedAt}
+                      vip={tournament.vip}
+                      __v={tournament.__v}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -left-8" />
+              <CarouselNext className="w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white -right-8" />
+            </Carousel>
+          )}
         </div>
         <div>
           <div className="px-4 md:px-12 py-20 bg-[#F9F9F9]">
@@ -390,28 +219,28 @@ const hasParticipated = tournament?.data?.participants?.includes(user?.user?._id
                   <Loader2 className="w-10 h-10 animate-spin" />
                 </div>
               ) : (
-              <Carousel
-                opts={{
-                  align: "start",
-                  loop: true,
-                  skipSnaps: false,
-                  slidesToScroll: 1,
-                }}
-                className="w-full relative"
-              >
-                <CarouselContent className="-ml-2 md:-ml-4">
-                  {offerproducts?.map((product, index) => (
-                    <CarouselItem
-                      key={index}
-                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
-                    >
-                      <FeaturedProductsCard {...product} />
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
-                <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
-              </Carousel>
+                <Carousel
+                  opts={{
+                    align: "start",
+                    loop: true,
+                    skipSnaps: false,
+                    slidesToScroll: 1,
+                  }}
+                  className="w-full relative"
+                >
+                  <CarouselContent className="-ml-2 md:-ml-4">
+                    {offerproducts?.map((product, index) => (
+                      <CarouselItem
+                        key={index}
+                        className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
+                      >
+                        <FeaturedProductsCard {...product} />
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
+                  <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
+                </Carousel>
               )}
             </div>
           </div>
