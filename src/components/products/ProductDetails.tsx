@@ -102,6 +102,7 @@ const ProductDetails = ({
   isNew,
   price,
   isLoading,
+  noStockMessage,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
   const { data: addToCartData, refetch } = useGetCart();
   const { mutateAsync: updateCart } = useUpdateCart();
@@ -319,7 +320,7 @@ const ProductDetails = ({
             <div className="mt-3">
               <p className="">
                 <span className="text-[#444444] font-bold">Availability:</span>{" "}
-                {stock > 0 ? "In Stock" : "Out of Stock"}
+                {stock > 0 ? "In Stock" : noStockMessage || "Out of Stock"}
               </p>
             </div>
 

@@ -719,7 +719,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                   );
                 }}
               >
-                Add Discount
+                Add Another Discount
               </Button>
             </div>
           ) : (
