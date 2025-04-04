@@ -27,11 +27,8 @@ import {
   Trophy,
   Gift,
   ListOrdered,
-<<<<<<< HEAD
   Gamepad,
-=======
   Heart,
->>>>>>> 709949b72f613a21d88e5eff2791cd05a4a721da
 } from "lucide-react";
 import {
   Collapsible,
