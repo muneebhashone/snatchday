@@ -68,11 +68,16 @@ import {
   updateReturnHistory,
   PatchOrder,
   IFormData,
+<<<<<<< HEAD
   CreateGame,
   GetGames,
   GetGamebyId,
   DeleteGame,
   UpdateGame,
+=======
+  addToWishList,
+  wishList,
+>>>>>>> 709949b72f613a21d88e5eff2791cd05a4a721da
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -624,6 +629,7 @@ export const useUpdateReturnHistory = () => {
   });
 };
 
+<<<<<<< HEAD
 // games api start
 
 export const UseCreateGame = () => {
@@ -656,3 +662,17 @@ export const useDeleteGame = () => {
 };
 
 // games api end
+=======
+export const useWishList = () => {
+  return useQuery({
+    queryKey: ["wishlist"],
+    queryFn: wishList,
+  });
+};
+
+export const useAddToWishList = () => {
+  return useMutation({
+    mutationFn: (id: string) => addToWishList(id),
+  });
+};
+>>>>>>> 709949b72f613a21d88e5eff2791cd05a4a721da

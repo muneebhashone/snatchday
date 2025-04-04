@@ -607,3 +607,13 @@ export const DeleteGame = async (id) => {
 }
 
 // games api end
+export const wishList = async () => {
+  const response = await axiosInstance.get("/wishlist");
+  return response.data;
+};
+
+export const addToWishList = async (id: string) => {
+  const response = await axiosInstance.post(`/wishlist`, { productId: id });
+  return response.data;
+};
+

@@ -27,7 +27,11 @@ import {
   Trophy,
   Gift,
   ListOrdered,
+<<<<<<< HEAD
   Gamepad,
+=======
+  Heart,
+>>>>>>> 709949b72f613a21d88e5eff2791cd05a4a721da
 } from "lucide-react";
 import {
   Collapsible,
@@ -112,6 +116,11 @@ const navItems = [
     title: "Settings",
     url: "/admin/settings",
     icon: <Settings className="h-4 w-4" />,
+  },
+  {
+    title: "Wishlist",
+    url: "/admin/wishlist",
+    icon: <Heart className="h-4 w-4" />,
   },
   {
     title: "Newsletters",
