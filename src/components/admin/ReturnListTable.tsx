@@ -10,10 +10,10 @@ import {
   import { useGetMyReturns } from "@/hooks/api";
 import { formatDate } from "date-fns";
   import {  Edit2, Eye, Loader } from "lucide-react";
-  import Link from "next/link";
   import {  useState, useEffect } from "react";
   import { useDebounce } from "@/hooks/useDebounce";
-  
+  import Link from "next/link";
+
   export function ReturnListTable() {
     const [pagination, setPagination] = useState({ pageSize: 10, currentPage: 1 });
     const [filters, setFilters] = useState({
@@ -141,25 +141,17 @@ import { formatDate } from "date-fns";
                     {formatDate(returnItem.createdAt || "", "dd/MM/yyyy")}
                   </TableCell>
                   <TableCell className="text-center flex gap-2 justify-center">
-                    <Link href={`/admin/orders/returns/${returnItem._id}`}>
-                      <button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-gray-100"
-                      >
-                        <Eye className="h-5 w-5 text-foreground" />
-                      </button>
-                    </Link>
-                    <Link href={`/admin/orders/returns/update/${returnItem._id}`}>
-                      <button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-gray-100"
-                      >
-                        <Edit2 className="h-5 w-5 text-foreground" />
-                      </button>
-                    </Link>
-                  </TableCell>
+  <Link href={`/admin/orders/returns/${returnItem._id}`}>
+    <button className="hover:bg-gray-100 p-2 rounded">
+      <Eye className="h-5 w-5 text-foreground" />
+    </button>
+  </Link>
+  <Link href={`/admin/orders/returns/update/${returnItem._id}`}>
+    <button className="hover:bg-gray-100 p-2 rounded">
+      <Edit2 className="h-5 w-5 text-foreground" />
+    </button>
+  </Link>
+</TableCell>
                   <TableCell className="text-center">
                     {/* <InvoiceButton orderDetails={returnItem} /> */}
                   </TableCell>
