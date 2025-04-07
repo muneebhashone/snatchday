@@ -41,6 +41,9 @@ export interface IRecommendProduct {
 
 type IForm = z.infer<typeof formSchema>;
 
+const user = JSON.parse(localStorage.getItem("snatchday_user") || "{}");
+console.log(user);
+
 const RecommendProductModal = ({
   setIsOpen,
 }: {
@@ -50,11 +53,17 @@ const RecommendProductModal = ({
   const { isPending, mutate: RecommendProduct } = useRecommendProduct();
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      friendEmail: "",
-    },
+    defaultValues: user
+      ? {
+          name: user?.user.name || "",
+          email: user?.user.email || "",
+          friendEmail: "",
+        }
+      : {
+          name: "",
+          email: "",
+          friendEmail: "",
+        },
   });
 
   const handleSubmit = (data: IForm) => {

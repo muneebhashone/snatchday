@@ -8,10 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import { useCart } from "@/context/CartContext";
-import { usePlaceOrder } from "@/hooks/api";
+import { useCheckout, usePlaceOrder } from "@/hooks/api";
 import { toast } from "sonner";
 import { PlaceOrder } from "@/types";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 const checkoutSchema = z.object({
   billingDetails: z.object({
     firstName: z.string().nonempty("First name is required"),
@@ -41,6 +42,8 @@ type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 const CheckoutForm = () => {
   const router = useRouter();
+  const { isCheckout } = useCheckout();
+    console.log(isCheckout, "isCheckout");
   const { cartData, setCartData, setCartCount } = useCart();
   const {
     register,
@@ -75,7 +78,13 @@ const CheckoutForm = () => {
       },
     });
   };
-  console.log(errors, "errors11");
+
+  useEffect(() => {
+    if (!isCheckout) {
+      router.push("/order");
+    }
+  }, [isCheckout, router]);
+
 
   return (
     <ClientLayout>

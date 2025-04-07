@@ -110,7 +110,7 @@ const ComparisonPage = () => {
             </div>
           ) : isError ? (
             <div>{`Error: ${error}`}</div>
-          ) : compareProducts.length < 1 ? (
+          ) : compareProducts?.length < 1 ? (
             <div className="w-full text-center text-xl text-red-500 font-bold italic">
               *Products are not selected to compare*
             </div>
