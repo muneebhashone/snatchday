@@ -29,92 +29,6 @@ import { TournamentResponse } from "@/types";
 import CountdownDisplay from "../CountdownProps";
 import { calculateCountdown } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
-const tournaments = [
-  {
-    title: "Bargain or Discount Tournament",
-    productName: "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000",
-    startDate: "21.02.2025 at 18:31",
-    checkoutTime: "18:21",
-    game: "Push It",
-    duration: "3:00 minutes",
-    rrp: "535,00€",
-    currentPrice: "535,00€ incl. 19% VAT, plus shipping",
-    priceDrop: "5.00€",
-    participationFee: "250 Snap Points / 2.50€",
-    participants: "0 of 200",
-    image: iphone,
-    alt: "iPhone",
-    rating: 5,
-    reviews: 123,
-    gameIcon: graphiccard,
-    gameName: "Push It",
-    participationPoints: 250,
-    currentPriceValue: 535.0,
-    countdown: {
-      days: 19,
-      hours: 20,
-      minutes: 48,
-      seconds: 37,
-    },
-    status: "pending",
-  },
-  {
-    title: "Bargain or Discount Tournament",
-    productName: "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000",
-    startDate: "21.02.2025 at 18:31",
-    checkoutTime: "18:21",
-    game: "Push It",
-    duration: "3:00 minutes",
-    rrp: "535,00€",
-    currentPrice: "535,00€ incl. 19% VAT, plus shipping",
-    priceDrop: "5.00€",
-    participationFee: "250 Snap Points / 2.50€",
-    participants: "0 of 200",
-    image: laptop,
-    alt: "Laptop",
-    rating: 5, 
-    reviews: 123,
-    gameIcon: graphiccard,
-    gameName: "Push It",
-    participationPoints: 250,
-    currentPriceValue: 535.0,
-    countdown: {
-      days: 21,
-      hours: 20,
-      minutes: 48,
-      seconds: 37,
-    },
-    status: "pending",
-  },
-  {
-    title: "Bargain Tournament",
-    productName: "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000",
-    startDate: "21.02.2025 at 18:31",
-    checkoutTime: "18:21",
-    game: "Push It",
-    duration: "3:00 minutes",
-    rrp: "535,00€",
-    currentPrice: "535,00€ incl. 19% VAT, plus shipping",
-    priceDrop: "5.00€",
-    participationFee: "250 Snap Points / 2.50€",
-    participants: "0 of 200",
-    image: laptop2,
-    alt: "Laptop Promotion", 
-    rating: 5,
-    reviews: 123,
-    gameIcon: graphiccard,
-    gameName: "Push It",
-    participationPoints: 250,
-    currentPriceValue: 535.0,
-    countdown: {
-      days: 23,
-      hours: 20,
-      minutes: 48,
-      seconds: 37,
-    },
-    status: "live",
-  },
-];
 
 const HeroSection = () => {
   const [, setActiveIndex] = useState(0);
@@ -122,7 +36,8 @@ const HeroSection = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const { data: upComingTournament,isLoading:isUpComingTournamentLoading } = useUpComingTournament();
-
+ 
+  
   console.log(upComingTournament, "upComingTournament");
   // Set isLoaded to true after component mounts
   useEffect(() => {
@@ -390,7 +305,7 @@ const HeroSection = () => {
                         >
                           <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-2xl">
                             Tournament ID :
-                            <span className="text-primary"> 1234567890</span>
+                            <span className="text-primary">{tournament.tournamentId}</span>
                           </h2>
                         </motion.div>
                         <motion.div

@@ -25,6 +25,7 @@ import {
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import {
+  useAddToWishList,
   useCompareProducts,
   useGetCart,
   useGetCompareProducts,
@@ -102,6 +103,7 @@ const ProductDetails = ({
   isNew,
   price,
   isLoading,
+  noStockMessage,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
   const { data: addToCartData, refetch } = useGetCart();
   const { mutateAsync: updateCart } = useUpdateCart();
@@ -116,7 +118,7 @@ const ProductDetails = ({
   const [quantity, setQuantity] = useState(1);
 
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
-
+  const { mutate: addToWishList } = useAddToWishList();
   const { user } = useUserContext();
   // const handleIncrement = () => {
   //   setQuantity((prev) => prev + 1);
@@ -143,22 +145,8 @@ const ProductDetails = ({
   const productExist = compareProducts?.data?.products?.some(
     (pro) => pro._id === params.id
   );
-
-  // const handleClick = () => {
-  //   productIdForCompare(params.id as string, {
-  //     onSuccess: () => {
-  //       toast.success("product added for compare");
-  //       queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
-  //     },
-  //     onError: (error) => {
-  //       toast.error("Failed to add for compare");
-  //       console.error(error);
-  //     },
-  //   });
-  //   console.log(compareProducts.data.products, "compareProducts");
-  // };
   const handleClick = () => {
-    if (compareProducts.data.products.length > 3) {
+    if (compareProducts?.data && compareProducts?.data.products.length > 3) {
       productIdForCompare(compareProducts.data.products[0]._id);
       productIdForCompare(params.id as string, {
         onSuccess: () => {
@@ -217,6 +205,23 @@ const ProductDetails = ({
     );
   };
 
+  const handleWishList = (id: string) => {
+    addToWishList(id, {
+      onSuccess: (res) => {
+        console.log(res.data.message);
+        toast.success(
+          `${
+            res.data.message ? res.data.message : " product added to wishlist"
+          }`
+        );
+      },
+      onError: (error) => {
+        toast.error("Failed to add to wishlist");
+        console.error(error);
+      },
+    });
+  };
+
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
       <div className="rounded-3xl p-8 relative z-10">
@@ -265,7 +270,10 @@ const ProductDetails = ({
                   New
                 </p>
               )}
-              <Button className="w-12 h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
+              <Button
+                onClick={() => handleWishList(params.id as string)}
+                className="w-12 h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full"
+              >
                 <Heart className="w-6 h-6 text-[#A5A5A5] " />
               </Button>
             </div>
@@ -319,7 +327,7 @@ const ProductDetails = ({
             <div className="mt-3">
               <p className="">
                 <span className="text-[#444444] font-bold">Availability:</span>{" "}
-                {stock > 0 ? "In Stock" : "Out of Stock"}
+                {stock > 0 ? "In Stock" : noStockMessage || "Out of Stock"}
               </p>
             </div>
 

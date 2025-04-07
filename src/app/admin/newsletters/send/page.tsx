@@ -1,5 +1,6 @@
 "use client";
-
+import ImageUploader from "quill-image-uploader";
+import ReactQuill, { Quill } from "react-quill";
 import { useCallback, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -52,6 +53,64 @@ export default function NewsletterComposer() {
     offset: 0,
   };
 
+  //
+  Quill.register("modules/imageUploader", ImageUploader);
+
+  const modules = {
+    toolbar: [
+      [{ font: [] }, { size: [] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ script: "sub" }, { script: "super" }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
+      [{ align: [] }],
+      ["blockquote", "code-block"],
+      ["link", "image", "video"],
+      ["clean"],
+    ],
+    imageUploader: {
+      upload: (file) => {
+        return new Promise((resolve, reject) => {
+          const formData = new FormData();
+          formData.append("images", file);
+          fetch(
+            "https://test-node-vercel-production.up.railway.app/newsletter/images",
+            {
+              method: "POST",
+              body: formData,
+            }
+          )
+            .then((response) => response.json())
+            .then((result) => {
+              console.log(result);
+              resolve(result.data.images[0]);
+            })
+            .catch((error) => {
+              reject("Upload failed");
+              console.error("Error:", error);
+            });
+        });
+      },
+    },
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "imageBlot",
+  ];
+  //
+
   const [filters, setFilter] = useState(filter);
   const {
     data: customers,
@@ -59,8 +118,6 @@ export default function NewsletterComposer() {
     fetchNextPage,
     hasNextPage,
   } = useCustomers(filters);
-
-  // console.log(hasNextPage, isLoading, fetchNextPage);
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
@@ -81,41 +138,40 @@ export default function NewsletterComposer() {
     isError,
   } = useNewsletterMail();
   const handleSubmit = (mail: IForm) => {
-    const { subject, message, type } = mail;
-    const payload: any = {
-      subject,
-      message,
-      type,
-    };
-    if (type === "customer") {
-      if (selectedCustomers.length > 0) {
-        payload.emails = selectedCustomers.map((c) => c.email);
-      } else {
-        toast.error("Please select customers");
-        return;
-      }
-    }
-    if (mail.group) {
-      payload.group = mail.group;
-    }
-    newsletterMail(payload, {
-      onSuccess: () => {
-        toast.success("Send");
-        form.reset();
-        setSelectedCustomers([]);
-      },
-      onError: () => {
-        toast.error("error");
-      },
-    });
+    // const { subject, message, type } = mail;
+    // const payload: any = {
+    //   subject,
+    //   message,
+    //   type,
+    // };
+    // if (type === "customer") {
+    //   if (selectedCustomers.length > 0) {
+    //     payload.emails = selectedCustomers.map((c) => c.email);
+    //   } else {
+    //     toast.error("Please select customers");
+    //     return;
+    //   }
+    // }
+    // if (mail.group) {
+    //   payload.group = mail.group;
+    // }
+    // newsletterMail(payload, {
+    //   onSuccess: () => {
+    //     toast.success("Send");
+    //     form.reset();
+    //     setSelectedCustomers([]);
+    //   },
+    //   onError: () => {
+    //     toast.error("error");
+    //   },
+    // });
+    console.log(mail, "maildata log");
   };
   const lastElementRef = useCallback(
     (node: HTMLDivElement) => {
-      // console.log(node);
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
-        // console.log({ entries });
         if (entries[0].isIntersecting && hasNextPage) {
           console.log("FETCHING NEXT PAGE");
           fetchNextPage();
@@ -373,10 +429,16 @@ export default function NewsletterComposer() {
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <RichTextEditor
-                                value={field.value}
-                                onChange={field.onChange}
-                              />
+                              <div className="w-full">
+                                <ReactQuill
+                                  theme="snow"
+                                  // value={field.value}
+                                  // onChange={field.onChange}
+                                  modules={modules}
+                                  formats={formats}
+                                  className="h-64 mb-16"
+                                />
+                              </div>
                             </FormControl>
                           </FormItem>
                         )}

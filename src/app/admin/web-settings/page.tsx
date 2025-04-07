@@ -1,13 +1,13 @@
 import AdminLayout from '@/components/admin/AdminLayout'
-import { Wishlist } from '@/components/admin/Wishlist'
 import React from 'react'
+import WebSettingList from '@/components/admin/WebSettingList'
 
 const page = () => {
   return (
     <AdminLayout>
-      <Wishlist />
+      <WebSettingList />
     </AdminLayout>
   )
-};
+}
 
 export default page

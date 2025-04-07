@@ -34,15 +34,15 @@ const formSchema = z.object({
     required_error: "Title is required",
   }),
   username: z.string().min(1, "Username is required"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   street: z.string().optional(),
-  location: z.string().min(1, "Location is required"),
+  location: z.string().optional(),
   country: z.enum(["Germany", "USA", "France", "UK"], {
     required_error: "Country is required",
   }),
   email: z.string().email("Invalid email format"),
-  approved: z.boolean(),
+  approved: z.boolean().optional(),
 });
 
 type IForm = z.infer<typeof formSchema>;
@@ -54,6 +54,7 @@ export default function CustomerForm() {
   const { data: customer } = useGetCustomerById(paramsId);
   const customerData = customer?.data.customer;
   const { mutate: updateCustomer, isPending } = useUpdateCustomer(paramsId);
+  console.log(customer);
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
@@ -76,21 +77,25 @@ export default function CustomerForm() {
       form.reset({
         salutation: customerData.salutation || "Mister",
         title: customerData.title || "Dr.",
-        username: customerData.username || "",
+        username: customerData.name || "",
         firstName: customerData.firstName || "",
         lastName: customerData.lastName || "",
         street: customerData.street || "",
         location: customerData.location || "",
         country: customerData.country || "Germany",
         email: customerData.email || "",
-        approved: customerData.approved || "",
+        approved: customerData.approved || false,
       });
     }
   }, [customer?.approved, customerData, form]);
 
   const onSubmitted = (values: any) => {
-    console.log("Form Submitted:", values);
-    updateCustomer(values, {
+    const cleanedValues = JSON.parse(
+      JSON.stringify(values, (key, value) => {
+        return value === "" || value === null ? undefined : value;
+      })
+    );
+    updateCustomer(cleanedValues, {
       onSuccess: () => {
         toast.success("customer updated successfully");
         router.push("/admin/customers");
@@ -179,17 +184,17 @@ export default function CustomerForm() {
                 name="approved"
                 render={({ field }) => (
                   <FormItem className="col-span-1">
-                      <FormLabel>Approve </FormLabel>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            id="approved"
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
+                    <FormLabel>Approve </FormLabel>
+                    <FormControl>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          id="approved"
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

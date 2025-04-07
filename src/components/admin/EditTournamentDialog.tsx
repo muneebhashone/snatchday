@@ -119,6 +119,7 @@ export function EditTournamentDialog({
   const [open, setOpen] = useState(false);
   const [openPop, setOpenPop] = useState(false);
   const queryClient = useQueryClient();
+  const findItem = products.find((pro) => pro._id === tournament.article)?.name;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -196,9 +197,10 @@ export function EditTournamentDialog({
                       <Popover open={openPop} onOpenChange={setOpenPop}>
                         <PopoverTrigger asChild>
                           <Button className="w-[200px] justify-between hover:bg-primary">
+                            {console.log(field.value)}
                             {field.value
                               ? products?.find(
-                                  (product: any) => product.name === field.value
+                                  (product: any) => product._id === field.value
                                 )?.name || "Select a product"
                               : "Select a product"}
                             <ChevronsUpDown className="opacity-50" />

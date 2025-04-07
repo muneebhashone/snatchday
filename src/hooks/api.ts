@@ -75,6 +75,10 @@ import {
   UpdateGame,
   wishList,
   addToWishList,
+  addContent,
+  getContent,
+  deleteContent,
+  updateContent,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -89,6 +93,7 @@ import {
   PlaceOrder,
   ProductFormData,
   ResetPasswordTypes,
+  WebSetting,
 } from "@/types";
 import { useUserContext } from "@/context/userContext";
 
@@ -426,12 +431,20 @@ export const useCustomers = (filters) => {
   });
 };
 
-export const useCustomersPagination = (page, search, group, date, isActive) => {
+export const useCustomersPagination = (
+  page: number,
+  search?: string,
+  group?: string,
+  date?: string,
+  isActive?: string
+) => {
   return useQuery({
     queryKey: ["customers", page, search, group, date, isActive],
     queryFn: () => getCustomer(page, search, group, date, isActive),
+    enabled: true,
   });
 };
+
 
 export const useGetCustomerById = (id) => {
   return useQuery({
@@ -668,5 +681,34 @@ export const useWishList = () => {
 export const useAddToWishList = () => {
   return useMutation({
     mutationFn: (id: string) => addToWishList(id),
+  });
+};
+
+export const useAddContent = () => {
+  return useMutation({
+    mutationFn: addContent,
+  });
+};
+
+export const useGetContent =() =>{
+  return useQuery({
+    queryKey: ["content"],
+    queryFn: getContent,
+
+  })
+}
+
+export const useDeleteContent = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteContent(id),
+  });
+};
+
+export const useUpdateContent = () => {
+  return useMutation({
+    mutationFn: (data: WebSetting & { id: string }) => {
+      const { id, ...updateData } = data;
+      return updateContent(id, updateData);
+    }
   });
 };
