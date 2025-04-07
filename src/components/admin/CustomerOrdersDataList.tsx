@@ -56,34 +56,33 @@ const CustomerOrdersDataList = () => {
         </TableHeader>
         <TableBody>
           {orders?.data.orders.map((order, i) => (
-            <TableRow className="" key={order.orderNumber}>
+            <TableRow className="" key={order?.orderNumber}>
               <TableCell>
                 <span className="font-bold">{i + 1}</span>
               </TableCell>
               <TableCell>
-                <span className="font-bold">{order.orderNumber}</span>
+                <span className="font-bold">{order?.orderNumber || "N/A"}</span>
               </TableCell>
               <TableCell className="">
-                {order.createdAt.split("T")[0]}
+                {order?.createdAt?.split("T")[0] || "N/A"}
               </TableCell>
               <TableCell className="">
-                {order?.cartObject.cart.map((cart, i) => (
-                  <span key={i}>{cart.product.article}</span>
+                {order?.cartObject?.cart?.map((cart, i) => (
+                  <span key={i}>{cart?.product?.article || "N/A"}</span>
                 ))}
               </TableCell>
-              <TableCell>{order?.cartObject.total}</TableCell>
-              <TableCell>{order?.cartObject.subTotal}</TableCell>
+              <TableCell>{`${Number(order?.cartObject?.total).toFixed(2)} €`}</TableCell>
+              <TableCell>{`${Number(order?.cartObject?.subTotal).toFixed(2)} €`}</TableCell>
               <TableCell>
                 <span
-                  className={`px-4 py-2 rounded-full ${
-                    order?.status === "pending"
+                  className={`px-4 py-2 rounded-full ${order?.status === "pending"
                       ? "bg-primary text-white"
                       : order?.status === "paid"
-                      ? "bg-green-800 text-white"
-                      : order?.status === "cancelled"
-                      ? "bg-red-600 text-white"
-                      : "border border-gray-300 shadow-sm text-foreground"
-                  }`}
+                        ? "bg-green-800 text-white"
+                        : order?.status === "cancelled"
+                          ? "bg-red-600 text-white"
+                          : "border border-gray-300 shadow-sm text-foreground"
+                    }`}
                 >
                   {order?.status}
                 </span>
@@ -120,9 +119,8 @@ const CustomerOrdersDataList = () => {
                   return (
                     <button
                       key={index}
-                      className={`page-indicator m-1 ${
-                        index === page / 5 ? "bg-primary px-2 text-white" : ""
-                      }`}
+                      className={`page-indicator m-1 ${index === page / 5 ? "bg-primary px-2 text-white" : ""
+                        }`}
                       onClick={() => setPage(index * 5)}
                     >
                       {index + 1}
