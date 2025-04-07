@@ -68,8 +68,19 @@ import {
   updateReturnHistory,
   PatchOrder,
   IFormData,
+  CreateGame,
+  GetGames,
+  GetGamebyId,
+  DeleteGame,
+  UpdateGame,
+  wishList,
+  addToWishList,
 } from "../lib/api";
-import { TournamentFormData , ReturnOrderTypes, UpdateReturnTypes } from "@/types/admin";
+import {
+  TournamentFormData,
+  ReturnOrderTypes,
+  UpdateReturnTypes,
+} from "@/types/admin";
 
 import {
   CategoryFormData,
@@ -334,7 +345,7 @@ export const useManageTournament = () => {
   });
 };
 
-export const useGetTournaments = (params: TournamentParams) => {
+export const useGetTournaments = (params?: TournamentParams) => {
   return useQuery({
     queryKey: ["tournaments", params],
     queryFn: () => getTournaments(params),
@@ -400,21 +411,16 @@ export const useNewsletterMail = () => {
 
 //customers
 export const useCustomers = (filters) => {
-  // console.log({filters})
   return useInfiniteQuery({
     queryKey: ["customers", filters],
     queryFn: ({ pageParam }) => {
-      // console.log({pageParam})
       // return getCustomers({ ...filters, offset: pageParam });
       return getCustomers({ ...filters, offset: pageParam });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      // console.log({lastPage})
-      // console.log({allPages})
       const customers = lastPage.data.customers[0].data;
       const total = lastPage.data.customers[0].total[0].total;
-      // console.log({total, customers})
       return customers.length < 10 ? undefined : filters.offset;
     },
   });
@@ -459,9 +465,8 @@ export const useGetCustomerOrdersData = (page, status, user, date) => {
 
 //customer apis end
 
-// order api
+// order api start
 
-// export const useGetOrders = (limit,offset,) => {};
 export const useGetOrders = (page, status, date) => {
   return useQuery({
     queryKey: ["customers", page, status, date],
@@ -478,7 +483,6 @@ export const useGetOrderById = (id) => {
 
 export const usePatchOrder = (id) => {
   return useMutation({
-    // mutationKey: ["order"],
     mutationFn: (formData: IFormData) => PatchOrder(id, formData),
   });
 };
@@ -519,7 +523,8 @@ export const useAddToCart = () => {
 
 export const useUpdateCart = () => {
   return useMutation({
-    mutationFn: ({ id, quantity }: { id: string; quantity: number }) => updateCart(id, quantity),
+    mutationFn: ({ id, quantity }: { id: string; quantity: number }) =>
+      updateCart(id, quantity),
   });
 };
 
@@ -535,7 +540,6 @@ export const useCheckout = () => {
     mutationFn: (data: CheckoutTypes) => checkout(data),
   });
 };
-
 
 export const usePlaceOrder = () => {
   return useMutation({
@@ -617,6 +621,52 @@ export const useGetVoucherById = (id: string) => {
 
 export const useUpdateReturnHistory = () => {
   return useMutation({
-    mutationFn: ({id,data}:{id:string,data:UpdateReturnTypes}) => updateReturnHistory(id,data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateReturnTypes }) =>
+      updateReturnHistory(id, data),
+  });
+};
+
+// games api start
+
+export const UseCreateGame = () => {
+  return useMutation({
+    mutationFn: CreateGame,
+  });
+};
+
+export const useGetGames = (page) => {
+  return useQuery({
+    queryKey: ["games"],
+    queryFn: () => GetGames(page),
+  });
+};
+export const useGetGameById = (id) => {
+  return useQuery({
+    queryKey: ["game"],
+    queryFn: () => GetGamebyId(id),
+  });
+};
+export const useUpdateGame = (id) => {
+  return useMutation({
+    mutationFn: (data: FormData) => UpdateGame(id, data),
+  });
+};
+export const useDeleteGame = () => {
+  return useMutation({
+    mutationFn: (id) => DeleteGame(id),
+  });
+};
+
+// games api end
+export const useWishList = () => {
+  return useQuery({
+    queryKey: ["wishlist"],
+    queryFn: wishList,
+  });
+};
+
+export const useAddToWishList = () => {
+  return useMutation({
+    mutationFn: (id: string) => addToWishList(id),
   });
 };

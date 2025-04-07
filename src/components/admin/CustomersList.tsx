@@ -20,7 +20,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { CalendarIcon, Filter, List, Save } from "lucide-react";
+import { CalendarIcon, Filter, List, Rotate3d } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
@@ -29,10 +29,9 @@ import { CustomeListTable } from "../CustomerListTable";
 const formSchema = z.object({
   customerName: z.string().optional(),
   customerGroup: z.string().optional(),
-  approved: z.enum(["yes", "no"]).optional(),
+  approved: z.string().optional(),
   created: z.coerce.date().optional(),
   email: z.string().optional(),
-  // status: z.enum(["active", "inactive"]).optional(),
   status: z.string().optional(),
   IP: z.string().optional(),
 });
@@ -61,6 +60,10 @@ export default function CustomersList() {
     setGroup(values.customerGroup);
     setDate(values.created);
     setActive(values.status);
+  };
+
+  const ClearFields = () => {
+    form.reset({ customerGroup: "", status: "", approved: "" });
   };
 
   return (
@@ -101,7 +104,8 @@ export default function CustomersList() {
                 <FormLabel>Customer Group</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
+                  defaultValue=""
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -109,7 +113,7 @@ export default function CustomersList() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={null}>Select</SelectItem>
+                    {/* <SelectItem value={null}>Select</SelectItem> */}
                     <SelectItem value="BASIC">Basic</SelectItem>
                     <SelectItem value="VIP">VIP</SelectItem>
                   </SelectContent>
@@ -128,7 +132,8 @@ export default function CustomersList() {
                 <FormLabel>Approved</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
+                  defaultValue=""
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -145,7 +150,6 @@ export default function CustomersList() {
             )}
           />
 
-          {/* created at */}
           <FormField
             control={form.control}
             name="created"
@@ -174,7 +178,9 @@ export default function CustomersList() {
                         }
                         onSelect={(date) => {
                           field.onChange(
-                            new Date(date).toISOString().split("T")[0]
+                            date
+                              ? new Date(date).toISOString().split("T")[0]
+                              : ""
                           );
                         }}
                         initialFocus
@@ -211,7 +217,8 @@ export default function CustomersList() {
                 <FormLabel>Status</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
+                  defaultValue=""
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -219,7 +226,9 @@ export default function CustomersList() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={null}>Select</SelectItem>
+                    {/* <SelectItem disabled value={null}>
+                      Select Status
+                    </SelectItem> */}
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
@@ -245,7 +254,15 @@ export default function CustomersList() {
           />
 
           {/* Buttons */}
-          <div className="flex justify-start items-center pt-7 ">
+          <div className="flex justify-start items-center pt-7 gap-4">
+            <Button
+              onClick={() => ClearFields()}
+              type="button"
+              className="ml-4 bg-[#007bff] hover:bg-[007bff]"
+            >
+              <Rotate3d />
+              Clear
+            </Button>
             <Button type="submit" className="bg-primary hover:bg-primary">
               <Filter />
               Filter

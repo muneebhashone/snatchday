@@ -49,6 +49,7 @@ interface SubCategory {
 }
 
 const Header = () => {
+  const { data: cartData } = useGetCart();
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,8 +57,7 @@ const Header = () => {
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
- const {data:myprofile, isLoading:isMyProfileLoading}=useGetMyProfile()
-
+  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
 
   const [userPoints] = useState({
     snapPoints: 4875,
@@ -177,7 +177,31 @@ const Header = () => {
                                         {category.name}
                                       </Link>
                                       <ul className="space-y-2">
-                                        {category.subCategories.map(
+                                        {category.subCategories
+                                          .filter((cat) => cat.above)
+                                          .map(
+                                            (
+                                              subcategory: SubCategory,
+                                              index
+                                            ) => (
+                                              <li
+                                                key={index}
+                                                onMouseEnter={() =>
+                                                  setCategoryImage(
+                                                    subcategory.image
+                                                  )
+                                                }
+                                              >
+                                                <Link
+                                                  href={`/product-listing?category=${subcategory._id}`}
+                                                  className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                                >
+                                                  {subcategory?.name || "N/A"}
+                                                </Link>
+                                              </li>
+                                            )
+                                          )}
+                                        {/* {category.subCategories.map(
                                           (subcategory: SubCategory, index) => (
                                             <li
                                               key={index}
@@ -195,7 +219,7 @@ const Header = () => {
                                               </Link>
                                             </li>
                                           )
-                                        )}
+                                        )} */}
                                       </ul>
                                     </div>
                                   );
@@ -373,18 +397,19 @@ const Header = () => {
           <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
             <Heart className="h-6 w-6 " />
           </button>
-          <button onClick={handleCartClick} className="hover:text-primary bg-transparent p-0 text-[#888888] relative flex items-center gap-4 cursor-pointer">
+          <button
+            onClick={handleCartClick}
+            className="hover:text-primary bg-transparent p-0 text-[#888888] relative flex items-center gap-4 cursor-pointer"
+          >
             <ShoppingCart className="h-6 w-6" />
             <span className="absolute -top-4 left-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {cartCount}
+              {cartData?.data ? cartData?.data?.cart?.length : 0}
             </span>
-            </button>
-            <div className="text-sm text-foreground text-start">
-              <p className="font-bold">Your Shopping Cart</p>
-              <p className="text-sm text-primary font-bold">0.00 €</p>
-            </div>
-            
-       
+          </button>
+          <div className="text-sm text-foreground text-start">
+            <p className="font-bold">Your Shopping Cart</p>
+            <p className="text-sm text-primary font-bold">0.00 €</p>
+          </div>
         </div>
 
         {/* {/ Mobile Icons /} */}
@@ -426,34 +451,34 @@ const Header = () => {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Snap Points</span>
-                  <span className="text-primary font-bold">
-                    {myprofile?.data?.wallet?.snapPoints}
-                  </span>
+                    <span className="text-gray-600">Snap Points</span>
+                    <span className="text-primary font-bold">
+                      {myprofile?.data?.wallet?.snapPoints}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Equivalent Value</span>
+                    <span className="text-primary font-medium">
+                      {myprofile?.data?.wallet?.snapPoints / 100}€
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Equivalent Value</span>
-                  <span className="text-primary font-medium">
-                    {myprofile?.data?.wallet?.snapPoints / 100}€
-                  </span>
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-600">Discount Points</span>
-                  <span className="text-primary font-bold">
-                    {myprofile?.data?.wallet?.discountPoints}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Equivalent Value</span>
-                  <span className="text-primary font-medium">
-                    {myprofile?.data?.wallet?.discountPoints / 100}€
-                  </span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Discount Points</span>
+                    <span className="text-primary font-bold">
+                      {myprofile?.data?.wallet?.discountPoints}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500">Equivalent Value</span>
+                    <span className="text-primary font-medium">
+                      {myprofile?.data?.wallet?.discountPoints / 100}€
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
             )}
           </DropdownMenuContent>
         </DropdownMenu>

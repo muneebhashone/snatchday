@@ -5,6 +5,7 @@ const nextConfig = {
       "res.cloudinary.com",
       "encrypted-tbn0.gstatic.com,",
       "images.unsplash.com",
+      "encrypted-tbn0.gstatic.com",
     ],
     remotePatterns: [
       {

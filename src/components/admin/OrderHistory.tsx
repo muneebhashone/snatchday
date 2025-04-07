@@ -74,10 +74,7 @@ export default function OrderHistory() {
 
   function onSubmit(data) {
     console.log("Form submitted:", data);
-
     const formData = new FormData();
-
-    // Append all form fields to FormData
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value.toString());
@@ -88,6 +85,7 @@ export default function OrderHistory() {
       onSuccess: () => {
         toast.success("Order updated successfully");
         queryClient.invalidateQueries({ queryKey: ["order"] });
+        form.reset({ status: "", customerInformed: false, remarks: "" });
       },
       onError: (error) => {
         toast.error(`Failed to update order: ${error.message}`);
@@ -140,7 +138,9 @@ export default function OrderHistory() {
                   {odr?.date.split("T")[0]}
                 </TableCell>
                 <TableCell className="text-center">{odr.remarks}</TableCell>
-                <TableCell className="text-center capitalize">{odr.status}</TableCell>
+                <TableCell className="text-center capitalize">
+                  {odr.status}
+                </TableCell>
                 <TableCell className="text-center">
                   {odr.customerInformed ? "yes" : "no"}
                 </TableCell>
@@ -172,7 +172,8 @@ export default function OrderHistory() {
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value}
+                          value={field.value}
+                          defaultValue=""
                         >
                           <SelectTrigger className="w-full max-w-md">
                             <SelectValue placeholder="Select status" />

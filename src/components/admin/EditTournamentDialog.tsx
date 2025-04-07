@@ -41,9 +41,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, Edit } from "lucide-react";
-import { useGetTournaments, useManageTournament } from "@/hooks/api";
+import { CalendarIcon, Check, ChevronsUpDown, Edit } from "lucide-react";
+import { useGetProducts, useManageTournament } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
+import { TimePickerDemo } from "../ui/TimePicker1";
 const formSchema = z.object({
   id: z.string().min(1, "ID is required"),
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -99,12 +109,15 @@ interface Tournament {
 
 export function EditTournamentDialog({
   tournament,
+  products,
 }: {
   tournament: Tournament;
+  products: any[];
 }) {
   const { mutate: manageTournament } = useManageTournament();
-
+  const [value, setValue] = useState();
   const [open, setOpen] = useState(false);
+  const [openPop, setOpenPop] = useState(false);
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -117,7 +130,7 @@ export function EditTournamentDialog({
       metaTitle: tournament.metaTitle,
       metaDescription: tournament.metaDescription,
       metaKeywords: tournament.metaKeywords,
-      article: tournament.article,
+      article: tournament?.article.name,
       startingPrice: tournament.startingPrice,
       priceReduction: tournament.priceReduction,
       numberOfPieces: tournament.numberOfPieces,
@@ -132,11 +145,10 @@ export function EditTournamentDialog({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values, "values");
+  async function onSubmit(values) {
     try {
       manageTournament(
-        { data: values },
+        { data: { ...values, article: value } },
         {
           onSuccess: () => {
             toast.success("Tournament updated successfully");
@@ -172,19 +184,105 @@ export function EditTournamentDialog({
             <div className="grid grid-cols-2 gap-6">
               <FormField
                 control={form.control}
-                name="id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>ID</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                name="article"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-1">
+                        Article
+                        <span className="text-red-500">*</span>
+                      </FormLabel>
 
+                      <Popover open={openPop} onOpenChange={setOpenPop}>
+                        <PopoverTrigger asChild>
+                          <Button className="w-[200px] justify-between hover:bg-primary">
+                            {field.value
+                              ? products?.find(
+                                  (product: any) => product.name === field.value
+                                )?.name || "Select a product"
+                              : "Select a product"}
+                            <ChevronsUpDown className="opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                          <Command>
+                            <CommandInput
+                              placeholder="Search product..."
+                              className="h-9"
+                            />
+                            <CommandList>
+                              <CommandEmpty>No product found.</CommandEmpty>
+                              <CommandGroup className="overflow-y-scroll max-h-60     ">
+                                {products?.map((product: any) => (
+                                  <CommandItem
+                                    key={product._id}
+                                    value={product.title}
+                                    onSelect={(currentValue) => {
+                                      field.onChange(currentValue);
+                                      const selectedProduct = products.find(
+                                        (p: any) => p.name === currentValue
+                                      );
+                                      console.log(
+                                        selectedProduct,
+                                        "selectedProduct"
+                                      );
+                                      if (selectedProduct) {
+                                        form.setValue(
+                                          "name",
+                                          selectedProduct.name
+                                        );
+                                        form.setValue(
+                                          "title",
+                                          selectedProduct.title
+                                        );
+                                        form.setValue(
+                                          "startingPrice",
+                                          selectedProduct.price
+                                        );
+                                        form.setValue(
+                                          "image",
+                                          selectedProduct.images[0] || ""
+                                        );
+                                        setValue(selectedProduct._id);
+                                      }
+                                      setOpenPop(false);
+                                    }}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      {product.images[0] && (
+                                        <div className="relative w-8 h-8 rounded overflow-hidden">
+                                          <Image
+                                            src={product.images[0]}
+                                            alt={product.name}
+                                            fill
+                                            className="object-cover"
+                                          />
+                                        </div>
+                                      )}
+                                      <span>{product.name}</span>
+                                    </div>
+                                    <Check
+                                      className={cn(
+                                        "ml-auto",
+                                        field.value === product._id
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
               <FormField
+                disabled={true}
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -197,35 +295,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="textForBanner"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Banner Text</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name="game"
@@ -293,50 +362,23 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
-                name="end"
+                name="start"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>End Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(new Date(field.value), "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={
-                            field.value ? new Date(field.value) : undefined
-                          }
-                          onSelect={(date) =>
-                            field.onChange(date?.toISOString())
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
+                  <FormItem>
+                    <FormLabel>Time</FormLabel>
+                    <TimePickerDemo
+                      date={field.value ? new Date(field.value) : undefined}
+                      setDate={(onchange) => {
+                        field.onChange(onchange?.toISOString());
+                      }}
+                    />
                   </FormItem>
                 )}
               />
               <FormField
+                disabled={true}
                 control={form.control}
                 name="startingPrice"
                 render={({ field }) => (
@@ -349,7 +391,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="priceReduction"
@@ -363,7 +404,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="numberOfPieces"
@@ -377,7 +417,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="length"
@@ -391,7 +430,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="fee"
@@ -405,7 +443,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="numberOfParticipants"
@@ -419,7 +456,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="resubmissions"
@@ -434,7 +470,6 @@ export function EditTournamentDialog({
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
               name="vip"
@@ -455,7 +490,6 @@ export function EditTournamentDialog({
                 </FormItem>
               )}
             />
-
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -470,7 +504,6 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="metaDescription"
@@ -498,22 +531,7 @@ export function EditTournamentDialog({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name="article"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Article</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} className="min-h-[100px]" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
-
             <div className="flex justify-end">
               <Button type="submit">Update Tournament</Button>
             </div>

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { User, X, LogOut, Loader2 } from "lucide-react";
+import { User, X, LogOut, Loader2, ShoppingCartIcon } from "lucide-react";
 import { FacebookIcon } from "../icons/icon";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
@@ -20,7 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {  useAuthApi, useGetMyProfile, useLogout } from "@/hooks/api";
+import { useAuthApi, useGetMyProfile, useLogout } from "@/hooks/api";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,18 +34,24 @@ const loginSchema = z.object({
 });
 
 interface LoginProps {
-  type?: string
+  type?: string;
+  addToCart?: boolean;
+  smallAddtoCart?: boolean;
 }
 
-const Login = ({ type }: LoginProps) => {
+const Login = ({
+  type,
+  addToCart = false,
+  smallAddtoCart = false,
+}: LoginProps) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const {user,setUserData,logout}=useUserContext()
-  const router=useRouter()
+  const { user, setUserData, logout } = useUserContext();
+  const router = useRouter();
   const { mutate: login, isPending } = useAuthApi();
-  const {data:myProfile,isPending:isMyProfilePending}=useGetMyProfile()
-  const {mutate:Userlogout}=useLogout()
+  const { data: myProfile, isPending: isMyProfilePending } = useGetMyProfile();
+  const { mutate: Userlogout } = useLogout();
   const {
     register,
     handleSubmit,
@@ -71,21 +77,20 @@ const Login = ({ type }: LoginProps) => {
         setIsLoggedIn(false);
         logout();
         toast.success("Logout successfully");
-        router.push('/');
+        router.push("/");
       },
       onError: (error) => {
-        console.error('Logout failed:', error);
+        console.error("Logout failed:", error);
         toast.error("Logout failed");
-      }
+      },
     });
   };
 
   useEffect(() => {
-    if (user) { 
-      setIsLoggedIn(true); 
+    if (user) {
+      setIsLoggedIn(true);
     }
   }, [user]);
-
 
   const onSubmit = (data: z.infer<typeof loginSchema>) => {
     login(
@@ -97,10 +102,10 @@ const Login = ({ type }: LoginProps) => {
         type: "login",
       },
       {
-        onSuccess: ({data}) => {
+        onSuccess: ({ data }) => {
           setIsLoggedIn(true);
-          setUserData(data)
-          setIsLoginOpen(false)
+          setUserData(data);
+          setIsLoginOpen(false);
           toast.success("Login successful");
         },
         onError: (error) => {
@@ -114,19 +119,26 @@ const Login = ({ type }: LoginProps) => {
   if (isRegisterOpen) {
     return <Register onBack={handleBackToLogin} />;
   }
- 
 
   if (isLoggedIn) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-          <p className="text-lg font-medium text-card-foreground">{ isMyProfilePending ? <Loader2 className="animate-spin" /> : myProfile?.data?.user?.username || myProfile?.data?.user?.name }</p>
+          <p className="text-lg font-medium text-card-foreground">
+            {isMyProfilePending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              myProfile?.data?.user?.username || myProfile?.data?.user?.name
+            )}
+          </p>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-36 mt-6">
           <Link href="/my-account/my-profile">
             <DropdownMenuItem className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
-              <p className="text-sm font-medium text-card-foreground">My Account</p>
+              <p className="text-sm font-medium text-card-foreground">
+                My Account
+              </p>
             </DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />
@@ -135,7 +147,9 @@ const Login = ({ type }: LoginProps) => {
             onClick={handleLogout}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            <p className="text-sm font-medium text-card-foreground text-red-600" >Logout</p>
+            <p className="text-sm font-medium text-card-foreground text-red-600">
+              Logout
+            </p>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -146,8 +160,26 @@ const Login = ({ type }: LoginProps) => {
     <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
       <DialogTrigger asChild>
         <div className="cursor-pointer">
-          {type === "TournamentRegister" ? "Login"   : type === "Register" ? <GredientButton buttonText="Register for free" onClick={()=>setIsRegisterOpen(true)}   /> : <User className="h-6 w-6" />}
-         
+          {type === "TournamentRegister" ? (
+            "Login"
+          ) : type === "Register" ? (
+            <GredientButton
+              buttonText="Register for free"
+              onClick={() => setIsRegisterOpen(true)}
+            />
+          ) : addToCart === false ? (
+            <User className="h-6 w-6" />
+          ) : (
+            <button
+              className={`gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full hover:opacity-90 ${
+                smallAddtoCart ? "py-1 px-7 text-sm" : "w-64 h-14"
+              } `}
+            >
+              <ShoppingCartIcon size={28} className="mr-2" />
+              Add to Cart
+              {/* {isAddToCartPending ? "adding..." : "Add to Cart"} */}
+            </button>
+          )}
         </div>
       </DialogTrigger>
       <DialogContent className="max-w-[682px] p-0">
@@ -161,7 +193,9 @@ const Login = ({ type }: LoginProps) => {
             </Button>
           </DialogTrigger>
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-[48px] font-extrabold">Log In</DialogTitle>
+            <DialogTitle className="text-[48px] font-extrabold">
+              Log In
+            </DialogTitle>
           </div>
         </DialogHeader>
 
@@ -173,14 +207,18 @@ const Login = ({ type }: LoginProps) => {
               className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
               {...register("email")}
             />
-            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="text-red-500">{errors.email.message}</p>
+            )}
             <Input
               type="password"
               placeholder="Password"
               className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
               {...register("password")}
             />
-            {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="text-red-500">{errors.password.message}</p>
+            )}
             <Button
               type="submit"
               className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10"
@@ -191,13 +229,18 @@ const Login = ({ type }: LoginProps) => {
           </form>
 
           <div className="text-right mt-5">
-            <Link href="/forgot-password" className="text-gray-600 hover:underline text-sm">
+            <Link
+              href="/forgot-password"
+              className="text-gray-600 hover:underline text-sm"
+            >
               Forgot your password?
             </Link>
           </div>
 
           <div className="flex items-center justify-between mt-10">
-            <p className="text-center text-gray-600 mx-4">Or Login with Social Media</p>
+            <p className="text-center text-gray-600 mx-4">
+              Or Login with Social Media
+            </p>
             <FacebookIcon />
           </div>
 

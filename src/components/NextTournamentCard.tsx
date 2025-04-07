@@ -6,8 +6,8 @@ import { Separator } from "./ui/separator";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import { ShareIcon } from "./icons/icon";
-import gameIcon from "@/app/images/graphiccard.png"
-import NotFoundImage from "@/app/images/notfoundProduct.jpg"
+import gameIcon from "@/app/images/graphiccard.png";
+import NotFoundImage from "@/app/images/notfoundProduct.jpg";
 import { calculateCountdown } from "@/lib/utils";
 import { start } from "repl";
 import CountdownDisplay from "./CountdownProps";
@@ -60,28 +60,29 @@ const NextTournamentCard = ({
   vip,
   __v,
   _id,
- 
 }: NextTournamentCardProps) => {
+  console.log(typeof fee, "fee");
 
-  console.log(typeof fee,"fee")
-
-  const countDown=calculateCountdown(start)
+  const countDown = calculateCountdown(start);
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300 items-center">
       {/* Left Column - Product Image */}
       <div className="relative border-gray-200 pt-10 xl:pt-16 px-8 flex flex-col items-center">
         <div>
           <Image
-            src={image && (image.startsWith('/') || image.startsWith('http')) ? image : NotFoundImage.src}
+            src={
+              image && (image.startsWith("/") || image.startsWith("http"))
+                ? image
+                : NotFoundImage.src
+            }
             alt={title}
             width={349}
             height={200}
-            objectFit="cover"
-           
+            className="rounded-t-xl rounded-b-none w-[349px] h-[200px] object-contain"
+            objectFit="contain"
           />
         </div>
-        <CountdownDisplay countdown={countDown} />  
-
+        <CountdownDisplay countdown={countDown} />
       </div>
 
       {/* Right Column - Tournament Info */}
@@ -93,16 +94,17 @@ const NextTournamentCard = ({
         {/* Tournament Badge */}
         <div className="mb-3">
           <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-normal">
-            Tournament ID :
-            <span className="text-primary"> {tournamentId}</span>
+            Tournament ID :<span className="text-primary"> {tournamentId}</span>
           </h2>
         </div>
         <div className="inline-block bg-primary text-white text-xs xl:text-sm px-2 sm:px-3 py-1 rounded-full ">
-         {name}
+          {name}
         </div>
 
         {/* Product Title */}
-        <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D]">{name}</p>
+        <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D]">
+          {name}
+        </p>
 
         {/* Rating */}
         <div className="flex items-center gap-1">
@@ -119,16 +121,23 @@ const NextTournamentCard = ({
         <div className="flex flex-wrap 2xl:items-center justify-between gap-2 mt-2 xl:mt-5">
           <div className="flex items-center justify-start gap-2 w-max">
             <div className="w-12 xl:w-16 h-12 xl:h-16 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
-              <Image className="" src={gameIcon} alt="Game Icon" width={40} height={37} />
+              <Image
+                className=""
+                src={gameIcon}
+                alt="Game Icon"
+                width={40}
+                height={37}
+              />
               <Button className="flex items-center justify-center xl:hidden absolute top-3 right-3 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
-          <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
-        </Button>
-           
+                <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
+              </Button>
             </div>
             <div>
               <div className="flex items-center gap-1">
                 <p className="text-lg xl:text-lg font-bold">Game:</p>
-                <p className="text-primary text-lg xl:text-lg font-bold">{game}</p>
+                <p className="text-primary text-lg xl:text-lg font-bold">
+                  {game}
+                </p>
               </div>
               <div className="flex w-max items-center gap-1 text-card-foreground ">
                 <p className="text-sm">Duration:</p>
@@ -139,7 +148,9 @@ const NextTournamentCard = ({
           {/* <div className="flex w-max xl:w-full justify-start xl:flex-col xl:gap-0 gap-3 xl:w-max"> */}
           <div className="flex w-max justify-start items-center xl:flex-col xl:gap-0 gap-3 ">
             <p className="text-sm sm:text-lg"> Participants</p>
-            <p className="text-sm sm:text-normal">0 To {numberOfParticipants}</p>
+            <p className="text-sm sm:text-normal">
+              0 To {numberOfParticipants}
+            </p>
           </div>
         </div>
 
@@ -147,7 +158,7 @@ const NextTournamentCard = ({
           {/* <div className="flex xl:flex-row flex-col justify-between w-full xl:items-center gap-2"> */}
           <div className="flex flex-wrap justify-between w-full xl:items-center gap-2">
             {/* Price Info */}
-            <div >
+            <div>
               <div className="flex items-center gap-1">
                 <p className="text-card-foreground text-lg font-semibold">
                   Current price:
@@ -179,10 +190,12 @@ const NextTournamentCard = ({
         <div className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between">
           <div className="flex items-center gap-2">
             <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
-              <Link href={`/tournament-detail?id=${id}`}>To The Tournament</Link>
+              <Link href={`/tournament-detail?id=${_id}`}>
+                To The Tournament
+              </Link>
             </Button>
             <div className="bg-orange-200 rounded-full h-6 w-6 flex items-center justify-center">
-            <ShareIcon/>
+              <ShareIcon />
             </div>
           </div>
           <Button
