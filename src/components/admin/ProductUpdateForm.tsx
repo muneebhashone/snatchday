@@ -41,6 +41,7 @@ import { formatDate } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { format, sub } from "date-fns";
 import { Checkbox } from "../ui/checkbox";
+import { get } from "http";
 
 const discountSchema = z.object({
   // customerGroup: z.string().min(1, "Customer group cannot be empty"),
@@ -50,31 +51,47 @@ const discountSchema = z.object({
   until: z.coerce.date().optional(),
 });
 
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  description: z.string().min(1, "Description cannot be empty"),
-  company: z.string().min(1, "Company cannot be empty"),
-  images: z.any(),
-  colors: z.string().min(1, "Colors cannot be empty"),
-  stock: z.number().min(0, "Stock must be 0 or greater"),
-  price: z.number().min(0, "Price must be 0 or greater"),
-  // discounts: z.string().optional(),
-  attributes: z.any(),
-  categoryIds: z.string().min(1, "Category is required"),
-  type: z.enum(["NEW", "SALE"]),
-  isFeatured: z.boolean(),
-  metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
-  metaDescription: z.string().min(1, "Meta description cannot be empty"),
-  metaKeywords: z.string().min(1, "Meta keywords cannot be empty"),
-  article: z.string().min(1, "Article cannot be empty"),
-  sku: z.string().min(1, "SKU cannot be empty"),
-  barcodeEAN: z.string().min(1, "Barcode EAN cannot be empty"),
-  noStockMessage: z.string().min(1, "No stock message cannot be empty"),
-  relatedProducts: z.array(z.string()).default([]),
-  requireShipping: z.boolean(),
-  liscenseKey: z.string().min(1, "License key cannot be empty"),
-  discounts: z.array(discountSchema).optional(),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    description: z.string().min(1, "Description cannot be empty"),
+    company: z.string().min(1, "Company cannot be empty"),
+    images: z.any(),
+    colors: z.string().min(1, "Colors cannot be empty"),
+    stock: z.number().min(0, "Stock must be 0 or greater"),
+    price: z.number().min(0, "Price must be 0 or greater"),
+    // discounts: z.string().optional(),
+    attributes: z.any(),
+    categoryIds: z.string(),
+    type: z.enum(["NEW", "SALE"]),
+    isFeatured: z.boolean(),
+    metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
+    metaDescription: z.string().min(1, "Meta description cannot be empty"),
+    metaKeywords: z.string().min(1, "Meta keywords cannot be empty"),
+    article: z.string().min(1, "Article cannot be empty"),
+    sku: z.string().min(1, "SKU cannot be empty"),
+    barcodeEAN: z.string().min(1, "Barcode EAN cannot be empty"),
+    noStockMessage: z.string().min(1, "No stock message cannot be empty"),
+    relatedProducts: z.array(z.string()).default([]),
+    requireShipping: z.boolean(),
+    liscenseKey: z.string().optional(),
+    discounts: z.array(discountSchema).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.requireShipping && data.liscenseKey) {
+      ctx.addIssue({
+        path: ["liscenseKey"],
+        code: z.ZodIssueCode.custom,
+        message: "License key is not required when shipping is enable",
+      });
+    } else if (!data.requireShipping && !data.liscenseKey) {
+      ctx.addIssue({
+        path: ["liscenseKey"],
+        code: z.ZodIssueCode.custom,
+        message: "License key is required when shipping is not enable",
+      });
+    }
+  });
 
 interface Category {
   _id: string;
@@ -144,7 +161,8 @@ interface Product {
 }
 
 export default function ProductUpdateForm({ product }: { product: Product }) {
-  const [applyDiscounts, setApplyDiscounts] = useState(false);
+  const [disableLicenseKey, setDisableLicenseKey] = useState(false);
+  const [categories, getCategories] = useState([]);
   const [removedImages, setRemovedImages] = useState<string[]>([]);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -180,7 +198,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       price: product.price,
       discounts: product.discounts || [],
       attributes: Object.keys(product.attributes || {}),
-      categoryIds: product.categoryIds[0]?._id || "",
+      // categoryIds: product.categoryIds[0]?._id || "",
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
@@ -204,7 +222,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     if (product?.discounts) {
       replace(product.discounts);
     }
-  }, [product]);
+    if (product && product.categoryIds) {
+      getCategories(product?.categoryIds);
+    }
+  }, [categoriesData?.data?.categories, product, replace]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -215,14 +236,14 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           URL.revokeObjectURL(url);
         }
       });
-      
+
       // Create new previews
       const urls = Array.from(files).map((file) => URL.createObjectURL(file));
       setPreviewUrls([
         ...previewUrls.filter((url) => !url.startsWith("blob:")),
         ...urls,
       ]);
-      
+
       // Update form
       form.setValue("images", files);
     }
@@ -230,9 +251,14 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
 
   const onSubmit2 = (value) => {
     console.log(value, "submitted value");
+    console.log(categories, "categories");
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const data = { ...values };
+    if (data.requireShipping) {
+      delete data.liscenseKey;
+    }
     try {
       const formData = new FormData();
 
@@ -240,13 +266,16 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
         formData.append("removedImages", JSON.stringify(removedImages));
       }
 
-      for (const [key, value] of Object.entries(values)) {
+      for (const [key, value] of Object.entries(data)) {
         if (key === "images" && value instanceof FileList) {
           Array.from(value).forEach((file) => {
             formData.append("images", file);
           });
         } else if (key === "categoryIds") {
-          formData.append("categoryIds", JSON.stringify([value]));
+          formData.append(
+            "categoryIds",
+            JSON.stringify(categories.map((cat) => cat._id))
+          );
         } else if (key === "colors") {
           const colorsArray = value
             .split(",")
@@ -283,15 +312,15 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           data: formData as any,
         },
         {
-        onSuccess: () => {
-          toast.success("Product updated successfully");
+          onSuccess: () => {
+            toast.success("Product updated successfully");
             queryClient.invalidateQueries({ queryKey: ["products"] });
-            // router.push("/admin/products");
-        },
-        onError: (error) => {
-          toast.error("Failed to update product");
-          console.error(error);
-        },
+            router.push("/admin/products");
+          },
+          onError: (error) => {
+            toast.error("Failed to update product");
+            console.error(error);
+          },
         }
       );
     } catch (error) {
@@ -307,33 +336,33 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       <h2 className="text-2xl font-bold mb-6">Update Product</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
                   <Input placeholder="Product name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <FormField
-              control={form.control}
-              name="company"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company</FormLabel>
-                  <FormControl>
+          <FormField
+            control={form.control}
+            name="company"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Company</FormLabel>
+                <FormControl>
                   <Input placeholder="Company name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           <FormField
             control={form.control}
@@ -364,17 +393,17 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                   />
                 </FormControl>
                 <div className="flex gap-4 my-2">
-                    {previewUrls.map((url, index) => (
+                  {previewUrls.map((url, index) => (
                     <div
                       key={index}
                       className="relative aspect-square w-20 h-20 rounded-lg overflow-hidden border"
                     >
-                        <Image
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
+                      <Image
+                        src={url}
+                        alt={`Preview ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
                       <button
                         type="button"
                         className="absolute top-0 right-0 bg-white rounded-full p-1 shadow"
@@ -390,9 +419,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       >
                         <X size={16} />
                       </button>
-                      </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -493,8 +522,18 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               <FormItem>
                 <FormLabel>Category</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={(e) => {
+                    field.onChange(e);
+                    const category = categoriesData?.data?.categories?.find(
+                      (cat) => cat._id === e
+                    );
+                    const exist = categories.find(
+                      (existCategory) => existCategory._id === category._id
+                    );
+                    if (!exist) {
+                      getCategories((prev) => [...prev, category]);
+                    }
+                  }}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -512,6 +551,29 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                   </SelectContent>
                 </Select>
                 <FormMessage />
+                <div className="flex gap-2">
+                  {categories.map((cat, i) => (
+                    <div
+                      className="relative bg-primary rounded px-2 text-white"
+                      key={i}
+                    >
+                      <X
+                        onClick={() => {
+                          getCategories((prev) =>
+                            prev.filter((_, index) => index !== i)
+                          );
+                        }}
+                        className="rounded-full absolute -top-1 -right-2 bg-white text-primary"
+                        size={13}
+                      />
+                      {
+                        categoriesData?.data?.categories?.find(
+                          (findCat) => findCat._id === cat?._id
+                        )?.displayName
+                      }
+                    </div>
+                  ))}
+                </div>
               </FormItem>
             )}
           />
@@ -1142,37 +1204,42 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           <FormField
             control={form.control}
             name="requireShipping"
-            render={({ field }) => (
-              <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel>Require Shipping</FormLabel>
-                  <FormDescription>
-                    Does this product require shipping?
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              setDisableLicenseKey(field.value);
+              return (
+                <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel>Require Shipping</FormLabel>
+                    <FormDescription>
+                      Does this product require shipping?
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              );
+            }}
           />
 
-          <FormField
-            control={form.control}
-            name="liscenseKey"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>License Key</FormLabel>
-                <FormControl>
-                  <Input placeholder="Product license key" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!disableLicenseKey && (
+            <FormField
+              control={form.control}
+              name="liscenseKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>License Key</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Product license key" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <div className="flex justify-end">
             <Button type="submit">Update Product</Button>

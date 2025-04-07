@@ -30,11 +30,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { CalendarIcon, X } from "lucide-react";
 import { Checkbox } from "../ui/checkbox";
-import { cn } from "@/lib/utils"; // Adjust the import path as necessary
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
@@ -53,49 +52,66 @@ interface DiscountItem {
 }
 
 const discountSchema = z.object({
-  // customerGroup: z.string().min(1, "Customer group cannot be empty"),
-  customerGroup: z.enum(["BASIC", "VIP"]),
-  price: z.number().nonnegative("Price must be 0 or greater"),
+  customerGroup: z.string().optional(),
+  price: z.number().nonnegative("Price must be 0 or greater").optional(),
   away: z.coerce.date().optional(),
   until: z.coerce.date().optional(),
 });
 
-const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  description: z.string().min(1, "Description cannot be empty"),
-  company: z.string().min(1, "Company cannot be empty"),
-  images: z.array(z.instanceof(File)).min(1, "At least one image is required"),
-  colors: z.string().min(1, "Colors cannot be empty"),
-  stock: z.number().min(0, "Stock must be 0 or greater"),
-  price: z.number().min(0, "Price must be 0 or greater"),
-  attributes: z.any(),
-  categoryIds: z.string().min(1, "Category is required"),
-  type: z.enum(["NEW", "SALE"]),
-  isFeatured: z.boolean(),
-  metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
-  metaDescription: z.string().min(1, "Meta description cannot be empty"),
-  metaKeywords: z.string().min(1, "Meta keywords cannot be empty"),
-  article: z.string().min(1, "Article cannot be empty"),
-  sku: z.string().min(1, "SKU cannot be empty"),
-  barcodeEAN: z.string().min(1, "Barcode EAN cannot be empty"),
-  noStockMessage: z.string().min(1, "No stock message cannot be empty"),
-  relatedProducts: z.array(z.string()).optional(),
-  requireShipping: z.boolean(),
-  liscenseKey: z.string().min(1, "License key cannot be empty"),
-  discounts: z.array(discountSchema).optional(),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    description: z.string().min(1, "Description cannot be empty"),
+    company: z.string().min(1, "Company cannot be empty"),
+    images: z
+      .array(z.instanceof(File))
+      .min(1, "At least one image is required"),
+    colors: z.string().min(1, "Colors cannot be empty"),
+    stock: z.number().min(0, "Stock must be 0 or greater"),
+    price: z.number().min(0, "Price must be 0 or greater"),
+    attributes: z.any(),
+    categoryIds: z.string().min(1, "Category is required"),
+    type: z.enum(["NEW", "SALE"]),
+    isFeatured: z.boolean(),
+    metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
+    metaDescription: z.string().min(1, "Meta description cannot be empty"),
+    metaKeywords: z.string().min(1, "Meta keywords cannot be empty"),
+    article: z.string().min(1, "Article cannot be empty"),
+    sku: z.string().min(1, "SKU cannot be empty"),
+    barcodeEAN: z.string().min(1, "Barcode EAN cannot be empty"),
+    noStockMessage: z.string().min(1, "No stock message cannot be empty"),
+    relatedProducts: z.array(z.string()).optional(),
+    requireShipping: z.boolean().optional(),
+    discounts: z.array(discountSchema).optional(),
+    liscenseKey: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.requireShipping && data.liscenseKey) {
+      ctx.addIssue({
+        path: ["liscenseKey"],
+        code: z.ZodIssueCode.custom,
+        message: "License key is not required when shipping is enable",
+      });
+    } else if (!data.requireShipping && !data.liscenseKey) {
+      ctx.addIssue({
+        path: ["licenseKey"],
+        code: z.ZodIssueCode.custom,
+        message: "License key is required when shipping is not enable",
+      });
+    }
+  });
 
 export default function ProductsForm() {
-  // const [discounts, setDiscounts] = useState([{ customerGroup: "", price: 0 }]);
   const [applyDiscounts, setApplyDiscounts] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const { mutate: createProduct, isPending } = useCreateProduct();
   const { data: getCategories } = useGetCategories();
+  const [selectedCategory, setSelectedCategory] = useState<object[]>([]);
+  const [disableLicenseKey, setDisableLicenseKey] = useState(false);
 
   const { data: getProducts } = useGetProducts();
   const { data: filters } = useGetFilters();
 
-  console.log(applyDiscounts, "discounts");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -117,7 +133,7 @@ export default function ProductsForm() {
       barcodeEAN: "",
       noStockMessage: "",
       relatedProducts: [],
-      requireShipping: false,
+      requireShipping: true,
       liscenseKey: "",
       images: [],
       discounts: [
@@ -136,31 +152,28 @@ export default function ProductsForm() {
     const files = e.target.files;
     if (files) {
       const fileArray = Array.from(files);
-
-      // Clear previous previews
       previewUrls.forEach((url) => URL.revokeObjectURL(url));
-
-      // Create new previews
       const urls = fileArray.map((file) => URL.createObjectURL(file));
       setPreviewUrls(urls);
-
-      // Update form field
       form.setValue("images", fileArray, { shouldValidate: true });
     }
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    const dataToSend = { ...values };
+    if (dataToSend.requireShipping) {
+      delete dataToSend.liscenseKey;
+    }
     try {
       setApplyDiscounts(false);
       const formData = new FormData();
-      // Append all form fields to FormData
-      Object.entries(values).forEach(([key, value]) => {
+      Object.entries(dataToSend).forEach(([key, value]) => {
         if (key === "categoryIds") {
-          // Convert single category ID to array format
-          formData.append("categoryIds", JSON.stringify([value]));
+          formData.append(
+            "categoryIds",
+            JSON.stringify(selectedCategory.map((cat: Category) => cat._id))
+          );
         } else if (key === "images") {
-          // Handle multiple image files
           const files = value as File[];
           if (files) {
             Array.from(files).forEach((file) => {
@@ -168,13 +181,13 @@ export default function ProductsForm() {
             });
           }
         } else if (key === "colors") {
-          // Convert comma-separated colors to array
           const colorsArray = value
             .split(",")
             .map((color: string) => color.trim())
             .filter(Boolean);
           formData.append("colors", JSON.stringify(colorsArray));
         } else if (key === "attributes") {
+          console.log(selectedFilter, "selectedFilter");
           const attributesObject = Object.entries(selectedFilter).reduce(
             (acc, [filterName, filterValues]) => {
               filterValues.forEach((value) => {
@@ -187,13 +200,11 @@ export default function ProductsForm() {
 
           formData.append("attributes", JSON.stringify(attributesObject));
         } else if (key === "relatedProducts") {
-          // Handle empty or valid array of product IDs
           const productIds = Array.isArray(value) ? value : [];
           formData.append("relatedProducts", JSON.stringify(productIds));
         } else if (key === "discounts") {
           try {
             if (Array.isArray(value)) {
-              // Ensure each discount object has required fields before appending
               const validDiscounts = value.filter(
                 (discount) =>
                   discount.price &&
@@ -205,20 +216,17 @@ export default function ProductsForm() {
               formData.append("discounts", JSON.stringify(validDiscounts));
             } else {
               console.error("Discounts field is not an array:", value);
-              formData.append("discounts", "[]"); // Fallback to an empty array
+              formData.append("discounts", "[]");
             }
           } catch (error) {
             console.error("Error handling discounts:", error);
             formData.append("discounts", "[]");
           }
         } else if (key === "price" || key === "stock") {
-          // Ensure numbers are properly formatted
           formData.append(key, value.toString());
         } else if (key === "isFeatured" || key === "requireShipping") {
-          // Convert boolean to string
           formData.append(key, value ? "true" : "false");
         } else if (value !== undefined && value !== null) {
-          // Handle all other string fields
           formData.append(key, value.toString());
         }
       });
@@ -228,6 +236,7 @@ export default function ProductsForm() {
           toast.success("Product created successfully");
           setPreviewUrls([]);
           form.reset();
+          window.location.href = "/admin/products";
         },
         onError: (error) => {
           toast.error("Failed to create product");
@@ -414,35 +423,68 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="categoryIds"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category *</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {getCategories?.data?.categories?.map(
-                      (category: Category) => (
-                        <SelectItem key={category._id} value={category._id}>
-                          {category.displayName || category.name}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div>
+            <FormField
+              control={form.control}
+              name="categoryIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category *</FormLabel>
+                  <Select
+                    // onValueChange={field.onChange}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      const selectedCategoriess =
+                        getCategories?.data?.categories?.find(
+                          (category: Category) => category._id === value
+                        );
+                      setSelectedCategory([
+                        ...selectedCategory,
+                        selectedCategoriess,
+                      ]);
+                    }}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {getCategories?.data?.categories?.map(
+                        (category: Category) => (
+                          <SelectItem key={category._id} value={category._id}>
+                            {category.displayName || category.name}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex gap-2 mt-2 flex-wrap">
+              {selectedCategory &&
+                selectedCategory?.map((cat, i) => (
+                  <span
+                    className="relative bg-primary text-white text-sm p-1 rounded"
+                    key={i}
+                  >
+                    <X
+                      onClick={() => {
+                        setSelectedCategory((prev) =>
+                          prev.filter((_, index) => index !== i)
+                        );
+                      }}
+                      size={15}
+                      className="bg-white text-primary rounded-full p-[2px] absolute -top-1 -right-2 cursor-pointer"
+                    />
+                    {cat.displayName}
+                  </span>
+                ))}
+            </div>
+          </div>
           <FormField
             control={form.control}
             name="metaTitle"
@@ -898,36 +940,41 @@ export default function ProductsForm() {
           <FormField
             control={form.control}
             name="requireShipping"
-            render={({ field }) => (
-              <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel>Require Shipping *</FormLabel>
-                  <FormDescription>
-                    Does this product require shipping?
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
+            render={({ field }) => {
+              setDisableLicenseKey(field.value);
+              return (
+                <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel>Require Shipping *</FormLabel>
+                    <FormDescription>
+                      Does this product require shipping?
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              );
+            }}
           />
-          <FormField
-            control={form.control}
-            name="liscenseKey"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>License Key *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Product license key" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {!disableLicenseKey && (
+            <FormField
+              control={form.control}
+              name="liscenseKey"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>liscense Key *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Product license key" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <div className="flex justify-end">
             <Button type="submit">
               {isPending ? "Creating..." : "Create Product"}

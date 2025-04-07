@@ -37,8 +37,7 @@ import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
 import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
-import { TimePickerInput } from "../ui/TimePickerInput";
+import { useRouter, usePathname, useParams } from "next/navigation";
 import { TimePickerDemo } from "../ui/TimePicker1";
 import { toast } from "sonner";
 import {
@@ -111,15 +110,16 @@ const formSchema = z.object({
 });
 
 const TournamentCreateForm = ({ productId }: { productId?: string }) => {
+  const params = useParams();
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
 
-  console.log(pathname, "pathname");
+  console.log(pathname.split("/")[4], "pathname");
   const { mutate: createTournament, isPending } = useCreateTournament();
-  const { data: getProducts } = useGetProducts({limit: `100000`});
+  const { data: getProducts } = useGetProducts({ limit: `100000` });
   const products = getProducts?.data?.products || [];
 
   const product = getProducts?.data?.products?.find(
@@ -165,11 +165,12 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
   }, [product, form]);
 
   const onSubmit = async (values) => {
+    const pro = params.id ? params.id : value;
     try {
       createTournament(
         {
           ...values,
-          article: value,
+          article: pro,
         },
         {
           onSuccess: () => {
@@ -293,7 +294,7 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
               {productSelectField}
 
               <FormField
-              disabled={true}
+                disabled={true}
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -348,7 +349,7 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
             {/* Pricing and Numbers */}
             <div className="space-y-6">
               <FormField
-              disabled={true}
+                disabled={true}
                 control={form.control}
                 name="startingPrice"
                 render={({ field }) => (
