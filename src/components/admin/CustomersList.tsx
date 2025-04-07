@@ -64,6 +64,7 @@ export default function CustomersList() {
 
   const ClearFields = () => {
     form.reset({ customerGroup: "", status: "", approved: "" });
+   
   };
 
   return (

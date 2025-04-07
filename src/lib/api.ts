@@ -260,24 +260,24 @@ export const getCustomers = async (params) => {
 };
 
 export const getCustomer = async (
-  pageParams,
-  search,
-  group,
-  date,
-  isActive
+  pageParams: number,
+  search?: string,
+  group?: string,
+  date?: string,
+  isActive?: string
 ) => {
   const limit = 10;
-  const response = await axiosInstance.get("/customer", {
-    params: {
-      limit,
-      offset: pageParams,
-      search,
-      group,
-      date,
-      isActive,
-    },
-  });
-  console.log(pageParams);
+  const params: Record<string, any> = {
+    limit,
+    offset: pageParams,
+  };
+
+  if (search) params.search = search;
+  if (group) params.group = group;
+  if (date) params.date = date;
+  if (isActive) params.isActive = isActive;
+
+  const response = await axiosInstance.get("/customer", { params });
   return response.data;
 };
 

@@ -431,12 +431,20 @@ export const useCustomers = (filters) => {
   });
 };
 
-export const useCustomersPagination = (page, search, group, date, isActive) => {
+export const useCustomersPagination = (
+  page: number,
+  search?: string,
+  group?: string,
+  date?: string,
+  isActive?: string
+) => {
   return useQuery({
     queryKey: ["customers", page, search, group, date, isActive],
     queryFn: () => getCustomer(page, search, group, date, isActive),
+    enabled: true,
   });
 };
+
 
 export const useGetCustomerById = (id) => {
   return useQuery({
