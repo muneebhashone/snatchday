@@ -109,11 +109,12 @@ const navItems = [
     url: "/admin/customers",
     icon: <Users className="h-4 w-4" />,
   },
-  {
-    title: "Settings",
-    url: "/admin/settings",
-    icon: <Settings className="h-4 w-4" />,
-  },
+
+  // {
+  //   title: "Web Settings",
+  //   url: "/admin/web-settings",
+  //   icon: <Settings className="h-4 w-4" />,
+  // },
   {
     title: "Newsletters",
     url: "/admin/newsletters",
@@ -153,7 +154,30 @@ const navItems = [
       },
     ],
   },
+  {
+    title: "Web Settings",
+
+    icon: <Settings className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Web Settings",
+        url: "/admin/web-settings",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Web Setting",
+        url: "/admin/web-settings/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+      {
+        title: "Edit Web Setting",
+        url: "/admin/web-settings/edit",
+        icon: <List className="h-4 w-4" />,
+      },
+    ],
+  },
 ];
+
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname =

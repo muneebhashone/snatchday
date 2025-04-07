@@ -350,3 +350,13 @@ export interface Order {
   voucherId?: string | null;
   history: Array<any>; // Adjust as needed based on the structure of history
 }
+
+export interface WebSetting {
+  name: string;
+  content: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  order: number;
+}
+

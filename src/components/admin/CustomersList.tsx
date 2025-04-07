@@ -86,9 +86,9 @@ export default function CustomersList() {
             name="customerName"
             render={({ field }) => (
               <FormItem className="">
-                <FormLabel>Customer Name</FormLabel>
+                <FormLabel>Search</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter customer name" />
+                  <Input {...field} placeholder="Search" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -194,7 +194,7 @@ export default function CustomersList() {
           />
 
           {/* Email */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
@@ -206,10 +206,10 @@ export default function CustomersList() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* status */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="status"
             render={({ field }) => (
@@ -226,9 +226,9 @@ export default function CustomersList() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {/* <SelectItem disabled value={null}>
+                    <SelectItem disabled value={null}>
                       Select Status
-                    </SelectItem> */}
+                    </SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                   </SelectContent>
@@ -236,10 +236,10 @@ export default function CustomersList() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* IP */}
-          <FormField
+          {/* <FormField
             control={form.control}
             name="IP"
             render={({ field }) => (
@@ -251,7 +251,7 @@ export default function CustomersList() {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           {/* Buttons */}
           <div className="flex justify-start items-center pt-7 gap-4">

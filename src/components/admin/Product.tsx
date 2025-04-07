@@ -76,6 +76,7 @@ export function Product() {
   const { data: productsData, isLoading: isProductsLoading } =
     useGetProducts(filters);
   const { data: categoriesData } = useGetCategories();
+  
   const { mutate: deleteProduct } = useDeleteProduct();
 
   const handleDelete = (id: string) => {
