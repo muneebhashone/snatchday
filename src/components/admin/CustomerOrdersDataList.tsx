@@ -73,7 +73,7 @@ const CustomerOrdersDataList = () => {
               </TableCell>
               <TableCell>{`${Number(order?.cartObject?.total).toFixed(2)} €`}</TableCell>
               <TableCell>{`${Number(order?.cartObject?.subTotal).toFixed(2)} €`}</TableCell>
-              <TableCell>
+              <TableCell className="capitalize">
                 <span
                   className={`px-4 py-2 rounded-full ${order?.status === "pending"
                       ? "bg-primary text-white"
@@ -104,23 +104,23 @@ const CustomerOrdersDataList = () => {
           <TableRow>
             <TableCell colSpan={8} className="text-center">
               <button
-                onClick={() => {
-                  setPage((prev) => Math.max(prev - 5, 0)); // negative value nhi jaegi
-                }}
+                disabled={page === 0}
+                className={`m-1 px-4 py-2 rounded ${page === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'}`}
+                onClick={() => setPage((prev) => Math.max(0, prev - 5))}
               >
-                Prev
+                Previous
               </button>
               {Array.from(
                 {
                   length: Math.ceil((orders?.data.total || 0) / 5),
                 },
                 (_, index) => {
-                  console.log(index);
                   return (
                     <button
                       key={index}
-                      className={`page-indicator m-1 ${index === page / 5 ? "bg-primary px-2 text-white" : ""
-                        }`}
+                      className={`page-indicator m-1 px-4 py-2 rounded ${
+                        index === page / 5 ? "bg-primary text-white" : "hover:bg-primary/10"
+                      }`}
                       onClick={() => setPage(index * 5)}
                     >
                       {index + 1}
@@ -129,10 +129,16 @@ const CustomerOrdersDataList = () => {
                 }
               )}
               <button
+                disabled={page >= (orders?.data.total || 0) - 5}
+                className={`m-1 px-4 py-2 rounded ${
+                  page >= (orders?.data.total || 0) - 5 
+                  ? 'opacity-50 cursor-not-allowed' 
+                  : 'hover:bg-primary hover:text-white'
+                }`}
                 onClick={() => {
                   setPage((prev) =>
-                    Math.min(prev + 5, (orders?.data.total || 0) - page)
-                  ); // last page ke bad api hit nhi krega
+                    Math.min(prev + 5, (orders?.data.total || 0) - 5)
+                  );
                 }}
               >
                 Next
