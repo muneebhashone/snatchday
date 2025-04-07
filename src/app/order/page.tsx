@@ -53,6 +53,7 @@ const voucherSchema = z.object({
 });
 
 const CartTable = () => {
+  const {  setIsCheckout } = useCheckout();
   const { data: cart, isLoading, refetch } = useGetCart();
 
   const [applyvocherResponse, setApplyvocherResponse] = useState(null);
@@ -104,10 +105,12 @@ const CartTable = () => {
             position: "top-right",
             style: { backgroundColor: "green", color: "white" },
           });
+          setIsCheckout(true);
           refetch();
         },
-        onError: () => {
-          toast.error("Failed to update cart", {
+        onError: (error) => {
+          console.log(error,"error11")
+          toast.error(error?.response?.data?.message || "Failed to update cart", {
             position: "top-right",
             style: { backgroundColor: "red", color: "white" },
           });
@@ -172,7 +175,7 @@ const CartTable = () => {
         });
       },
       onError: (error) => {
-        toast.error("Failed to checkout" + error.response.data.message, {
+        toast.error(error?.response?.data?.message || "Failed to checkout", {
           position: "top-right",
           style: { backgroundColor: "red", color: "white" },
         });
@@ -193,8 +196,7 @@ const CartTable = () => {
           });
         },
         onError: (error) => {
-          console.log("Failed to apply voucher", error);
-          toast.error("Failed to apply voucher", {
+          toast.error(error?.response.data.message || "Failed to apply voucher", {
             position: "top-right",
             style: { backgroundColor: "red", color: "white" },
           });
