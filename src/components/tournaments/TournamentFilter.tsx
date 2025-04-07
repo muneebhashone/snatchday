@@ -20,10 +20,10 @@ import { useGetCategories, useGetGames, useGetProducts } from "@/hooks/api";
 
 interface TournamentFilterProps {
   onPeriodChange: (from: string, until: string) => void;
-  onPriceChange: (price: number[]) => void; // Updated from number to number[]
+  onPriceChange: (price: string) => void;
   onGameChange: (game: string) => void;
   onProductChange: (product: string) => void;
-  onFeeChange: (fee: number) => void;
+  onFeeChange: (fee: string) => void;
   onVipChange: (vip: string) => void;
   onCategoryChange: (category: string) => void;
 }
@@ -54,36 +54,86 @@ const TournamentFilter = ({
 
   const handleApplyFilters = () => {
     onPeriodChange(period.from, period.until);
-    onPriceChange(priceRange);
+    onPriceChange(`[${priceRange[0]},${priceRange[1]}]`);
     onGameChange(game);
     onProductChange(product);
-    onFeeChange(participationFee);
+    onFeeChange(`[${participationFee[0]},${participationFee[1]}]`);
     onVipChange(vip);
     onCategoryChange(category);
   };
 
+  const handleClearFilters = () => {
+    // Reset local state
+    setPriceRange([0, 100]);
+    setParticipationFee([0, 100]);
+    setPeriod({ from: "", until: "" });
+    setGame("");
+    setProduct("");
+    setVip("no");
+    setCategory("");
+    
+    // Reset API filters
+    onPeriodChange("", "");
+    onPriceChange("");
+    onGameChange("");
+    onProductChange("");
+    onFeeChange("");
+    onVipChange("no");
+    onCategoryChange("");
+  };
+
+  // Helper function to check if any filter is active
+  const isAnyFilterActive = () => {
+    return (
+      period.from !== "" ||
+      period.until !== "" ||
+      priceRange[0] !== 0 ||
+      priceRange[1] !== 100 ||
+      participationFee[0] !== 0 ||
+      participationFee[1] !== 100 ||
+      game !== "" ||
+      product !== "" ||
+      vip !== "no" ||
+      category !== ""
+    );
+  };
+console.log(isAnyFilterActive(),"isAnyFilterActive")
   // Handle period change
   const handlePeriodChange = (from: string, until: string) => {
-    setPeriod((prev) => ({
-      from: from || prev.from,
-      until: until || prev.until,
-    }));
+    const today = new Date().toISOString().split('T')[0];
+    
+    setPeriod((prev) => {
+      // Validate from date
+      if (from && from < today) {
+        from = today;
+      }
+      
+      // Validate until date
+      if (until && from && until < from) {
+        until = from;
+      }
+      
+      return {
+        from: from || prev.from,
+        until: until || prev.until,
+      };
+    });
   };
 
-  const handleGameChange = (game: string) => {
-    setGame(game);
+  const handleGameChange = (gameId: string) => {
+    setGame(gameId);
   };
 
-  const handleProductChange = (product: string) => {
-    setProduct(product);
+  const handleProductChange = (productId: string) => {
+    setProduct(productId);
   };
 
   const handleVipChange = (vip: string) => {
     setVip(vip);
   };
 
-  const handleCategoryChange = (cate: string) => {
-    setCategory(cate);
+  const handleCategoryChange = (categoryId: string) => {
+    setCategory(categoryId);
   };
 
   return (
@@ -96,6 +146,7 @@ const TournamentFilter = ({
             <Input
               type="date"
               value={period.from}
+              min={new Date().toISOString().split('T')[0]}
               placeholder="from"
               onChange={(e) => handlePeriodChange(e.target.value, "")}
               className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500"
@@ -103,6 +154,7 @@ const TournamentFilter = ({
             <Input
               type="date"
               value={period.until || ""}
+              min={period.from || new Date().toISOString().split('T')[0]}
               placeholder="until"
               onChange={(e) => handlePeriodChange("", e.target.value)}
               className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500"
@@ -132,7 +184,7 @@ const TournamentFilter = ({
         {/* Game Name */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600 mb-2">Game name</p>
-          <Select onValueChange={handleGameChange}>
+          <Select onValueChange={(value) => handleGameChange(value)}>
             <SelectTrigger className="h-12 rounded-xl bg-white border-gray-200 focus:border-primary">
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
@@ -147,7 +199,7 @@ const TournamentFilter = ({
         {/* Products */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600 mb-2">Products</p>
-          <Select onValueChange={handleProductChange}>
+          <Select value={product} onValueChange={(value) => handleProductChange(value)}>
             <SelectTrigger className="h-12 rounded-xl bg-white border-gray-200 focus:border-primary">
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
@@ -190,8 +242,8 @@ const TournamentFilter = ({
             Show only VIP tournaments
           </p>
           <RadioGroup
-            defaultValue="no"
-            onValueChange={handleVipChange}
+            value={vip}
+            onValueChange={(value) => handleVipChange(value)}
             className="flex gap-8"
           >
             <div className="flex items-center space-x-2">
@@ -208,7 +260,7 @@ const TournamentFilter = ({
         {/* Category */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600 mb-2">Category</p>
-          <Select onValueChange={handleCategoryChange}>
+          <Select value={category} onValueChange={(value) => handleCategoryChange(value)}>
             <SelectTrigger className="h-12 rounded-xl bg-white border-gray-200 focus:border-primary">
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
@@ -223,7 +275,15 @@ const TournamentFilter = ({
         </div>
 
         {/* Filter Button */}
-        <div className="flex items-center justify-center md:justify-end">
+        <div className="flex items-center justify-center md:justify-end gap-4">
+          {isAnyFilterActive() && (
+            <Button
+              onClick={handleClearFilters}
+              className="text-gray-700 bg-white border border-gray-300 rounded-full px-10 sm:px-12 h-10 sm:h-12 text-base font-medium hover:bg-gray-50"
+            >
+              CLEAR
+            </Button>
+          )}
           <Button
             onClick={handleApplyFilters}
             className="gradient-primary text-white rounded-full px-10 sm:px-12 h-10 sm:h-12 text-base font-medium hover:opacity-90"

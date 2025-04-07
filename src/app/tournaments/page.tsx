@@ -19,12 +19,11 @@ const Page = () => {
     offset: "0",
   });
 
-  const debouncedFilters = useDebounce(filters, 500); // 500ms debounce
+  const debouncedFilters = useDebounce(filters, 300);
 
   const handleFilterChange = (key: keyof TournamentParams, value: string) => {
-     console.log(key,value)
       let sortAttr = '';
-    let sortOrder = '';
+     let sortOrder = '';
   
     switch (value) {
       case 'latest':
@@ -58,7 +57,7 @@ const Page = () => {
   };
 
 
-  const handlePriceChange = (priceRange: number[]) => {
+  const handlePriceChange = (priceRange: string) => {
     setFilters(prev => ({ 
       ...prev, 
       startingPrice: priceRange 
@@ -66,10 +65,31 @@ const Page = () => {
   };
 
 
-  const handleFeenge = (priceRange: number[]) => {
+  const handleFeeChange = (feeRange: string) => {
     setFilters(prev => ({ 
       ...prev, 
-      startingPrice: priceRange 
+      participationFee: feeRange 
+    }));
+  };
+
+  const handleProductChange = (productId: string) => {
+    setFilters(prev => ({ 
+      ...prev, 
+      productId 
+    }));
+  };
+
+  const handleCategoryChange = (categoryId: string) => {
+    setFilters(prev => ({ 
+      ...prev, 
+      categoryId 
+    }));
+  };
+
+  const handleVipChange = (vip: string) => {
+    setFilters(prev => ({ 
+      ...prev, 
+      vip: vip === 'yes' ? 'true' : 'false' 
     }));
   };
 
@@ -134,11 +154,10 @@ const Page = () => {
               onPeriodChange={handlePeriodChange}
               onPriceChange={handlePriceChange}
               onGameChange={handleGameChange}
-              onProductChange={(product) => handleFilterChange('product', product)}
-              onFeeChange={(fee) => handleFilterChange('fee', fee.toString())}
-              onVipChange={(vip) => handleFilterChange('vip', vip)}
-              onCategoryChange={(category) => handleFilterChange('category', category)}
-            
+              onProductChange={handleProductChange}
+              onFeeChange={handleFeeChange}
+              onVipChange={handleVipChange}
+              onCategoryChange={handleCategoryChange}
             />
           </div>
 
@@ -149,10 +168,13 @@ const Page = () => {
                    <Loader2 className="animate-spin h-8 w-8" />
               </div>
             ) : (
-               
-              nextTournament?.data?.map((tournament, index) => (
-                <NextTournamentCard key={index} {...tournament} />
-              ))
+               nextTournament?.data?.length === 0 ? (
+                <p>No tournaments found</p>
+              ) : (
+                nextTournament?.data?.map((tournament, index) => (
+                  <NextTournamentCard key={index} {...tournament} />
+                ))
+              )
             )}
           </div>
         </div>
