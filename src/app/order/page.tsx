@@ -19,6 +19,7 @@ import {
   useGetPoints,
   useUpdateCart,
 } from "@/hooks/api";
+import { useCheckout as useCheckoutContext } from "@/context/isCheckout";
 import { DeleteIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -53,7 +54,7 @@ const voucherSchema = z.object({
 });
 
 const CartTable = () => {
-  const {  setIsCheckout } = useCheckout();
+  const {  setIsCheckout } = useCheckoutContext();
   const { data: cart, isLoading, refetch } = useGetCart();
 
   const [applyvocherResponse, setApplyvocherResponse] = useState(null);
@@ -105,7 +106,6 @@ const CartTable = () => {
             position: "top-right",
             style: { backgroundColor: "green", color: "white" },
           });
-          setIsCheckout(true);
           refetch();
         },
         onError: (error) => {
@@ -169,6 +169,8 @@ const CartTable = () => {
       onSuccess: () => {
         setCartData(cart?.data);
         router.push(`/checkout`);
+        setIsCheckout(true);
+
         toast.success("Checkout process started", {
           position: "top-right",
           style: { backgroundColor: "green", color: "white" },
