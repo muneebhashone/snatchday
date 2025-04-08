@@ -8,6 +8,7 @@ import { Edit2 } from "lucide-react";
 import CustomerTournaments from "./CustomerTournaments";
 import CustomerIPAdresses from "./CustomerIPAdresses";
 import CustomerOrdersDataList from "./CustomerOrdersDataList";
+import CustomerReturns from "./CustomerReturns";
 
 export function CustomerdEdit() {
   return (
@@ -97,12 +98,14 @@ export function CustomerdEdit() {
         <TabsContent value="returns">
           <Card className="border-none">
             <CardContent className="space-y-2">
-              <div className="text-center mt-10">
+              {/* <div className="text-center mt-10">
                 <h1 className="text-center font-bold text-2xl text-primary">
                   Customer Orders
                 </h1>
                 coming soon....
-              </div>
+              </div> */}
+
+                <CustomerReturns />
             </CardContent>
           </Card>
         </TabsContent>

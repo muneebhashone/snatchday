@@ -637,3 +637,9 @@ export const updateContent = async (id:string,data:WebSetting) => {
   const response =await axiosInstance.put(`/web-settings/content/${id}`,data)
   return response.data;
 }
+
+
+export const getCustomerReturnById=async(id:string)=>{
+  const response = await axiosInstance.get(`/customer/${id}`);
+  return response.data;
+}

@@ -79,6 +79,7 @@ import {
   getContent,
   deleteContent,
   updateContent,
+  getCustomerReturnById,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -712,3 +713,10 @@ export const useUpdateContent = () => {
     }
   });
 };
+
+export const useGetCustomerReturnById=(id:string)=>{
+  return useQuery({
+    queryKey: ["customerReturn",id],
+    queryFn: () => getCustomerReturnById(id),
+  });
+}

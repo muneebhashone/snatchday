@@ -81,16 +81,16 @@ const OrdersTable = () => {
                   </ul>
                 </TableCell>
                 <TableCell className="text-center">{order?.orderNumber || "N/A"}</TableCell>
-                <TableCell className="text-right">{`${order?.cartObject?.subTotal}€` || "N/A"}</TableCell>
-                <TableCell className="text-right">{`${order?.cartObject?.total}€` || "N/A"}</TableCell>
+                <TableCell className="text-right">{`${order?.cartObject?.subTotal.toFixed(2)}€` || "N/A"}</TableCell>
+                <TableCell className="text-right">{`${order?.cartObject?.total.toFixed(2)}€` || "N/A"}</TableCell>
                 <TableCell>
                   <div className={`text-center capitalize rounded-md py-1 px-2 ${order.status === "Paid" ? "bg-green-700 text-white" : order.status === "Complete" ? "bg-green-700 text-white" : "bg-primary text-white"}`}>
                     {order.status || "N/A"}
                   </div>
                 </TableCell> 
-                 <TableCell className="text-center">
+                 <TableCell className="text-center flex items-center justify-center">
                   <Link href={`/orders/${order?._id}`}>
-                    <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                    <Button variant="ghost" size="icon" className="hover:bg-gray-100 flex items-end">
                       <Eye className="h-5 w-5 text-foreground" />
                     </Button>
                   </Link>
