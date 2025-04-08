@@ -618,22 +618,3 @@ export const addToWishList = async (id: string) => {
   return response.data;
 };
 
-export const addContent = async (data: WebSetting) => {
-  const response = await axiosInstance.post(`/web-settings/content`, data);
-  return response.data;
-};
-
-export const getContent = async () => {
-  const response = await axiosInstance.get(`/web-settings/content`);
-  return response.data;
-};
-
-export const deleteContent = async (id: string) => {
-  const response = await axiosInstance.delete(`/web-settings/content/${id}`);
-  return response.data;
-};
-
-export const updateContent = async (id:string,data:WebSetting) => {
-  const response =await axiosInstance.put(`/web-settings/content/${id}`,data)
-  return response.data;
-}
