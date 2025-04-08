@@ -1,11 +1,8 @@
 "use client";
 import React from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useWishList } from '@/hooks/api';
 
 export function Wishlist() {
-    const { data: wishlistData } = useWishList();
-    console.log(wishlistData, "wishlistData");
 
   return (
     <Table>

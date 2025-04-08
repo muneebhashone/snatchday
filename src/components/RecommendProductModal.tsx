@@ -55,8 +55,8 @@ const RecommendProductModal = ({
     resolver: zodResolver(formSchema),
     defaultValues: user
       ? {
-          name: user?.user.name || "",
-          email: user?.user.email || "",
+          name: user?.user?.name || "",
+          email: user?.user?.email || "",
           friendEmail: "",
         }
       : {
