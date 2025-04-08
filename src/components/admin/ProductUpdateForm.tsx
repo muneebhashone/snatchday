@@ -62,7 +62,7 @@ const formSchema = z
     price: z.number().min(0, "Price must be 0 or greater"),
     // discounts: z.string().optional(),
     attributes: z.any(),
-    categoryIds: z.string(),
+    categoryIds: z.any(),
     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
@@ -169,7 +169,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const [previewUrls, setPreviewUrls] = useState<string[]>(
     product.images || []
   );
-  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: updateProduct,isPending } = useUpdateProduct();
   const { data: categoriesData } = useGetCategories() as {
     data: CategoryResponse;
   };
@@ -198,7 +198,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       price: product.price,
       discounts: product.discounts || [],
       attributes: Object.keys(product.attributes || {}),
-      // categoryIds: product.categoryIds[0]?._id || "",
+      categoryIds: product.categoryIds?.map((id) => id._id) || "",
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
@@ -318,7 +318,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             router.push("/admin/products");
           },
           onError: (error) => {
-            toast.error("Failed to update product");
+            toast.error(error?.response?.data.message || "Failed to update product");
             console.error(error);
           },
         }
@@ -1242,7 +1242,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           )}
 
           <div className="flex justify-end">
-            <Button type="submit">Update Product</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Updating..." : "Update Product"}
+            </Button>
           </div>
         </form>
       </Form>

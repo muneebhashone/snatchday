@@ -12,6 +12,7 @@ import { useGetTournaments } from "@/hooks/api";
 import { TournamentParams } from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Loader2 } from "lucide-react";
+import { ShareTournamentModal } from "@/components/ShareTournamentModal";
 
 const Page = () => {
   const [filters, setFilters] = useState<TournamentParams>({
@@ -19,7 +20,7 @@ const Page = () => {
     offset: "0",
   });
 
-  const debouncedFilters = useDebounce(filters, 300);
+  const debouncedFilters = useDebounce(filters, 1000);
 
   const handleFilterChange = (key: keyof TournamentParams, value: string) => {
       let sortAttr = '';
@@ -79,12 +80,35 @@ const Page = () => {
     }));
   };
 
-  const handleCategoryChange = (categoryId: string) => {
+  // const handleCategoryChange = (categoryId: string) => {
     
-    setFilters(prev => ({ 
-      ...prev, 
-      category: categoryId 
-    }));
+  //   setFilters(prev => ({ 
+  //     ...prev, 
+  //     category: categoryId
+  //   }));
+  // };
+
+  const handleCategoryChange = (categoryId: string) => {
+    setFilters(prev => {
+      // Convert previous string "[id1,id2]" into real array
+      const raw = prev.category || "[]";
+      const prevCategories: string[] = JSON.parse(raw);
+  
+      const isSelected = prevCategories.includes(categoryId);
+      const newCategories = isSelected
+        ? prevCategories.filter(id => id !== categoryId)
+        : [...prevCategories, categoryId];
+  
+      if (newCategories.length === 0) {
+        const { category, ...rest } = prev;
+        return rest;
+      }
+  
+      return {
+        ...prev,
+        category: JSON.stringify(newCategories),
+      };
+    });
   };
 
   const handleVipChange = (vip: string) => {
@@ -178,6 +202,7 @@ const Page = () => {
               ))}
             </div>
           )}
+       
           
           {/* <div className="py-5  sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           {isLoading ? (

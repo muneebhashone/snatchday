@@ -9,12 +9,16 @@ import {
   TableRow 
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import { Trash } from 'lucide-react'
+import { Trash, Search, X } from 'lucide-react'
 import { useDeleteCategory, useGetCategories } from '@/hooks/api'
 import { CreateCategoryDialog } from './CreateCategoryDialog'
 import { EditCategoryDialog } from './EditCategoryDialog'
 import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'  
+import { Input } from '@/components/ui/input'
+import { useDebounce } from '@/hooks/useDebounce'
+import { useState, useEffect } from 'react'
+
 interface CategoryType  {
   _id: string;
   name: string;
@@ -32,11 +36,29 @@ interface CategoryType  {
 }
 
 const Categories = () => {
-  // Fetch categories using the hook
-  const { data : getCategories, isLoading, isError } = useGetCategories()
-  const categories = getCategories?.data.categories
-  const { mutate: deleteCategory } = useDeleteCategory()
-  const queryClient = useQueryClient()
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({
+    limit: "10",
+    offset: "0",
+    name: "",
+  });
+  const debouncedSearchTerm = useDebounce(searchTerm.trim(), 1000);
+
+  // Update filters when debounced search term changes
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, name: debouncedSearchTerm }));
+  }, [debouncedSearchTerm]);
+  
+  // Fetch categories using the hook with filters
+  const { data: getCategories, isLoading, isError } = useGetCategories(filters);
+  const categories = getCategories?.data?.categories;
+  const totalCount = getCategories?.data?.total || getCategories?.data?.categories?.length || 0;
+  const totalPages = Math.ceil(totalCount / parseInt(filters.limit));
+  const currentPage = Math.floor(parseInt(filters.offset) / parseInt(filters.limit)) + 1;
+ 
+  const { mutate: deleteCategory } = useDeleteCategory();
+  const queryClient = useQueryClient();
+
   const handleDelete = (id: string) => {
     deleteCategory(id, {
       onSuccess: () => {
@@ -48,18 +70,33 @@ const Categories = () => {
         console.error(error);
       },
     });
-  }
+  };
+
+  const handlePageChange = (page: number) => {
+    setFilters(prev => ({
+      ...prev,
+      offset: ((page - 1) * parseInt(filters.limit)).toString()
+    }));
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-semibold">Categories</h1>
         <div className='flex gap-2'>
-          <CreateCategoryDialog />
-          {/* <Button variant="ghost" size="icon" className="bg-red-500 text-white hover:bg-red-600 transition-colors">
-              <Delete className='w-4 h-4'/>
-          </Button> */}
+          <div className="relative w-64">
+            {searchTerm ? <X  className="absolute right-2 top-3 h-4 w-4 text-muted-foreground"  onClick={()=>setSearchTerm('')}/> :
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />}
+            <Input
+              placeholder="Search by name "
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8"
+            />
           </div>
+          <CreateCategoryDialog />
         </div>
+      </div>
 
       <div className="bg-white rounded-md shadow-sm">
         {isLoading ? (
@@ -116,7 +153,42 @@ const Categories = () => {
                 )}
             </TableBody>
           </Table>
-          </div>
+          {totalCount > 0 && (
+            <div className="flex items-center justify-between px-4 py-4 border-t">
+              <div className="text-sm text-gray-500">
+                Showing {parseInt(filters.offset) + 1} to {Math.min(parseInt(filters.offset) + parseInt(filters.limit), totalCount)} of {totalCount} entries
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
         )}
       </div>
     </div>

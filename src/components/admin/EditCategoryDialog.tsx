@@ -1,3 +1,4 @@
+"use client"
 import {
   Dialog,
   DialogContent,
@@ -8,7 +9,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Edit } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useGetCategories, useGetCategoryById, useUpdateCategory } from "@/hooks/api"
 import { toast } from "sonner"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -50,7 +51,7 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
   image: z.any(),
-  parentCategoryId: z.string().optional(),
+  parentCategory: z.string().optional(),
   shop: z.boolean(),
   above: z.boolean(),
 })
@@ -62,7 +63,7 @@ interface EditCategoryDialogProps {
 export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
   const [open, setOpen] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string>(category.image)
-  const { mutate: updateCategory } = useUpdateCategory()
+  const { mutate: updateCategory,isPending  : isUpdateLoading } = useUpdateCategory()
   const queryClient = useQueryClient()
 
 
@@ -74,13 +75,27 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: category.name,
-      description: category.description,
-      parentCategoryId: category.parentCategory || '',
-      shop: category.shop,
-      above: category.above,
+      name: category?.name,
+      description: category?.description,
+      parentCategory: category?.parentCategory || '',
+      shop: category?.shop,
+      above: category?.above,
     },
   })
+
+
+  useEffect(() => {
+    if (category) {
+      form.reset({
+        name: category?.name,
+        description: category?.description,
+        parentCategory: category?.parentCategory || '',
+        shop: category?.shop,
+        above: category?.above,
+      });
+    }
+  }, [ category , form]);
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -224,20 +239,19 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
             /> */}
             <FormField
             control={form.control}
-            name="parentCategoryId"
-            defaultValue={category.parentCategory}
+            name="parentCategory"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Parent Category ID</FormLabel>
                 <FormControl>
                   {/* <Input placeholder="Parent category ID (optional)" {...field} /> */}
-                  <Select onValueChange={field.onChange} defaultValue={category.parentCategory}>
+                  <Select onValueChange={field.onChange} value={field.value} >
                     <SelectTrigger>
                       <SelectValue placeholder="Select parent category" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories?.map((category: Category) => (
-                        <SelectItem key={category._id} value={category._id}>
+                        <SelectItem key={category._id} value={category._id} >
                           {category.name}
                         </SelectItem>
                       ))}
@@ -295,8 +309,8 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit">
-                Update Category
+              <Button type="submit" disabled={isUpdateLoading}>
+                {isUpdateLoading ? "Updating..." : "Update Category"}
               </Button>
             </div>
           </form>

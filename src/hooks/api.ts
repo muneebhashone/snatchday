@@ -172,10 +172,14 @@ export const useCreateProduct = () => {
   });
 };
 
-export const useGetCategories = () => {
+export const useGetCategories = (params: {
+  limit?: string;
+  offset?: string;
+  name?: string;
+}) => {
   return useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
+    queryKey: ["categories", params],
+    queryFn: () => getCategories(params),
   });
 };
 
