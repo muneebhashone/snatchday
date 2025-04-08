@@ -75,18 +75,20 @@ const Page = () => {
   const handleProductChange = (productId: string) => {
     setFilters(prev => ({ 
       ...prev, 
-      productId 
+      product: productId 
     }));
   };
 
   const handleCategoryChange = (categoryId: string) => {
+    
     setFilters(prev => ({ 
       ...prev, 
-      categoryId 
+      category: categoryId 
     }));
   };
 
   const handleVipChange = (vip: string) => {
+    if(!vip) return;
     setFilters(prev => ({ 
       ...prev, 
       vip: vip === 'yes' ? 'true' : 'false' 
@@ -103,7 +105,7 @@ const Page = () => {
 
 
   const { data: nextTournament ,isLoading} = useGetTournaments(debouncedFilters);
-
+  
   return (
     <ClientLayout>
       <div className="mt-10">
@@ -155,6 +157,7 @@ const Page = () => {
               onPriceChange={handlePriceChange}
               onGameChange={handleGameChange}
               onProductChange={handleProductChange}
+              setFilters={setFilters}
               onFeeChange={handleFeeChange}
               onVipChange={handleVipChange}
               onCategoryChange={handleCategoryChange}
@@ -162,21 +165,35 @@ const Page = () => {
           </div>
 
           {/* Tournament Content */}
-          <div className="py-5 sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+          {isLoading ? (
+            <div className="col-span-full flex justify-center items-center">
+              <Loader2 className="animate-spin h-8 w-8" />
+            </div>
+          ) : nextTournament?.data?.length === 0 ? (
+            <p className="text-xl text-center">Tournaments not found</p> 
+          ) : (
+            <div className="py-5  sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+              {nextTournament?.data?.map((tournament, index) => (
+                <NextTournamentCard key={index} {...tournament} />
+              ))}
+            </div>
+          )}
+          
+          {/* <div className="py-5  sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           {isLoading ? (
               <div className="col-span-full flex justify-center items-center">
                    <Loader2 className="animate-spin h-8 w-8" />
               </div>
             ) : (
                nextTournament?.data?.length === 0 ? (
-                <p>No tournaments found</p>
+                <p className="text-xl">Tournament not found</p>
               ) : (
                 nextTournament?.data?.map((tournament, index) => (
                   <NextTournamentCard key={index} {...tournament} />
                 ))
               )
             )}
-          </div>
+          </div> */}
         </div>
 
         <div className="pb-60 pt-10">

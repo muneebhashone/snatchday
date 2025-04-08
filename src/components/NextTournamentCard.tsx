@@ -190,8 +190,8 @@ const NextTournamentCard = ({
         <div className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between">
           <div className="flex items-center gap-2">
             <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
-              <Link href={`/tournament-detail?id=${_id}`}>
-                To The Tournament
+              <Link href={`/tournament-detail?id=${id}`}>
+                To The Tournamentasdasdasd
               </Link>
             </Button>
             <div className="bg-orange-200 rounded-full h-6 w-6 flex items-center justify-center">
@@ -200,6 +200,7 @@ const NextTournamentCard = ({
           </div>
           <Button
             variant="ghost"
+            // onClick={handleTournamentShare}
             className="text-gray-600 bg-gray-50 rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]"
           >
             Share tournament

@@ -26,6 +26,8 @@ interface TournamentFilterProps {
   onFeeChange: (fee: string) => void;
   onVipChange: (vip: string) => void;
   onCategoryChange: (category: string) => void;
+  setFilters: (filters: Record<string, string[]>) => void;
+
 }
 
 const TournamentFilter = ({
@@ -36,9 +38,10 @@ const TournamentFilter = ({
   onFeeChange,
   onVipChange,
   onCategoryChange,
+  setFilters,
 }: TournamentFilterProps) => {
-  const [priceRange, setPriceRange] = useState([0, 100]);
-  const [participationFee, setParticipationFee] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [participationFee, setParticipationFee] = useState([0 , 1000]);
   const [period, setPeriod] = useState({ from: "", until: "" });
   const [game, setGame] = useState("");
   const [product, setProduct] = useState("");
@@ -46,40 +49,50 @@ const TournamentFilter = ({
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data: games, isLoading: isGamesLoader } = useGetGames(page);
+  // const { data: games, isLoading: isGamesLoader } = useGetGames(page);
   const { data: categories, isLoading: isCategLoding } = useGetCategories();
   const { data: Products, isLoading: isProductLoding } = useGetProducts();
 
   // console.log(Products,"alllll")
 
   const handleApplyFilters = () => {
-    onPeriodChange(period.from, period.until);
-    onPriceChange(`[${priceRange[0]},${priceRange[1]}]`);
-    onGameChange(game);
-    onProductChange(product);
-    onFeeChange(`[${participationFee[0]},${participationFee[1]}]`);
+    if(period.from !== "" || period.until !== ""){
+      onPeriodChange(period.from, period.until);
+
+    } if (priceRange[0] !== 0 || priceRange[1] !== 1000) {
+      onPriceChange(`[${priceRange[0]},${priceRange[1]}]`);
+    }
+     if(participationFee[0] !== 0 || participationFee[1] !== 1000) {
+      onFeeChange(`[${participationFee[0]},${participationFee[1]}]`);
+    }
+    if (game !== "") {
+        onGameChange(game);
+    }
+    if (product !== "") {
+      onProductChange(product);
+    }
     onVipChange(vip);
-    onCategoryChange(category);
+
+    if (category !== "") {
+      onCategoryChange([category]);
+    }
   };
 
   const handleClearFilters = () => {
     // Reset local state
-    setPriceRange([0, 100]);
-    setParticipationFee([0, 100]);
+    
+    setPriceRange([0, 1000]);
+    setParticipationFee([0, 1000]);
     setPeriod({ from: "", until: "" });
     setGame("");
     setProduct("");
     setVip("no");
-    setCategory("");
+    setCategory([]);
     
-    // Reset API filters
-    onPeriodChange("", "");
-    onPriceChange("");
-    onGameChange("");
-    onProductChange("");
-    onFeeChange("");
-    onVipChange("no");
-    onCategoryChange("");
+    setFilters({
+      limit: "10",
+      offset: "0",
+    });
   };
 
   // Helper function to check if any filter is active
@@ -88,16 +101,16 @@ const TournamentFilter = ({
       period.from !== "" ||
       period.until !== "" ||
       priceRange[0] !== 0 ||
-      priceRange[1] !== 100 ||
+      priceRange[1] !== 1000 ||
       participationFee[0] !== 0 ||
-      participationFee[1] !== 100 ||
+      participationFee[1] !== 1000 ||
       game !== "" ||
       product !== "" ||
       vip !== "no" ||
-      category !== ""
+      category.length > 0
     );
   };
-console.log(isAnyFilterActive(),"isAnyFilterActive")
+
   // Handle period change
   const handlePeriodChange = (from: string, until: string) => {
     const today = new Date().toISOString().split('T')[0];
@@ -169,9 +182,10 @@ console.log(isAnyFilterActive(),"isAnyFilterActive")
             <DualRangeSlider
               label={(value) => value}
               value={priceRange}
+              
               onValueChange={setPriceRange}
-              min={0}
-              max={100}
+              min={5}
+              max={1000}
               step={1}
             />
             <div className="flex items-center justify-between mt-1 text-sm text-gray-500">
@@ -184,9 +198,9 @@ console.log(isAnyFilterActive(),"isAnyFilterActive")
         {/* Game Name */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600 mb-2">Game name</p>
-          <Select onValueChange={(value) => handleGameChange(value)}>
+          <Select disabled onValueChange={(value) => handleGameChange(value)}>
             <SelectTrigger className="h-12 rounded-xl bg-white border-gray-200 focus:border-primary">
-              <SelectValue placeholder="Choose" />
+              <SelectValue placeholder="Coming soon" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="powerblocks">PowerBlocks</SelectItem>
@@ -225,8 +239,8 @@ console.log(isAnyFilterActive(),"isAnyFilterActive")
               label={(value) => value}
               value={participationFee}
               onValueChange={setParticipationFee}
-              min={0}
-              max={100}
+              min={5}
+              max={1000}
               step={1}
             />
             <div className="flex items-center justify-between mt-1 text-sm text-gray-500">
@@ -265,7 +279,7 @@ console.log(isAnyFilterActive(),"isAnyFilterActive")
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
             <SelectContent>
-              {categories?.data?.categories?.map((category) => (
+              {categories?.data?.categories?.slice().reverse().map((category) => (
                 <SelectItem key={category._id} value={category._id}>
                   {category.name}
                 </SelectItem>

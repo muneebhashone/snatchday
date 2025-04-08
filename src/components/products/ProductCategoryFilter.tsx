@@ -23,7 +23,7 @@ const ProductCategoryFilter = ({
   onPriceChange,
   isLoading
 }: ProductCategoryFilterProps) => {
-  const [priceRange, setPriceRange] = React.useState([10, 100000]);
+  const [priceRange, setPriceRange] = React.useState([5, 1000]);
 
     // const {data:filtersData, isLoading} = useGetFilters()
       
@@ -140,8 +140,8 @@ const ProductCategoryFilter = ({
           <DualRangeSlider
             value={priceRange}
             onValueChange={handlePriceChange}
-            min={100}
-            max={2000}
+            min={5}
+            max={1000}
             step={10}
           />
           {/* <Slider
