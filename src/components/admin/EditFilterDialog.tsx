@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUpdateFilter, useGetCategories } from "@/hooks/api";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -63,18 +63,36 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
   const [values, setValues] = useState(filter.value);
   const queryClient = useQueryClient();
 
-  const { mutate: updateFilter } = useUpdateFilter();
-  const { data: getCategories } = useGetCategories();
+  const { mutate: updateFilter,isPending } = useUpdateFilter();
+  const { data: getCategories } = useGetCategories({
+      params: {
+        limit: "99999",
+        offset: "0"
+      }
+  });
   const categories = getCategories?.data.categories || [];
+
+  console.log(filter,"filter123444")
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: filter.name,
-      value: filter.value,
-      category: filter.category,
+      name: "",
+      value: [],
+      category: ""
     },
   });
+
+
+    useEffect(()=>{
+      if(filter){
+        form.reset({
+          name: filter.name,
+          value: filter.value,
+          category: filter?.category?._id,
+        })
+      }
+    },[filter])
 
   const handleAddValue = () => {
     if (currentValue.trim()) {
@@ -213,7 +231,7 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
                     <SelectContent>
                       {categories.map((category: Category) => (
                         <SelectItem key={category._id} value={category._id}>
-                          {category.displayName || category.name}
+                          {category.name || category.displayName}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -231,7 +249,9 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
               >
                 Cancel
               </Button>
-              <Button type="submit">Update Filter</Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Updating..." : "Update Filter"}
+              </Button>
             </div>
           </form>
         </Form>

@@ -1,7 +1,7 @@
-import React from "react";
+"use client "
+import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { StaticImageData } from "next/image";
 import { Separator } from "./ui/separator";
 import { Heart } from "lucide-react";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import NotFoundImage from "@/app/images/notfoundProduct.jpg";
 import { calculateCountdown } from "@/lib/utils";
 import { start } from "repl";
 import CountdownDisplay from "./CountdownProps";
+import { ShareTournamentModal } from "./ShareTournamentModal";
 interface NextTournamentCardProps {
   id: string;
   article: string;
@@ -56,9 +57,14 @@ const NextTournamentCard = ({
   tournamentId,
   _id,
 }: NextTournamentCardProps) => {
-  console.log(end, "end");
   const countDown = calculateCountdown(start);
   const endDate = calculateCountdown(end);
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
+
+  
+const handleTournamentShare=() =>{
+  setShareModalOpen(true);
+}
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300 items-center">
       {/* Left Column - Product Image */}
@@ -183,8 +189,8 @@ const NextTournamentCard = ({
         <div className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between">
           <div className="flex items-center gap-2">
             <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
-              <Link href={`/tournament-detail?id=${id}`}>
-                To The Tournamentasdasdasd
+              <Link href={`/tournament-detail?id=${_id}`}>
+                To The Tournament
               </Link>
             </Button>
             <div className="bg-orange-200 rounded-full h-6 w-6 flex items-center justify-center">
@@ -193,11 +199,17 @@ const NextTournamentCard = ({
           </div>
           <Button
             variant="ghost"
-            // onClick={handleTournamentShare}
+            onClick={handleTournamentShare}
             className="text-gray-600 bg-gray-50 rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]"
           >
             Share tournament
           </Button>
+
+          <ShareTournamentModal
+            tournamentId={_id}
+            open={isShareModalOpen}
+            onClose={() => setShareModalOpen(false)}
+          />
         </div>
       </div>
     </div>

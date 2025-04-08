@@ -41,8 +41,9 @@ const TournamentDetailHero = ({
   const { user } = useUserContext();
   const { mutate: participateTournament, isPending } =
     useParticipateTournament();
-  const { mutate: shareTournament, isPending: isSharePending } =
-    useShareTournament();
+ 
+
+
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const [isShareModalOpen, setShareModalOpen] = useState(false);
 
