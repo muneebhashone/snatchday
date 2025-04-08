@@ -30,10 +30,12 @@ const formSchema = z.object({
   salutation: z.enum(["Mister", "Miss", "Doctor"], {
     required_error: "Salutation is required",
   }),
+
   title: z.enum(["Dr.", "Prof.", "Mr.", "Ms."], {
     required_error: "Title is required",
   }),
-  username: z.string().min(1, "Username is required"),
+
+  name: z.string().min(1, "Name is required"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   street: z.string().optional(),
@@ -54,40 +56,40 @@ export default function CustomerForm() {
   const { data: customer } = useGetCustomerById(paramsId);
   const customerData = customer?.data.customer;
   const { mutate: updateCustomer, isPending } = useUpdateCustomer(paramsId);
-  console.log(customer);
+  console.log(customerData,"datacustomer");
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      salutation: "Mister",
-      title: "Dr.",
-      username: "",
-      firstName: "",
-      lastName: "",
-      street: "",
-      location: "",
-      country: "Germany",
-      email: "",
-      approved: false,
+      salutation: customerData?.salutation || "Mister",
+      title: customerData?.title || "Dr.",
+      name: customerData?.username || "",
+      firstName: customerData?.firstName || "",
+      lastName: customerData?.lastName || "",
+      street: customerData?.street || "",
+      location: customerData?.location || "",
+      country: customerData?.country || "Germany",
+      email: customerData?.email || "",
+      approved: customerData?.approved || false,
     },
   });
 
   useEffect(() => {
     if (customerData) {
       form.reset({
-        salutation: customerData.salutation || "Mister",
-        title: customerData.title || "Dr.",
-        username: customerData.name || "",
-        firstName: customerData.firstName || "",
-        lastName: customerData.lastName || "",
-        street: customerData.street || "",
-        location: customerData.location || "",
-        country: customerData.country || "Germany",
-        email: customerData.email || "",
-        approved: customerData.approved || false,
+        salutation: customerData?.salutation || "Mister",
+        title: customerData?.title || "Dr.",
+        name: customerData?.name || "",
+        firstName: customerData?.firstName || "",
+        lastName: customerData?.lastName || "",
+        street: customerData?.street || "",
+        location: customerData?.location || "",
+        country: customerData?.country || "Germany",
+        email: customerData?.email || "",
+        approved: customerData?.approved || false,
       });
     }
-  }, [customer?.approved, customerData, form]);
+  }, [ customerData, form]);
 
   const onSubmitted = (values: any) => {
     const cleanedValues = JSON.parse(
@@ -119,7 +121,7 @@ export default function CustomerForm() {
                 <FormLabel>Salutation</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -145,7 +147,7 @@ export default function CustomerForm() {
                 <FormLabel>Title</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -166,12 +168,12 @@ export default function CustomerForm() {
           <div className="grid grid-cols-5">
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem className="col-span-4">
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Enter username" />
+                    <Input {...field} placeholder="Enter name" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -269,7 +271,7 @@ export default function CustomerForm() {
                 <FormLabel>Country</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
