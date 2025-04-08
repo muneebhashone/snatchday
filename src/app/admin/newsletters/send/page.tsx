@@ -1,5 +1,4 @@
 "use client";
-
 import { useCallback, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import RichTextEditor from "@/components/admin/RichTextEditor";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
   Breadcrumb,
@@ -28,6 +26,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { toast } from "sonner";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 const formSchema = z.object({
   subject: z.string().nonempty(),
@@ -40,7 +39,7 @@ const formSchema = z.object({
 
 type IForm = z.infer<typeof formSchema>;
 
-export default function NewsletterComposer() {
+const NewsletterComposer = () => {
   const observer = useRef<IntersectionObserver>();
   const [showCustomers, setShowCustomers] = useState(false);
   const [selectedCustomers, setSelectedCustomers] = useState<
@@ -59,8 +58,6 @@ export default function NewsletterComposer() {
     fetchNextPage,
     hasNextPage,
   } = useCustomers(filters);
-
-  // console.log(hasNextPage, isLoading, fetchNextPage);
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
@@ -108,14 +105,13 @@ export default function NewsletterComposer() {
         toast.error("error");
       },
     });
+    // console.log(mail, "maildata log");
   };
   const lastElementRef = useCallback(
     (node: HTMLDivElement) => {
-      // console.log(node);
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
       observer.current = new IntersectionObserver((entries) => {
-        // console.log({ entries });
         if (entries[0].isIntersecting && hasNextPage) {
           console.log("FETCHING NEXT PAGE");
           fetchNextPage();
@@ -367,7 +363,7 @@ export default function NewsletterComposer() {
                     </div>
                     <div className="flex-1">
                       {/* Rich text editor toolbar */}
-                      <FormField
+                      {/* <FormField
                         control={form.control}
                         name="message"
                         render={({ field }) => (
@@ -380,7 +376,7 @@ export default function NewsletterComposer() {
                             </FormControl>
                           </FormItem>
                         )}
-                      />
+                      /> */}
                     </div>
                   </div>
                   {isPending ? (
@@ -399,3 +395,5 @@ export default function NewsletterComposer() {
     );
   }
 }
+
+export default NewsletterComposer;

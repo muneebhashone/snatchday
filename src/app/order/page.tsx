@@ -19,6 +19,7 @@ import {
   useGetPoints,
   useUpdateCart,
 } from "@/hooks/api";
+import { useCheckout as useCheckoutContext } from "@/context/isCheckout";
 import { DeleteIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -53,6 +54,7 @@ const voucherSchema = z.object({
 });
 
 const CartTable = () => {
+  const {  setIsCheckout } = useCheckoutContext();
   const { data: cart, isLoading, refetch } = useGetCart();
 
   const [applyvocherResponse, setApplyvocherResponse] = useState(null);
@@ -106,8 +108,9 @@ const CartTable = () => {
           });
           refetch();
         },
-        onError: () => {
-          toast.error("Failed to update cart", {
+        onError: (error) => {
+          console.log(error,"error11")
+          toast.error(error?.response?.data?.message || "Failed to update cart", {
             position: "top-right",
             style: { backgroundColor: "red", color: "white" },
           });
@@ -166,13 +169,15 @@ const CartTable = () => {
       onSuccess: () => {
         setCartData(cart?.data);
         router.push(`/checkout`);
+        setIsCheckout(true);
+
         toast.success("Checkout process started", {
           position: "top-right",
           style: { backgroundColor: "green", color: "white" },
         });
       },
       onError: (error) => {
-        toast.error("Failed to checkout" + error.response.data.message, {
+        toast.error(error?.response?.data?.message || "Failed to checkout", {
           position: "top-right",
           style: { backgroundColor: "red", color: "white" },
         });
@@ -193,8 +198,7 @@ const CartTable = () => {
           });
         },
         onError: (error) => {
-          console.log("Failed to apply voucher", error);
-          toast.error("Failed to apply voucher", {
+          toast.error(error?.response.data.message || "Failed to apply voucher", {
             position: "top-right",
             style: { backgroundColor: "red", color: "white" },
           });

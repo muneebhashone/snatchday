@@ -5,16 +5,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Edit } from "lucide-react"
-import { useState } from "react"
-import { useUpdateFilter, useGetCategories } from "@/hooks/api"
-import { toast } from "sonner"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { useQueryClient } from "@tanstack/react-query"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
+import { useState } from "react";
+import { useUpdateFilter, useGetCategories } from "@/hooks/api";
+import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Form,
   FormControl,
@@ -22,15 +22,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 interface Category {
   _id: string;
@@ -51,21 +51,21 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   value: z.array(z.string()).min(1, "At least one value is required"),
   category: z.string().min(1, "Category is required"),
-})
+});
 
 interface EditFilterDialogProps {
   filter: Filter;
 }
 
 export function EditFilterDialog({ filter }: EditFilterDialogProps) {
-  const [open, setOpen] = useState(false)
-  const [currentValue, setCurrentValue] = useState("")
-  const [values, setValues] = useState(filter.value)
-  const queryClient = useQueryClient()
+  const [open, setOpen] = useState(false);
+  const [currentValue, setCurrentValue] = useState("");
+  const [values, setValues] = useState(filter.value);
+  const queryClient = useQueryClient();
 
-  const { mutate: updateFilter } = useUpdateFilter()
-  const { data: getCategories } = useGetCategories()
-  const categories = getCategories?.data.categories || []
+  const { mutate: updateFilter } = useUpdateFilter();
+  const { data: getCategories } = useGetCategories();
+  const categories = getCategories?.data.categories || [];
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,22 +74,22 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
       value: filter.value,
       category: filter.category,
     },
-  })
+  });
 
   const handleAddValue = () => {
     if (currentValue.trim()) {
-      const newValues = [...values, currentValue.trim()]
-      setValues(newValues)
-      form.setValue('value', newValues)
-      setCurrentValue("")
+      const newValues = [...values, currentValue.trim()];
+      setValues(newValues);
+      form.setValue("value", newValues);
+      setCurrentValue("");
     }
-  }
+  };
 
   const handleRemoveValue = (index: number) => {
-    const newValues = values.filter((_, i) => i !== index)
-    setValues(newValues)
-    form.setValue('value', newValues)
-  }
+    const newValues = values.filter((_, i) => i !== index);
+    setValues(newValues);
+    form.setValue("value", newValues);
+  };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     updateFilter(
@@ -98,36 +98,38 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
         data: {
           name: data.name,
           value: data.value,
-          category: data.category
-        }
+          category: data.category,
+        },
       },
       {
         onSuccess: () => {
-          toast.success("Filter updated successfully")
-          setOpen(false)
-          queryClient.invalidateQueries({ queryKey: ['filters'] });
+          toast.success("Filter updated successfully");
+          setOpen(false);
+          queryClient.invalidateQueries({ queryKey: ["filters"] });
         },
         onError: (error) => {
-          toast.error("Failed to update filter")
-          console.error(error)
-        }
+          toast.error("Failed to update filter");
+          console.error(error);
+        },
       }
-    )
-  }
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="text-blue-500 hover:text-blue-600 transition-colors">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-blue-500 hover:text-blue-600 transition-colors"
+        >
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Edit Filter</DialogTitle>
-          <DialogDescription>
-            Update filter information
-          </DialogDescription>
+          <DialogDescription>Update filter information</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -157,9 +159,9 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
                       value={currentValue}
                       onChange={(e) => setCurrentValue(e.target.value)}
                       onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddValue()
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddValue();
                         }
                       }}
                     />
@@ -199,7 +201,10 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a category" />
@@ -219,16 +224,18 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
             />
 
             <div className="flex justify-end gap-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit">
-                Update Filter
-              </Button>
+              <Button type="submit">Update Filter</Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

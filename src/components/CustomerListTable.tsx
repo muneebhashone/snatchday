@@ -47,7 +47,7 @@ export function CustomeListTable({
           <TableHead className="text-primary font-bold">
             Customer group
           </TableHead>
-          <TableHead className="text-primary font-bold">Status</TableHead>
+          <TableHead className="text-primary font-bold">Approve</TableHead>
           <TableHead className="text-primary font-bold">IP</TableHead>
           <TableHead className="text-primary font-bold">Created</TableHead>
           <TableHead className="text-primary font-bold">Points</TableHead>
@@ -62,7 +62,7 @@ export function CustomeListTable({
             <TableCell className="font-bold">{customer.name}</TableCell>
             <TableCell className="">{customer.email}</TableCell>
             <TableCell>{customer.group}</TableCell>
-            <TableCell>{customer.isActive ? "Active" : "inActive"}</TableCell>
+            <TableCell>{customer.approved ? "Approved" : "Not Approve"}</TableCell>
             <TableCell className="">{customer.ip}</TableCell>
             <TableCell className="">
               {customer.createdAt.split("T")[0]}

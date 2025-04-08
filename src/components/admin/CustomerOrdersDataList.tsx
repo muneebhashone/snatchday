@@ -56,34 +56,33 @@ const CustomerOrdersDataList = () => {
         </TableHeader>
         <TableBody>
           {orders?.data.orders.map((order, i) => (
-            <TableRow className="" key={order.orderNumber}>
+            <TableRow className="" key={order?.orderNumber}>
               <TableCell>
                 <span className="font-bold">{i + 1}</span>
               </TableCell>
               <TableCell>
-                <span className="font-bold">{order.orderNumber}</span>
+                <span className="font-bold">{order?.orderNumber || "N/A"}</span>
               </TableCell>
               <TableCell className="">
-                {order.createdAt.split("T")[0]}
+                {order?.createdAt?.split("T")[0] || "N/A"}
               </TableCell>
               <TableCell className="">
-                {order?.cartObject.cart.map((cart, i) => (
-                  <span key={i}>{cart.product.article}</span>
+                {order?.cartObject?.cart?.map((cart, i) => (
+                  <span key={i}>{cart?.product?.article || "N/A"}</span>
                 ))}
               </TableCell>
-              <TableCell>{order?.cartObject.total}</TableCell>
-              <TableCell>{order?.cartObject.subTotal}</TableCell>
-              <TableCell>
+              <TableCell>{`${Number(order?.cartObject?.total).toFixed(2)} €`}</TableCell>
+              <TableCell>{`${Number(order?.cartObject?.subTotal).toFixed(2)} €`}</TableCell>
+              <TableCell className="capitalize">
                 <span
-                  className={`px-4 py-2 rounded-full ${
-                    order?.status === "pending"
+                  className={`px-4 py-2 rounded-full ${order?.status === "pending"
                       ? "bg-primary text-white"
                       : order?.status === "paid"
-                      ? "bg-green-800 text-white"
-                      : order?.status === "cancelled"
-                      ? "bg-red-600 text-white"
-                      : "border border-gray-300 shadow-sm text-foreground"
-                  }`}
+                        ? "bg-green-800 text-white"
+                        : order?.status === "cancelled"
+                          ? "bg-red-600 text-white"
+                          : "border border-gray-300 shadow-sm text-foreground"
+                    }`}
                 >
                   {order?.status}
                 </span>
@@ -105,23 +104,22 @@ const CustomerOrdersDataList = () => {
           <TableRow>
             <TableCell colSpan={8} className="text-center">
               <button
-                onClick={() => {
-                  setPage((prev) => Math.max(prev - 5, 0)); // negative value nhi jaegi
-                }}
+                disabled={page === 0}
+                className={`m-1 px-4 py-2 rounded ${page === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary hover:text-white'}`}
+                onClick={() => setPage((prev) => Math.max(0, prev - 5))}
               >
-                Prev
+                Previous
               </button>
               {Array.from(
                 {
                   length: Math.ceil((orders?.data.total || 0) / 5),
                 },
                 (_, index) => {
-                  console.log(index);
                   return (
                     <button
                       key={index}
-                      className={`page-indicator m-1 ${
-                        index === page / 5 ? "bg-primary px-2 text-white" : ""
+                      className={`page-indicator m-1 px-4 py-2 rounded ${
+                        index === page / 5 ? "bg-primary text-white" : "hover:bg-primary/10"
                       }`}
                       onClick={() => setPage(index * 5)}
                     >
@@ -131,10 +129,16 @@ const CustomerOrdersDataList = () => {
                 }
               )}
               <button
+                disabled={page >= (orders?.data.total || 0) - 5}
+                className={`m-1 px-4 py-2 rounded ${
+                  page >= (orders?.data.total || 0) - 5 
+                  ? 'opacity-50 cursor-not-allowed' 
+                  : 'hover:bg-primary hover:text-white'
+                }`}
                 onClick={() => {
                   setPage((prev) =>
-                    Math.min(prev + 5, (orders?.data.total || 0) - page)
-                  ); // last page ke bad api hit nhi krega
+                    Math.min(prev + 5, (orders?.data.total || 0) - 5)
+                  );
                 }}
               >
                 Next

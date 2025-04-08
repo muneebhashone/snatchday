@@ -76,8 +76,9 @@ export function Product() {
   const { data: productsData, isLoading: isProductsLoading } =
     useGetProducts(filters);
   const { data: categoriesData } = useGetCategories();
+  
   const { mutate: deleteProduct } = useDeleteProduct();
-
+  console.log(categoriesData?.data?.categories);
   const handleDelete = (id: string) => {
     deleteProduct(id, {
       onSuccess: () => {
@@ -238,9 +239,17 @@ export function Product() {
                   <TableCell>{product?.price || "N/A"}</TableCell>
                   <TableCell>{product?.stock || "N/A"}</TableCell>
                   <TableCell>
-                    {categoriesData?.data?.categories?.find(
-                      (category: Category) => category._id === product.categoryIds[0]
-                    )?.displayName || "N/A"}
+                    {product?.categoryIds.map((categoryId) => (
+                      <div key={categoryId}>
+                        {categoriesData?.data?.categories?.find(
+                          (cat) => cat._id === categoryId?._id
+                        )?.displayName || "N/A"}
+                      </div>
+                    ))}
+                    {/* {categoriesData?.data?.categories?.find(
+                      (category: Category) =>
+                        category._id === product.categoryIds[0]._id
+                    )?.displayName || "N/A"} */}
                   </TableCell>
                   <TableCell>{product?.type}</TableCell>
                   <TableCell>

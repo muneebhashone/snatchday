@@ -54,7 +54,6 @@ const ReturnDetailsPage = () => {
     );
 
   const returnData = data?.data;
-  console.log(returnData, "returnData");
 
   return (
     <div className="my-4 min-w-[1440px] mx-auto px-4 py-8">
@@ -131,17 +130,17 @@ const ReturnDetailsPage = () => {
                     {/* <h4 className="font-semibold">Product Details</h4> */}
                     <p className="text-sm text-gray-500">
                       <Image
-                        src={item?.product.images[0]}
-                        alt={item?.product.description}
+                        src={item?.product?.images[0]}
+                        alt={item?.product?.description}
                         width={50}
                         height={50}
                       />
                     </p>
                     <p className="text-sm text-gray-500">
-                      <strong>Name:</strong> {item?.product.name}
+                      <strong>Name:</strong> {item?.product?.name}
                     </p>
                     <p className="text-sm text-gray-500">
-                      <strong>Article:</strong> {item?.product.article}
+                      <strong>Article:</strong> {item?.product?.article}
                     </p>
                     <p className="text-sm text-gray-500">
                       <strong>Quantity:</strong> {item?.quantity}
@@ -150,12 +149,13 @@ const ReturnDetailsPage = () => {
                       <strong>Reason:</strong> {item?.reason}
                     </p>
                     <p className="text-sm text-gray-500">
-                      <strong>Price:</strong> {item?.product.price.toFixed()}€
+                      <strong>Price:</strong> {item?.product?.price.toFixed()}€
                     </p>
-                    <p className="text-sm text-gray-500">
+                    {/* <p className="text-sm text-gray-500">
                       <strong>Created:</strong>{" "}
+                      {console.log(item, "item11")}
                       {formatDate(item?.product?.createdAt || "", "dd/MM/yyyy")}
-                    </p>
+                    </p> */}
                   </div>
                 </div>
               </div>

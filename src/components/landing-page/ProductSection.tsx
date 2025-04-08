@@ -14,6 +14,7 @@ import ProductCard from "../ProductCard";
 const ProductSection = () => {
   const { data: currentOffers, isLoading } = useCurrentOffers();
   const products = currentOffers?.data.products;
+
   return (
     <section className="py-10">
       <div className="container max-w-[1920px] mx-auto px-5 md:px-20">
@@ -43,17 +44,26 @@ const ProductSection = () => {
           className="w-full "
         >
           <CarouselContent>
-            {products?.map((product, index) => (
-              <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4">
-                <div className="p-1">
-                  <Card className="border-transparent">
-                    <CardContent className="flex aspect-square items-center justify-center p-0 ">
+
+            {
+              products?.length > 0 && products !== null ? (
+                products?.map((product, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/4">
+                    <div className="p-1">
+                      <Card className="border-transparent">
+                        <CardContent className="flex aspect-square items-center justify-center p-0 ">
                       <ProductCard key={index} {...product} />
                     </CardContent>
                   </Card>
                 </div>
-              </CarouselItem>
-            ))}
+              </CarouselItem> 
+            ))
+            ) : (
+              <div className="flex items-center justify-center   w-full">
+                <p className="text-gray-600"> Current offers not available</p>
+              </div>
+            )
+            }
           </CarouselContent>
           <CarouselPrevious className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -left-24" />
           <CarouselNext className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -right-24" />

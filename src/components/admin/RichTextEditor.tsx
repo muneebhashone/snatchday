@@ -1,11 +1,17 @@
+
 "use client";
+import React from "react";
+import  ReactQuill, { Quill } from "react-quill";
+// import dynamic from "next/dynamic";
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import ImageUploader from "quill-image-uploader";
+// import { useRef } from "react";
 
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+// const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
+
+Quill.register("modules/imageUploader", ImageUploader);
 const modules = {
   toolbar: [
     [{ font: [] }, { size: [] }],
@@ -19,17 +25,39 @@ const modules = {
     ["link", "image", "video"],
     ["clean"],
   ],
+  imageUploader: {
+    upload: (file) => {
+      return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append("images", file);
+        fetch(
+          "https://test-node-vercel-production.up.railway.app/newsletter/images",
+          {
+            method: "POST",
+            body: formData,
+          }
+        )
+          .then((response) => response.json())
+          .then((result) => {
+            console.log(result);
+            resolve(result.data.images[0]);
+          })
+          .catch((error) => {
+            reject("Upload failed");
+            console.error("Error:", error);
+          });
+      });
+    },
+  },
 };
 
 const RichTextEditor = ({ onChange, value }) => {
-//   const [content, setContent] = useState("");
-//   const handleOnChange = (data) => {
-//     setContent(data);
-//     sendContent(data);
-//   };
+  
+  // const ref = useRef();
   return (
     <div className="w-full">
       <ReactQuill
+        // ref={ref}
         theme="snow"
         value={value}
         modules={modules}

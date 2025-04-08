@@ -27,7 +27,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useGetCart, useGetCategories, useGetMyProfile } from "@/hooks/api";
+import {
+  useGetCart,
+  useGetCategories,
+  useGetMyProfile,
+  useWishList,
+} from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 // import iphone from '@/app/images/iphone.png'
 // import laptop1 from '@/app/images/laptop.png'
@@ -50,6 +55,8 @@ interface SubCategory {
 
 const Header = () => {
   const { data: cartData } = useGetCart();
+  const { data: wishlist } = useWishList();
+  // console.log(wishlist?.data.products?.length);
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -394,9 +401,17 @@ const Header = () => {
           <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
             <Login />
           </button>
-          <button className="hover:text-primary bg-transparent p-0 text-[#888888]">
+          <Link
+            href="/wishlist"
+            className="relative hover:text-primary bg-transparent p-0 text-[#888888]"
+          >
+            <div className="absolute -top-4 -right-3 bg-primary text-white px-[6px] py-[2px] text-xs rounded-full">
+              {wishlist?.data.products?.length
+                ? wishlist?.data.products?.length
+                : "0"}
+            </div>
             <Heart className="h-6 w-6 " />
-          </button>
+          </Link>
           <button
             onClick={handleCartClick}
             className="hover:text-primary bg-transparent p-0 text-[#888888] relative flex items-center gap-4 cursor-pointer"

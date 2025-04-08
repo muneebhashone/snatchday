@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -9,12 +10,14 @@ import {
 } from "@/components/ui/table";
 import { useGetMyReturns } from "@/hooks/api";
 import { formatDate } from "date-fns";
-import { Edit2, Eye, Loader } from "lucide-react";
+import {  Eye, Loader } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useParams } from "next/navigation";
 
-export function ReturnListTable() {
+const CustomerReturns = () => {
+  const { id } = useParams();
   const [pagination, setPagination] = useState({
     pageSize: 10,
     currentPage: 1,
@@ -23,6 +26,7 @@ export function ReturnListTable() {
     status: "",
     orderNumber: "",
     articleId: "",
+    customerId: id,
   });
 
   const debouncedFilters = useDebounce(filters, 300);
@@ -36,7 +40,6 @@ export function ReturnListTable() {
     offset: (pagination.currentPage - 1) * pagination.pageSize,
     ...debouncedFilters,
   });
-  console.log(returns, "returns11user");
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -120,7 +123,7 @@ export function ReturnListTable() {
           ) : returns?.data?.returns?.length > 0 ? (
             returns?.data?.returns?.map((returnItem, index) => (
               <TableRow key={index}>
-                <TableCell>
+                <TableCell className="min-w-[150px]">
                   {returnItem?.productsData?.map((product, i) => (
                     <ul key={i}>
                       <li>{product?.product?.article || "N/A"}</li>
@@ -145,7 +148,7 @@ export function ReturnListTable() {
                 </TableCell>
                 <TableCell className="text-center flex gap-2 justify-center items-center">
                   <Link href={`/admin/orders/returns/update/${returnItem._id}`}>
-                    <button className="hover:bg-gray-100">
+                    <button className="hover:bg-gray-100 flex items-end">
                       <Eye className="h-5 w-5 text-foreground" />
                     </button>
                   </Link>
@@ -163,11 +166,12 @@ export function ReturnListTable() {
             </TableRow>
           )}
         </TableBody>
-        <TableFooter className="w-full">
-          <TableRow>
-            <TableCell colSpan={8} className="text-center">
-              <button
-                className={`${
+        {returns?.data?.total > 10 && (
+          <TableFooter className="w-full">
+            <TableRow>
+              <TableCell colSpan={8} className="text-center">
+                <button
+                  className={`${
                   pagination.currentPage === 1
                     ? "text-gray-300 cursor-not-allowed"
                     : ""
@@ -219,7 +223,10 @@ export function ReturnListTable() {
             </TableCell>
           </TableRow>
         </TableFooter>
-      </Table>
+      )}
+        </Table>
     </>
   );
 }
+
+export default CustomerReturns;

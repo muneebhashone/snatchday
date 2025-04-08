@@ -2,6 +2,7 @@
 import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "../ui/slider";
+import { DualRangeSlider } from "../tournaments/dualSlider";
 
 interface ProductCategoryFilterProps {
   filters: Array<{
@@ -22,7 +23,7 @@ const ProductCategoryFilter = ({
   onPriceChange,
   isLoading
 }: ProductCategoryFilterProps) => {
-  const [priceRange, setPriceRange] = React.useState([1000, 100000]);
+  const [priceRange, setPriceRange] = React.useState([5, 1000]);
 
     // const {data:filtersData, isLoading} = useGetFilters()
       
@@ -110,11 +111,14 @@ const ProductCategoryFilter = ({
           ))}
         </div>
       ) : (
-        filters.map((filter) => (
+        filters.map((filter) => {
+          // Get unique values using Set
+          const uniqueValues = Array.from(new Set(filter.values));
+          return uniqueValues.length > 0 && (
           <div key={filter.id} className="space-y-2">
             <h3 className="font-medium text-lg">{filter.name}</h3>
             <div className="space-y-2">
-              {filter.values.map((value) => (
+              {uniqueValues.map((value) => (
                 <label key={value} className="flex items-center space-x-2">
                   <Checkbox
                     checked={selectedFilters[filter.name]?.includes(value) || false}
@@ -126,14 +130,21 @@ const ProductCategoryFilter = ({
               ))}
             </div>
           </div>
-        ))
+          )})
       )}
 
       {/* Price Range Filter */}
       <div className="space-y-4">
         <p className="font-medium text-gray-700">Price Range</p>
         <div className="space-y-4">
-          <Slider
+          <DualRangeSlider
+            value={priceRange}
+            onValueChange={handlePriceChange}
+            min={5}
+            max={1000}
+            step={10}
+          />
+          {/* <Slider
          defaultValue={[2000, 2000]}
          max={2000}
          min={100}
@@ -141,7 +152,7 @@ const ProductCategoryFilter = ({
             value={priceRange}
             onValueChange={handlePriceChange}
             className="w-full"
-          />
+          /> */}
           <div className="flex items-center justify-between text-sm text-gray-500">
             <span>{priceRange[0].toFixed(3)}€</span>
             <span>{priceRange[1].toFixed(3)}€</span>

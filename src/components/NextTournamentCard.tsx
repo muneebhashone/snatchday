@@ -43,7 +43,6 @@ interface NextTournamentCardProps {
 }
 
 const NextTournamentCard = ({
-  id,
   image,
   title,
   name,
@@ -53,36 +52,30 @@ const NextTournamentCard = ({
   fee,
   numberOfParticipants,
   start,
-  status,
-  textForBanner,
+  end,
   tournamentId,
-  updatedAt,
-  vip,
-  __v,
   _id,
 }: NextTournamentCardProps) => {
-  console.log(typeof fee, "fee");
-
+  console.log(end, "end");
   const countDown = calculateCountdown(start);
+  const endDate = calculateCountdown(end);
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300 items-center">
       {/* Left Column - Product Image */}
-      <div className="relative border-gray-200 pt-10 xl:pt-16 px-8 flex flex-col items-center">
-        <div>
-          <Image
-            src={
-              image && (image.startsWith("/") || image.startsWith("http"))
-                ? image
-                : NotFoundImage.src
-            }
-            alt={title}
-            width={349}
-            height={200}
-            className="rounded-t-xl rounded-b-none w-[349px] h-[200px] object-contain"
-            objectFit="contain"
-          />
-        </div>
-        <CountdownDisplay countdown={countDown} />
+      <div className="relative border-gray-200 pt-10 xl:pt-16 px-8 flex flex-col items-center justify-around h-full">
+        <Image
+          src={
+            image && (image.startsWith("/") || image.startsWith("http"))
+              ? image
+              : NotFoundImage.src
+          }
+          alt={title}
+          width={349}
+          height={200}
+          className="rounded-t-xl rounded-b-none w-[349px] h-[200px] object-contain"
+          objectFit="contain"
+        />
+        <CountdownDisplay countdown={countDown} endDate={endDate} />
       </div>
 
       {/* Right Column - Tournament Info */}
@@ -190,8 +183,8 @@ const NextTournamentCard = ({
         <div className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between">
           <div className="flex items-center gap-2">
             <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
-              <Link href={`/tournament-detail?id=${_id}`}>
-                To The Tournament
+              <Link href={`/tournament-detail?id=${id}`}>
+                To The Tournamentasdasdasd
               </Link>
             </Button>
             <div className="bg-orange-200 rounded-full h-6 w-6 flex items-center justify-center">
@@ -200,6 +193,7 @@ const NextTournamentCard = ({
           </div>
           <Button
             variant="ghost"
+            // onClick={handleTournamentShare}
             className="text-gray-600 bg-gray-50 rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]"
           >
             Share tournament

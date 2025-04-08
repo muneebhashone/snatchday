@@ -16,6 +16,7 @@ import {
   TournamentDetailResponse,
   CheckoutTypes,
   PlaceOrder,
+  WebSetting,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -259,11 +260,11 @@ export const getCustomers = async (params) => {
 };
 
 export const getCustomer = async (
-  pageParams,
-  search,
-  group,
-  date,
-  isActive
+  pageParams: number,
+  search?: string,
+  group?: string,
+  date?: string,
+  isActive?: string
 ) => {
   const limit = 10;
   const response = await axiosInstance.get("/customer", {
@@ -273,7 +274,7 @@ export const getCustomer = async (
       search,
       group,
       date,
-      isActive,
+      isApproved: isActive,
     },
   });
   console.log(pageParams);
@@ -581,7 +582,7 @@ export const CreateGame = async (data) => {
   return response.data;
 };
 
-export const GetGames = async (offset) => {
+export const GetGames = async (offset: number) => {
   const limit = 10;
   const response = await axiosInstance.get("/game", {
     params: { limit, offset },
@@ -604,7 +605,7 @@ export const UpdateGame = async (id, data) => {
 export const DeleteGame = async (id) => {
   const response = await axiosInstance.delete(`/game/${id}`);
   return response.data;
-}
+};
 
 // games api end
 export const wishList = async () => {
@@ -617,3 +618,28 @@ export const addToWishList = async (id: string) => {
   return response.data;
 };
 
+export const addContent = async (data: WebSetting) => {
+  const response = await axiosInstance.post(`/web-settings/content`, data);
+  return response.data;
+};
+
+export const getContent = async () => {
+  const response = await axiosInstance.get(`/web-settings/content`);
+  return response.data;
+};
+
+export const deleteContent = async (id: string) => {
+  const response = await axiosInstance.delete(`/web-settings/content/${id}`);
+  return response.data;
+};
+
+export const updateContent = async (id:string,data:WebSetting) => {
+  const response =await axiosInstance.put(`/web-settings/content/${id}`,data)
+  return response.data;
+}
+
+
+export const getCustomerReturnById=async(id:string)=>{
+  const response = await axiosInstance.get(`/customer/${id}`);
+  return response.data;
+}

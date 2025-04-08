@@ -44,8 +44,11 @@ const TournamentDetailPage = () => {
     isLoading,
     refetch: refetchTournament,
   } = useGetTournamentById(id);
+
+  
   const { data: currentOffers, isLoading: isLoadingCurrentOffers } =
     useCurrentOffers();
+
   const offerproducts: CurrentOfferResponse = currentOffers?.data.products;
 
   const { data: tournaments, isLoading: isUpComingTournamentLoading } =

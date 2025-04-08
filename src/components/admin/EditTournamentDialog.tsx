@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -41,7 +41,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, Check, ChevronsUpDown, Edit } from "lucide-react";
+import {
+  CalendarIcon,
+  Check,
+  ChevronsUpDown,
+  Edit,
+  Loader,
+} from "lucide-react";
 import { useGetProducts, useManageTournament } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
@@ -54,34 +60,54 @@ import {
   CommandList,
 } from "../ui/command";
 import { TimePickerDemo } from "../ui/TimePicker1";
+// const formSchema = z.object({
+//   id: z.string().min(1, "ID is required"),
+//   name: z.string().min(3, "Name must be at least 3 characters"),
+//   title: z.string().min(3, "Title must be at least 3 characters"),
+//   textForBanner: z.string().min(3, "Banner text must be at least 3 characters"),
+//   metaTitle: z.string().min(3, "Meta title must be at least 3 characters"),
+//   metaDescription: z
+//     .string()
+//     .min(3, "Meta description must be at least 3 characters"),
+//   metaKeywords: z
+//     .string()
+//     .min(3, "Meta keywords must be at least 3 characters"),
+//   article: z.string().min(10, "Article must be at least 10 characters"),
+//   startingPrice: z.coerce.number().min(0, "Starting price must be positive"),
+//   priceReduction: z.coerce.number().min(0, "Price reduction must be positive"),
+//   numberOfPieces: z.coerce
+//     .number()
+//     .min(1, "Number of pieces must be at least 1"),
+//   game: z.string().min(1, "Game must be selected"),
+//   start: z.string().min(1, "Start date must be selected"),
+//   // end: z.string().min(1, "End date must be selected"),
+//   length: z.coerce.number().min(1, "Length must be at least 1"),
+//   fee: z.coerce.number().min(0, "Fee must be positive"),
+//   numberOfParticipants: z.coerce
+//     .number()
+//     .min(1, "Number of participants must be at least 1"),
+//   vip: z.boolean(),
+//   resubmissions: z.coerce.number().min(0, "Resubmissions must be positive"),
+// });
 const formSchema = z.object({
-  id: z.string().min(1, "ID is required"),
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  textForBanner: z.string().min(3, "Banner text must be at least 3 characters"),
-  metaTitle: z.string().min(3, "Meta title must be at least 3 characters"),
-  metaDescription: z
-    .string()
-    .min(3, "Meta description must be at least 3 characters"),
-  metaKeywords: z
-    .string()
-    .min(3, "Meta keywords must be at least 3 characters"),
-  article: z.string().min(10, "Article must be at least 10 characters"),
-  startingPrice: z.coerce.number().min(0, "Starting price must be positive"),
-  priceReduction: z.coerce.number().min(0, "Price reduction must be positive"),
-  numberOfPieces: z.coerce
-    .number()
-    .min(1, "Number of pieces must be at least 1"),
-  game: z.string().min(1, "Game must be selected"),
-  start: z.string().min(1, "Start date must be selected"),
-  end: z.string().min(1, "End date must be selected"),
-  length: z.coerce.number().min(1, "Length must be at least 1"),
-  fee: z.coerce.number().min(0, "Fee must be positive"),
-  numberOfParticipants: z.coerce
-    .number()
-    .min(1, "Number of participants must be at least 1"),
-  vip: z.boolean(),
-  resubmissions: z.coerce.number().min(0, "Resubmissions must be positive"),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  title: z.string().optional(),
+  textForBanner: z.string().optional(),
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  metaKeywords: z.string().optional(),
+  article: z.string().optional(),
+  startingPrice: z.coerce.number().optional(),
+  priceReduction: z.coerce.number().optional(),
+  numberOfPieces: z.coerce.number().optional(),
+  game: z.string().optional(),
+  start: z.string().optional(),
+  length: z.coerce.number().optional(),
+  fee: z.coerce.number().optional(),
+  numberOfParticipants: z.coerce.number().optional(),
+  vip: z.boolean().optional(),
+  resubmissions: z.coerce.number().optional(),
 });
 
 interface Tournament {
@@ -114,36 +140,40 @@ export function EditTournamentDialog({
   tournament: Tournament;
   products: any[];
 }) {
-  const { mutate: manageTournament } = useManageTournament();
+  const { mutate: manageTournament, isPending } = useManageTournament();
   const [value, setValue] = useState();
   const [open, setOpen] = useState(false);
   const [openPop, setOpenPop] = useState(false);
   const queryClient = useQueryClient();
+  const findItem = products.find((pro) => pro._id === tournament.article)?.name;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      id: tournament._id,
-      name: tournament.name,
-      title: tournament.title,
-      textForBanner: tournament.textForBanner,
-      metaTitle: tournament.metaTitle,
-      metaDescription: tournament.metaDescription,
-      metaKeywords: tournament.metaKeywords,
-      article: tournament?.article.name,
-      startingPrice: tournament.startingPrice,
-      priceReduction: tournament.priceReduction,
-      numberOfPieces: tournament.numberOfPieces,
-      game: tournament.game,
-      start: tournament.start,
-      end: tournament.end,
-      length: tournament.length,
-      fee: tournament.fee,
-      numberOfParticipants: tournament.numberOfParticipants,
-      vip: tournament.vip,
-      resubmissions: tournament.resubmissions,
-    },
   });
+  useEffect(() => {
+    if (tournament) {
+      form.reset({
+        id: tournament._id,
+        name: tournament?.name,
+        title: tournament?.title,
+        textForBanner: tournament?.textForBanner,
+        metaTitle: tournament?.metaTitle,
+        metaDescription: tournament?.metaDescription,
+        metaKeywords: tournament?.metaKeywords,
+        article: tournament?.article,
+        startingPrice: tournament?.startingPrice,
+        priceReduction: tournament?.priceReduction,
+        numberOfPieces: tournament?.numberOfPieces,
+        game: tournament?.game,
+        start: tournament?.start,
+        length: tournament?.length,
+        fee: tournament?.fee,
+        numberOfParticipants: tournament?.numberOfParticipants,
+        vip: tournament?.vip,
+        resubmissions: tournament?.resubmissions,
+      });
+    }
+  }, [form, tournament]);
 
   async function onSubmit(values) {
     try {
@@ -154,6 +184,7 @@ export function EditTournamentDialog({
             toast.success("Tournament updated successfully");
             queryClient.invalidateQueries({ queryKey: ["tournaments"] });
             setOpen(false);
+            setOpen(false);
           },
           onError: (error) => {
             toast.error("Failed to update tournament");
@@ -161,7 +192,6 @@ export function EditTournamentDialog({
           },
         }
       );
-      setOpen(false);
     } catch (error) {
       toast.error("Failed to update tournament");
       console.error(error);
@@ -186,6 +216,7 @@ export function EditTournamentDialog({
                 control={form.control}
                 name="article"
                 render={({ field }) => {
+                  console.log(field.value);
                   return (
                     <FormItem>
                       <FormLabel className="flex items-center gap-1">
@@ -196,11 +227,7 @@ export function EditTournamentDialog({
                       <Popover open={openPop} onOpenChange={setOpenPop}>
                         <PopoverTrigger asChild>
                           <Button className="w-[200px] justify-between hover:bg-primary">
-                            {field.value
-                              ? products?.find(
-                                  (product: any) => product.name === field.value
-                                )?.name || "Select a product"
-                              : "Select a product"}
+                            {findItem}
                             <ChevronsUpDown className="opacity-50" />
                           </Button>
                         </PopoverTrigger>
@@ -533,7 +560,17 @@ export function EditTournamentDialog({
               />
             </div>
             <div className="flex justify-end">
-              <Button type="submit">Update Tournament</Button>
+              <Button
+                disabled={isPending}
+                className={`hover:bg-primary`}
+                type="submit"
+              >
+                {isPending ? (
+                  <Loader className="animate-spin" size={20} />
+                ) : (
+                  "Update Tournament"
+                )}
+              </Button>
             </div>
           </form>
         </Form>

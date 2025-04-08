@@ -56,8 +56,8 @@ const CustomerTournaments = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {customerTournaments?.data.tournaments.map((tournament, i) => (
-            <TableRow className="" key={tournament.title}>
+          {customerTournaments?.data?.tournaments?.map((tournament, i) => (
+            <TableRow className="" key={tournament?.title}>
               <TableCell>
                 <Image
                   src={i % 2 === 0 ? imageForOpinion : imageForOpinion2}
@@ -84,21 +84,21 @@ const CustomerTournaments = () => {
                     height={50}
                     unoptimized
                   />
-                  {tournament.name}{" "}
+                  {tournament?.name || "N/A"} {" "}
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex flex-col justify-center items-start">
-                  <span>{tournament.article.price}</span>
+                  <span>{tournament?.article?.price || "N/A"}</span>
                   <span>
                     -
-                    {tournament.priceReduction *
-                      tournament.numberOfParticipants}
+                    {tournament?.priceReduction *
+                      tournament?.numberOfParticipants || "N/A"}
                   </span>
                   <span className="text-primary">
-                    {tournament.article.price -
-                      tournament.priceReduction *
-                        tournament.numberOfParticipants}
+                    {tournament?.article?.price -
+                      tournament?.priceReduction *
+                        tournament?.numberOfParticipants || "N/A"}
                   </span>
                 </div>
               </TableCell>
@@ -107,7 +107,7 @@ const CustomerTournaments = () => {
                 <EditTournamentDialog
                   tournament={{
                     ...tournament,
-                    article: tournament.article.name,
+                    article: tournament?.article?.name,
                   }}
                 />
               </TableCell>
