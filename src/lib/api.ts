@@ -617,4 +617,3 @@ export const addToWishList = async (id: string) => {
   const response = await axiosInstance.post(`/wishlist`, { productId: id });
   return response.data;
 };
-
