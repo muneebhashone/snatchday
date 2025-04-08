@@ -40,7 +40,6 @@ const CustomerReturns = () => {
     offset: (pagination.currentPage - 1) * pagination.pageSize,
     ...debouncedFilters,
   });
-  console.log(returns, "returns11user");
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

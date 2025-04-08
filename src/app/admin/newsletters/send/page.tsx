@@ -39,7 +39,7 @@ const formSchema = z.object({
 
 type IForm = z.infer<typeof formSchema>;
 
-export default function NewsletterComposer() {
+const NewsletterComposer = () => {
   const observer = useRef<IntersectionObserver>();
   const [showCustomers, setShowCustomers] = useState(false);
   const [selectedCustomers, setSelectedCustomers] = useState<
@@ -363,7 +363,7 @@ export default function NewsletterComposer() {
                     </div>
                     <div className="flex-1">
                       {/* Rich text editor toolbar */}
-                      <FormField
+                      {/* <FormField
                         control={form.control}
                         name="message"
                         render={({ field }) => (
@@ -376,7 +376,7 @@ export default function NewsletterComposer() {
                             </FormControl>
                           </FormItem>
                         )}
-                      />
+                      /> */}
                     </div>
                   </div>
                   {isPending ? (
@@ -395,3 +395,5 @@ export default function NewsletterComposer() {
     );
   }
 }
+
+export default NewsletterComposer;

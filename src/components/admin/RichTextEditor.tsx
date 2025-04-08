@@ -1,44 +1,15 @@
-// "use client";
+
+"use client";
+import React from "react";
+import  ReactQuill, { Quill } from "react-quill";
 // import dynamic from "next/dynamic";
-// import "react-quill/dist/quill.snow.css";
+
+import "react-quill/dist/quill.snow.css";
+import ImageUploader from "quill-image-uploader";
+// import { useRef } from "react";
 
 // const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
-// const modules = {
-//   toolbar: [
-//     [{ font: [] }, { size: [] }],
-//     ["bold", "italic", "underline", "strike"],
-//     [{ color: [] }, { background: [] }],
-//     [{ script: "sub" }, { script: "super" }],
-//     [{ list: "ordered" }, { list: "bullet" }],
-//     [{ indent: "-1" }, { indent: "+1" }],
-//     [{ align: [] }],
-//     ["blockquote", "code-block"],
-//     ["link", "image", "video"],
-//     ["clean"],
-//   ],
-// };
-
-// const RichTextEditor = ({ onChange, value }) => {
-//   return (
-//     <div className="w-full">
-//       <ReactQuill
-//         theme="snow"
-//         value={value}
-//         modules={modules}
-//         onChange={onChange}
-//         className="h-64 mb-16"
-//       />
-//     </div>
-//   );
-// };
-
-// export default RichTextEditor;
-"use client";
-import ReactQuill, { Quill } from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import ImageUploader from "quill-image-uploader";
-import { useRef } from "react";
 
 Quill.register("modules/imageUploader", ImageUploader);
 const modules = {
@@ -81,11 +52,12 @@ const modules = {
 };
 
 const RichTextEditor = ({ onChange, value }) => {
-  const ref = useRef();
+  
+  // const ref = useRef();
   return (
     <div className="w-full">
       <ReactQuill
-        ref={ref}
+        // ref={ref}
         theme="snow"
         value={value}
         modules={modules}
