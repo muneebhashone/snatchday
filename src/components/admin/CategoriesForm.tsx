@@ -39,7 +39,11 @@ const formSchema = z.object({
   above: z.boolean(),
 });
 
-export default function CategoriesForm() {
+type CategoriesFormProps = {
+  onSuccess?: () => void;
+};
+
+export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const { mutate: createCategory, isPending } = useCreateCategory();
   const { data: getCategories } = useGetCategories();
@@ -98,6 +102,7 @@ export default function CategoriesForm() {
           queryClient.invalidateQueries({ queryKey: ["categories"] });
           setPreviewUrl("");
           form.reset();
+          onSuccess?.();
         },
         onError: (error) => {
           toast.error("Failed to create category");

@@ -30,6 +30,7 @@ import {
   useGetCart,
   useGetCompareProducts,
   useUpdateCart,
+  useWishList,
 } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -118,6 +119,7 @@ const ProductDetails = ({
   const [quantity, setQuantity] = useState(1);
 
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
+  const { data, refetch: refetchWishlist } = useWishList();
   const { mutate: addToWishList } = useAddToWishList();
   const { user } = useUserContext();
   // const handleIncrement = () => {
@@ -214,6 +216,7 @@ const ProductDetails = ({
             res.data.message ? res.data.message : " product added to wishlist"
           }`
         );
+        refetchWishlist();
       },
       onError: (error) => {
         toast.error("Failed to add to wishlist");

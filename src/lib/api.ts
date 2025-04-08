@@ -267,17 +267,17 @@ export const getCustomer = async (
   isActive?: string
 ) => {
   const limit = 10;
-  const params: Record<string, any> = {
-    limit,
-    offset: pageParams,
-  };
-
-  if (search) params.search = search;
-  if (group) params.group = group;
-  if (date) params.date = date;
-  if (isActive) params.isActive = isActive;
-
-  const response = await axiosInstance.get("/customer", { params });
+  const response = await axiosInstance.get("/customer", {
+    params: {
+      limit,
+      offset: pageParams,
+      search,
+      group,
+      date,
+      isApproved: isActive,
+    },
+  });
+  console.log(pageParams);
   return response.data;
 };
 
@@ -582,7 +582,7 @@ export const CreateGame = async (data) => {
   return response.data;
 };
 
-export const GetGames = async (offset:number) => {
+export const GetGames = async (offset: number) => {
   const limit = 10;
   const response = await axiosInstance.get("/game", {
     params: { limit, offset },
@@ -605,7 +605,7 @@ export const UpdateGame = async (id, data) => {
 export const DeleteGame = async (id) => {
   const response = await axiosInstance.delete(`/game/${id}`);
   return response.data;
-}
+};
 
 // games api end
 export const wishList = async () => {

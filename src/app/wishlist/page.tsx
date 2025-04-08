@@ -15,6 +15,7 @@ import { QueryClient } from "@tanstack/react-query";
 import {
   Heart,
   Home,
+  LucideHeartCrack,
   MinusCircle,
   PlusCircle,
   ShoppingCart,
@@ -87,7 +88,7 @@ const Page = () => {
   };
   return (
     <ClientLayout>
-      <div className="container mx-auto px-4 my-44">
+      <div className="container mx-auto px-4 mt-40 mb-56">
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
           <Link href="/" className="flex items-center hover:text-[#F47B42]">
             <Home className="h-4 w-4 mr-1" />
@@ -99,7 +100,8 @@ const Page = () => {
 
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-[#F47B42] flex items-center">
-            <Heart className="mr-2 h-6 w-6 fill-[#F47B42]" /> My Wishlist
+            <Heart className="mr-2 h-7 w-7 bg-primary text-white fill-white p-[5px] rounded-full" />{" "}
+            Wishlist
           </h1>
         </div>
 
@@ -196,25 +198,12 @@ const Page = () => {
                     variant="outline"
                     className="border-[#F47B42] text-[#F47B42] hover:bg-[#F47B42] hover:text-white w-max rounded-full h-7 px-6"
                   >
-                    <Trash2 className="mr-2 h-2 w-2" />
+                    <LucideHeartCrack />
                     Remove
                   </Button>
                 </div>
               </div>
             ))}
-        </div>
-
-        <div className="hidden mt-8 p-8 border rounded-lg text-center">
-          <div className="flex justify-center mb-4">
-            <Heart className="h-16 w-16 text-gray-300" />
-          </div>
-          <h2 className="text-xl font-medium mb-2">Your wishlist is empty</h2>
-          <p className="text-muted-foreground mb-6">
-            Browse our products and add items to your wishlist
-          </p>
-          <Button className="bg-[#F47B42] hover:bg-[#E06A31] text-white">
-            Continue Shopping
-          </Button>
         </div>
       </div>
     </ClientLayout>

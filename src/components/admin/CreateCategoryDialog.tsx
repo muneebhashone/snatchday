@@ -5,16 +5,21 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import CategoriesForm from "./CategoriesForm"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import CategoriesForm from "./CategoriesForm";
+import { useState } from "react";
 
 export function CreateCategoryDialog() {
+  const [open, setOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost"className="bg-primary text-white hover:bg-primary transition-colors">
-         Add Category
+        <Button
+          variant="ghost"
+          className="bg-primary text-white hover:bg-primary transition-colors"
+        >
+          Add Category
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[70vh] overflow-y-auto">
@@ -24,8 +29,12 @@ export function CreateCategoryDialog() {
             Add a new category to your store
           </DialogDescription>
         </DialogHeader>
-        <CategoriesForm />
+        <CategoriesForm
+          onSuccess={() => {
+            setOpen(false);
+          }}
+        />
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

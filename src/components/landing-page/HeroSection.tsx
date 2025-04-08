@@ -22,7 +22,7 @@ import laptop2 from "@/app/images/promoitonModalImage.png";
 import imgbottom from "@/app/images/imagebottom.png";
 import { LiveIcon } from "../icons/icon";
 import laptop from "@/app/images/detailimage.png";
-import { motion, AnimatePresence } from "framer-motion"; 
+import { motion, AnimatePresence } from "framer-motion";
 import { Swiper as SwiperType } from "swiper";
 import { useUpComingTournament } from "@/hooks/api";
 import { TournamentResponse } from "@/types";
@@ -35,10 +35,9 @@ const HeroSection = () => {
   const [key, setKey] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const { data: upComingTournament,isLoading:isUpComingTournamentLoading } = useUpComingTournament();
- 
-  
-  console.log(upComingTournament, "upComingTournament");
+  const { data: upComingTournament, isLoading: isUpComingTournamentLoading } =
+    useUpComingTournament();
+
   // Set isLoaded to true after component mounts
   useEffect(() => {
     setIsLoaded(true);
@@ -58,9 +57,6 @@ const HeroSection = () => {
     { src: five, alt: "Featured product five" },
     { src: six, alt: "Featured product six" },
   ];
-
-
-  
 
   // Text animation variants (from left)
   const textVariants = {
@@ -128,9 +124,9 @@ const HeroSection = () => {
 
   // Reveal animation for the product image
   const revealVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
-      y: 50
+      y: 50,
     },
     visible: {
       opacity: 1,
@@ -139,9 +135,9 @@ const HeroSection = () => {
         duration: 0.8,
         ease: "easeOut",
         when: "beforeChildren",
-        staggerChildren: 0.05
-      }
-    }
+        staggerChildren: 0.05,
+      },
+    },
   };
 
   // Grid cell reveal animation
@@ -150,17 +146,17 @@ const HeroSection = () => {
     visible: {
       opacity: 1,
       transition: {
-        duration: 0.3
-      }
-    }
+        duration: 0.3,
+      },
+    },
   };
 
   // Grid effect animation for images
   const gridImageVariants = {
-    hidden: { 
+    hidden: {
       opacity: 0,
       scale: 0.8,
-      filter: "blur(10px)"
+      filter: "blur(10px)",
     },
     visible: {
       opacity: 1,
@@ -171,9 +167,9 @@ const HeroSection = () => {
         ease: "easeOut",
         delay: 0.6,
         when: "beforeChildren",
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   // Grid cells animation
@@ -184,18 +180,18 @@ const HeroSection = () => {
       scale: 1,
       transition: {
         duration: 0.5,
-        ease: [0.43, 0.13, 0.23, 0.96]
-      }
-    }
+        ease: [0.43, 0.13, 0.23, 0.96],
+      },
+    },
   };
 
   // Simple fade-in animation for product image
   const fadeInVariants = {
-    hidden: { 
+    hidden: {
       y: -50,
       opacity: 0,
       scale: 0.95,
-      filter: "blur(8px)"
+      filter: "blur(8px)",
     },
     visible: {
       y: 0,
@@ -204,24 +200,21 @@ const HeroSection = () => {
       filter: "blur(0px)",
       transition: {
         duration: 0.8,
-        ease: "easeOut"
-      }
-    }
+        ease: "easeOut",
+      },
+    },
   };
 
-  
-
-  return (
-    isUpComingTournamentLoading ? (
-      <div className="my-40  flex items-center justify-center">
-          <Loader2 className="animate-spin size-18" />
-      </div>
-    ) : (
-      <motion.section 
-        className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10"
-        initial="hidden"
-        animate={isLoaded ? "visible" : "hidden"}
-        variants={pageEntranceVariants}
+  return isUpComingTournamentLoading ? (
+    <div className="my-40  flex items-center justify-center">
+      <Loader2 className="animate-spin size-18" />
+    </div>
+  ) : (
+    <motion.section
+      className="min-h-screen w-full relative bg-white pt-28 lg:pt-20 p-10"
+      initial="hidden"
+      animate={isLoaded ? "visible" : "hidden"}
+      variants={pageEntranceVariants}
     >
       {/* Background Image with animation */}
       <motion.div
@@ -248,10 +241,10 @@ const HeroSection = () => {
               key={index}
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ 
-                duration: 0.5, 
-                delay: 0.8 + (index * 0.1),
-                ease: [0.43, 0.13, 0.23, 0.96]
+              transition={{
+                duration: 0.5,
+                delay: 0.8 + index * 0.1,
+                ease: [0.43, 0.13, 0.23, 0.96],
               }}
               className={`absolute ${getRandomPosition(index)}`}
             >
@@ -284,6 +277,7 @@ const HeroSection = () => {
         >
           {upComingTournament?.data?.map((tournament, index) => {
             const countdown = calculateCountdown(tournament.start);
+            const endDate = calculateCountdown(tournament.end);
 
             return (
               <SwiperSlide key={index}>
@@ -305,7 +299,9 @@ const HeroSection = () => {
                         >
                           <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-2xl">
                             Tournament ID :
-                            <span className="text-primary">{tournament.tournamentId}</span>
+                            <span className="text-primary">
+                              {tournament.tournamentId}
+                            </span>
                           </h2>
                         </motion.div>
                         <motion.div
@@ -366,7 +362,9 @@ const HeroSection = () => {
                                 </p>
                               </div>
                               <div className="flex w-max items-center gap-1 text-card-foreground ">
-                                <p className="text-lg font-semibold">Duration:</p>
+                                <p className="text-lg font-semibold">
+                                  Duration:
+                                </p>
                                 <p className="text-lg font-semibold">
                                   {tournament.length + " minutes"}
                                 </p>
@@ -424,7 +422,9 @@ const HeroSection = () => {
                         >
                           <div className="flex items-center gap-2">
                             <Button className="mt-6 gradient-primary text-lg font-bold hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg w-[244px] h-[57px]">
-                              <Link href={`/tournament-detail?id=${tournament._id}`}>
+                              <Link
+                                href={`/tournament-detail?id=${tournament._id}`}
+                              >
                                 To The Tournament
                               </Link>
                             </Button>
@@ -464,7 +464,7 @@ const HeroSection = () => {
                         />
                       </motion.div>
                     </AnimatePresence>
-                    <CountdownDisplay countdown={countdown} />  
+                    <CountdownDisplay countdown={countdown} endDate={endDate} />
                   </div>
                 </div>
               </SwiperSlide>
@@ -474,7 +474,6 @@ const HeroSection = () => {
       </div>
       <PermotionalSection />
     </motion.section>
-    )
   );
 };
 
