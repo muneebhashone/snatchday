@@ -62,29 +62,18 @@ const formSchema = z
     noShipping: z.boolean(),
     products: z.array(z.string()).min(1, "Product is required"),
     categories: z.array(z.string()).min(1, "Category is required"),
-    from: z.string().min(1, "Valid From date is required"),
-    until: z.string().min(1, "Valid Until date is required"),
+    from: z.string().min(1, "Start date is required"),
+    until: z.string().min(1, "End date is required"),
     noOfUsage: z.coerce.number().min(1, "Number of usage must be at least 1"),
     usagePerUser: z.coerce.number().min(1, "Usage per user must be at least 1"),
-  })
-  .refine((data) => {
-    const from = new Date(data.from);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return from >= today;
+  }).refine((val) => {
+    console.log(val,"val")
+      return new Date(val.until) > new Date(val.from);
   }, {
-    message: "Valid From date cannot be in the past",
-    path: ["from"],
-  })
-  .refine((data) => {
-    const from = new Date(data.from);
-    const until = new Date(data.until);
-    return until > from;
-  }, {
-    message: " Until date must be greater than  From date",
+    message: "End date must be greater than start date",
     path: ["until"],
   });
+ 
 
 
 
@@ -119,6 +108,10 @@ const VoucherForm = () => {
       usagePerUser: 1,
     },
   });
+
+
+  console.log(form.formState.errors,"for.state");
+
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
