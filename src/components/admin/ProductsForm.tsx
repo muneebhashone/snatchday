@@ -104,6 +104,8 @@ const formSchema = z
       });
     }
 
+
+
     // Custom validation for discounts (dates)
     if (data.discounts && data.discounts.length > 0) {
       data.discounts.forEach((discount, index) => {
@@ -116,6 +118,16 @@ const formSchema = z
             path: [`discounts.${index}.away`],
             code: z.ZodIssueCode.custom,
             message: "Start Date cannot be in the past",
+          });
+        }
+     
+        console.log(data.price,"price");
+        console.log(data.discounts?.[index]?.price,"discount");
+        if (data.price < data.discounts?.[index]?.price) {
+          ctx.addIssue({
+            path: [`discounts.${index}.price`],
+            code: z.ZodIssueCode.custom,
+            message: "Discount price cannot be greater than original price",
           });
         }
 
@@ -178,6 +190,10 @@ export default function ProductsForm() {
     control: form.control,
     name: "discounts",
   });
+
+
+    console.log(form.formState.errors,"erros");
+
 
   const [selectedFilter, setSelectedFilters] = useState<string | null>(null);
 
@@ -631,7 +647,11 @@ export default function ProductsForm() {
                               }
                             />
                           </FormControl>
-                          <FormMessage />
+                          {form.formState.errors?.discounts?.[index]?.price && (
+                            <FormMessage>
+                              {form.formState.errors?.discounts?.[index]?.price?.message}
+                            </FormMessage>
+                          )}
                         </FormItem>
                       )}
                     />
