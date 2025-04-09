@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
+import { CustomMultiSelect } from "./multiselect";
 
 interface Category {
   _id: string;
@@ -70,8 +71,11 @@ const formSchema = z
     stock: z.number().min(0, "Stock must be 0 or greater"),
     price: z.number().min(0, "Price must be 0 or greater"),
     attributes: z.any(),
-    categoryIds: z.string().min(1, "Category is required"),
-    type: z.enum(["NEW", "SALE"]),
+    categoryIds: z
+    .array(z.object({
+      id: z.string().min(1, "Category ID is required"),
+    })),
+     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
     metaDescription: z.string().min(1, "Meta description cannot be empty"),
@@ -90,13 +94,39 @@ const formSchema = z
       ctx.addIssue({
         path: ["liscenseKey"],
         code: z.ZodIssueCode.custom,
-        message: "License key is not required when shipping is enable",
+        message: "License key is not required when shipping is enabled",
       });
     } else if (!data.requireShipping && !data.liscenseKey) {
       ctx.addIssue({
         path: ["licenseKey"],
         code: z.ZodIssueCode.custom,
-        message: "License key is required when shipping is not enable",
+        message: "License key is required when shipping is not enabled",
+      });
+    }
+
+    // Custom validation for discounts (dates)
+    if (data.discounts && data.discounts.length > 0) {
+      data.discounts.forEach((discount, index) => {
+        const startDate = new Date(discount.away);
+        const endDate = new Date(discount.until);
+
+        // Check if the start date is in the past
+        if (startDate < new Date()) {
+          ctx.addIssue({
+            path: [`discounts.${index}.away`],
+            code: z.ZodIssueCode.custom,
+            message: "Start Date cannot be in the past",
+          });
+        }
+
+        // Check if the end date is greater than the start date
+        if (endDate <= startDate) {
+          ctx.addIssue({
+            path: [`discounts.${index}.until`],
+            code: z.ZodIssueCode.custom,
+            message: "End Date must be greater than Start Date",
+          });
+        }
       });
     }
   });
@@ -105,7 +135,10 @@ export default function ProductsForm() {
   const [applyDiscounts, setApplyDiscounts] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const { mutate: createProduct, isPending } = useCreateProduct();
-  const { data: getCategories } = useGetCategories();
+  const { data: getCategories } = useGetCategories({
+     limit:"99999999",
+     offset:"0"
+  });
   const [selectedCategory, setSelectedCategory] = useState<object[]>([]);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
 
@@ -122,7 +155,7 @@ export default function ProductsForm() {
       stock: 0,
       price: 0,
       attributes: "",
-      categoryIds: "",
+      categoryIds: [],
       type: "NEW",
       isFeatured: false,
       metaTitle: "",
@@ -160,6 +193,7 @@ export default function ProductsForm() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+
     const dataToSend = { ...values };
     if (dataToSend.requireShipping) {
       delete dataToSend.liscenseKey;
@@ -248,6 +282,9 @@ export default function ProductsForm() {
       console.error(error);
     }
   }
+
+
+ 
 
   return (
     <div className="p-6">
@@ -423,8 +460,9 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-          <div>
-            <FormField
+     
+      
+             <FormField
               control={form.control}
               name="categoryIds"
               render={({ field }) => (
@@ -483,8 +521,8 @@ export default function ProductsForm() {
                     {cat.displayName}
                   </span>
                 ))}
-            </div>
-          </div>
+            </div> 
+          
           <FormField
             control={form.control}
             name="metaTitle"

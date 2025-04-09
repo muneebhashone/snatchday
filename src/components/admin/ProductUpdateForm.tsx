@@ -91,6 +91,32 @@ const formSchema = z
         message: "License key is required when shipping is not enable",
       });
     }
+
+    // Custom validation for discounts (dates)
+    if (data.discounts && data.discounts.length > 0) {
+      data.discounts.forEach((discount, index) => {
+        const startDate = new Date(discount.away);
+        const endDate = new Date(discount.until);
+
+        // Check if the start date is in the past
+        if (startDate < new Date()) {
+          ctx.addIssue({
+            path: [`discounts.${index}.away`],
+            code: z.ZodIssueCode.custom,
+            message: "Start Date cannot be in the past",
+          });
+        }
+
+        // Check if the end date is greater than the start date
+        if (endDate <= startDate) {
+          ctx.addIssue({
+            path: [`discounts.${index}.until`],
+            code: z.ZodIssueCode.custom,
+            message: "End Date must be greater than Start Date",
+          });
+        }
+      });
+    }
   });
 
 interface Category {
@@ -218,6 +244,8 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     control: form.control,
     name: "discounts",
   });
+
+
   useEffect(() => {
     if (product?.discounts) {
       replace(product.discounts);
@@ -226,6 +254,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       getCategories(product?.categoryIds);
     }
   }, [categoriesData?.data?.categories, product, replace]);
+
+
+
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

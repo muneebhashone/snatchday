@@ -39,27 +39,64 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 
-const formSchema = z.object({
-  code: z.string().min(3, "Code must be at least 3 characters"),
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  type: z.enum(["PERCENTAGE", "FIXED"]),
-  estate: z.string(),
-  value: z.coerce.number().min(0, "Value must be positive"),
-  registered: z.boolean(),
-  noShipping: z.boolean(),
-  products: z.array(z.string()),
-  categories: z.array(z.string()),
-  from: z.string(),
-  until: z.string(),
-  noOfUsage: z.coerce.number().min(1, "Number of usage must be at least 1"),
-  usagePerUser: z.coerce.number().min(1, "Usage per user must be at least 1"),
-}) satisfies z.ZodType<CreateVoucherData>;
+const formSchema = z
+  .object({
+    code: z.string().min(3, "Code must be at least 3 characters"),
+    name: z.string().min(3, "Name must be at least 3 characters"),
+    type: z.enum(["PERCENTAGE", "FIXED"], {
+      required_error: "Voucher type is required",
+    }),
+    estate: z.string(),
+    value: z.preprocess(
+      (val) => {
+        if (val === '' || val === null || val === undefined) return undefined;
+        const numberVal = Number(val);
+        return isNaN(numberVal) ? undefined : numberVal;
+      },
+      z.number({
+        required_error: "Value is required",
+        invalid_type_error: "Value must be a number"
+      }).min(1, "Value must be positive or greater than 0")
+    ),
+    registered: z.boolean(),
+    noShipping: z.boolean(),
+    products: z.array(z.string()).min(1, "Product is required"),
+    categories: z.array(z.string()).min(1, "Category is required"),
+    from: z.string().min(1, "Valid From date is required"),
+    until: z.string().min(1, "Valid Until date is required"),
+    noOfUsage: z.coerce.number().min(1, "Number of usage must be at least 1"),
+    usagePerUser: z.coerce.number().min(1, "Usage per user must be at least 1"),
+  })
+  .refine((data) => {
+    const from = new Date(data.from);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return from >= today;
+  }, {
+    message: "Valid From date cannot be in the past",
+    path: ["from"],
+  })
+  .refine((data) => {
+    const from = new Date(data.from);
+    const until = new Date(data.until);
+    return until > from;
+  }, {
+    message: " Until date must be greater than  From date",
+    path: ["until"],
+  });
+
+
 
 const VoucherForm = () => {
   const router = useRouter();
   const { mutate: createVoucher, isPending } = useCreateVoucher();
   const { data: productsResponse } = useGetProducts();
-  const { data: categoriesResponse } = useGetCategories();
+  const { data: categoriesResponse } = useGetCategories(
+    {
+      limit:'9999999'
+    }
+  );
 
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
@@ -69,9 +106,9 @@ const VoucherForm = () => {
     defaultValues: {
       code: "",
       name: "",
-      type: "PERCENTAGE",
-      estate: "active",
-      value: 0,
+      type: "",
+      estate: "",
+      value: undefined,
       registered: false,
       noShipping: false,
       products: [],

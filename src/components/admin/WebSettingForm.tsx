@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { MultiSelect } from '../ui/multi-select';
 
 // Dynamically import React Quill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { 
@@ -36,7 +37,7 @@ const formSchema = z.object({
   content: z.string().min(1, 'Content is required'),
   metaTitle: z.string().min(1, 'Meta title is required'),
   metaDescription: z.string().min(1, 'Meta description is required'),
-  metaKeywords: z.string().min(1, 'Meta keywords are required'),
+  metaKeywords: z.array(z.string()).min(1, 'Meta keywords are required'),
   order: z.number().min(0, 'Order must be a positive number'),
 });
 
@@ -52,7 +53,7 @@ const WebSettingForm = () => {
       content: '',
       metaTitle: '',
       metaDescription: '',
-      metaKeywords: '',
+      metaKeywords: [] as string[],
       order: 0,
     },
   });
@@ -76,7 +77,7 @@ const WebSettingForm = () => {
       content: values.content, // This will contain the Quill editor content
       metaTitle: values.metaTitle,
       metaDescription: values.metaDescription,
-      metaKeywords: values.metaKeywords,
+      metaKeywords: values.metaKeywords.join(','),
       order: values.order
     });
   };
@@ -185,7 +186,11 @@ const WebSettingForm = () => {
             <FormItem>
               <FormLabel>Meta Keywords</FormLabel>
               <FormControl>
-                <Input placeholder="Enter meta keywords" {...field} />
+                <MultiSelect
+                  placeholder="Enter meta keywords"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
