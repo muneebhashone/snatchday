@@ -188,7 +188,7 @@ const Login = ({
           )}
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-[682px] p-0 ">
+      <DialogContent className="max-w-[682px] p-0 " hideCloseButton={true}>
         <DialogHeader  className="text-left relative px-24 pt-10 ">
           <DialogTrigger asChild className="absolute -right-5 -top-5 z-30">
             <Button
