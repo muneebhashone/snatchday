@@ -13,23 +13,23 @@ import { start } from "repl";
 import CountdownDisplay from "./CountdownProps";
 interface NextTournamentCardProps {
   id: string;
-  article: string;
-  category: string[];
-  createdAt: string;
+  // article: string;
+  // category: string[];
+  // createdAt: string;
   end: string;
   fee: number | string;
   game: string;
   image: string;
   length: number;
-  metaDescription: string;
-  metaKeywords: string;
-  metaTitle: string;
+  // metaDescription: string;
+  // metaKeywords: string;
+  // metaTitle: string;
   name: string;
   numberOfParticipants: number;
-  numberOfPieces: number;
-  participants: any[];
-  priceReduction: number;
-  resubmissions: number;
+  // numberOfPieces: number;
+  // participants: any[];
+  // priceReduction: number;
+  // resubmissions: number;
   start: string;
   startingPrice: number;
   status: string;
@@ -39,10 +39,11 @@ interface NextTournamentCardProps {
   updatedAt: string;
   vip: boolean;
   __v: number;
-  _id: string;
+  // _id: string;
 }
 
 const NextTournamentCard = ({
+  id,
   image,
   title,
   name,
@@ -54,7 +55,6 @@ const NextTournamentCard = ({
   start,
   end,
   tournamentId,
-  _id,
 }: NextTournamentCardProps) => {
   console.log(end, "end");
   const countDown = calculateCountdown(start);

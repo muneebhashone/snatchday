@@ -1,17 +1,13 @@
-
 "use client";
 import React from "react";
-import  ReactQuill, { Quill } from "react-quill";
-// import dynamic from "next/dynamic";
-
+import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
+import { useEffect, useState } from "react";
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.snow.css";
+import { Quill } from "react-quill";
 import ImageUploader from "quill-image-uploader";
-// import { useRef } from "react";
 
-// const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-
-
-Quill.register("modules/imageUploader", ImageUploader);
 const modules = {
   toolbar: [
     [{ font: [] }, { size: [] }],
@@ -52,12 +48,18 @@ const modules = {
 };
 
 const RichTextEditor = ({ onChange, value }) => {
-  
-  // const ref = useRef();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    Quill.register("modules/imageUploader", ImageUploader);
+  }, []);
+
+  if (!isClient) return null;
+
   return (
     <div className="w-full">
       <ReactQuill
-        // ref={ref}
         theme="snow"
         value={value}
         modules={modules}
