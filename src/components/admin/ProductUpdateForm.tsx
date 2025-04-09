@@ -134,6 +134,22 @@ interface DiscountItem {
   price: number;
 }
 
+interface ICategoryIds {
+  above: boolean;
+  createdAt: string;
+  description: string;
+  displayName: string;
+  filters: string[];
+  image: string;
+  isActive: boolean;
+  name: string;
+  parentCategory: string;
+  shop: boolean;
+  subCategories: string[];
+  updatedAt: string;
+  _id: string;
+}
+
 interface Product {
   _id: string;
   name: string;
@@ -145,7 +161,7 @@ interface Product {
   price: number;
   discounts: DiscountItem[];
   attributes: Record<string, any>;
-  categoryIds: string[];
+  categoryIds: ICategoryIds[];
   type: "NEW" | "SALE";
   isFeatured: boolean;
   metaTitle: string;
@@ -185,7 +201,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       return acc;
     }, {} as Record<string, string[]>)
   );
-
+  console.log(product.categoryIds);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -198,7 +214,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       price: product.price,
       discounts: product.discounts || [],
       attributes: Object.keys(product.attributes || {}),
-      // categoryIds: product.categoryIds[0]?._id || "",
+      categoryIds: product.categoryIds[0]?._id || "",
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
@@ -534,6 +550,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       getCategories((prev) => [...prev, category]);
                     }
                   }}
+                  value={product.categoryIds[0]._id}
                 >
                   <FormControl>
                     <SelectTrigger>

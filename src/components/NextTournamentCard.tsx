@@ -81,9 +81,7 @@ const NextTournamentCard = ({
       {/* Right Column - Tournament Info */}
 
       <div className="xl:border-l pt-5 xl:pt-10 pb-5 xl:pb-12 px-5 sm:px-7 relative">
-        <Button className="xl:block hidden absolute top-8 xl:top-5 right-5 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
-          <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
-        </Button>
+        
         {/* Tournament Badge */}
         <div className="mb-3">
           <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-normal">
