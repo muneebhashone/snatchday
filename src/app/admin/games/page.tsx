@@ -21,14 +21,14 @@ const Page = () => {
   const router = useRouter();
   const [page, setPage] = useState(0);
   const skip = 10;
-  const { data: games, isLoading } = useGetGames(page);
+  const { data: games, isLoading, refetch } = useGetGames(page);
   console.log(games);
 
   const onDelete = async (id) => {
     deleteGame(id, {
       onSuccess: () => {
         toast.success("Game deleted successfully");
-        router.refresh();
+        refetch();
       },
       onError: (error) => {
         console.log(error);
@@ -70,7 +70,7 @@ const Page = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {games?.data?.map((game) => (
+            {games?.data?.games.map((game) => (
               <TableRow key={game._id}>
                 {/* <TableCell className="font-bold">{game._id}</TableCell> */}
                 <TableCell>

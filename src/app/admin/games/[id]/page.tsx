@@ -1,12 +1,18 @@
 "use client";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Card } from "@/components/ui/card";
-import { useGetGameById } from "@/hooks/api";
+import {
+  useGetGameById,
+  useGetGames,
+  useGetGamesPaths,
+  useUpdateGame,
+} from "@/hooks/api";
 import {
   Calendar,
   Gamepad2,
   Gamepad2Icon,
   Info,
+  Key,
   Plus,
   RefreshCcw,
   User,
@@ -38,6 +44,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { QueryClient } from "@tanstack/react-query";
+import { IError } from "../create/page";
+import { Textarea } from "@/components/ui/textarea";
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -45,7 +54,7 @@ const FormSchema = z.object({
   metaTitle: z.string().nonempty("Meta Title is required"),
   metaDescription: z.string().optional(),
   metaKeywords: z.string().optional(),
-  path: z.string().nonempty("Path is required"),
+  game: z.string().nonempty("Game is required"),
   levels: z.string().nonempty("Levels are required"),
   maxScore: z.string().optional(),
   delay: z.string().optional(),
@@ -68,73 +77,76 @@ const FormSchema = z.object({
 type IForm = z.infer<typeof FormSchema>;
 
 const Page = () => {
+  const { data: getPaths } = useGetGamesPaths();
+  const Paths = getPaths?.data?.games;
+  const queryClient = new QueryClient();
   const params = useParams();
   const paramsId = params.id;
+  const { mutate: UpdateGame, isPending } = useUpdateGame(paramsId);
   const { data: game } = useGetGameById(paramsId);
-  console.log(game);
-
   const form = useForm<IForm>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {
-      title: game?.data.title || "",
-      content: game?.data.content || "",
-      metaTitle: game?.data.metaTitle || "",
-      metaDescription: game?.data.metaDescription || "",
-      metaKeywords: game?.data.metaKeywords || "",
-      path: game?.data.path || "",
-      levels: game?.data.levels || "",
-      maxScore: game?.data.maxScore || "",
-      delay: game?.data.delay || "",
-      width: game?.data.width || "",
-      height: game?.data.height || "",
-      customGame: game?.data.customGame || false,
-      randomLevels: game?.data.randomLevels || false,
-      suitableDuel: game?.data.suitableDuel || false,
-      suitableTournament: game?.data.suitableTournament || false,
-      suitableTraining: game?.data.suitableTraining || false,
-      winnerDetermination: {
-        level: game?.data.winnerDetermination?.level || "MAX",
-        score: game?.data.winnerDetermination?.score || "MAX",
-        time: game?.data.winnerDetermination?.time || "MAX",
-      },
-      logo: undefined,
-      image: undefined,
-    },
   });
 
   useEffect(() => {
     if (game?.data) {
+      const stringifiedData = {
+        ...game.data,
+        levels: String(game.data.levels || ""),
+        height: String(game.data.height || ""),
+        delay: String(game.data.delay || ""),
+        maxScore: String(game.data.maxScore || ""),
+        width: String(game.data.width || ""),
+      };
       form.reset({
-        title: game?.data.title,
-        content: game?.data.content,
-        metaTitle: game?.data.metaTitle,
-        metaDescription: game?.data.metaDescription,
-        metaKeywords: game?.data.metaKeywords,
-        path: game?.data.path,
-        levels: game?.data.levels,
-        maxScore: game?.data.maxScore,
-        delay: game?.data.delay,
-        width: game?.data.width,
-        height: game?.data.height,
-        customGame: game?.data.customGame,
-        randomLevels: game?.data.randomLevels,
-        suitableDuel: game?.data.suitableDuel,
-        suitableTournament: game?.data.suitableTournament,
-        suitableTraining: game?.data.suitableTraining,
+        title: stringifiedData.title,
+        content: stringifiedData.content,
+        metaTitle: stringifiedData.metaTitle,
+        metaDescription: stringifiedData.metaDescription,
+        metaKeywords: stringifiedData.metaKeywords,
+        game: stringifiedData?.game,
+        levels: stringifiedData.levels,
+        maxScore: stringifiedData.maxScore,
+        delay: stringifiedData.delay,
+        width: stringifiedData.width,
+        height: stringifiedData.height,
+        customGame: stringifiedData.customGame,
+        randomLevels: stringifiedData.randomLevels,
+        suitableDuel: stringifiedData.suitableDuel,
+        suitableTournament: stringifiedData.suitableTournament,
+        suitableTraining: stringifiedData.suitableTraining,
         winnerDetermination: {
-          level: game?.data.winnerDetermination?.level,
-          score: game?.data.winnerDetermination?.score,
-          time: game?.data.winnerDetermination?.time,
+          level: stringifiedData?.winnerDetermination?.level,
+          score: stringifiedData?.winnerDetermination?.score,
+          time: stringifiedData?.winnerDetermination?.time,
         },
-        logo: game?.data.logo,
-        image: game?.data.image,
+        logo: undefined,
+        image: undefined,
       });
     }
-  }, [form, game?.data]);
+  }, [form, game?.data, Paths, game, UpdateGame]);
 
   const onSubmit = (data: IForm) => {
-    console.log(data);
-    toast.success("Game updated successfully!");
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === "winnerDetermination") {
+        formData.append(key, JSON.stringify(value));
+      } else if (value !== undefined && value !== null) {
+        formData.append(key, value instanceof File ? value : value.toString());
+      }
+    });
+
+    UpdateGame(formData, {
+      onSuccess: () => {
+        toast.success("Game Has Been Updated Successfully");
+        queryClient.invalidateQueries({ queryKey: ["game"] });
+        form.reset();
+        window.location.href = "/admin/games";
+      },
+      onError: (error) => {
+        toast.error((error as unknown as IError)?.response.data.message);
+      },
+    });
   };
 
   return (
@@ -227,7 +239,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Content</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter content..." {...field} />
+                      {/* <Input placeholder="Enter content..." {...field} /> */}
+                      <Textarea
+                        placeholder="enter your content here..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -279,12 +295,31 @@ const Page = () => {
               />
               <FormField
                 control={form.control}
-                name="path"
+                name="game"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Path</FormLabel>
+                    <FormLabel>Game</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter path..." {...field} />
+                      {/* <Input placeholder="Enter path..." {...field} /> */}
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => field.onChange(value)}
+                        defaultValue={game?.data?.game}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select a Game" />
+                        </SelectTrigger>
+                        <SelectContent className="h-52">
+                          <SelectGroup>
+                            <SelectLabel>Games</SelectLabel>
+                            {Paths?.map((path, i) => (
+                              <SelectItem key={i} value={path}>
+                                {path}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -299,7 +334,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Levels</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter levels..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="Enter levels..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -312,7 +351,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Max Score</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter max score..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="Enter max score..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -325,7 +368,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Delay</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter delay..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="Enter delay..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -340,7 +387,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Width</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter width..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="Enter width..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -370,9 +421,12 @@ const Page = () => {
                         <div className="w-full flex items-center gap-2">
                           <label className="text-sm font-medium">Level:</label>
                           <Select
-                            value={field.value.level}
+                            value={field?.value?.level}
                             onValueChange={(value) =>
                               field.onChange({ ...field.value, level: value })
+                            }
+                            defaultValue={
+                              game?.data?.winnerDetermination?.level
                             }
                           >
                             <SelectTrigger className="w-full">
@@ -390,10 +444,11 @@ const Page = () => {
                         <div className="w-full flex items-center gap-2">
                           <label className="text-sm font-medium">Score:</label>
                           <Select
-                            value={field.value.score}
+                            value={field?.value?.score}
                             onValueChange={(value) =>
                               field.onChange({ ...field.value, score: value })
                             }
+                            defaultValue={game?.data.winnerDetermination?.score}
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select Score" />
@@ -410,10 +465,11 @@ const Page = () => {
                         <div className="w-full flex items-center gap-2">
                           <label className="text-sm font-medium">Time:</label>
                           <Select
-                            value={field.value.time}
+                            value={field?.value?.time}
                             onValueChange={(value) =>
                               field.onChange({ ...field.value, time: value })
                             }
+                            defaultValue={game?.data.winnerDetermination?.time}
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select Time" />
@@ -447,8 +503,9 @@ const Page = () => {
                           <Input
                             id="image"
                             type="file"
-                            onChange={(e) =>
-                              field.onChange(e.target.files?.[0])
+                            onChange={
+                              (e) => field.onChange(e.target.files?.[0])
+                              // console.log(e.target.files?.[0])
                             }
                           />
                         </div>
@@ -478,8 +535,9 @@ const Page = () => {
                           <Input
                             id="logo"
                             type="file"
-                            onChange={(e) =>
-                              field.onChange(e.target.files?.[0])
+                            onChange={
+                              (e) => field.onChange(e.target.files[0])
+                              // console.log(e.target.files[0])
                             }
                           />
                         </div>

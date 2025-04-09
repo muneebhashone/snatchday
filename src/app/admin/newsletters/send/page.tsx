@@ -363,20 +363,20 @@ const NewsletterComposer = () => {
                     </div>
                     <div className="flex-1">
                       {/* Rich text editor toolbar */}
-                      {/* <FormField
+                      <FormField
                         control={form.control}
                         name="message"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <RichTextEditor
+                              {/* <RichTextEditor
                                 value={field.value}
                                 onChange={field.onChange}
-                              />
+                              /> */}
                             </FormControl>
                           </FormItem>
                         )}
-                      /> */}
+                      />
                     </div>
                   </div>
                   {isPending ? (

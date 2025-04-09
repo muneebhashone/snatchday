@@ -1,9 +1,9 @@
+"use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
 import React from "react";
 import SectionCenter from "@/components/SectionCenter";
 import GameCards from "@/components/GameCards";
-import FeaturedProductsCard from "@/components/FeaturedProductsCard";
 import graphiccard from "@/app/images/graphiccard.png";
 import trainingbg from "@/app/images/trainingBg.png";
 import trainingbgc from "@/app/images/trainingbgc.png";
@@ -14,91 +14,14 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import { useCurrentOffers } from "@/hooks/api";
+import { Card, CardContent } from "@/components/ui/card";
+import ProductCard from "@/components/ProductCard";
 
 const TrainingCenterPage = () => {
-  const displayProducts = [
-    {
-      title: "14 - AMD Ryzen 9 3 GHz - Win 11",
-      price: "2.644",
-      oldPrice: "2.694",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      isNew: false,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "14 - AMD Ryzen 9 3 GHz - Win 11",
-      price: "2.644",
-      oldPrice: "2.694",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      isNew: false,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "ZOTAC GAMING GeForce RTX 3050 AMP - Grafikkarten",
-      price: "319,80",
-      oldPrice: "334,80",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: false,
-      isNew: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "SanDisk Extreme - Flash-Speicherkarte (microSDXC)",
-      price: "31,40",
-      oldPrice: "31,40",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "Razer Blade 14 - AMD Ryzen 9 6900HX / 3.3 GHz - Win 11",
-      price: "2.644",
-      oldPrice: "2.694",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: false,
-      isNew: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "Canon CLI-551 C/M/Y/BK Multipack - 4er-Pack - Schwarz",
-      price: "52,44",
-      oldPrice: "64,44",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "€99",
-      category: "elektro",
-    },
-    {
-      title: "Galaxy S22 Ultra",
-      price: "52,44",
-      oldPrice: "64,44",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "€99",
-      category: "audio",
-    },
-  ];
+  const { data: currentOffers, isLoading } = useCurrentOffers();
+  const products = currentOffers?.data.products;
+
   return (
     <ClientLayout>
       <main className="mt-10">
@@ -133,18 +56,33 @@ const TrainingCenterPage = () => {
               }}
               className="w-full relative"
             >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {displayProducts.map((product, index) => (
-                  <CarouselItem
-                    key={index}
-                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
-                  >
-                    <FeaturedProductsCard {...product} />
-                  </CarouselItem>
-                ))}
+              <CarouselContent>
+                {products?.length > 0 && products !== null ? (
+                  products?.map((product, index) => (
+                    <CarouselItem
+                      key={index}
+                      className="md:basis-1/2 lg:basis-1/4"
+                    >
+                      <div className="p-1">
+                        <Card className="border-transparent">
+                          <CardContent className="flex aspect-square items-center justify-center p-0 ">
+                            <ProductCard key={index} {...product} />
+                          </CardContent>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center   w-full">
+                    <p className="text-gray-600">
+                      {" "}
+                      Current offers not available
+                    </p>
+                  </div>
+                )}
               </CarouselContent>
-              <CarouselPrevious className="absolute -left-4 lg:-left-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
-              <CarouselNext className="absolute -right-4 lg:-right-8 top-1/2 -translate-y-1/2 w-12 h-12 md:w-16 md:h-16 bg-white shadow-lg border-0 text-gray-700 hover:bg-primary hover:text-white transition-all duration-300" />
+              <CarouselPrevious className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -left-24" />
+              <CarouselNext className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -right-24" />
             </Carousel>
           </div>
         </div>

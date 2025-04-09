@@ -21,14 +21,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UseCreateGame } from "@/hooks/api";
+import { Textarea } from "@/components/ui/textarea";
+import { UseCreateGame, useGetGamesPaths } from "@/hooks/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Value } from "@radix-ui/react-select";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
+export interface IError {
+  response: {
+    data: {
+      message: string;
+    };
+  };
+}
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title Must Be Required"),
@@ -36,7 +44,7 @@ const FormSchema = z.object({
   metaTitle: z.string().nonempty("Meta Title Must Be Required"),
   metaDescription: z.string().optional(),
   metaKeywords: z.string().optional(),
-  path: z.string().nonempty("Path Must Be Required"),
+  game: z.string().nonempty("Game Must Be Required"),
   customGame: z.boolean(),
   winnerDetermination: z.object({
     level: z.enum(["MAX", "MIN"]),
@@ -44,14 +52,14 @@ const FormSchema = z.object({
     time: z.enum(["MAX", "MIN"]),
   }),
   levels: z.string().nonempty("Levels Must Be Required"),
-  maxScore: z.string().optional(),
-  delay: z.string().optional(),
+  maxScore: z.string().nonempty("Max Score Must Be Required"),
+  delay: z.string().nonempty("Levels Must Be Required"),
   randomLevels: z.boolean(),
   suitableDuel: z.boolean(),
   suitableTournament: z.boolean(),
   suitableTraining: z.boolean(),
-  width: z.string(),
-  height: z.string(),
+  width: z.string().nonempty("width Must Be Required"),
+  height: z.string().nonempty("height Must Be Required"),
   logo: z.instanceof(File),
   image: z.instanceof(File),
 });
@@ -59,6 +67,8 @@ const FormSchema = z.object({
 type IForm = z.infer<typeof FormSchema>;
 
 const Page = () => {
+  const { data: getPaths } = useGetGamesPaths();
+  const Paths = getPaths?.data?.games;
   const { mutate: createGame } = UseCreateGame();
   const router = useRouter();
   const form = useForm<IForm>({
@@ -69,7 +79,7 @@ const Page = () => {
       metaTitle: "",
       metaDescription: "",
       metaKeywords: "",
-      path: "",
+      game: "",
       customGame: false,
       winnerDetermination: { level: null, score: null, time: null },
       levels: "",
@@ -102,7 +112,9 @@ const Page = () => {
       },
       onError: (error) => {
         console.log(error, "error");
-        toast.error(`Error Occured ${error}`);
+        toast.error(
+          `Error Occured ${(error as unknown as IError)?.response.data.message}`
+        );
       },
     });
 
@@ -137,7 +149,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Content</FormLabel>
                     <FormControl>
-                      <Input placeholder="input Content here..." {...field} />
+                      <Textarea
+                        placeholder="enter your content here.."
+                        className="h-10"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -195,12 +211,29 @@ const Page = () => {
               />
               <FormField
                 control={form.control}
-                name="path"
+                name="game"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Path</FormLabel>
+                    <FormLabel>Games</FormLabel>
                     <FormControl>
-                      <Input placeholder="input path here..." {...field} />
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select a fruit" />
+                        </SelectTrigger>
+                        <SelectContent className="h-52">
+                          <SelectGroup>
+                            <SelectLabel>Paths</SelectLabel>
+                            {Paths?.map((path, i) => (
+                              <SelectItem key={i} value={path}>
+                                {path}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -291,7 +324,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Levels</FormLabel>
                     <FormControl>
-                      <Input placeholder="input Levels here..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="input Levels here..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -307,7 +344,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Max Score</FormLabel>
                     <FormControl>
-                      <Input placeholder="input Max Score here..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="input Max Score here..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -320,7 +361,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Delay</FormLabel>
                     <FormControl>
-                      <Input placeholder="input delay here..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="input delay here..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -333,7 +378,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Width</FormLabel>
                     <FormControl>
-                      <Input placeholder="input width here..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="input width here..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -349,7 +398,11 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Height</FormLabel>
                     <FormControl>
-                      <Input placeholder="input height here..." {...field} />
+                      <Input
+                        type="number"
+                        placeholder="input height here..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -459,7 +512,7 @@ const Page = () => {
                           htmlFor="suitableTraining"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
-                          Custom Game?
+                          Suitable Training
                         </label>
                       </div>
                     </FormControl>

@@ -80,6 +80,9 @@ import {
   deleteContent,
   updateContent,
   getCustomerReturnById,
+  getGamesPaths,
+  TrainingCenter,
+  TrainingCenterById,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -450,7 +453,6 @@ export const useCustomersPagination = (
   });
 };
 
-
 export const useGetCustomerById = (id) => {
   return useQuery({
     queryKey: ["customer"],
@@ -652,10 +654,10 @@ export const UseCreateGame = () => {
   });
 };
 
-export const useGetGames = (page) => {
+export const useGetGames = (offset: number) => {
   return useQuery({
-    queryKey: ["games"],
-    queryFn: () => GetGames(page),
+    queryKey: ["games", offset], // Include offset in the queryKey
+    queryFn: () => GetGames(offset), // Pass offset to the API function
   });
 };
 export const useGetGameById = (id) => {
@@ -672,6 +674,13 @@ export const useUpdateGame = (id) => {
 export const useDeleteGame = () => {
   return useMutation({
     mutationFn: (id) => DeleteGame(id),
+  });
+};
+
+export const useGetGamesPaths = () => {
+  return useQuery({
+    queryKey: ["gamePath"],
+    queryFn: getGamesPaths,
   });
 };
 
@@ -695,13 +704,12 @@ export const useAddContent = () => {
   });
 };
 
-export const useGetContent =() =>{
+export const useGetContent = () => {
   return useQuery({
     queryKey: ["content"],
     queryFn: getContent,
-
-  })
-}
+  });
+};
 
 export const useDeleteContent = () => {
   return useMutation({
@@ -714,13 +722,30 @@ export const useUpdateContent = () => {
     mutationFn: (data: WebSetting & { id: string }) => {
       const { id, ...updateData } = data;
       return updateContent(id, updateData);
-    }
+    },
   });
 };
 
-export const useGetCustomerReturnById=(id:string)=>{
+export const useGetCustomerReturnById = (id: string) => {
   return useQuery({
-    queryKey: ["customerReturn",id],
+    queryKey: ["customerReturn", id],
     queryFn: () => getCustomerReturnById(id),
   });
-}
+};
+
+//training center user
+
+export const useTrainingCenter = () => {
+  return useQuery({
+    queryKey: ["trainingCenter"],
+    queryFn: TrainingCenter,
+  });
+};
+export const useTrainingCenterById = (id) => {
+  return useQuery({
+    queryKey: ["trainingCenter", id],
+    queryFn: () => TrainingCenterById(id),
+  });
+};
+
+// training center end

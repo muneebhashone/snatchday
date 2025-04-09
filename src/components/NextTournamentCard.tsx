@@ -14,23 +14,23 @@ import CountdownDisplay from "./CountdownProps";
 import { ShareTournamentModal } from "./ShareTournamentModal";
 interface NextTournamentCardProps {
   id: string;
-  article: string;
-  category: string[];
-  createdAt: string;
+  // article: string;
+  // category: string[];
+  // createdAt: string;
   end: string;
   fee: number | string;
   game: string;
   image: string;
   length: number;
-  metaDescription: string;
-  metaKeywords: string;
-  metaTitle: string;
+  // metaDescription: string;
+  // metaKeywords: string;
+  // metaTitle: string;
   name: string;
   numberOfParticipants: number;
-  numberOfPieces: number;
-  participants: any[];
-  priceReduction: number;
-  resubmissions: number;
+  // numberOfPieces: number;
+  // participants: any[];
+  // priceReduction: number;
+  // resubmissions: number;
   start: string;
   startingPrice: number;
   status: string;
@@ -40,10 +40,11 @@ interface NextTournamentCardProps {
   updatedAt: string;
   vip: boolean;
   __v: number;
-  _id: string;
+  // _id: string;
 }
 
 const NextTournamentCard = ({
+  id,
   image,
   title,
   name,
@@ -55,7 +56,6 @@ const NextTournamentCard = ({
   start,
   end,
   tournamentId,
-  _id,
 }: NextTournamentCardProps) => {
   const countDown = calculateCountdown(start);
   const endDate = calculateCountdown(end);
@@ -87,9 +87,7 @@ const handleTournamentShare=() =>{
       {/* Right Column - Tournament Info */}
 
       <div className="xl:border-l pt-5 xl:pt-10 pb-5 xl:pb-12 px-5 sm:px-7 relative">
-        <Button className="xl:block hidden absolute top-8 xl:top-5 right-5 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
-          <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
-        </Button>
+        
         {/* Tournament Badge */}
         <div className="mb-3">
           <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-normal">
