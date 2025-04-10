@@ -39,14 +39,18 @@ import { useCart } from "@/context/CartContext";
 // Define the Zod schema for the checkout payload
 const checkoutSchema = z
   .object({
-    snapPoints: z.string().optional(),
-    discountPoints: z.string().optional(),
+    snapPoints: z.string().optional().refine(val => !val || parseFloat(val) > 0, {
+      message: "snapPoints must be a positive number",
+    }),
+    discountPoints: z.string().optional().refine(val => !val || parseFloat(val) > 0, {
+      message: "discountPoints must be a positive number",
+    }),
     // voucherCode: z.string().nonempty({ message: "Voucher Code is required" }),
   })
-  .refine((data) => data.snapPoints || data.discountPoints, {
-    message: "required",
-    path: ["snapPoints"], // You can specify the path to show the error on snapPoints
-  });
+  // .refine((data) => data.snapPoints || data.discountPoints, {
+  //   message: "required",
+  //   path: ["snapPoints"], // You can specify the path to show the error on snapPoints
+  // });
 
 // Define a new Zod schema for the voucher code
 const voucherSchema = z.object({

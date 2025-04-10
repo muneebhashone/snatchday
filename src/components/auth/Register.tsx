@@ -76,7 +76,7 @@ const Register = ({ onBack }: RegisterProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-[1170px] p-0">
+      <DialogContent className="max-w-[1170px] p-0" hideCloseButton={true}>
         <DialogHeader className="text-left relative px-24 pt-10">
           <button
             onClick={handleClose}

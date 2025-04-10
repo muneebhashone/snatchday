@@ -91,6 +91,32 @@ const formSchema = z
         message: "License key is required when shipping is not enable",
       });
     }
+
+    // Custom validation for discounts (dates)
+    if (data.discounts && data.discounts.length > 0) {
+      data.discounts.forEach((discount, index) => {
+        const startDate = new Date(discount.away);
+        const endDate = new Date(discount.until);
+
+        // Check if the start date is in the past
+        if (startDate < new Date()) {
+          ctx.addIssue({
+            path: [`discounts.${index}.away`],
+            code: z.ZodIssueCode.custom,
+            message: "Start Date cannot be in the past",
+          });
+        }
+
+        // Check if the end date is greater than the start date
+        if (endDate <= startDate) {
+          ctx.addIssue({
+            path: [`discounts.${index}.until`],
+            code: z.ZodIssueCode.custom,
+            message: "End Date must be greater than Start Date",
+          });
+        }
+      });
+    }
   });
 
 interface Category {
@@ -134,6 +160,22 @@ interface DiscountItem {
   price: number;
 }
 
+interface ICategoryIds {
+  above: boolean;
+  createdAt: string;
+  description: string;
+  displayName: string;
+  filters: string[];
+  image: string;
+  isActive: boolean;
+  name: string;
+  parentCategory: string;
+  shop: boolean;
+  subCategories: string[];
+  updatedAt: string;
+  _id: string;
+}
+
 interface Product {
   _id: string;
   name: string;
@@ -145,7 +187,7 @@ interface Product {
   price: number;
   discounts: DiscountItem[];
   attributes: Record<string, any>;
-  categoryIds: string[];
+  categoryIds: ICategoryIds[];
   type: "NEW" | "SALE";
   isFeatured: boolean;
   metaTitle: string;
@@ -185,7 +227,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       return acc;
     }, {} as Record<string, string[]>)
   );
-
+  console.log(product.categoryIds);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -198,7 +240,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       price: product.price,
       discounts: product.discounts || [],
       attributes: Object.keys(product.attributes || {}),
-      categoryIds: product.categoryIds?.map((id) => id._id) || "",
+      categoryIds: product.categoryIds[0]?._id || "",
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
@@ -218,6 +260,8 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     control: form.control,
     name: "discounts",
   });
+
+
   useEffect(() => {
     if (product?.discounts) {
       replace(product.discounts);
@@ -226,6 +270,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       getCategories(product?.categoryIds);
     }
   }, [categoriesData?.data?.categories, product, replace]);
+
+
+
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -534,6 +582,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       getCategories((prev) => [...prev, category]);
                     }
                   }}
+                  value={product.categoryIds[0]._id}
                 >
                   <FormControl>
                     <SelectTrigger>

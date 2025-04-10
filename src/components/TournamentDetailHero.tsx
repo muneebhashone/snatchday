@@ -54,10 +54,9 @@ const TournamentDetailHero = ({
   const closeLoginModal = () => {
     setLoginModalOpen(false);
   };
-  console.log(user,"user")
+  console.log(user, "user");
 
-
-  console.log(tournamentData,"tournamentData")
+  console.log(tournamentData, "tournamentData");
 
   // const handleParticipate = () => {
 
@@ -88,10 +87,9 @@ const TournamentDetailHero = ({
   
       console.log(userGroup, isVipTournament);
   
-      // VIP users can only participate in VIP tournaments
-      // Basic/All users can only participate in non-VIP tournaments
-      if ((userGroup === "vip" && isVipTournament) || 
-          (userGroup !== "vip" && !isVipTournament)) {
+      // Allow VIP users to participate in any tournament
+      // Only restrict non-VIP users from joining VIP tournaments
+      if (userGroup === "vip" || (!isVipTournament && userGroup !== "vip")) {
         if (tournamentData?.data?._id) {
           participateTournament(tournamentData?.data?._id, {
             onSuccess: () => {
@@ -101,19 +99,17 @@ const TournamentDetailHero = ({
             onError: (error: any) => {
               console.error("Participation failed:", error);
               toast.error(error?.message);
-            }
+            },
           });
         }
       } else {
-        toast.error(userGroup === "vip" 
-          ? "This tournament is for non-VIP users only" 
-          : "This tournament is for VIP users only");
+        toast.error("This tournament is for VIP users only");
       }
     } else {
       setLoginModalOpen(true);
     }
   };
-
+  
   return (
     <div className="relative h-max">
       <Image
@@ -362,6 +358,7 @@ const TournamentDetailHero = ({
               <div className="flex items-center justify-center gap-1 md:gap-4 relative z-10 mt-10">
                 <CountdownDisplay
                   countdown={calculateCountdown(tournamentData?.data?.start)}
+                  endDate={calculateCountdown(tournamentData?.data?.end)}
                 />
               </div>
             </div>
