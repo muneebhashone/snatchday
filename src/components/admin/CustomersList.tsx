@@ -39,6 +39,7 @@ export default function CustomersList() {
   const [group, setGroup] = useState("");
   const [date, setDate] = useState("");
   const [isApprove, setApprove] = useState("");
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,6 +49,7 @@ export default function CustomersList() {
       created: "",
     },
   });
+
 
   const onSubmit = (values: any) => {
     console.log(values);
@@ -67,7 +69,7 @@ export default function CustomersList() {
 
   return (
     <div>
-      <h1>Customers</h1>
+      <h1 className="mb-4 font-bold text-2xl">Customers</h1>
       <div className="max-w-full mx-auto rounded-sm border">
         <div className="w-full pl-4 flex items-center gap-1">
           {/* <OverviewIcon />  */}
@@ -77,7 +79,7 @@ export default function CustomersList() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-1 grid grid-cols-4 items-center justify-center gap-2 bg-gray-100 pl-24 pt-4 pb-8"
+            className="space-y-1 grid grid-cols-4 items-center justify-center gap-2 bg-gray-100 px-12 pt-4 pb-8"
           >
             {/* customer name */}
             <FormField
@@ -167,7 +169,7 @@ export default function CustomersList() {
                         >
                           <CalendarIcon />
                           {field.value
-                            ? String(field.value.split("T")[0])
+                            ? new Date(field.value).toLocaleDateString("en-CA") // Format: YYYY-MM-DD
                             : "Pick a date"}
                         </Button>
                       </PopoverTrigger>
@@ -178,8 +180,9 @@ export default function CustomersList() {
                             field.value ? new Date(field.value) : undefined
                           }
                           onSelect={(date) => {
+                            console.log(date, 'date');
                             field.onChange(
-                              date ? new Date(date).toISOString() : undefined
+                              date ? new Date(date).toLocaleDateString("en-CA") : undefined
                             );
                           }}
                           initialFocus

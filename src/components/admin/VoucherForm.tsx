@@ -60,19 +60,38 @@ const formSchema = z
     ),
     registered: z.boolean(),
     noShipping: z.boolean(),
-    products: z.array(z.string()).min(1, "Product is required"),
-    categories: z.array(z.string()).min(1, "Category is required"),
+    products: z.array(z.string()),
+    categories: z.array(z.string()),
     from: z.string().min(1, "Start date is required"),
     until: z.string().min(1, "End date is required"),
     noOfUsage: z.coerce.number().min(1, "Number of usage must be at least 1"),
     usagePerUser: z.coerce.number().min(1, "Usage per user must be at least 1"),
-  }).refine((val) => {
-    console.log(val,"val")
-      return new Date(val.until) > new Date(val.from);
-  }, {
-    message: "End date must be greater than start date",
-    path: ["until"],
+  })
+  .superRefine((val, ctx) => {
+    // At least one of `products` or `categories` must be non-empty
+    if (val.products.length === 0 && val.categories.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Either products or categories must be selected",
+        path: ["products"],
+      });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Either products or categories must be selected",
+        path: ["categories"],
+      });
+    }
+
+    // End date must be after start date
+    if (new Date(val.until) <= new Date(val.from)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date must be greater than start date",
+        path: ["until"],
+      });
+    }
   });
+
  
 
 
@@ -110,7 +129,6 @@ const VoucherForm = () => {
   });
 
 
-  console.log(form.formState.errors,"for.state");
 
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {

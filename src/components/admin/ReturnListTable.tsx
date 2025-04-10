@@ -13,6 +13,7 @@ import { Edit2, Eye, Loader } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
+import InvoiceButton from "../InvoiceButton ";
 
 export function ReturnListTable() {
   const [pagination, setPagination] = useState({
@@ -120,7 +121,7 @@ export function ReturnListTable() {
           ) : returns?.data?.returns?.length > 0 ? (
             returns?.data?.returns?.map((returnItem, index) => (
               <TableRow key={index}>
-                <TableCell>
+                <TableCell className="w-[200px]">
                   {returnItem?.productsData?.map((product, i) => (
                     <ul key={i}>
                       <li>{product?.product?.article || "N/A"}</li>
@@ -150,9 +151,9 @@ export function ReturnListTable() {
                     </button>
                   </Link>
                 </TableCell>
-                <TableCell className="text-center">
-                  {/* <InvoiceButton orderDetails={returnItem} /> */}
-                </TableCell>
+                {/* <TableCell className="text-center">
+                  <InvoiceButton orderDetails={returnItem} />
+                </TableCell> */}
               </TableRow>
             ))
           ) : (

@@ -57,44 +57,50 @@ const formSchema = z.object({
 })
 
 interface EditCategoryDialogProps {
-  category: Category;
+  categoryId: string;
 }
 
-export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
+export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
+  
+  const {data:  getSingleCategory}=useGetCategoryById(categoryId)
+
+
   const [open, setOpen] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string>(category.image)
+  const [previewUrl, setPreviewUrl] = useState<string>('')
   const { mutate: updateCategory,isPending  : isUpdateLoading } = useUpdateCategory()
   const queryClient = useQueryClient()
 
+ 
 
-  const { data: getCategories } = useGetCategories()
+  const { data: getCategories } = useGetCategories({
+    limit: "9999999"
+  })
   const categories = getCategories?.data?.categories
 
-  console.log(category,"category")
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: category?.name,
-      description: category?.description,
-      parentCategory: category?.parentCategory || '',
-      shop: category?.shop,
-      above: category?.above,
+      name: getSingleCategory?.data?.name || '',
+      description: getSingleCategory?.data?.description || '',
+      parentCategory: getSingleCategory?.data?.parentCategory || '',
+      shop: getSingleCategory?.data?.shop || false,
+      above: getSingleCategory?.data?.above || false,
     },
   })
 
 
   useEffect(() => {
-    if (category) {
+    if (getSingleCategory) {
       form.reset({
-        name: category?.name,
-        description: category?.description,
-        parentCategory: category?.parentCategory || '',
-        shop: category?.shop,
-        above: category?.above,
+        name: getSingleCategory?.data?.name,
+        description: getSingleCategory?.data?.description,
+        parentCategory: getSingleCategory?.data?.parentCategory || '',
+        shop: getSingleCategory?.data?.shop,
+        above: getSingleCategory?.data?.above,
       });
     }
-  }, [ category , form]);
+  }, [ getSingleCategory , form]);
 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,8 +136,17 @@ export function EditCategoryDialog({ category }: EditCategoryDialogProps) {
         }
       })
 
+      const dataTosend = {
+        name: values.name,
+        description: values.description,
+        image: values.image,
+        shop: values.shop,
+        above: values.above,
+        ...(values.parentCategory && { parentCategoryId: values.parentCategory })
+      };
+
       updateCategory(
-        { id: category._id, data: formData },
+        { id: categoryId, data: dataTosend },
         {
           onSuccess: () => {
             toast.success("Category updated successfully")
