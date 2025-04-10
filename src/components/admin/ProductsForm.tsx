@@ -71,7 +71,7 @@ const formSchema = z
     stock: z.number().min(0, "Stock must be 0 or greater"),
     price: z.number().min(0, "Price must be 0 or greater"),
     attributes: z.any(),
-    categoryIds: z.string().min(1, "Category is required"),
+    categoryIds: z.any(),
     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
@@ -101,8 +101,6 @@ const formSchema = z
       });
     }
 
-
-
     // Custom validation for discounts (dates)
     if (data.discounts && data.discounts.length > 0) {
       data.discounts.forEach((discount, index) => {
@@ -117,9 +115,9 @@ const formSchema = z
             message: "Start Date cannot be in the past",
           });
         }
-     
-        console.log(data.price,"price");
-        console.log(data.discounts?.[index]?.price,"discount");
+
+        console.log(data.price, "price");
+        console.log(data.discounts?.[index]?.price, "discount");
         if (data.price < data.discounts?.[index]?.price) {
           ctx.addIssue({
             path: [`discounts.${index}.price`],
@@ -141,12 +139,13 @@ const formSchema = z
   });
 
 export default function ProductsForm() {
+  const [emptyCategory, setEmptyCategory] = useState(false);
   const [applyDiscounts, setApplyDiscounts] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const { mutate: createProduct, isPending } = useCreateProduct();
   const { data: getCategories } = useGetCategories({
-     limit:"99999999",
-     offset:"0"
+    limit: "99999999",
+    offset: "0",
   });
   const [selectedCategory, setSelectedCategory] = useState<object[]>([]);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
@@ -188,9 +187,6 @@ export default function ProductsForm() {
     name: "discounts",
   });
 
-
-
-
   const [selectedFilter, setSelectedFilters] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,7 +201,11 @@ export default function ProductsForm() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-
+    if (selectedCategory.length < 1) {
+      setEmptyCategory(true);
+      return;
+    }
+    setEmptyCategory(false);
     const dataToSend = { ...values };
     if (dataToSend.requireShipping) {
       delete dataToSend.liscenseKey;
@@ -294,9 +294,6 @@ export default function ProductsForm() {
       console.error(error);
     }
   }
-
-
- 
 
   return (
     <div className="p-6">
@@ -472,9 +469,9 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
-     
-      
-             <FormField
+
+          <div>
+            <FormField
               control={form.control}
               name="categoryIds"
               render={({ field }) => (
@@ -482,7 +479,6 @@ export default function ProductsForm() {
                   <FormLabel>Category *</FormLabel>
                   <Select
                     value=""
-                    // onValueChange={field.onChange}
                     onValueChange={(value) => {
                       field.onChange(value);
                       const selectedCategoriess =
@@ -520,27 +516,33 @@ export default function ProductsForm() {
                 </FormItem>
               )}
             />
-            <div className="flex gap-2 mt-2 flex-wrap">
-              {selectedCategory &&
-                selectedCategory?.map((cat, i) => (
-                  <span
-                    className="relative bg-primary text-white text-sm p-1 rounded"
-                    key={i}
-                  >
-                    <X
-                      onClick={() => {
-                        setSelectedCategory((prev) =>
-                          prev.filter((_, index) => index !== i)
-                        );
-                      }}
-                      size={15}
-                      className="bg-white text-primary rounded-full p-[2px] absolute -top-1 -right-2 cursor-pointer"
-                    />
-                    {cat.displayName}
-                  </span>
-                ))}
-            </div> 
-          
+            {selectedCategory.length < 1 && emptyCategory && (
+              <p className="text-red-500 text-sm ">
+                *please select atleast one category*
+              </p>
+            )}
+          </div>
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {selectedCategory &&
+              selectedCategory?.map((cat, i) => (
+                <span
+                  className="relative bg-primary text-white text-sm p-1 rounded"
+                  key={i}
+                >
+                  <X
+                    onClick={() => {
+                      setSelectedCategory((prev) =>
+                        prev.filter((_, index) => index !== i)
+                      );
+                    }}
+                    size={15}
+                    className="bg-white text-primary rounded-full p-[2px] absolute -top-1 -right-2 cursor-pointer"
+                  />
+                  {cat.displayName}
+                </span>
+              ))}
+          </div>
+
           <FormField
             control={form.control}
             name="metaTitle"
@@ -651,7 +653,10 @@ export default function ProductsForm() {
                           </FormControl>
                           {form.formState.errors?.discounts?.[index]?.price && (
                             <FormMessage>
-                              {form.formState.errors?.discounts?.[index]?.price?.message}
+                              {
+                                form.formState.errors?.discounts?.[index]?.price
+                                  ?.message
+                              }
                             </FormMessage>
                           )}
                         </FormItem>
@@ -787,6 +792,7 @@ export default function ProductsForm() {
                 <FormLabel>Filters name</FormLabel>
                 <FormControl>
                   <Select
+                    value=""
                     onValueChange={(value) => {
                       const currentValues = field.value || [];
                       if (!currentValues.includes(value)) {
@@ -826,7 +832,7 @@ export default function ProductsForm() {
                     {field.value.map((filterName) => (
                       <div
                         key={filterName}
-                        className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                        className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
                       >
                         <span className="text-sm">{filterName}</span>
                         <Button
