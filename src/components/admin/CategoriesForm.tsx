@@ -34,7 +34,7 @@ const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().min(1, "Description cannot be empty"),
   image: z.custom<File>((v) => v instanceof File, "Please upload an image"),
-  parentCategoryId: z.string().optional(),
+  parentCategory: z.string().optional(),
   shop: z.boolean(),
   above: z.boolean(),
 });
@@ -55,7 +55,7 @@ export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
     defaultValues: {
       name: "",
       description: "",
-      parentCategoryId: "",
+      parentCategory: "",
       shop: false,
       above: false,
     },
@@ -178,7 +178,7 @@ export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
 
           <FormField
             control={form.control}
-            name="parentCategoryId"
+            name="parentCategory"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Parent Category ID</FormLabel>

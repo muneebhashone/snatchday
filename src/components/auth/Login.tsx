@@ -57,6 +57,7 @@ const Login = ({
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(loginSchema),
@@ -111,7 +112,12 @@ const Login = ({
           toast.success("Login successful");
         },
         onError: (error) => {
-          toast.error("Login failed");
+          toast.error(error?.response?.data?.message || "Login failed", {
+            style: {
+              background: "#ff4d4f", 
+              color: "#fff",    
+            },
+          })
           console.error("Login failed:", error);
         },
       }
@@ -186,10 +192,11 @@ const Login = ({
           )}
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-[682px] p-0">
-        <DialogHeader className="text-left relative px-24 pt-10">
+      <DialogContent className="max-w-[682px] p-0 " hideCloseButton={true}>
+        <DialogHeader  className="text-left relative px-24 pt-10 ">
           <DialogTrigger asChild className="absolute -right-5 -top-5 z-30">
             <Button
+            onClick={() => reset()}
               variant="ghost"
               className="h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100"
             >

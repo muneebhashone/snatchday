@@ -177,6 +177,7 @@ const ProductContent = () => {
                     <NextTournamentCard
                       id={tournament._id}
                       image={tournament.image}
+                      _id={tournament._id}
                       title={tournament.title}
                       name={tournament.name}
                       game={tournament.game}

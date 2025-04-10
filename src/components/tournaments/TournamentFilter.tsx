@@ -50,7 +50,10 @@ const TournamentFilter = ({
   const [page, setPage] = useState(1);
 
   // const { data: games, isLoading: isGamesLoader } = useGetGames(page);
-  const { data: categories, isLoading: isCategLoding } = useGetCategories();
+  const { data: categories, isLoading: isCategLoding } = useGetCategories({
+     limit: "9999999",
+    
+  });
   const { data: Products, isLoading: isProductLoding } = useGetProducts();
 
   // console.log(Products,"alllll")
@@ -74,7 +77,7 @@ const TournamentFilter = ({
     onVipChange(vip);
 
     if (category !== "") {
-      onCategoryChange([category]);
+      onCategoryChange(category);
     }
   };
 
@@ -87,7 +90,7 @@ const TournamentFilter = ({
     setGame("");
     setProduct("");
     setVip("no");
-    setCategory([]);
+    setCategory("");
     
     setFilters({
       limit: "10",

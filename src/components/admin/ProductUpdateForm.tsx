@@ -62,7 +62,7 @@ const formSchema = z
     price: z.number().min(0, "Price must be 0 or greater"),
     // discounts: z.string().optional(),
     attributes: z.any(),
-    categoryIds: z.string(),
+    categoryIds: z.any(),
     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
@@ -89,6 +89,32 @@ const formSchema = z
         path: ["liscenseKey"],
         code: z.ZodIssueCode.custom,
         message: "License key is required when shipping is not enable",
+      });
+    }
+
+    // Custom validation for discounts (dates)
+    if (data.discounts && data.discounts.length > 0) {
+      data.discounts.forEach((discount, index) => {
+        const startDate = new Date(discount.away);
+        const endDate = new Date(discount.until);
+
+        // Check if the start date is in the past
+        if (startDate < new Date()) {
+          ctx.addIssue({
+            path: [`discounts.${index}.away`],
+            code: z.ZodIssueCode.custom,
+            message: "Start Date cannot be in the past",
+          });
+        }
+
+        // Check if the end date is greater than the start date
+        if (endDate <= startDate) {
+          ctx.addIssue({
+            path: [`discounts.${index}.until`],
+            code: z.ZodIssueCode.custom,
+            message: "End Date must be greater than Start Date",
+          });
+        }
       });
     }
   });
@@ -185,7 +211,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const [previewUrls, setPreviewUrls] = useState<string[]>(
     product.images || []
   );
-  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: updateProduct,isPending } = useUpdateProduct();
   const { data: categoriesData } = useGetCategories() as {
     data: CategoryResponse;
   };
@@ -234,6 +260,8 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     control: form.control,
     name: "discounts",
   });
+
+
   useEffect(() => {
     if (product?.discounts) {
       replace(product.discounts);
@@ -242,6 +270,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       getCategories(product?.categoryIds);
     }
   }, [categoriesData?.data?.categories, product, replace]);
+
+
+
+
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -334,7 +366,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             router.push("/admin/products");
           },
           onError: (error) => {
-            toast.error("Failed to update product");
+            toast.error(error?.response?.data.message || "Failed to update product");
             console.error(error);
           },
         }
@@ -1259,7 +1291,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           )}
 
           <div className="flex justify-end">
-            <Button type="submit">Update Product</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Updating..." : "Update Product"}
+            </Button>
           </div>
         </form>
       </Form>

@@ -72,9 +72,9 @@ export function CustomeListTable({
               <Link href={`/admin/customers/${customer._id}`}>
                 <Edit className="text-primary" />
               </Link>
-              <Link href={`#`}>
+              {/* <Link href={`#`}>
                 <Delete className="text-red-500" />
-              </Link>
+              </Link> */}
             </TableCell>
           </TableRow>
         ))}

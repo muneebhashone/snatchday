@@ -195,6 +195,7 @@ const TournamentDetailPage = () => {
                       tournamentId={"23456722"}
                       updatedAt={tournament.updatedAt}
                       vip={tournament.vip}
+                      _id={tournament._id}
                       __v={tournament.__v}
                     />
                   </CarouselItem>

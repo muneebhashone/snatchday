@@ -34,21 +34,21 @@ const CountdownDisplay: React.FC<CountdownProps> = ({ endDate, countdown }) => {
           </div>
           <div className="text-center text-[#1C1B1D]">
             <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-              {endDate?.hours}
+              {endDate?.hours || 0}
             </div>
             <p className="text-xs hidden xl:block">Hours</p>
             <p className="xl:hidden block text-xs">Hrs</p>
           </div>
           <div className="text-center text-[#1C1B1D]">
             <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-              {endDate?.minutes}
+              {endDate?.minutes || 0}
             </div>
             <p className="text-xs hidden xl:block">Minutes</p>
             <p className="text-xs xl:hidden block">Min</p>
           </div>
           <div className="text-center text-[#1C1B1D]">
             <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-              {endDate?.seconds}
+              {endDate?.seconds || 0}
             </div>
             <p className="text-xs hidden xl:block">Seconds</p>
             <p className="text-xs xl:hidden block">Sec</p>
@@ -66,21 +66,21 @@ const CountdownDisplay: React.FC<CountdownProps> = ({ endDate, countdown }) => {
       </div>
       <div className="text-center text-[#1C1B1D]">
         <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-          {countdown?.hours}
+          {countdown?.hours || 0}
         </div>
         <p className="text-xs hidden xl:block">Hours</p>
         <p className="xl:hidden block text-xs">Hrs</p>
       </div>
       <div className="text-center text-[#1C1B1D]">
         <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-          {countdown?.minutes}
+          {countdown?.minutes || 0}
         </div>
         <p className="text-xs hidden xl:block">Minutes</p>
         <p className="text-xs xl:hidden block">Min</p>
       </div>
       <div className="text-center text-[#1C1B1D]">
         <div className="border bg-white border-gray-200 text-[18px] xl:text-[30px] font-normal px-3 xl:px-7">
-          {countdown?.seconds}
+          {countdown?.seconds || 0}
         </div>
         <p className="text-xs hidden xl:block">Seconds</p>
         <p className="text-xs xl:hidden block">Sec</p>
