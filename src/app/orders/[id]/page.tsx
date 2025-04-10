@@ -112,8 +112,8 @@ const OrderDetails = () => {
                         {item?.product?.name}
                       </td>
                       <td className="border p-2 text-center">{item?.quantity || 0}</td>
-                      <td className="border p-2 text-center">{`${item?.unitPrice}€`}</td>
-                      <td className="border p-2 text-center">{`${item?.totalPrice}€`}</td>
+                      <td className="border p-2 text-center">{`${item?.unitPrice?.toFixed(2)}€`}</td>
+                      <td className="border p-2 text-center">{`${item?.totalPrice?.toFixed(2)}€`}</td>
                       <td className="border p-2 text-center">{formatDate(item?.product?.createdAt || "", "dd/MM/yyyy")}</td>
                       <td className="border p-2">
                         <button
@@ -130,7 +130,7 @@ const OrderDetails = () => {
 
               <div className="mt-4 border-t pt-4">
                 <p>
-                  <strong>Subtotal:</strong> {orderDetails?.data?.cartObject?.subTotal}€
+                  <strong>Subtotal:</strong> {orderDetails?.data?.cartObject?.subTotal?.toFixed(2)}€
                 </p>
                 <p>
                   <strong>DE Shipping (Weight 0.00kg):</strong> Coming soon
@@ -147,7 +147,7 @@ const OrderDetails = () => {
                 <p>
                   <strong>Recharge credit:</strong> Coming soon
                 </p>
-                <p className="font-bold text-lg">In total: {orderDetails?.data?.cartObject?.total.toFixed(2)}€</p>
+                <p className="font-bold text-lg">In total: {orderDetails?.data?.cartObject?.total?.toFixed(2)}€</p>
               </div>
             </CardContent>
 

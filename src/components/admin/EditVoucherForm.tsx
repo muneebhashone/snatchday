@@ -42,24 +42,42 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Loader2 } from "lucide-react";
 
-const formSchema = z.object({
-  code: z.string().min(3, "Code must be at least 3 characters"),
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  type: z.enum(["PERCENTAGE", "FIXED"]),
-  estate: z.string(),
-  value: z.coerce.number().min(0, "Value must be positive"),
-  registered: z.boolean(),
-  noShipping: z.boolean(),
-  products: z.array(z.string()),
-  categories: z.array(z.string()),
-  expiryDate: z.date().optional(),
-  // minOrderValue: z.coerce
-  //   .number()
-  //   .min(0, "Minimum order value must be positive"),
-  // maxUses: z.coerce.number().min(0, "Maximum uses must be positive"),
-  from: z.coerce.date(),
-  until: z.coerce.date(),
-});
+const formSchema = z
+  .object({
+    code: z.string().min(3, "Code must be at least 3 characters"),
+    name: z.string().min(3, "Name must be at least 3 characters"),
+    type: z.enum(["PERCENTAGE", "FIXED"], {
+      required_error: "Voucher type is required",
+    }),
+    estate: z.string(),
+    value: z.preprocess(
+      (val) => {
+        if (val === '' || val === null || val === undefined) return undefined;
+        const numberVal = Number(val);
+        return isNaN(numberVal) ? undefined : numberVal;
+      },
+      z.number({
+        required_error: "Value is required",
+        invalid_type_error: "Value must be a number"
+      }).min(1, "Value must be positive or greater than 0")
+    ),
+    registered: z.boolean(),
+    noShipping: z.boolean(),
+    products: z.array(z.string()),
+    categories: z.array(z.string()),
+    from: z.string().min(1, "Start date is required"),
+    until: z.string().min(1, "End date is required"),
+  })
+  .superRefine((val, ctx) => {
+    // End date must be after start date
+    if (new Date(val.until) <= new Date(val.from)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date must be greater than start date",
+        path: ["until"],
+      });
+    }
+  });
 
 interface EditVoucherFormProps {
   voucherId: string;
@@ -69,8 +87,12 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   const router = useRouter();
   const { mutate: updateVoucher, isPending } = useUpdateVoucher(voucherId);
   const { data: voucherResponse } = useGetVoucherById(voucherId);
-  const { data: productsResponse } = useGetProducts();
-  const { data: categoriesResponse } = useGetCategories();
+  const { data: productsResponse } = useGetProducts({
+    limit: "99999999"
+  });
+  const { data: categoriesResponse } = useGetCategories({
+    limit: "99999999"
+  });
 
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
@@ -95,6 +117,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
       // maxUses: voucher?.maxUses || 0,
     },
   });
+
 
   useEffect(() => {
     if (voucher) {
@@ -253,7 +276,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                       <SelectValue placeholder="Select products" />
                     </SelectTrigger>
                     <SelectContent>
-                      {products.map((product) => (
+                      {products?.length > 0 && products.map((product) => (
                         <SelectItem key={product._id} value={product._id}>
                           {product.name}
                         </SelectItem>
@@ -264,7 +287,9 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                 {field.value?.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {field.value.map((productId) => {
-                      const product = products.find((p) => p._id === productId);
+                      const product = products?.find((p) => p._id === productId);
+                      if (!product || !product.name) return null;
+
                       return (
                         <div
                           key={productId}
@@ -315,7 +340,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                       <SelectValue placeholder="Select categories" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((category) => (
+                      {categories?.length > 0 && categories.map((category) => (
                         <SelectItem key={category._id} value={category._id}>
                           {category.name}
                         </SelectItem>
@@ -326,9 +351,12 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                 {field.value?.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
                     {field.value.map((categoryId) => {
-                      const category = categories.find(
+                      console.log(categoryId,"categoryId")
+                      const category = categories?.find(
                         (c) => c._id === categoryId
                       );
+                      console.log(category,"category")
+                      if (!category || !category.name) return null;
                       return (
                         <div
                           key={categoryId}

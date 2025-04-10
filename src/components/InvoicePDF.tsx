@@ -202,11 +202,11 @@ const InvoicePDF: React.FC<InvoiceProps> = ({ orderDetails }) => {
         <View style={styles.totalsSection}>
           <View style={styles.totalText}>
             <Text style={styles.totalLabel}>Subtotal:</Text>
-            <Text style={styles.totalValue}>{orderDetails?.cartObject?.subTotal} €</Text>
+            <Text style={styles.totalValue}>{orderDetails?.cartObject?.subTotal?.toFixed(2)} €</Text>
           </View>
           <View style={styles.totalText}>
             <Text style={styles.totalLabel}>SnapPoints:</Text>
-            <Text style={styles.totalValue}>{orderDetails?.cartObject?.snapPoints} €</Text>
+            <Text style={styles.totalValue}>{orderDetails?.cartObject?.snapPoints?.toFixed(2)} €</Text>
           </View>
           <View style={styles.totalText}>
             <Text style={styles.totalLabel}>DiscountPoints:</Text>
@@ -219,7 +219,7 @@ const InvoicePDF: React.FC<InvoiceProps> = ({ orderDetails }) => {
           <View style={[styles.totalText, { borderTopWidth: 1, borderTopColor: '#2980B9', paddingTop: 5 }]}>
             <Text style={[styles.totalLabel, { fontSize: 14 }]}>Total:</Text>
             <Text style={[styles.totalValue, { fontSize: 14, fontWeight: 'bold' }]}>
-              {orderDetails?.cartObject?.total} €
+              {orderDetails?.cartObject?.total?.toFixed(2)} €
             </Text>
           </View>
         </View>
