@@ -1,3 +1,4 @@
+"use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
 import duellingimage from "@/app/images/duellingimage.png";

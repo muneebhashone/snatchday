@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useCallback, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -369,10 +370,10 @@ const NewsletterComposer = () => {
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              {/* <RichTextEditor
+                              <RichTextEditor
                                 value={field.value}
                                 onChange={field.onChange}
-                              /> */}
+                              />
                             </FormControl>
                           </FormItem>
                         )}
@@ -394,6 +395,6 @@ const NewsletterComposer = () => {
       </AdminLayout>
     );
   }
-}
+};
 
 export default NewsletterComposer;
