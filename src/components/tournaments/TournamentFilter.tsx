@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DualRangeSlider } from "./dualSlider";
-import { useGetCategories, useGetGames, useGetProducts } from "@/hooks/api";
+import { useGetCategories, useGetProducts } from "@/hooks/api";
 
 interface TournamentFilterProps {
   onPeriodChange: (from: string, until: string) => void;
@@ -27,7 +27,6 @@ interface TournamentFilterProps {
   onVipChange: (vip: string) => void;
   onCategoryChange: (category: string) => void;
   setFilters: (filters: Record<string, string[]>) => void;
-
 }
 
 const TournamentFilter = ({
@@ -41,7 +40,7 @@ const TournamentFilter = ({
   setFilters,
 }: TournamentFilterProps) => {
   const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [participationFee, setParticipationFee] = useState([0 , 1000]);
+  const [participationFee, setParticipationFee] = useState([0, 1000]);
   const [period, setPeriod] = useState({ from: "", until: "" });
   const [game, setGame] = useState("");
   const [product, setProduct] = useState("");
@@ -49,10 +48,8 @@ const TournamentFilter = ({
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
 
-  // const { data: games, isLoading: isGamesLoader } = useGetGames(page);
   const { data: categories, isLoading: isCategLoding } = useGetCategories({
-     limit: "9999999",
-    
+    limit: "9999999",
   });
   const { data: Products, isLoading: isProductLoding } = useGetProducts();
 

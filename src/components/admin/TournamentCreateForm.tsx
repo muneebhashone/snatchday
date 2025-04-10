@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format } from "date-fns";
-import { useCreateTournament, useGetProducts } from "@/hooks/api";
+import { useCreateTournament, useGetGames, useGetProducts } from "@/hooks/api";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -49,68 +49,6 @@ import {
   CommandList,
 } from "../ui/command";
 
-// const formSchema = z.object({
-//   name: z
-//     .string({ required_error: "Name is required" })
-//     .min(3, "Name must be at least 3 characters"),
-//   title: z
-//     .string({ required_error: "Title is required" })
-//     .min(3, "Title must be at least 3 characters"),
-//   textForBanner: z
-//     .string({ required_error: "Banner text is required" })
-//     .min(3, "Banner text must be at least 3 characters"),
-//   metaTitle: z
-//     .string({ required_error: "Meta title is required" })
-//     .min(3, "Meta title must be at least 3 characters"),
-//   metaDescription: z
-//     .string({ required_error: "Meta description is required" })
-//     .min(3, "Meta description must be at least 3 characters"),
-//   metaKeywords: z
-//     .string({ required_error: "Meta keywords are required" })
-//     .min(3, "Meta keywords must be at least 3 characters"),
-//   article: z
-//     .string({ required_error: "Product selection is required" })
-//     .min(1, "Please select a product"),
-//   startingPrice: z.coerce
-//     .number({ required_error: "Starting price is required" })
-//     .min(0, "Starting price must be positive"),
-//   priceReduction: z.coerce
-//     .number({ required_error: "Price reduction is required" })
-//     .min(0, "Price reduction must be positive"),
-//   numberOfPieces: z.coerce
-//     .number({ required_error: "Number of pieces is required" })
-//     .min(1, "Number of pieces must be at least 1"),
-//   game: z
-//     .string({ required_error: "Game selection is required" })
-//     .min(1, "Game must be selected"),
-//   start: z
-//     .string({ required_error: "Start date is required" })
-//     .min(1, "Start date must be selected"),
-//   end: z
-//     .string({ required_error: "End date is required" })
-//     .min(1, "End date must be selected"),
-//   length: z.coerce
-//     .number({ required_error: "Length is required" })
-//     .min(1, "Length must be at least 1"),
-//   fee: z.coerce
-//     .number({ required_error: "Fee is required" })
-//     .min(0, "Fee must be positive"),
-//   numberOfParticipants: z.coerce
-//     .number({ required_error: "Number of participants is required" })
-//     .min(1, "Number of participants must be at least 1"),
-//   vip: z.boolean(),
-//   resubmissions: z.coerce
-//     .number({ required_error: "Resubmissions is required" })
-//     .min(0, "Resubmissions must be positive"),
-//   image: z.string(),
-//   // startTime: z.string(),
-//   // endTime: z
-//   //   .string({ required_error: "End time is required" })
-//   //   .refine((val) => !isNaN(Date.parse(val)), "Invalid time format"),
-
-// });
-
-
 const formSchema = z
   .object({
     name: z
@@ -148,19 +86,19 @@ const formSchema = z
       .min(1, "Game must be selected"),
 
     // 🟢 Updated Start Date Validation
-    start: z
-      .string({ required_error: "Start date is required" })
-      .refine((val) => {
+    start: z.string({ required_error: "Start date is required" }).refine(
+      (val) => {
         const startDate = new Date(val);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         return startDate >= today;
-      }, {
+      },
+      {
         message: "Start date cannot be in the past",
-      }),
+      }
+    ),
 
-    end: z
-      .string({ required_error: "End date is required" }),
+    end: z.string({ required_error: "End date is required" }),
 
     length: z.coerce
       .number({ required_error: "Length is required" })
@@ -178,17 +116,20 @@ const formSchema = z
     image: z.string(),
   })
 
-  .refine((data) => {
-    if (!data.start || !data.end) return true;
-    return new Date(data.end) > new Date(data.start);
-  }, {
-    message: "End date must be greater than start date",
-    path: ["end"],
-  });
-
-
+  .refine(
+    (data) => {
+      if (!data.start || !data.end) return true;
+      return new Date(data.end) > new Date(data.start);
+    },
+    {
+      message: "End date must be greater than start date",
+      path: ["end"],
+    }
+  );
 
 const TournamentCreateForm = ({ productId }: { productId?: string }) => {
+  const { data: games } = useGetGames(0, 100);
+  console.log(games);
   const params = useParams();
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
@@ -497,8 +438,12 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="powerblocks">PowerBlocks</SelectItem>
-                        <SelectItem value="pushit">Push It</SelectItem>
+                        {games?.data?.games &&
+                          games?.data?.games.map((game) => (
+                            <SelectItem key={game._id} value={game._id}>
+                              {game.game}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />

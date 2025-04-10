@@ -23,87 +23,82 @@ const Page = () => {
   const debouncedFilters = useDebounce(filters, 1000);
 
   const handleFilterChange = (key: keyof TournamentParams, value: string) => {
-      let sortAttr = '';
-     let sortOrder = '';
-  
+    let sortAttr = "";
+    let sortOrder = "";
+
     switch (value) {
-      case 'latest':
-        sortAttr = 'createdAt';
-        sortOrder = 'desc';
+      case "latest":
+        sortAttr = "createdAt";
+        sortOrder = "desc";
         break;
-      case 'high':
-        sortAttr = 'startingPrice';
-        sortOrder = 'asc';
+      case "high":
+        sortAttr = "startingPrice";
+        sortOrder = "asc";
         break;
-      case 'low':
-        sortAttr = 'startingPrice';
-        sortOrder = 'desc';
+      case "low":
+        sortAttr = "startingPrice";
+        sortOrder = "desc";
         break;
       default:
         break;
     }
-  
-    setFilters((prev) => ({ 
-      ...prev, 
+
+    setFilters((prev) => ({
+      ...prev,
       sort_attr: sortAttr,
-      sort: sortOrder
+      sort: sortOrder,
     }));
   };
-
-
-  
 
   const handlePeriodChange = (from: string, until: string) => {
-    setFilters(prev => ({ ...prev, from, until }));
+    setFilters((prev) => ({ ...prev, from, until }));
   };
 
-
   const handlePriceChange = (priceRange: string) => {
-    setFilters(prev => ({ 
-      ...prev, 
-      startingPrice: priceRange 
+    setFilters((prev) => ({
+      ...prev,
+      startingPrice: priceRange,
     }));
   };
 
-
   const handleFeeChange = (feeRange: string) => {
-    setFilters(prev => ({ 
-      ...prev, 
-      participationFee: feeRange 
+    setFilters((prev) => ({
+      ...prev,
+      participationFee: feeRange,
     }));
   };
 
   const handleProductChange = (productId: string) => {
-    setFilters(prev => ({ 
-      ...prev, 
-      product: productId 
+    setFilters((prev) => ({
+      ...prev,
+      product: productId,
     }));
   };
 
   // const handleCategoryChange = (categoryId: string) => {
-    
-  //   setFilters(prev => ({ 
-  //     ...prev, 
+
+  //   setFilters(prev => ({
+  //     ...prev,
   //     category: categoryId
   //   }));
   // };
 
   const handleCategoryChange = (categoryId: string) => {
-    setFilters(prev => {
+    setFilters((prev) => {
       // Convert previous string "[id1,id2]" into real array
       const raw = prev.category || "[]";
       const prevCategories: string[] = JSON.parse(raw);
-  
+
       const isSelected = prevCategories.includes(categoryId);
       const newCategories = isSelected
-        ? prevCategories.filter(id => id !== categoryId)
+        ? prevCategories.filter((id) => id !== categoryId)
         : [...prevCategories, categoryId];
-  
+
       if (newCategories.length === 0) {
         const { category, ...rest } = prev;
         return rest;
       }
-  
+
       return {
         ...prev,
         category: JSON.stringify(newCategories),
@@ -112,24 +107,20 @@ const Page = () => {
   };
 
   const handleVipChange = (vip: string) => {
-    if(!vip) return;
-    setFilters(prev => ({ 
-      ...prev, 
-      vip: vip === 'yes' ? 'true' : 'false' 
+    if (!vip) return;
+    setFilters((prev) => ({
+      ...prev,
+      vip: vip === "yes" ? "true" : "false",
     }));
   };
 
   const handleGameChange = (game: string) => {
-    setFilters(prev => ({ ...prev, game }));
+    setFilters((prev) => ({ ...prev, game }));
   };
 
+  const { data: nextTournament, isLoading } =
+    useGetTournaments(debouncedFilters);
 
-
-
-
-
-  const { data: nextTournament ,isLoading} = useGetTournaments(debouncedFilters);
-  
   return (
     <ClientLayout>
       <div className="mt-10">
@@ -144,24 +135,35 @@ const Page = () => {
           <div className="flex md:flex-row flex-col items-center justify-between mb-8 gap-4">
             <div className="flex items-center gap-4">
               <Button className="gradient-primary text-white rounded-full px-4 sm:px-6 py-1 sm:py-2">
-                All TOURNAMENTS 
+                All TOURNAMENTS
               </Button>
               <p className="text-gray-600">Showing all tournaments</p>
             </div>
             <div className="flex items-center gap-4">
-              <select onChange={(e) => handleFilterChange("sort", e.target.value)} className="h-12 px-2 sm:px-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary">
-              <option value="" selected disabled>Sort by</option>
-              <option value={"latest"}>Sort by: Latest</option>
+              <select
+                onChange={(e) => handleFilterChange("sort", e.target.value)}
+                className="h-12 px-2 sm:px-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="" selected disabled>
+                  Sort by
+                </option>
+                <option value={"latest"}>Sort by: Latest</option>
                 <option value={"high"}>Sort by: Price Low to High</option>
                 <option value={"low"}>Sort by: Price High to Low</option>
               </select>
               {filters.sort && (
-                <Button 
-                  variant="link" 
+                <Button
+                  variant="link"
                   onClick={() => {
-                    setFilters(prev => ({ ...prev, sort: undefined, sort_attr: undefined }));
+                    setFilters((prev) => ({
+                      ...prev,
+                      sort: undefined,
+                      sort_attr: undefined,
+                    }));
                     // Reset the select element to default
-                    const selectElement = document.querySelector('select') as HTMLSelectElement;
+                    const selectElement = document.querySelector(
+                      "select"
+                    ) as HTMLSelectElement;
                     if (selectElement) {
                       selectElement.selectedIndex = 0;
                     }
@@ -176,7 +178,7 @@ const Page = () => {
 
           {/* Filter Section */}
           <div className="mb-8">
-            <TournamentFilter 
+            <TournamentFilter
               onPeriodChange={handlePeriodChange}
               onPriceChange={handlePriceChange}
               onGameChange={handleGameChange}
@@ -194,16 +196,21 @@ const Page = () => {
               <Loader2 className="animate-spin h-8 w-8" />
             </div>
           ) : nextTournament?.data?.length === 0 ? (
-            <p className="text-xl text-center">Tournaments not found</p> 
+            <p className="text-xl text-center">Tournaments not found</p>
           ) : (
             <div className="py-5  sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
               {nextTournament?.data?.map((tournament, index) => (
-                <NextTournamentCard key={index} {...tournament} />
+                <NextTournamentCard
+                  key={index}
+                  {...tournament}
+                  game={tournament?.game.title}
+                  gameImage={tournament?.game?.image}
+                />
+                // <></>
               ))}
             </div>
           )}
-       
-          
+
           {/* <div className="py-5  sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           {isLoading ? (
               <div className="col-span-full flex justify-center items-center">
