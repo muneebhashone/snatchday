@@ -177,7 +177,7 @@ export const useCreateProduct = () => {
   });
 };
 
-export const useGetCategories = (params: {
+export const useGetCategories = (params?: {
   limit?: string;
   offset?: string;
   name?: string;
