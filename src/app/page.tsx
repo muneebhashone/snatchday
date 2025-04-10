@@ -68,7 +68,7 @@ export default function Home() {
           </motion.div>
         )}
         
-        <HeroSection />
+        {/* <HeroSection /> */}
         
         <motion.div
           initial={{ opacity: 0, y: 50 }}
