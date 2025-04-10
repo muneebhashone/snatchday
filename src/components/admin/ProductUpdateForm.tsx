@@ -42,6 +42,7 @@ import { Calendar } from "../ui/calendar";
 import { format, sub } from "date-fns";
 import { Checkbox } from "../ui/checkbox";
 import { get } from "http";
+import { IError } from "@/app/admin/games/create/page";
 
 const discountSchema = z.object({
   // customerGroup: z.string().min(1, "Customer group cannot be empty"),
@@ -160,7 +161,7 @@ interface DiscountItem {
   price: number;
 }
 
-interface ICategoryIds {
+export interface ICategoryIds {
   above: boolean;
   createdAt: string;
   description: string;
@@ -203,6 +204,7 @@ interface Product {
 }
 
 export default function ProductUpdateForm({ product }: { product: Product }) {
+  const [emptyCategory, setEmptyCategory] = useState(false);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
   const [categories, getCategories] = useState([]);
   const [removedImages, setRemovedImages] = useState<string[]>([]);
@@ -211,8 +213,11 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const [previewUrls, setPreviewUrls] = useState<string[]>(
     product.images || []
   );
-  const { mutate: updateProduct,isPending } = useUpdateProduct();
-  const { data: categoriesData } = useGetCategories() as {
+  const { mutate: updateProduct, isPending } = useUpdateProduct();
+  const { data: categoriesData } = useGetCategories({
+    limit: "99999",
+    offset: "0",
+  }) as {
     data: CategoryResponse;
   };
   const { data: productsData } = useGetProducts() as { data: ProductResponse };
@@ -261,7 +266,6 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     name: "discounts",
   });
 
-
   useEffect(() => {
     if (product?.discounts) {
       replace(product.discounts);
@@ -270,10 +274,6 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       getCategories(product?.categoryIds);
     }
   }, [categoriesData?.data?.categories, product, replace]);
-
-
-
-
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -303,6 +303,11 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (categories.length < 1) {
+      setEmptyCategory(true);
+      return;
+    }
+    setEmptyCategory(false);
     const data = { ...values };
     if (data.requireShipping) {
       delete data.liscenseKey;
@@ -366,7 +371,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             router.push("/admin/products");
           },
           onError: (error) => {
-            toast.error(error?.response?.data.message || "Failed to update product");
+            toast.error(
+              (error as unknown as IError)?.response?.data.message ||
+                "Failed to update product"
+            );
             console.error(error);
           },
         }
@@ -563,69 +571,76 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="categoryIds"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={(e) => {
-                    field.onChange(e);
-                    const category = categoriesData?.data?.categories?.find(
-                      (cat) => cat._id === e
-                    );
-                    const exist = categories.find(
-                      (existCategory) => existCategory._id === category._id
-                    );
-                    if (!exist) {
-                      getCategories((prev) => [...prev, category]);
-                    }
-                  }}
-                  value={product.categoryIds[0]._id}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categoriesData?.data?.categories?.map(
-                      (category: Category) => (
-                        <SelectItem key={category._id} value={category._id}>
-                          {category.displayName || category.name}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-                <div className="flex gap-2">
-                  {categories.map((cat, i) => (
-                    <div
-                      className="relative bg-primary rounded px-2 text-white"
-                      key={i}
-                    >
-                      <X
-                        onClick={() => {
-                          getCategories((prev) =>
-                            prev.filter((_, index) => index !== i)
-                          );
-                        }}
-                        className="rounded-full absolute -top-1 -right-2 bg-white text-primary"
-                        size={13}
-                      />
-                      {
-                        categoriesData?.data?.categories?.find(
-                          (findCat) => findCat._id === cat?._id
-                        )?.displayName
+          <div>
+            <FormField
+              control={form.control}
+              name="categoryIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    onValueChange={(e) => {
+                      field.onChange(e);
+                      const category = categoriesData?.data?.categories?.find(
+                        (cat) => cat._id === e
+                      );
+                      const exist = categories.find(
+                        (existCategory) => existCategory._id === category._id
+                      );
+                      if (!exist) {
+                        getCategories((prev) => [...prev, category]);
                       }
-                    </div>
-                  ))}
-                </div>
-              </FormItem>
+                    }}
+                    value=""
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categoriesData?.data?.categories?.map(
+                        (category: Category) => (
+                          <SelectItem key={category._id} value={category._id}>
+                            {category.displayName || category.name}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                  <div className="flex gap-2">
+                    {categories.map((cat, i) => (
+                      <div
+                        className="relative bg-primary rounded px-2 text-white"
+                        key={i}
+                      >
+                        <X
+                          onClick={() => {
+                            getCategories((prev) =>
+                              prev.filter((_, index) => index !== i)
+                            );
+                          }}
+                          className="rounded-full absolute -top-1 -right-2 bg-white text-primary"
+                          size={13}
+                        />
+                        {
+                          categoriesData?.data?.categories?.find(
+                            (findCat) => findCat._id === cat?._id
+                          )?.displayName
+                        }
+                      </div>
+                    ))}
+                  </div>
+                </FormItem>
+              )}
+            />
+            {categories.length < 1 && emptyCategory && (
+              <p className="text-red-500 text-sm">
+                *Please select atleast one category*
+              </p>
             )}
-          />
+          </div>
 
           <FormField
             control={form.control}
@@ -1016,6 +1031,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               <FormItem>
                 <FormLabel>Filters name</FormLabel>
                 <Select
+                  value=""
                   onValueChange={(value) => {
                     const currentValues = field.value || [];
                     if (!currentValues.includes(value)) {
@@ -1050,7 +1066,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                     {field.value.map((filterName) => (
                       <div
                         key={filterName}
-                        className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                        className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
                       >
                         <span className="text-sm">{filterName}</span>
                         <Button
@@ -1087,6 +1103,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               <FormItem>
                 <FormLabel>Related Products</FormLabel>
                 <Select
+                  value=""
                   onValueChange={(value) => {
                     const currentValues = field.value || [];
                     if (!currentValues.includes(value)) {
@@ -1120,7 +1137,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       return (
                         <div
                           key={productId}
-                          className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                          className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
                         >
                           <span className="text-sm">{product?.name}</span>
                           <Button
