@@ -41,6 +41,7 @@ interface NextTournamentCardProps {
   vip: boolean;
   __v: number;
   _id?: string;
+  gameImage: string;
 }
 
 const NextTournamentCard = ({
@@ -57,6 +58,7 @@ const NextTournamentCard = ({
   start,
   end,
   tournamentId,
+  gameImage,
 }: NextTournamentCardProps) => {
   const countDown = calculateCountdown(start);
   const endDate = calculateCountdown(end);
@@ -119,7 +121,7 @@ const NextTournamentCard = ({
             <div className="w-12 xl:w-16 h-12 xl:h-16 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
               <Image
                 className=""
-                src={gameIcon}
+                src={gameImage}
                 alt="Game Icon"
                 width={40}
                 height={37}
