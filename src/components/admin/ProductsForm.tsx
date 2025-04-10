@@ -481,6 +481,7 @@ export default function ProductsForm() {
                 <FormItem>
                   <FormLabel>Category *</FormLabel>
                   <Select
+                    value=""
                     // onValueChange={field.onChange}
                     onValueChange={(value) => {
                       field.onChange(value);
@@ -493,7 +494,6 @@ export default function ProductsForm() {
                         selectedCategoriess,
                       ]);
                     }}
-                    defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -503,7 +503,13 @@ export default function ProductsForm() {
                     <SelectContent>
                       {getCategories?.data?.categories?.map(
                         (category: Category) => (
-                          <SelectItem key={category._id} value={category._id}>
+                          <SelectItem
+                            key={category._id}
+                            value={category._id}
+                            disabled={selectedCategory.some(
+                              (cat) => cat._id === category._id
+                            )}
+                          >
                             {category.displayName || category.name}
                           </SelectItem>
                         )
@@ -929,6 +935,7 @@ export default function ProductsForm() {
                 <FormLabel>Related Products</FormLabel>
                 <FormControl>
                   <Select
+                    value=""
                     onValueChange={(value) => {
                       const currentValues = field.value || [];
                       if (!currentValues.includes(value)) {
@@ -963,7 +970,7 @@ export default function ProductsForm() {
                       return (
                         <div
                           key={productId}
-                          className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                          className="flex items-center gap-1 text-white px-2 py-1 rounded-md bg-primary"
                         >
                           <span className="text-sm">{product?.name}</span>
                           <Button

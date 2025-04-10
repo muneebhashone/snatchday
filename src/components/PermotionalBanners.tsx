@@ -9,7 +9,6 @@ interface PromotionalBannersProps {
   iconText: string;
   title: string;
   discount: boolean;
-
   mainbg: string;
   boldText: string;
   children: React.ReactNode;
@@ -40,8 +39,9 @@ const PromotionalBanners = ({
             </div>
 
             <span
-              className={`w-max inline-flex items-center px-3 py-0 h-8 sm:h-auto rounded-full mt-3 text-sm ${iconbg} ${iconText === "70% OFF" ? "text-black" : "text-white"
-                }`}
+              className={`w-max inline-flex items-center px-3 py-0 h-8 sm:h-auto rounded-full mt-3 text-sm ${iconbg} ${
+                iconText === "70% OFF" ? "text-black" : "text-white"
+              }`}
             >
               {iconText}
             </span>
@@ -61,9 +61,9 @@ const PromotionalBanners = ({
           </Link>
         </div>
         <div className="flex items-center justify-center sm:justify-start gap-4 relative z-10 my-7">
-          {time?.map((item) => {
+          {time?.map((item, i) => {
             return (
-              <div key={item.timer} className="text-center">
+              <div key={`${item.timer} + ${i}`} className="text-center">
                 <div className="text-3xl bg-[#CDB3FF] px-4 py-1">
                   {item.timer}
                 </div>

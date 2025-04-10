@@ -664,3 +664,18 @@ export const TrainingCenterById = async (id) => {
 };
 
 // training center end
+
+//my account api
+export const MyAccountGames = async () => {
+  const response = await axiosInstance.get(`/game/get/stats`);
+  return response.data;
+};
+export const MyAccountTournaments = async (offset) => {
+  const limit = 10;
+  const response = await axiosInstance.get(`/tournament/get-my-tournaments`, {
+    params: { limit, offset },
+  });
+  return response.data;
+};
+
+//my account api end

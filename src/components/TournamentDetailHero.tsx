@@ -159,7 +159,7 @@ const TournamentDetailHero = ({
                       <Image
                         className="object-contain"
                         src={powerBlock}
-                        alt=""
+                        alt="Tournamnet line 168"
                       />
                     </div>
                     <div className="mr-14 flex flex-col justify-center">
@@ -301,7 +301,7 @@ const TournamentDetailHero = ({
                       )}
                     </>
                   </div>
-                  {hasParticipated ? "" : <Image src={questionmark} alt="" />}
+                  {hasParticipated ? "" : <Image src={questionmark} alt="Tournament line 310" />}
                 </Button>
                 <div
                   className="text-gray-300 py-7 px-6 rounded-full shadow-[3px_3px_8px_#BFB3CA] cursor-pointer"

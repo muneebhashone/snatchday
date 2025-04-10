@@ -363,7 +363,6 @@ const NewsletterComposer = () => {
                       <span className="text-red-500 mr-1">*</span> News
                     </div>
                     <div className="flex-1">
-                      {/* Rich text editor toolbar */}
                       <FormField
                         control={form.control}
                         name="message"

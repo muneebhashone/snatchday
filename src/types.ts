@@ -40,7 +40,15 @@ export interface FilterFormData {
   data?: any;
 }
 
+export interface SubCategory {
+  _id: string;
+  name: string;
+  image: string;
+  above: boolean;
+}
+
 export interface Category {
+  subCategories: SubCategory[];
   _id: string;
   name: string;
   description: string;
@@ -104,6 +112,7 @@ export interface Product {
   categoryIds: string[];
   type: "NEW" | "SALE";
   data?: any;
+  discounts?: [{ price: number }];
 }
 
 export interface ProductsData {
@@ -149,7 +158,7 @@ export interface ComapreProduct {
   name: string;
   numberOfParticipants: number;
   numberOfPieces: number;
-  participants: any[]; 
+  participants: any[];
   priceReduction: number;
   resubmissions: number;
   start: Date;
@@ -157,10 +166,10 @@ export interface ComapreProduct {
   status: string;
   textForBanner: string;
   title: string;
-  updatedAt: string; 
+  updatedAt: string;
   vip: boolean;
-  __v: number; 
-  _id: string; 
+  __v: number;
+  _id: string;
 }
 
 export interface Tournament {
@@ -212,7 +221,6 @@ export interface TournamentDetailResponse {
 export interface TournamentResponse {
   success: boolean;
   data: Tournament[];
-  
 }
 
 export interface CurrentOfferResponse {
@@ -222,7 +230,6 @@ export interface CurrentOfferResponse {
   };
   isLoading?: boolean;
 }
-
 
 export interface User {
   _id: string;
@@ -236,7 +243,6 @@ export interface User {
   start: string;
   length: number;
   vip: boolean;
-
 }
 
 export interface CheckoutTypes {
@@ -271,7 +277,6 @@ export interface PlaceOrder {
     federalState?: string;
   };
 }
-
 
 export interface Order {
   orderNumber: string;
@@ -359,4 +364,3 @@ export interface WebSetting {
   metaKeywords: string;
   order: number;
 }
-

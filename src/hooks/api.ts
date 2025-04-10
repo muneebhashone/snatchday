@@ -83,6 +83,8 @@ import {
   getGamesPaths,
   TrainingCenter,
   TrainingCenterById,
+  MyAccountGames,
+  MyAccountTournaments,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -749,3 +751,19 @@ export const useTrainingCenterById = (id) => {
 };
 
 // training center end
+
+//my account hook
+export const useMyAccountGames = () => {
+  return useQuery({
+    queryKey: ["MyGames"],
+    queryFn: MyAccountGames,
+  });
+};
+
+export const useMyAccountTournaments = (offset) => {
+  return useQuery({
+    queryKey: ["MyTournaments", offset],
+    queryFn: () => MyAccountTournaments(offset),
+  });
+};
+//my account hook end

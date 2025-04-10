@@ -16,11 +16,12 @@ const GameCards = () => {
           >
             <div className="aspect-square rounded-full h-28 lg:h-64 w-28 lg:w-64 shadow-lg border border-gray-200 flex items-center justify-center transition-transform transform group-hover:scale-105">
               <Image
-                className="w-[50px] h-[50px] md:w-[120px] lg:w-[140px] md:h-[120px] lg:h-[140px]"
+                className="w-[50px] h-[50px] md:w-[120px] lg:w-[200px] md:h-[120px] lg:h-[200px] object-contain"
                 src={center.logo}
                 alt={center.title}
-                width={141}
-                height={141}
+                width={200}
+                height={200}
+                unoptimized
               />
             </div>
             <h3 className="text-center text-2xl font-bold mt-10 mb-4">

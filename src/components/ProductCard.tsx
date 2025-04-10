@@ -8,7 +8,7 @@ import {
   PlusCircle,
   PlusSquare,
 } from "lucide-react";
-import { ICurrentOfferProduct } from "@/types";
+import { Product } from "@/types";
 import Link from "next/link";
 import {
   Tooltip,
@@ -35,7 +35,7 @@ const ProductCard = ({
   price,
   type,
   _id,
-}: ICurrentOfferProduct) => {
+}: Product) => {
   const { data: addToCartData, refetch } = useGetCart();
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
   const { mutateAsync: updateCart } = useUpdateCart();
