@@ -587,8 +587,7 @@ export const CreateGame = async (data) => {
   return response.data;
 };
 
-export const GetGames = async (offset: number) => {
-  const limit = 10;
+export const GetGames = async (offset?: number, limit = 10) => {
   const response = await axiosInstance.get("/game/", {
     params: { limit, offset },
   });

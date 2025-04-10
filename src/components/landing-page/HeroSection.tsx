@@ -341,7 +341,7 @@ const HeroSection = () => {
                             <div className="w-12 xl:w-24 h-12 xl:h-24 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
                               <Image
                                 className=""
-                                src={graphiccard}
+                                src={tournament?.game?.image}
                                 alt="Game Icon"
                                 width={70}
                                 height={65}
@@ -353,7 +353,7 @@ const HeroSection = () => {
                                   Game:
                                 </p>
                                 <p className="text-primary text-lg xl:text-xl font-bold">
-                                  {tournament?.game}
+                                  {tournament?.game?.title}
                                 </p>
                               </div>
                               <div className="flex w-max items-center gap-1 text-card-foreground ">

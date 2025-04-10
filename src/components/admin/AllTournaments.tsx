@@ -59,7 +59,7 @@ interface Tournament {
   startingPrice: number;
   priceReduction: number;
   numberOfPieces: number;
-  game: string;
+  game: object;
   start: string;
   length: number;
   fee: number;
@@ -236,7 +236,7 @@ const AllTournaments = () => {
                   )}
                 </TableCell>
                 <TableCell>{tournament.title}</TableCell>
-                <TableCell>{tournament.game}</TableCell>
+                <TableCell>{tournament?.game?.title}</TableCell>
                 <TableCell>${tournament.startingPrice}</TableCell>
                 <TableCell>
                   ${tournament.priceReduction * tournament.participants?.length}

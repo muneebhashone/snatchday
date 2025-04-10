@@ -184,7 +184,8 @@ const TournamentDetailPage = () => {
                       image={tournament.image}
                       title={tournament.title}
                       name={tournament.name}
-                      game={tournament.game}
+                      game={tournament?.game?.title}
+                      gameImage={tournament?.game?.image}
                       length={tournament.length}
                       startingPrice={tournament.startingPrice}
                       fee={tournament.fee}
