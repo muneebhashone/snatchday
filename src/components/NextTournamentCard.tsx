@@ -40,7 +40,7 @@ interface NextTournamentCardProps {
   updatedAt: string;
   vip: boolean;
   __v: number;
-  // _id: string;
+  _id: string;
 }
 
 const NextTournamentCard = ({
@@ -56,11 +56,11 @@ const NextTournamentCard = ({
   start,
   end,
   tournamentId,
+  _id
 }: NextTournamentCardProps) => {
   const countDown = calculateCountdown(start);
   const endDate = calculateCountdown(end);
   const [isShareModalOpen, setShareModalOpen] = useState(false);
-
   
 const handleTournamentShare=() =>{
   setShareModalOpen(true);

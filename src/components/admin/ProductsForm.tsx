@@ -71,11 +71,8 @@ const formSchema = z
     stock: z.number().min(0, "Stock must be 0 or greater"),
     price: z.number().min(0, "Price must be 0 or greater"),
     attributes: z.any(),
-    categoryIds: z
-    .array(z.object({
-      id: z.string().min(1, "Category ID is required"),
-    })),
-     type: z.enum(["NEW", "SALE"]),
+    categoryIds: z.string().min(1, "Category is required"),
+    type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
     metaDescription: z.string().min(1, "Meta description cannot be empty"),
@@ -192,7 +189,6 @@ export default function ProductsForm() {
   });
 
 
-    console.log(form.formState.errors,"erros");
 
 
   const [selectedFilter, setSelectedFilters] = useState<string | null>(null);

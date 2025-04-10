@@ -40,10 +40,10 @@ import { useCart } from "@/context/CartContext";
 const checkoutSchema = z
   .object({
     snapPoints: z.string().optional().refine(val => !val || parseFloat(val) > 0, {
-      message: "snapPoints must be a positive number if provided",
+      message: "snapPoints must be a positive number",
     }),
     discountPoints: z.string().optional().refine(val => !val || parseFloat(val) > 0, {
-      message: "discountPoints must be a positive number if provided",
+      message: "discountPoints must be a positive number",
     }),
     // voucherCode: z.string().nonempty({ message: "Voucher Code is required" }),
   })

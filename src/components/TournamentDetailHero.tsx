@@ -84,15 +84,12 @@ const TournamentDetailHero = ({
     if (user) {
       const userGroup = user?.user?.group;
       const isVipTournament = tournamentData?.data?.vip;
-
+  
       console.log(userGroup, isVipTournament);
-
-      // VIP users can only participate in VIP tournaments
-      // Basic/All users can only participate in non-VIP tournaments
-      if (
-        (userGroup === "vip" && isVipTournament) ||
-        (userGroup !== "vip" && !isVipTournament)
-      ) {
+  
+      // Allow VIP users to participate in any tournament
+      // Only restrict non-VIP users from joining VIP tournaments
+      if (userGroup === "vip" || (!isVipTournament && userGroup !== "vip")) {
         if (tournamentData?.data?._id) {
           participateTournament(tournamentData?.data?._id, {
             onSuccess: () => {
@@ -106,17 +103,13 @@ const TournamentDetailHero = ({
           });
         }
       } else {
-        toast.error(
-          userGroup === "vip"
-            ? "This tournament is for non-VIP users only"
-            : "This tournament is for VIP users only"
-        );
+        toast.error("This tournament is for VIP users only");
       }
     } else {
       setLoginModalOpen(true);
     }
   };
-
+  
   return (
     <div className="relative h-max">
       <Image
