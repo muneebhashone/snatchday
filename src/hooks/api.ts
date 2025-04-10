@@ -184,7 +184,12 @@ export const useGetCategories = (params: {
 }) => {
   return useQuery({
     queryKey: ["categories", params],
-    queryFn: () => getCategories(params),
+    queryFn: () =>
+      getCategories({
+        limit: params.limit || "",
+        offset: params.offset || "",
+        name: params.name || "",
+      }),
   });
 };
 
@@ -656,10 +661,10 @@ export const UseCreateGame = () => {
   });
 };
 
-export const useGetGames = (offset: number) => {
+export const useGetGames = (offset?: number, limit?: number) => {
   return useQuery({
     queryKey: ["games", offset], // Include offset in the queryKey
-    queryFn: () => GetGames(offset), // Pass offset to the API function
+    queryFn: () => GetGames(offset, limit), // Pass offset to the API function
   });
 };
 export const useGetGameById = (id) => {

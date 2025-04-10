@@ -48,7 +48,7 @@ import {
   Edit,
   Loader,
 } from "lucide-react";
-import { useGetProducts, useManageTournament } from "@/hooks/api";
+import { useGetGames, useGetProducts, useManageTournament } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import {
@@ -122,7 +122,7 @@ interface Tournament {
   startingPrice: number;
   priceReduction: number;
   numberOfPieces: number;
-  game: string;
+  game: object;
   start: string;
   end: string;
   length: number;
@@ -140,6 +140,8 @@ export function EditTournamentDialog({
   tournament: Tournament;
   products: any[];
 }) {
+  console.log(tournament);
+  const { data: games } = useGetGames(0, 100);
   const { mutate: manageTournament, isPending } = useManageTournament();
   const [value, setValue] = useState();
   const [open, setOpen] = useState(false);
@@ -164,7 +166,7 @@ export function EditTournamentDialog({
         startingPrice: tournament?.startingPrice,
         priceReduction: tournament?.priceReduction,
         numberOfPieces: tournament?.numberOfPieces,
-        game: tournament?.game,
+        game: tournament?.game?._id,
         start: tournament?.start,
         length: tournament?.length,
         fee: tournament?.fee,
@@ -338,8 +340,11 @@ export function EditTournamentDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="powerblocks">PowerBlocks</SelectItem>
-                        <SelectItem value="pushit">Push It</SelectItem>
+                        {games?.data?.games?.map((game) => (
+                          <SelectItem key={game._id} value={game._id}>
+                            {game.game}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
