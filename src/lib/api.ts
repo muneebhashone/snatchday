@@ -507,9 +507,10 @@ export const updateVoucher = async (id: string, data: VoucherData) => {
 };
 
 export const getCategories = async (params: {
-  limit: string;
-  offset: string;
+  limit?: string;
+  offset?: string;
   name?: string;
+  above?: boolean;
 }) => {
   const response = await axiosInstance.get<CategoryResponse>("/category", {
     params,

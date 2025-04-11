@@ -50,7 +50,8 @@ const Header = () => {
   const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
 
   const { data: categories, isLoading } = useGetCategories({
-      limit:'9999999'
+      limit:'9999999',
+      above: true
   });
   const [categoryImage, setCategoryImage] = useState("");
 
@@ -145,7 +146,7 @@ const Header = () => {
                             {categories?.data?.categories
                               ?.filter(
                                 (category: Category) =>
-                                  category.above && category.parentCategory === null
+                                  category.above && !category.parentCategory
                               )
                               .map((category: Category) => (
                                 <div key={category._id} className="group">
