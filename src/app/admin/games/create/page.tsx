@@ -69,7 +69,7 @@ type IForm = z.infer<typeof FormSchema>;
 const Page = () => {
   const { data: getPaths } = useGetGamesPaths();
   const Paths = getPaths?.data?.games;
-  const { mutate: createGame } = UseCreateGame();
+  const { mutate: createGame,isPending } = UseCreateGame();
   const router = useRouter();
   const form = useForm<IForm>({
     resolver: zodResolver(FormSchema),
@@ -552,12 +552,12 @@ const Page = () => {
                     <FormControl>
                       <div className="flex items-center space-x-2">
                         <Checkbox
-                          id="suitableTraining"
+                          id="randomLevels"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
                         <label
-                          htmlFor="suitableTraining"
+                          htmlFor="randomLevels"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           Random Levels?
@@ -573,8 +573,9 @@ const Page = () => {
               <Button
                 className="bg-white text-primary border border-primary hover:bg-primary hover:text-white w-44 text-xl font-bold"
                 type="submit"
+                disabled={isPending}
               >
-                Create Game
+                {isPending ? "Creating..." : "Create Game"}
               </Button>
             </div>
           </form>

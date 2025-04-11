@@ -84,7 +84,7 @@ const AllTournaments = () => {
   //   const { mutate: deleteTournament } = useDeleteTournament();
   const { mutate: cancelTournament } = useCancelTournament();
 
-  const tournaments = getTournaments?.data || [];
+  const tournaments = getTournaments?.data?.tournaments || [];
 
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));

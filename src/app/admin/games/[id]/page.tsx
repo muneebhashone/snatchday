@@ -3,7 +3,6 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { Card } from "@/components/ui/card";
 import {
   useGetGameById,
-  useGetGames,
   useGetGamesPaths,
   useUpdateGame,
 } from "@/hooks/api";

@@ -22,7 +22,6 @@ const Page = () => {
   const [page, setPage] = useState(0);
   const skip = 10;
   const { data: games, isLoading, refetch } = useGetGames(page);
-  console.log(games);
 
   const onDelete = async (id) => {
     deleteGame(id, {
@@ -83,19 +82,19 @@ const Page = () => {
                     unoptimized
                   />
                 </TableCell>
-                <TableCell>{game.title}</TableCell>
-                <TableCell>{game.maxScore}</TableCell>
-                <TableCell>{game.levels}</TableCell>
+                <TableCell>{game?.title || "N/A"}</TableCell>
+                <TableCell>{game?.maxScore || "N/A"}</TableCell>
+                <TableCell>{game?.levels || "N/A"}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
                     <p>
                       <span className="text-primary">Level:</span>{" "}
-                      {game.winnerDetermination.level}
+                      {game?.winnerDetermination?.level || "N/A"}
                       {","}
                     </p>
                     <p>
                       <span className="text-primary">Score:</span>{" "}
-                      {game.winnerDetermination.score}
+                      {game?.winnerDetermination?.score || "N/A"}
                       {","}
                     </p>
                     <p>
