@@ -21,6 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { MultiSelect } from '../ui/multi-select';
+import { toast } from 'sonner';
 
 // Dynamically import React Quill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { 
@@ -66,6 +67,7 @@ const WebSettingForm = () => {
   const { mutate: createContent , isPending} = useMutation({
     mutationFn: (data: WebSetting) => addContent(data),
     onSuccess: () => {
+      toast.success('Content created successfully');
       router.push('/admin/web-settings');
       router.refresh();
     },

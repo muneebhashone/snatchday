@@ -21,6 +21,7 @@ import { Loader2 } from 'lucide-react';
 import { useGetContent, useUpdateContent } from '@/hooks/api';
 import { Select, SelectItem } from '../ui/select';
 import { MultiSelect } from '../ui/multi-select';
+import { toast } from 'sonner';
 
 // Dynamically import React Quill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { 
@@ -109,6 +110,7 @@ useEffect(() => {
       order: values.order
     }, {
       onSuccess: () => {
+        toast.success('Content updated successfully');
         router.push('/admin/web-settings');
         router.refresh();
       }
