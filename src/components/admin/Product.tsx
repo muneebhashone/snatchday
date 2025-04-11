@@ -142,7 +142,7 @@ export function Product() {
             value={priceRange}
             onValueChange={handlePriceRangeChange}
             min={10}
-            max={10000}
+            max={100000}
             step={50}
           />
           {priceRange && (

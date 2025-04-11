@@ -49,7 +49,9 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
 
-  const { data, isLoading } = useGetCategories();
+  const { data: categories, isLoading } = useGetCategories({
+      limit:'9999999'
+  });
   const [categoryImage, setCategoryImage] = useState("");
 
   useEffect(() => {
@@ -94,6 +96,8 @@ const Header = () => {
     router.push("/order");
   };
 
+  console.log(categories?.data?.categories, "data?.data?.categories");
+
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
@@ -129,84 +133,78 @@ const Header = () => {
 
                 <NavigationMenuContent className="border-t border-gray-100">
                   <div className="max-w-[1920px] mx-auto p-8">
-                    <div className="grid grid-cols-12 gap-8 w-screen">
-                      {/* Categories List */}
-                      {isLoading ? (
-                        <div className="flex justify-center items-center h-full w-full">
-                          <span className="text-lg font-medium">
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          </span>
+                    {isLoading ? (
+                      <div className="flex justify-center items-center w-screen h-[60vh]">
+                        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                      </div>
+                    ) : categories?.data?.categories?.length > 0 ? (
+                      <div className="grid grid-cols-12 gap-8 w-screen">
+                        {/* Categories List */}
+                        <div className="col-span-8">
+                          <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                            {categories?.data?.categories
+                              ?.filter(
+                                (category: Category) =>
+                                  category.above && category.parentCategory === null
+                              )
+                              .map((category: Category) => (
+                                <div key={category._id} className="group">
+                                  <span  onMouseEnter={() => setCategoryImage(category.image)} className="text-gray-500">
+                                  <Link
+                                    href={`/product-listing?category=${category._id}`}
+                                    className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                  >
+                                    {category.name}
+                                  </Link>
+                                  </span>
+                                  
+                                  <ul className="space-y-2">
+                                    {category.subCategories
+                                      .filter((cat) => cat.above)
+                                      .map((subcategory: SubCategory, index) => (
+                                        <li
+                                          key={index}
+                                          onMouseEnter={() =>
+                                            setCategoryImage(subcategory.image)
+                                          }
+                                        >
+                                          <Link
+                                            href={`/product-listing?category=${subcategory._id}`}
+                                            className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                          >
+                                            {subcategory?.name || "N/A"}
+                                          </Link>
+                                        </li>
+                                      ))}
+                                  </ul>
+                                </div>
+                              ))}
+                          </div>
                         </div>
-                      ) : (
-                        <>
-                          <div className="col-span-8">
-                            <div className="grid grid-cols-3 gap-x-8 gap-y-6">
-                              {data?.data?.categories
-                                ?.filter(
-                                  (category: Category) =>
-                                    category.above &&
-                                    category.parentCategory === null
-                                )
-                                .map((category: Category) => {
-                                  // const Icon = category.icon;
-                                  return (
-                                    <div key={category._id} className="group">
-                                      <Link
-                                        href={`/product-listing?category=${category._id}`}
-                                        className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
-                                      >
-                                        {/* <Icon className="w-4 h-4" /> */}
-                                        {category.name}
-                                      </Link>
-                                      <ul className="space-y-2">
-                                        {category.subCategories
-                                          .filter((cat) => cat.above)
-                                          .map(
-                                            (
-                                              subcategory: SubCategory,
-                                              index
-                                            ) => (
-                                              <li
-                                                key={index}
-                                                onMouseEnter={() =>
-                                                  setCategoryImage(
-                                                    subcategory.image
-                                                  )
-                                                }
-                                              >
-                                                <Link
-                                                  href={`/product-listing?category=${subcategory._id}`}
-                                                  className="text-gray-500 hover:text-primary transition-colors block text-sm"
-                                                >
-                                                  {subcategory?.name || "N/A"}
-                                                </Link>
-                                              </li>
-                                            )
-                                          )}
-                                      </ul>
-                                    </div>
-                                  );
-                                })}
-                            </div>
-                          </div>
+                        {console.log(categoryImage,"categoryImage")}
 
-                          {/* Category Image */}
-                          <div className="col-span-4">
-                            {categoryImage && (
-                              <div className="relative h-full w-full">
-                                <Image
-                                  src={categoryImage}
-                                  alt="Category preview"
-                                  fill
-                                  className="object-contain w-10 h-10"
-                                  unoptimized
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </>
-                      )}
-                    </div>
+                        {/* Category Image */}
+                        <div className="col-span-4">
+                          {categoryImage && (
+                            <div className="relative h-full w-full">
+                              <Image
+                                src={categoryImage }
+                                alt="Category preview"
+                                fill
+                                className="object-contain w-10 h-10"
+                                unoptimized
+
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex justify-center items-center w-screen h-[20vh]">
+                        <h1 className="text-lg font-medium text-gray-600">Data Not Found</h1>
+                      </div>
+                    )}
+
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -233,18 +231,16 @@ const Header = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                        pathname === items.link
+                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
                           ? "text-primary"
                           : "text-foreground"
-                      }`}
+                        }`}
                     >
                       {items.name}
                       <ChevronDown className="text-primary w-5 h-5" />
                       <div
-                        className={`w-2 h-2 bg-primary rounded-full ${
-                          pathname === items.link ? "opacity-100" : "opacity-0"
-                        }`}
+                        className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
+                          }`}
                       ></div>
                     </button>
                   </DialogTrigger>
@@ -253,22 +249,19 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
-                    pathname === items.link
+                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
                       ? "text-primary underline underline-offset-8 decoration-2"
                       : "text-foreground"
-                  }`}
+                    }`}
                 >
                   {items.name}
                   <ChevronDown
-                    className={`w-5 h-5 ${
-                      pathname === items.link ? "text-white" : "text-primary"
-                    }`}
+                    className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"
+                      }`}
                   />
                   <div
-                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
-                      pathname === items.link ? "opacity-100" : "opacity-0"
-                    }`}
+                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
+                      }`}
                   ></div>
                 </Link>
               )}
