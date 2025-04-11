@@ -131,6 +131,9 @@ const SupportPage = () => {
                 image={item.image}
                 categorytext={item.categorytext}
                 categorytitle={item.categorytitle}
+                onClick={() => {
+                  router.push(`/support/create-ticket`);
+                }}
               />
             ))}
           </div>

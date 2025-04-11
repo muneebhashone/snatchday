@@ -507,9 +507,10 @@ export const updateVoucher = async (id: string, data: VoucherData) => {
 };
 
 export const getCategories = async (params: {
-  limit: string;
-  offset: string;
+  limit?: string;
+  offset?: string;
   name?: string;
+  above?: boolean;
 }) => {
   const response = await axiosInstance.get<CategoryResponse>("/category", {
     params,
@@ -678,3 +679,61 @@ export const MyAccountTournaments = async (offset) => {
 };
 
 //my account api end
+
+// IT Scope api
+export const ITScope = async (formData) => {
+  const response = await axiosInstance.post("/product/itscope-json", formData);
+  return response.data;
+};
+// IT Scope apiend
+export interface TicketFormData {
+  email: string;
+  subject: string;
+  department: string;
+  message: string;
+  attachments?: File[];
+}
+
+export const createTicket = async (formData: FormData) => {
+  const response = await axiosInstance.post('/ticket', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+
+export interface TicketParams {
+  limit?: number;
+  offset?: number;
+  status?: string;
+  sort_attr?: string;
+  sort?: string;
+}
+
+
+  export const getTickets = async (params: TicketParams) => { 
+
+  const limit = 10;
+  const response = await axiosInstance.get("/ticket", {
+    params: { limit, ...params },
+  });
+  return response.data;
+};
+
+
+
+export const getTicketById = async (id: string) => {
+  const response = await axiosInstance.get(`/ticket/${id}`);
+  return response.data;
+};
+
+export const replyTicket = async (id: string, formData: FormData ) => {
+  const response = await axiosInstance.post(`/ticket/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return response.data;
+};
+

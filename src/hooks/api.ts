@@ -85,6 +85,14 @@ import {
   TrainingCenterById,
   MyAccountGames,
   MyAccountTournaments,
+  ITScope,
+
+  TicketFormData,
+  TicketParams,
+  getTickets,
+  getTicketById,
+  replyTicket,
+  createTicket,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -181,14 +189,13 @@ export const useGetCategories = (params?: {
   limit?: string;
   offset?: string;
   name?: string;
+  above?: boolean;
 }) => {
   return useQuery({
     queryKey: ["categories", params],
     queryFn: () =>
       getCategories({
-        limit: params.limit || "",
-        offset: params.offset || "",
-        name: params.name || "",
+        ...params
       }),
   });
 };
@@ -772,3 +779,38 @@ export const useMyAccountTournaments = (offset) => {
   });
 };
 //my account hook end
+
+// IT Scope hook
+export const UseITScope = () => {
+  return useMutation({
+    mutationFn: ITScope,
+  });
+};
+// IT Scope hook end
+export const useCreateTicket = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => createTicket(formData),
+  });
+};
+
+export const useGetTickets = (params: TicketParams) => {
+  return useQuery({
+    queryKey: ["tickets", params],
+    queryFn: () => getTickets(params),
+  });
+};
+
+export const useGetTicketById = (id: string) => {
+  return useQuery({
+    queryKey: ["ticket", id],
+    queryFn: () => getTicketById(id),
+  });
+};
+
+export const useReplyTicket = () => {
+  return useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+      replyTicket(id, formData),
+  });
+};
+

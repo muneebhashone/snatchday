@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { useUserContext } from "@/context/userContext";
 import { useRouter } from "next/navigation";
 import GredientButton from "../GredientButton";
+import { useSocket } from "@/context/SocketContext";
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -63,6 +64,8 @@ const Login = ({
     resolver: zodResolver(loginSchema),
   });
 
+  const { socket } = useSocket();
+
   const handleOpenRegister = () => {
     setIsLoginOpen(false);
     setIsRegisterOpen(true);
@@ -76,6 +79,7 @@ const Login = ({
   const handleLogout = () => {
     Userlogout(undefined, {
       onSuccess: () => {
+        socket.emit("logout");
         setUserData(null);
         setIsLoggedIn(false);
         logout();
@@ -106,6 +110,7 @@ const Login = ({
       },
       {
         onSuccess: ({ data }) => {
+          socket.emit("join", data?.user?._id);
           setIsLoggedIn(true);
           setUserData(data);
           setIsLoginOpen(false);
@@ -114,10 +119,10 @@ const Login = ({
         onError: (error) => {
           toast.error(error?.response?.data?.message || "Login failed", {
             style: {
-              background: "#ff4d4f", 
-              color: "#fff",    
+              background: "#ff4d4f",
+              color: "#fff",
             },
-          })
+          });
           console.error("Login failed:", error);
         },
       }
@@ -193,10 +198,10 @@ const Login = ({
         </div>
       </DialogTrigger>
       <DialogContent className="max-w-[682px] p-0 " hideCloseButton={true}>
-        <DialogHeader  className="text-left relative px-24 pt-10 ">
+        <DialogHeader className="text-left relative px-24 pt-10 ">
           <DialogTrigger asChild className="absolute -right-5 -top-5 z-30">
             <Button
-            onClick={() => reset()}
+              onClick={() => reset()}
               variant="ghost"
               className="h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100"
             >
