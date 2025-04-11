@@ -22,6 +22,7 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { formatCurrency } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -106,7 +107,7 @@ const NewOverview = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <div className="text-4xl font-bold">€9,964.05</div>
+                    <div className="text-4xl font-bold">{formatCurrency(9964.05)}</div>
                     <div className="flex items-center text-sm text-emerald-600 font-medium mt-1">
                       <ArrowUp className="h-4 w-4 mr-1" />
                       <span>15% up from previous period</span>
@@ -184,7 +185,7 @@ const NewOverview = () => {
                       <div className="w-2 h-2 rounded-full bg-pink-500 mr-2"></div>
                       <span className="text-sm text-gray-600">From new customers</span>
                     </div>
-                    <div className="text-2xl font-bold">€8,150.17</div>
+                    <div className="text-2xl font-bold">{formatCurrency(8150.17)}</div>
                     <div className="text-sm text-gray-600">82% of all revenue</div>
                     <div className="text-sm text-gray-600">30 orders</div>
                   </div>
@@ -193,7 +194,7 @@ const NewOverview = () => {
                       <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
                       <span className="text-sm text-gray-600">From returning customers</span>
                     </div>
-                    <div className="text-2xl font-bold">€1,813.88</div>
+                    <div className="text-2xl font-bold">{formatCurrency(1813.88)}</div>
                     <div className="text-sm text-gray-600">18% of all revenue</div>
                     <div className="text-sm text-gray-600">7 orders</div>
                   </div>

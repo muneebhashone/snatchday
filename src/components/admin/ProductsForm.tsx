@@ -38,6 +38,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { CustomMultiSelect } from "./multiselect";
+import { createMultipleImagesSchema, imageInputProps } from "@/lib/imageValidation";
 
 interface Category {
   _id: string;
@@ -349,10 +350,13 @@ export default function ProductsForm() {
                   <Input
                     type="file"
                     multiple
-                    accept="image/*"
+                    {...imageInputProps}
                     onChange={handleImageChange}
                   />
                 </FormControl>
+                <p className="text-xs text-muted-foreground">
+                  Accepted formats: JPG, PNG, GIF, WebP
+                </p>
                 <div className="flex gap-4 my-2">
                   {previewUrls?.map((url, index) => (
                     <div
@@ -1052,146 +1056,3 @@ export default function ProductsForm() {
     </div>
   );
 }
-
-// {applyDiscounts && (
-//   <div className="bg-gray-100 p-4 rounded-lg">
-//     <FormField
-//       control={form.control}
-//       name={`discounts.${0}.customerGroup`}
-//       render={({ field }) => (
-//         <FormItem>
-//           <FormLabel>Discount Type</FormLabel>
-//           <FormControl>
-//             <Select
-//               onValueChange={field.onChange}
-//               value={field.value}
-//             >
-//               <SelectTrigger>
-//                 <SelectValue placeholder="Select discount type" />
-//               </SelectTrigger>
-//               <SelectContent>
-//                 <SelectItem value="basic">Basic</SelectItem>
-//                 <SelectItem value="VIP">VIP</SelectItem>
-//               </SelectContent>
-//             </Select>
-//           </FormControl>
-//           <FormMessage />
-//         </FormItem>
-//       )}
-//     />
-
-//     {/* Discount Price Input */}
-//     <FormField
-//       control={form.control}
-//       name={`discounts.${0}.price`}
-//       render={({ field }) => (
-//         <FormItem>
-//           <FormLabel>Discount</FormLabel>
-//           <FormControl>
-//             <Input placeholder="Enter discount price" {...field} />
-//           </FormControl>
-//           <FormMessage />
-//         </FormItem>
-//       )}
-//     />
-
-//     {/* Start Date */}
-//     <FormField
-//       control={form.control}
-//       name={`discounts.${index}.away`}
-//       render={({ field }) => (
-//         <FormItem className="flex flex-col mt-5">
-//           <FormLabel>Start Date</FormLabel>
-//           <Popover>
-//             <PopoverTrigger asChild>
-//               <FormControl>
-//                 <Button
-//                   variant={"outline"}
-//                   className={cn(
-//                     "w-full pl-3 text-left font-normal",
-//                     !field.value && "text-muted-foreground"
-//                   )}
-//                 >
-//                   {field.value
-//                     ? format(new Date(field.value), "PPP")
-//                     : "Pick a date"}
-//                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-//                 </Button>
-//               </FormControl>
-//             </PopoverTrigger>
-//             <PopoverContent className="w-auto p-0" align="start">
-//               <Calendar
-//                 mode="single"
-//                 selected={
-//                   field.value ? new Date(field.value) : undefined
-//                 }
-//                 onSelect={(date) =>
-//                   field.onChange(date?.toISOString())
-//                 }
-//                 disabled={(date) => date < new Date()}
-//                 initialFocus
-//               />
-//             </PopoverContent>
-//           </Popover>
-//           <FormMessage />
-//         </FormItem>
-//       )}
-//     />
-
-//     {/* End Date */}
-//     <FormField
-//       control={form.control}
-//       name={`discounts.${0}.until`}
-//       render={({ field }) => (
-//         <FormItem className="flex flex-col mt-5">
-//           <FormLabel>End Date</FormLabel>
-//           <Popover>
-//             <PopoverTrigger asChild>
-//               <FormControl>
-//                 <Button
-//                   variant={"outline"}
-//                   className={cn(
-//                     "w-full pl-3 text-left font-normal",
-//                     !field.value && "text-muted-foreground"
-//                   )}
-//                 >
-//                   {field.value
-//                     ? format(new Date(field.value), "PPP")
-//                     : "Pick a date"}
-//                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-//                 </Button>
-//               </FormControl>
-//             </PopoverTrigger>
-//             <PopoverContent className="w-auto p-0" align="start">
-//               <Calendar
-//                 mode="single"
-//                 selected={
-//                   field.value ? new Date(field.value) : undefined
-//                 }
-//                 onSelect={(date) =>
-//                   field.onChange(date?.toISOString())
-//                 }
-//                 disabled={(date) => date < new Date()}
-//                 initialFocus
-//               />
-//             </PopoverContent>
-//           </Popover>
-//           <FormMessage />
-//         </FormItem>
-//       )}
-//     />
-
-//     {/* Submit Button */}
-//     <Button
-//       className="hover:bg-primary mx-auto self-center mt-4 justify-self-center"
-//       type="button"
-//       onClick={(e) => {
-//         e.preventDefault();
-//         console.log(form.getValues(), "form");
-//         setApplyDiscounts(false);
-//       }}
-//     >
-//       Apply
-//     </Button>
-//   </div>
-// )}

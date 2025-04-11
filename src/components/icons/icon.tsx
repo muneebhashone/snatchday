@@ -1589,3 +1589,28 @@ export const ShareIcon = () => {
     </svg>
   );
 };
+export const AnnouncementIcon = () => {
+  return (
+    <svg
+      width="30"
+      height="30"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M3 10V14H6L12 18V6L6 10H3Z" fill="currentColor" />
+      <path
+        d="M16 9C17.66 9 19 10.34 19 12C19 13.66 17.66 15 16 15"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M19 6C21.76 6 24 8.24 24 11C24 13.76 21.76 16 19 16"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+  );
+};

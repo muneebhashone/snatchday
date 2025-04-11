@@ -1,5 +1,6 @@
 "use client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import {
   Table,
   TableBody,
@@ -38,6 +39,7 @@ const Page = () => {
 
   return (
     <AdminLayout>
+      <AdminBreadcrumb title="Games" />
       {isLoading ? (
         <div className="flex items-center justify-center">
           <Loader size={25} className="animate-spin text-primary" />
@@ -59,9 +61,6 @@ const Page = () => {
               </TableHead>
               <TableHead className="text-primary font-bold">
                 Created At
-              </TableHead>
-              <TableHead className="text-primary font-bold">
-                Is Active
               </TableHead>
               <TableHead className="text-primary font-bold text-right">
                 Actions
@@ -104,7 +103,6 @@ const Page = () => {
                   </div>
                 </TableCell>
                 <TableCell>{game.createdAt.split("T")[0]}</TableCell>
-                <TableCell>{game.isActive ? "Yes" : "No"}</TableCell>
                 <TableCell className="flex mt-3 justify-end">
                   <FileEdit
                     onClick={() => {

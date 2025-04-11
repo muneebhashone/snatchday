@@ -50,13 +50,13 @@ const OrdersTable = () => {
        <Table className="border">
         <TableHeader className="rounded-t-3xl">
           <TableRow className="rounded-t-3xl">
-            <TableHead className="w-[100px]">order number</TableHead>
+            <TableHead className="w-[100px]">Order No.</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Article</TableHead>
             <TableHead className="text-center">Number</TableHead>
-            <TableHead className="text-right">subtotal</TableHead>
-            <TableHead className="text-right">total amount</TableHead>
-            <TableHead className="text-center">status</TableHead>
+            <TableHead className="text-right">Subtotal</TableHead>
+            <TableHead className="text-right">Total amount</TableHead>
+            <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">View order</TableHead>
             <TableHead className="text-center">The invoice</TableHead>
           </TableRow>

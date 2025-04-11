@@ -1,16 +1,15 @@
 import AdminLayout from "@/components/admin/AdminLayout"
-import NewOverview from "@/components/admin/NewOverview"
-
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb"
 import Overview from "@/components/admin/Overview"
+import React from 'react'
 
-export default function OverviewPage() {
+const page = () => {
   return (
     <AdminLayout>
-    <div className="p-6 space-y-6">
-      {/* <h2 className="text-3xl font-bold tracking-tight text-primary">Dashboard Overview</h2> */}
-     {/* <Overview /> */}
-     <NewOverview/>
-    </div>
+      <AdminBreadcrumb title="Overview" />
+      <Overview />
     </AdminLayout>
   )
-} 
+}
+
+export default page 

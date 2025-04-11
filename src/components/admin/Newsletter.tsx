@@ -17,11 +17,11 @@ const Newsletter = () => {
     <div className="p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Newsletters</h1>
-        <a href="/admin/newsletters/send">
+        {/* <a href="/admin/newsletters/send">
           <Button className="hover:bg-primary hover:border border-primary">
             Send
           </Button>
-        </a>
+        </a> */}
       </div>
       <div className="bg-white rounded-md shadow-sm">
         {isLoading ? (

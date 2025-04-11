@@ -77,6 +77,15 @@ const formSchema = z
         path: ["until"],
       });
     }
+
+    // Value must not exceed 100 when type is PERCENTAGE
+    if (val.type === "PERCENTAGE" && val.value > 100) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Percentage value cannot exceed 100%",
+        path: ["value"],
+      });
+    }
   });
 
 interface EditVoucherFormProps {

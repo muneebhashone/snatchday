@@ -1,11 +1,13 @@
 "use client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import { Card } from "@/components/ui/card";
 import { useGetGameById, useGetGamesPaths, useUpdateGame } from "@/hooks/api";
 import {
   Calendar,
   Gamepad2,
   Gamepad2Icon,
+  HomeIcon,
   Info,
   Key,
   Loader,
@@ -43,6 +45,15 @@ import {
 import { QueryClient } from "@tanstack/react-query";
 import { IError } from "../create/page";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
 
 const FormSchema = z.object({
   title: z.string().nonempty("Title is required"),
@@ -66,8 +77,8 @@ const FormSchema = z.object({
     score: z.enum(["MAX", "MIN"]),
     time: z.enum(["MAX", "MIN"]),
   }),
-  logo: z.instanceof(File).optional(),
-  image: z.instanceof(File).optional(),
+  logo: createImageSchema("Logo").optional(),
+  image: createImageSchema("Image").optional(),
 });
 
 type IForm = z.infer<typeof FormSchema>;
@@ -148,6 +159,15 @@ const Page = () => {
   return (
     <AdminLayout>
       <div>
+        <AdminBreadcrumb 
+          title="Edit Game"
+          items={[
+            {
+              title: "Games",
+              href: "/admin/games"
+            }
+          ]}
+        />
         <div className="grid grid-cols-2 gap-4">
           {/* game details */}
           <Card className="py-2 px-4 flex flex-col gap-2 shadow-md">
@@ -178,25 +198,6 @@ const Page = () => {
                 unoptimized
                 className="rounded-md object-contain"
               />
-            </div>
-          </Card>
-          {/* options */}
-          <Card className="py-2 px-4 flex flex-col gap-2 shadow-md">
-            <div className="flex gap-4 items-center pb-1 border-b">
-              <Info />
-              <h1 className="font-bold text-primary">Options</h1>
-            </div>
-            <div className="flex gap-4 items-center">
-              <div className="bg-primary p-2 rounded-sm">
-                <RefreshCcw className="text-white" size={15} />
-              </div>
-              <p>Update Game</p>
-            </div>
-            <div className="flex gap-4 items-center">
-              <div className="bg-primary p-2 rounded-sm">
-                <Plus className="text-white" size={15} />
-              </div>
-              <p>Add DLC</p>
             </div>
           </Card>
         </div>
@@ -332,6 +333,11 @@ const Page = () => {
                     <FormControl>
                       <Input
                         type="number"
+                        onKeyDown={(e) => {
+                          if (e.key === '-') {
+                            e.preventDefault();
+                          }
+                        }}
                         placeholder="Enter levels..."
                         {...field}
                       />
@@ -349,6 +355,11 @@ const Page = () => {
                     <FormControl>
                       <Input
                         type="number"
+                        onKeyDown={(e) => {
+                          if (e.key === '-') {
+                            e.preventDefault();
+                          }
+                        }}
                         placeholder="Enter max score..."
                         {...field}
                       />
@@ -366,6 +377,11 @@ const Page = () => {
                     <FormControl>
                       <Input
                         type="number"
+                        onKeyDown={(e) => {
+                          if (e.key === '-') {
+                            e.preventDefault();
+                          }
+                        }}
                         placeholder="Enter delay..."
                         {...field}
                       />
@@ -385,6 +401,13 @@ const Page = () => {
                     <FormControl>
                       <Input
                         type="number"
+                        max={1000}
+                        min={500}
+                        onKeyDown={(e) => {
+                          if (e.key === '-') {
+                            e.preventDefault();
+                          }
+                        }}
                         placeholder="Enter width..."
                         {...field}
                       />
@@ -400,7 +423,18 @@ const Page = () => {
                   <FormItem>
                     <FormLabel>Height</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter height..." {...field} />
+                      <Input
+                        max={1000}
+                        min={500}
+                        type="number"
+                        onKeyDown={(e) => {
+                          if (e.key === '-') {
+                            e.preventDefault();
+                          }
+                        }}
+                        placeholder="Enter height..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -499,11 +533,15 @@ const Page = () => {
                           <Input
                             id="image"
                             type="file"
+                            {...imageInputProps}
                             onChange={
                               (e) => field.onChange(e.target.files?.[0])
                               // console.log(e.target.files?.[0])
                             }
                           />
+                          <p className="text-xs text-muted-foreground">
+                            Accepted formats: JPG, PNG, GIF, WebP
+                          </p>
                         </div>
                       </FormControl>
                       <FormMessage />
@@ -531,11 +569,15 @@ const Page = () => {
                           <Input
                             id="logo"
                             type="file"
+                            {...imageInputProps}
                             onChange={
                               (e) => field.onChange(e.target.files[0])
                               // console.log(e.target.files[0])
                             }
                           />
+                          <p className="text-xs text-muted-foreground">
+                            Accepted formats: JPG, PNG, GIF, WebP
+                          </p>
                         </div>
                       </FormControl>
                       <FormMessage />

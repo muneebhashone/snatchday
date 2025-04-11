@@ -18,7 +18,7 @@ export const calculateCountdown = (startDate: string) => {
   const now = new Date();
   const start = new Date(startDate);
   const totalSeconds = Math.floor((start.getTime() - now.getTime()) / 1000);
-  
+
   return {
     days: Math.floor(totalSeconds / (3600 * 24)),
     hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
@@ -26,3 +26,11 @@ export const calculateCountdown = (startDate: string) => {
     seconds: totalSeconds % 60,
   };
 };
+
+
+export const formatCurrency = (number) => {
+  const ItnlNumber = new Intl.NumberFormat("en-IN", { style: "currency", currency: "EUR" }).format(
+    number,
+  )
+  return ItnlNumber
+}

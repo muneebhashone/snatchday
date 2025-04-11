@@ -109,35 +109,43 @@ export default function ReturnHistory() {
           </div>
         </div>
         <div className="p-4 border-b">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-primary">
-                  Created
-                </TableHead>
-                <TableHead className="text-primary">comment</TableHead>
-                <TableHead className="text-primary">status</TableHead>
-                <TableHead className="text-primary">
-                  Customer informed
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {returnData?.data?.history?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell className="font-medium">
-                    {formatDate(item?.date || "", "dd/MM/yyyy")}
-                  </TableCell>
-                  <TableCell>{item?.remarks}</TableCell>
-                  <TableCell className="capitalize">{item?.status}</TableCell>
-                  <TableCell>{item?.customerInformed ? "Yes" : "No"}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="text-right text-sm text-muted-foreground mt-2">
-            Showing 1 to 1 of 1 (1 page(s))
-          </div>
+          {!returnData?.data?.history.length ? (
+            <div className="font-bold text-center">*no returns history*</div>
+          ) : (
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-primary">Created</TableHead>
+                    <TableHead className="text-primary">comment</TableHead>
+                    <TableHead className="text-primary">status</TableHead>
+                    <TableHead className="text-primary">
+                      Customer informed
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {returnData?.data?.history?.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">
+                        {formatDate(item?.date || "", "dd/MM/yyyy")}
+                      </TableCell>
+                      <TableCell>{item?.remarks}</TableCell>
+                      <TableCell className="capitalize">
+                        {item?.status}
+                      </TableCell>
+                      <TableCell>
+                        {item?.customerInformed ? "Yes" : "No"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <div className="text-right text-sm text-muted-foreground mt-2">
+                Showing 1 to 1 of 1 (1 page(s))
+              </div>
+            </>
+          )}
         </div>
 
         <div className="p-4">

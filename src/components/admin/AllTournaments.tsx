@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import {
   useCancelTournament,
+  useGetGames,
   useGetProducts,
   useGetTournaments,
 } from "@/hooks/api";
@@ -29,6 +30,8 @@ import { Users } from "lucide-react";
 import { EditTournamentDialog } from "./EditTournamentDialog";
 import Link from "next/link";
 import Image from "next/image";
+import { formatCurrency } from "@/lib/utils";
+import { Pagination } from "../ui/pagination";
 
 interface FilterParams {
   limit?: string;
@@ -76,6 +79,8 @@ const AllTournaments = () => {
     limit: "10",
     offset: "0",
   });
+
+  const { data: getGames } = useGetGames(0, 100)
   const queryClient = useQueryClient();
   const { data: getProducts } = useGetProducts({ limit: `100000` });
   const products = getProducts?.data?.products || [];
@@ -109,6 +114,13 @@ const AllTournaments = () => {
     );
   }
 
+  const handlePageChange = (page: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      offset: ((page - 1) * parseInt(filters.limit || "10")).toString(),
+    }));
+  };
+
   return (
     <div className="py-10 px-6">
       <div className="flex justify-between items-center mb-6">
@@ -116,41 +128,6 @@ const AllTournaments = () => {
       </div>
 
       <div className="mb-6 grid grid-cols-4 gap-4">
-        <div>
-          <label className="text-sm font-medium mb-2 block">
-            Items per page
-          </label>
-          <Input
-            type="number"
-            placeholder="Limit"
-            value={filters.limit}
-            onChange={(e) => handleFilterChange("limit", e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium mb-2 block">Page Offset</label>
-          <Input
-            type="number"
-            placeholder="Offset"
-            value={filters.offset}
-            onChange={(e) => handleFilterChange("offset", e.target.value)}
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium mb-2 block">Sort Order</label>
-          <Select
-            value={filters.sort}
-            onValueChange={(value) => handleFilterChange("sort", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Sort order" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="asc">Ascending</SelectItem>
-              <SelectItem value="desc">Descending</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
         <div>
           <label className="text-sm font-medium mb-2 block">
             Search by Name
@@ -161,21 +138,21 @@ const AllTournaments = () => {
             onChange={(e) => handleFilterChange("name", e.target.value)}
           />
         </div>
-      </div>
-
-      <div className="mb-6 grid grid-cols-4 gap-4">
         <div>
           <label className="text-sm font-medium mb-2 block">Game</label>
           <Select
             value={filters.game}
             onValueChange={(value) => handleFilterChange("game", value)}
           >
+
             <SelectTrigger>
               <SelectValue placeholder="Select game" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="powerblocks">PowerBlocks</SelectItem>
-              <SelectItem value="pushit">Push It</SelectItem>
+              {getGames
+                ?.data?.games?.map((game) =>
+                  <SelectItem key={game._id} value={game?._id}>{game.title}</SelectItem>
+                )}
             </SelectContent>
           </Select>
         </div>
@@ -194,13 +171,13 @@ const AllTournaments = () => {
             </SelectContent>
           </Select>
         </div>
-      </div>
-      <div className="flex justify-end my-2">
-        <Button>
-          <Link href="/admin/tournament/create-tournament">
-            Create Tournament
-          </Link>
-        </Button>
+        <div className="flex justify-end items-center mt-5">
+          <Button>
+            <Link href="/admin/tournament/create-tournament">
+              Create Tournament
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="rounded-md border">
@@ -237,9 +214,9 @@ const AllTournaments = () => {
                 </TableCell>
                 <TableCell>{tournament.title}</TableCell>
                 <TableCell>{tournament?.game?.title}</TableCell>
-                <TableCell>${tournament.startingPrice}</TableCell>
+                <TableCell>{formatCurrency(tournament.startingPrice)}</TableCell>
                 <TableCell>
-                  ${tournament.priceReduction * tournament.participants?.length}
+                  {formatCurrency(tournament.priceReduction * tournament.participants?.length)}
                 </TableCell>
                 <TableCell>
                   <p>
@@ -253,11 +230,10 @@ const AllTournaments = () => {
                 <TableCell>{tournament.length}</TableCell>
                 <TableCell>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      tournament.vip
-                        ? "bg-purple-100 text-purple-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
+                    className={`px-2 py-1 rounded-full text-xs ${tournament.vip
+                      ? "bg-purple-100 text-purple-800"
+                      : "bg-gray-100 text-gray-800"
+                      }`}
                   >
                     {tournament.vip ? "VIP" : "Regular"}
                   </span>
@@ -305,6 +281,18 @@ const AllTournaments = () => {
             )}
           </TableBody>
         </Table>
+      </div>
+      <div className="flex items-center justify-end mt-5 mr-2">
+        <Pagination
+          totalItems={getTournaments?.data?.total || 0}
+          itemsPerPage={parseInt(filters.limit || "10")}
+          onPageChange={handlePageChange}
+          currentPage={
+            Math.floor(
+              parseInt(filters.offset || "0") / parseInt(filters.limit || "10")
+            ) + 1
+          }
+        />
       </div>
     </div>
   );
