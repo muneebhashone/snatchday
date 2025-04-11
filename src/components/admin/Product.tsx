@@ -1,5 +1,4 @@
 "use client";
-
 import {
   useGetProducts,
   useGetCategories,
@@ -70,7 +69,7 @@ export function Product() {
   const debouncedSearchTerm = useDebounce(searchTerm, 1000);
   const debouncedFilters = useDebounce(filters, 1000);
 
-  const [priceRange, setPriceRange] = useState([500, 100000]);
+  const [priceRange, setPriceRange] = useState([10, 100000]);
 
   // Update filters when debounced search term changes
   useEffect(() => {
@@ -82,7 +81,6 @@ export function Product() {
   const { data: categoriesData } = useGetCategories();
 
   const { mutate: deleteProduct } = useDeleteProduct();
-  console.log(categoriesData?.data?.categories);
   const handleDelete = (id: string) => {
     deleteProduct(id, {
       onSuccess: () => {
@@ -142,7 +140,7 @@ export function Product() {
             value={priceRange}
             onValueChange={handlePriceRangeChange}
             min={10}
-            max={10000}
+            max={100000}
             step={50}
           />
           {priceRange && (
@@ -275,7 +273,6 @@ export function Product() {
                   <TableCell>{product?.stock || "N/A"}</TableCell>
                   <TableCell>
                     {product?.categoryIds.map((categoryId) => {
-                      console.log(categoryId);
                       return (
                         <div key={categoryId}>{categoryId?.displayName}</div>
                       );

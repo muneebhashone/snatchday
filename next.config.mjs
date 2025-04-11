@@ -7,6 +7,7 @@ const nextConfig = {
       "images.unsplash.com",
       "encrypted-tbn0.gstatic.com",
       "snatch-day.s3.amazonaws.com",
+      "media.itscope.com",
     ],
     remotePatterns: [
       {

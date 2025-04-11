@@ -39,17 +39,17 @@ const TournamentFilter = ({
   onCategoryChange,
   setFilters,
 }: TournamentFilterProps) => {
-  const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [participationFee, setParticipationFee] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([5, 10000]);
+  const [participationFee, setParticipationFee] = useState([5, 10000]);
   const [period, setPeriod] = useState({ from: "", until: "" });
   const [game, setGame] = useState("");
   const [product, setProduct] = useState("");
   const [vip, setVip] = useState("no");
   const [category, setCategory] = useState("");
-  const [page, setPage] = useState(1);
 
   const { data: categories, isLoading: isCategLoding } = useGetCategories({
     limit: "9999999",
+    offset: "0",
   });
   const { data: Products, isLoading: isProductLoding } = useGetProducts();
 
@@ -59,10 +59,10 @@ const TournamentFilter = ({
     if(period.from !== "" || period.until !== ""){
       onPeriodChange(period.from, period.until);
 
-    } if (priceRange[0] !== 0 || priceRange[1] !== 1000) {
+    } if (priceRange[0] !== 5 || priceRange[1] !== 10000) {
       onPriceChange(`[${priceRange[0]},${priceRange[1]}]`);
     }
-     if(participationFee[0] !== 0 || participationFee[1] !== 1000) {
+     if(participationFee[0] !== 5 || participationFee[1] !== 10000) {
       onFeeChange(`[${participationFee[0]},${participationFee[1]}]`);
     }
     if (game !== "") {
@@ -81,8 +81,8 @@ const TournamentFilter = ({
   const handleClearFilters = () => {
     // Reset local state
     
-    setPriceRange([0, 1000]);
-    setParticipationFee([0, 1000]);
+    setPriceRange([5, 10000]);
+    setParticipationFee([5, 10000]);
     setPeriod({ from: "", until: "" });
     setGame("");
     setProduct("");
@@ -100,10 +100,10 @@ const TournamentFilter = ({
     return (
       period.from !== "" ||
       period.until !== "" ||
-      priceRange[0] !== 0 ||
-      priceRange[1] !== 1000 ||
-      participationFee[0] !== 0 ||
-      participationFee[1] !== 1000 ||
+      priceRange[0] !== 5 ||
+      priceRange[1] !== 10000 ||
+      participationFee[0] !== 5 ||
+      participationFee[1] !== 10000 ||
       game !== "" ||
       product !== "" ||
       vip !== "no" ||
@@ -113,18 +113,18 @@ const TournamentFilter = ({
 
   // Handle period change
   const handlePeriodChange = (from: string, until: string) => {
-    const today = new Date().toISOString().split('T')[0];
+    // const today = new Date().toISOString().split('T')[0];
     
     setPeriod((prev) => {
       // Validate from date
-      if (from && from < today) {
-        from = today;
-      }
+      // if (from) {
+      //   from = from;
+      // }
       
       // Validate until date
-      if (until && from && until < from) {
-        until = from;
-      }
+      // if (until && from && until < from) {
+      //   until = from;
+      // }
       
       return {
         from: from || prev.from,
@@ -149,6 +149,14 @@ const TournamentFilter = ({
     setCategory(categoryId);
   };
 
+  const nextDate=()=>{
+    const fromDate = new Date(period.from);
+    const nextDayFromDate = new Date(fromDate);
+    nextDayFromDate.setDate(fromDate.getDate() + 1);
+        const minUntilDate = nextDayFromDate.toISOString().split('T')[0];
+    return minUntilDate;
+  }
+
   return (
     <div className="bg-[#F9F9F9] p-8 rounded-xl">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
@@ -159,7 +167,7 @@ const TournamentFilter = ({
             <Input
               type="date"
               value={period.from}
-              min={new Date().toISOString().split('T')[0]}
+              // min={new Date().toISOString().split('T')[0]}
               placeholder="from"
               onChange={(e) => handlePeriodChange(e.target.value, "")}
               className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500"
@@ -167,7 +175,7 @@ const TournamentFilter = ({
             <Input
               type="date"
               value={period.until || ""}
-              min={period.from || new Date().toISOString().split('T')[0]}
+              min={period.from && nextDate()}
               placeholder="until"
               onChange={(e) => handlePeriodChange("", e.target.value)}
               className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500"
@@ -184,9 +192,9 @@ const TournamentFilter = ({
               value={priceRange}
               
               onValueChange={setPriceRange}
-              min={5}
-              max={1000}
-              step={1}
+              min={10}
+              max={10000}
+              step={50}
             />
             <div className="flex items-center justify-between mt-1 text-sm text-gray-500">
               <span>{priceRange[0].toFixed(2)}€</span>
@@ -239,9 +247,9 @@ const TournamentFilter = ({
               label={(value) => value}
               value={participationFee}
               onValueChange={setParticipationFee}
-              min={5}
-              max={1000}
-              step={1}
+              min={10}
+              max={10000}
+              step={50}
             />
             <div className="flex items-center justify-between mt-1 text-sm text-gray-500">
               <span>{participationFee[0].toFixed(2)}€</span>

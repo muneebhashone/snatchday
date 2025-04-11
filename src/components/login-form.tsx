@@ -29,6 +29,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import logo from "@/app/images/logo.png";
+import { useSocket } from "@/context/SocketContext";
 // Form validation schema
 const loginFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -52,6 +53,7 @@ export function LoginForm({
       password: "Snatchday@123",
     },
   });
+  const { socket } = useSocket();
 
   const { mutate: login, isPending } = useAuthApi();
 
@@ -67,6 +69,7 @@ export function LoginForm({
       },
       {
         onSuccess: ({ data }) => {
+          socket.emit("join", data?.user?._id);
           setUserData(data);
           toast.success("Login successfully");
           router.push("/admin");
@@ -77,90 +80,92 @@ export function LoginForm({
         },
         onSettled: () => {
           setIsRedirecting(false);
-        }
-
+        },
       }
     );
   };
 
   return (
     <>
-    {isRedirecting ? (
-      <div className="flex flex-col justify-center items-center h-screen">
-        <Image src={logo} alt="Snatchday Logo" className="mb-4" />
-        <Loader2 className="animate-spin size-14" />
-      </div>
-    ) : (
-      <>
-      <div className={cn("flex flex-col gap-6", className)} {...props}>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Login</CardTitle>
-            <CardDescription>
-              Enter your email below to login to your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6"
-              >
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="email">Email</Label>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          id="email"
-                          type="email"
-                          placeholder="m@example.com"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+      {isRedirecting ? (
+        <div className="flex flex-col justify-center items-center h-screen">
+          <Image src={logo} alt="Snatchday Logo" className="mb-4" />
+          <Loader2 className="animate-spin size-14" />
+        </div>
+      ) : (
+        <>
+          <div className={cn("flex flex-col gap-6", className)} {...props}>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">Login</CardTitle>
+                <CardDescription>
+                  Enter your email below to login to your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Label htmlFor="email">Email</Label>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              id="email"
+                              type="email"
+                              placeholder="m@example.com"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label htmlFor="password">Password</Label>
-                      <FormControl>
-                        <Input {...field} id="password" type="password" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Label htmlFor="password">Password</Label>
+                          <FormControl>
+                            <Input {...field} id="password" type="password" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                <Button
-                  type="submit"
-                  className="w-full hover:bg-orange-500"
-                  disabled={isPending}
-                >
-                  {isPending ? "Logging in..." : "Login"}
-                </Button>
-              </form>
-            </Form>
-            <div className="flex justify-end my-2">
-              <Link
-                href={{ pathname: "/forgot-password", query: { ref: "admin" } }}
-                className="underline text-sm hover:text-orange-500"
-              >
-                Forgot password
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      </>
-    )}
+                    <Button
+                      type="submit"
+                      className="w-full hover:bg-orange-500"
+                      disabled={isPending}
+                    >
+                      {isPending ? "Logging in..." : "Login"}
+                    </Button>
+                  </form>
+                </Form>
+                <div className="flex justify-end my-2">
+                  <Link
+                    href={{
+                      pathname: "/forgot-password",
+                      query: { ref: "admin" },
+                    }}
+                    className="underline text-sm hover:text-orange-500"
+                  >
+                    Forgot password
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </>
   );
 }

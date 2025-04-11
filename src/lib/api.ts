@@ -678,3 +678,10 @@ export const MyAccountTournaments = async (offset) => {
 };
 
 //my account api end
+
+// IT Scope api
+export const ITScope = async (formData) => {
+  const response = await axiosInstance.post("/product/itscope-json", formData);
+  return response.data;
+};
+// IT Scope apiend

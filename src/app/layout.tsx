@@ -9,6 +9,7 @@ import { UserContextProvider } from "@/context/userContext";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/context/CartContext";
 import { CheckoutProvider } from "@/context/isCheckout";
+import { SocketProvider } from "@/context/SocketContext";
 const hankenGrotesk = Hanken_Grotesk({
   subsets: ["latin"],
   variable: "--font-hanken-grotesk",
@@ -36,16 +37,18 @@ export default function RootLayout({
         className={`${hankenGrotesk.variable} ${montserrat.variable} antialiased`}
       >
         <UserContextProvider>
-           <AuthProvider>
-            <CartProvider>
-            <CheckoutProvider>
-            <Providers>
-              <Suspense fallback={<Loading />}>{children}</Suspense>
-              <Toaster />
-          </Providers>
-          </CheckoutProvider>
-          </CartProvider>
-          </AuthProvider>
+          <SocketProvider>
+            <AuthProvider>
+              <CartProvider>
+                <CheckoutProvider>
+                  <Providers>
+                    <Suspense fallback={<Loading />}>{children}</Suspense>
+                    <Toaster />
+                  </Providers>
+                </CheckoutProvider>
+              </CartProvider>
+            </AuthProvider>
+          </SocketProvider>
         </UserContextProvider>
       </body>
     </html>

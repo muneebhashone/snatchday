@@ -1,18 +1,14 @@
 "use client";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Card } from "@/components/ui/card";
-import {
-  useGetGameById,
-  useGetGames,
-  useGetGamesPaths,
-  useUpdateGame,
-} from "@/hooks/api";
+import { useGetGameById, useGetGamesPaths, useUpdateGame } from "@/hooks/api";
 import {
   Calendar,
   Gamepad2,
   Gamepad2Icon,
   Info,
   Key,
+  Loader,
   Plus,
   RefreshCcw,
   User,
@@ -678,9 +674,17 @@ const Page = () => {
                 )}
               />
             </div>
-            <div className="flex justify-center mt-8">
-              <Button type="submit" className="bg-primary text-white">
-                Update Game
+            <div className="flex justify-start items-center mt-14">
+              <Button
+                disabled={isPending}
+                type="submit"
+                className="bg-primary text-white"
+              >
+                {isPending ? (
+                  <Loader className="animate-spin" size={18} />
+                ) : (
+                  "Update Game"
+                )}
               </Button>
             </div>
           </form>

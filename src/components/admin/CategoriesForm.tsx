@@ -46,7 +46,10 @@ type CategoriesFormProps = {
 export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const { mutate: createCategory, isPending } = useCreateCategory();
-  const { data: getCategories } = useGetCategories();
+  const { data: getCategories } = useGetCategories({
+    limit: "999999",
+    offset: "0",
+  });
   const categories = getCategories?.data?.categories;
   const queryClient = useQueryClient();
 

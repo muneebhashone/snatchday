@@ -24,6 +24,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { UseCreateGame, useGetGamesPaths } from "@/hooks/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -69,7 +70,7 @@ type IForm = z.infer<typeof FormSchema>;
 const Page = () => {
   const { data: getPaths } = useGetGamesPaths();
   const Paths = getPaths?.data?.games;
-  const { mutate: createGame } = UseCreateGame();
+  const { mutate: createGame, isPending } = UseCreateGame();
   const router = useRouter();
   const form = useForm<IForm>({
     resolver: zodResolver(FormSchema),
@@ -552,12 +553,12 @@ const Page = () => {
                     <FormControl>
                       <div className="flex items-center space-x-2">
                         <Checkbox
-                          id="suitableTraining"
+                          id="randomLevels"
                           checked={field.value}
                           onCheckedChange={field.onChange}
                         />
                         <label
-                          htmlFor="suitableTraining"
+                          htmlFor="randomLevels"
                           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         >
                           Random Levels?
@@ -569,12 +570,17 @@ const Page = () => {
                 )}
               />
             </div>
-            <div className="flex items-center justify-center mt-10">
+            <div className="flex items-center justify-start mt-14">
               <Button
-                className="bg-white text-primary border border-primary hover:bg-primary hover:text-white w-44 text-xl font-bold"
+                className="bg-primary text-white"
                 type="submit"
+                disabled={isPending}
               >
-                Create Game
+                {isPending ? (
+                  <Loader className="text-primary animate-spin" size={18} />
+                ) : (
+                  "Create Game"
+                )}
               </Button>
             </div>
           </form>
