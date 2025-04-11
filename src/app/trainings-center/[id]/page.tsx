@@ -27,7 +27,7 @@ const Page = () => {
   return (
     <ClientLayout>
       <div className="mt-40 mb-52 flex flex-col items-center w-full">
-        <div className="mb-10">
+        <div className="mb-10  w-[70%]">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -79,13 +79,12 @@ const Page = () => {
                 Play
               </Button>
             ) : (
-              <Button className="bg-transparent">
+            
                 <Login
                   useForTournament={true}
                   addToCart={true}
                   smallAddtoCart={true}
                 />
-              </Button>
             )}
           </div>
         )}

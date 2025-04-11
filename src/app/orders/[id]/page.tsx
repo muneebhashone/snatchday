@@ -33,7 +33,7 @@ const OrderDetails = () => {
           </div>
         ) : (
           <Card className="p-6">
-            <h2 className="text-xl font-bold">Invoice #Invoice(comming soon)</h2>
+            <h2 className="text-xl font-bold">Invoice #123</h2>
             <div className="grid grid-cols-2 gap-4 mt-4 border p-4">
               <div>
                 <h3 className="font-bold">Order details</h3>
@@ -56,16 +56,16 @@ const OrderDetails = () => {
                   <strong>Created on:</strong> {formatDate(orderDetails?.data?.createdAt || "", "dd/MM/yyyy")}
                 </p>
                 <p>
-                  <strong>Invoice No.:</strong> Comming sooon
+                  <strong>Invoice No.:</strong> #123123
                 </p>
                 <p>
                   <strong>Order No.:</strong> {orderDetails?.data?.orderNumber || "N/A"}
                 </p>
                 <p>
-                  <strong>Payment method:</strong>  Coming soon
+                  <strong>Payment method:</strong> {orderDetails?.data?.paymentMethod || "N/A"}
                 </p>
                 <p>
-                  <strong>Delivery method:</strong> Coming soon
+                  <strong>Delivery method:</strong> {orderDetails?.data?.deliveryMethod || "N/A"}
                 </p>
               </div>
             </div>
@@ -133,7 +133,7 @@ const OrderDetails = () => {
                   <strong>Subtotal:</strong> {orderDetails?.data?.cartObject?.subTotal?.toFixed(2)}€
                 </p>
                 <p>
-                  <strong>DE Shipping (Weight 0.00kg):</strong> Coming soon
+                  <strong>DE Shipping (Weight 0.00kg):</strong> N/A
                 </p>
                 <p>
                   <strong>VAT:</strong> {`${orderDetails?.data?.cartObject?.vat}%`}
@@ -145,7 +145,7 @@ const OrderDetails = () => {
                   <strong>Discount points:</strong> { `${orderDetails?.data?.cartObject?.discountPoints}€` || "N/A"}
                 </p>
                 <p>
-                  <strong>Recharge credit:</strong> Coming soon
+                  <strong>Recharge credit:</strong> N/A
                 </p>
                 <p className="font-bold text-lg">In total: {orderDetails?.data?.cartObject?.total?.toFixed(2)}€</p>
               </div>
@@ -162,9 +162,9 @@ const OrderDetails = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orderDetails?.data?.history && orderDetails.data.history.length > 0 ? (
-                    orderDetails?.data?.history.map((item) => (
-                      item?.customerInformed ? (
+                  {orderDetails?.data?.history && orderDetails?.data?.history?.length > 0 ? (
+                    orderDetails?.data?.history?.map((item) => (
+                     
                         <tr key={item.id}>
                           <td className="border p-2">{formatDate(item?.date || "", "dd/MM/yyyy")}</td>
                           <td className="border p-2">{item?.status}</td>
@@ -172,7 +172,6 @@ const OrderDetails = () => {
                             {item?.remarks}
                           </td>
                         </tr>
-                      ) : null // Skip rendering if customerInformed is false
                     ))
                   ) : (
                     <tr>

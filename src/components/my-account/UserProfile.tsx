@@ -190,7 +190,7 @@ const UserProfile = () => {
                 <div className="flex-1 space-y-6">
                   <div className="flex items-center gap-2">
                     <span className="text-xl font-semibold capitalize ">
-                      {myProfile?.data?.user?.username || "N/A"}
+                      {myProfile?.data?.user?.role === "admin" ? myProfile?.data?.user?.name : myProfile?.data?.user?.username || "N/A"}
                     </span>
                   </div>
 

@@ -21,8 +21,9 @@ const Page = () => {
   return (
     <ClientLayout>
       <div className="mt-40 mb-52 flex flex-col items-center w-full">
-        <div>
-          <Breadcrumb>
+
+      <div className="w-[70%]">
+        <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink href="/">
@@ -52,6 +53,10 @@ const Page = () => {
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+          </div>
+
+        <div>
+         
           <div className="w-full flex items-center justify-center">
             <h1 className="text-5xl font-bold text-primary capitalize text-center mt-5 mb-5 bg-primary text-white px-2 py-1 w-max rounded-lg">
               {getGame?.data?.title}

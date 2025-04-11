@@ -17,7 +17,8 @@ const TournamentsTable = () => {
   const [offset, setOffset] = useState(0);
   const { data: myTournaments } = useMyAccountTournaments(offset);
   const tournaments = myTournaments?.data?.tournaments;
-  console.log(tournaments);
+
+  console.log(tournaments,"tournaments")
   return (
     <div className="p-20">
       <h2 className="text-2xl font-bold mb-10">My Tournaments</h2>
@@ -26,11 +27,12 @@ const TournamentsTable = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[50px]">#</TableHead>
-              <TableHead>Opinion</TableHead>
-              <TableHead>Description </TableHead>
-              <TableHead>StartDate - EndDate</TableHead>
-              <TableHead>your result</TableHead>
-              <TableHead>product</TableHead>
+              <TableHead>Image</TableHead>
+              <TableHead>Title </TableHead>
+              <TableHead>StartDate </TableHead>
+              <TableHead>EndDate </TableHead>
+              <TableHead>Result</TableHead>
+              <TableHead>Product</TableHead>
               <TableHead className="text-right">Price</TableHead>
               <TableHead className="text-center">status</TableHead>
             </TableRow>
@@ -52,20 +54,21 @@ const TournamentsTable = () => {
                     />
                   </div>
                 </TableCell>
-                <TableCell>{tournament.title}</TableCell>
+                <TableCell className="truncate max-w-[150px]" >{tournament.title}</TableCell>
                 <TableCell className="text-center">
                   <div className="font-medium text-primary mb-1">
                     {formatDate(tournament?.start)}
                   </div>
-                  to
-                  <div className="text-sm text-foreground">
+                </TableCell>
+                <TableCell className="text-center">
+                  <div className="font-medium text-primary mb-1">
                     {formatDate(tournament?.end)}
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div>Round: {tournament.round}</div>
-                  <div>Attempts: {tournament.attempts}</div>
-                  <div>Time: {tournament.time}</div>
+                  <div>Round: {tournament?.round  || ""}</div>
+                  <div>Attempts: {tournament?.attempts || ""}</div>
+                  <div>Time: {tournament?.time || ""}</div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-4">

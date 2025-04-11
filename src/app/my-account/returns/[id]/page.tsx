@@ -40,7 +40,7 @@ const ReturnDetailsPage = () => {
   if (isLoading)
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="w-16 h-16 animate-pulse text-blue-500" />
+        <Loader2 className="w-12 h-12 animate-spin text-orange-500 " />
       </div>
     );
 
@@ -82,15 +82,8 @@ const ReturnDetailsPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-2">
                 <div>
-                  <p className="flex items-center mb-2">
-                    <FileText className="mr-2 text-gray-500" />
-                    <span className="font-semibold">Return Number:</span>
-                    <span className="ml-2">
-                      {returnData?.returnNumber || "N/A"}
-                    </span>
-                  </p>
                   <p className="flex items-center mb-2">
                     <ShoppingCart className="mr-2 text-gray-500" />
                     <span className="font-semibold">Order Number:</span>
@@ -98,6 +91,14 @@ const ReturnDetailsPage = () => {
                       {returnData?.orderNumber || "N/A"}
                     </span>
                   </p>
+                  <p className="flex items-center mb-2">
+                    <ShoppingCart className="mr-2 text-gray-500" />
+                    <span className="font-semibold">Return Reason:</span>
+                    <span className="ml-2">
+                      {returnData?.reason || "N/A"}
+                    </span>
+                  </p>
+
                   <p className="flex items-center">
                     <Clock className="mr-2 text-gray-500" />
                     <span className="font-semibold">Created At:</span>
@@ -170,8 +171,7 @@ const ReturnDetailsPage = () => {
             </thead>
             <tbody>
               {returnData?.history && returnData.history.length > 0 ? (
-                returnData?.history.map((item) =>
-                  item?.customerInformed ? (
+                returnData?.history.map((item) => (
                     <tr key={item.id}>
                       <td className="border p-2">
                         {formatDate(item?.date || "", "dd/MM/yyyy")}
@@ -179,7 +179,7 @@ const ReturnDetailsPage = () => {
                       <td className="border p-2 capitalize">{item?.status}</td>
                       <td className="border truncate p-2">{item?.remarks}</td>
                     </tr>
-                  ) : null // Skip rendering if customerInformed is false
+                  )
                 )
               ) : (
                 <tr>
