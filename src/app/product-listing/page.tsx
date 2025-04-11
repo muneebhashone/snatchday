@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import laptop from "@/app/images/laptop.png";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Separator } from "@/components/ui/separator";
 import Search from "@/components/Search";
 import {
@@ -31,6 +31,7 @@ import {
   useGetCategoryById,
   useGetProducts,
   useGetFilterById,
+  useGetCategories,
 } from "@/hooks/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -106,6 +107,13 @@ const ProductListingPage = () => {
     setSearchTerm(value);
   };
 
+  const {data:allcategories} = useGetCategories({
+    limit: '9999999',
+    above: true
+  })
+
+  console.log(allcategories,"allcategories")
+
   const attributesArray = Object.entries(selectedFilters).flatMap(
     ([key, values]) => values.map((value) => ({ [key]: value }))
   );
@@ -123,12 +131,43 @@ const ProductListingPage = () => {
 
   const { data: categoryData } = useGetCategoryById(category as string);
 
-  const availableFilters =
-    categoryData?.data?.filters?.map((filter) => ({
-      name: filter.name,
-      values: filter.value || [],
-      id: filter._id,
-    })) || [];
+ 
+
+  // const availableFilters =
+  //   categoryData?.data?.filters?.map((filter) => ({
+  //     name: filter.name,
+  //     values: filter.value || [],
+  //     id: filter._id,
+  //   })) || [];
+
+
+
+
+
+    const availableFilters = useMemo(() => {
+      if (category) {
+        const selectedCategory = allcategories?.data?.categories?.find(cat => cat._id === category);
+        return selectedCategory?.filters?.map(filter => ({
+          name: filter.name,
+          values: filter.value || [],
+          id: filter._id,
+        })) || [];
+      }
+    
+      // Combine all filters when no category ID is selected
+      const allFilters = allcategories?.data?.categories?.flatMap(cat => cat?.filters || []);
+      const uniqueFiltersMap = new Map();
+      allFilters?.forEach(filter => {
+        if (!uniqueFiltersMap?.has(filter._id)) {
+          uniqueFiltersMap?.set(filter._id, {
+            name: filter.name,
+            values: filter.value || [],
+            id: filter._id,
+          });
+        }
+      });
+      return Array.from(uniqueFiltersMap.values());
+    }, [category, allcategories]);
 
   return (
     <ClientLayout>
