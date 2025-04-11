@@ -681,7 +681,7 @@ const Page = () => {
                 className="bg-primary text-white"
               >
                 {isPending ? (
-                  <Loader className="animate-spin text-primary" size={18} />
+                  <Loader className="animate-spin" size={18} />
                 ) : (
                   "Update Game"
                 )}

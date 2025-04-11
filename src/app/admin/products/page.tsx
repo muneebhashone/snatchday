@@ -27,49 +27,57 @@ import { z } from "zod";
 import { IError } from "../games/create/page";
 import { useEffect, useState } from "react";
 import { useSocket } from "@/context/SocketContext";
+import { Progress } from "@/components/ui/progress";
 
 const formSchema = z.object({
-  jsonFile: z
+  file: z
     .instanceof(File)
     .refine(
       (file) => file.type === "application/json",
       "Only JSON files are allowed"
     ),
-  updateAttributes: z.boolean(),
-  updateDescription: z.boolean(),
-  updateStock: z.boolean(),
-  updateTitles: z.boolean(),
-  updatePrice: z.boolean(),
+  // updateAttributes: z.boolean(),
+  // updateDescription: z.boolean(),
+  // updateStock: z.boolean(),
+  // updateTitles: z.boolean(),
+  // updatePrice: z.boolean(),
 });
 
 type IForm = z.infer<typeof formSchema>;
 
 export default function ProductsPage() {
   const { mutate: ITScope, isPending } = UseITScope();
+  const [open, setOpen] = useState(false);
+  // const [progress, setProgress] = useState(13);
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      jsonFile: null,
-      updateAttributes: false,
-      updateDescription: false,
-      updateStock: false,
-      updateTitles: false,
-      updatePrice: false,
+      file: null,
+      // updateAttributes: false,
+      // updateDescription: false,
+      // updateStock: false,
+      // updateTitles: false,
+      // updatePrice: false,
     },
   });
 
-  //
   const { socket } = useSocket();
   useEffect(() => {
     console.log(socket);
+    // const timer = setTimeout(() => setProgress(66), 500);
+    // return () => clearTimeout(timer);
   }, [socket]);
-  // socket end
+
   const onSubmit = (data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value instanceof File ? value : String(value));
     });
     ITScope(formData, {
+      onSuccess: () => {
+        toast.success("products uploaded successfully");
+        setOpen(false);
+      },
       onError: (error) => {
         toast.error((error as unknown as IError)?.response.data.message);
       },
@@ -77,9 +85,10 @@ export default function ProductsPage() {
   };
   return (
     <AdminLayout>
+      {/* <Progress value={progress} className="w-[20%] h-[10px]" /> */}
       <div className="w-full flex items-center justify-between">
         <h1 className="text-3xl font-bold">Products</h1>
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="bg-white border border-primary text-primary hover:text-white hover:bg-primary">
               IT Scope Sync
@@ -96,7 +105,7 @@ export default function ProductsPage() {
               >
                 <FormField
                   control={form.control}
-                  name="jsonFile"
+                  name="file"
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -119,7 +128,7 @@ export default function ProductsPage() {
                     </FormItem>
                   )}
                 />
-                <div className="flex flex-wrap gap-5">
+                {/* <div className="flex flex-wrap gap-5">
                   <FormField
                     control={form.control}
                     name="updateAttributes"
@@ -240,10 +249,10 @@ export default function ProductsPage() {
                       </FormItem>
                     )}
                   />
-                </div>
+                </div> */}
                 <Button disabled={isPending} type="submit">
                   {isPending ? (
-                    <Loader className="animate-spin text-primary" size={18} />
+                    <Loader className="animate-spin " size={18} />
                   ) : (
                     " Submit"
                   )}
