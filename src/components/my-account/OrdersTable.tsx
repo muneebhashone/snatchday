@@ -90,7 +90,7 @@ const OrdersTable = () => {
                 </TableCell> 
                  <TableCell className="text-center flex items-center justify-center">
                   <Link href={`/orders/${order?._id}`}>
-                    <Button variant="ghost" size="icon" className="hover:bg-gray-100 flex items-end">
+                    <Button variant="ghost" size="icon" className="hover:bg-gray-100 flex items-center">
                       <Eye className="h-5 w-5 text-foreground" />
                     </Button>
                   </Link>

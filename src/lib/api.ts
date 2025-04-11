@@ -509,7 +509,7 @@ export const updateVoucher = async (id: string, data: VoucherData) => {
 export const getCategories = async (params: {
   limit: string;
   offset: string;
-  name: string;
+  name?: string;
 }) => {
   const response = await axiosInstance.get<CategoryResponse>("/category", {
     params,
@@ -587,9 +587,8 @@ export const CreateGame = async (data) => {
   return response.data;
 };
 
-export const GetGames = async (offset: number) => {
-  const limit = 10;
-  const response = await axiosInstance.get("/game", {
+export const GetGames = async (offset?: number, limit = 10) => {
+  const response = await axiosInstance.get("/game/", {
     params: { limit, offset },
   });
   return response.data;
@@ -612,6 +611,10 @@ export const DeleteGame = async (id) => {
   return response.data;
 };
 
+export const getGamesPaths = async () => {
+  const response = await axiosInstance.get("/game/list/available");
+  return response.data;
+};
 // games api end
 export const wishList = async () => {
   const response = await axiosInstance.get("/wishlist");
@@ -638,13 +641,40 @@ export const deleteContent = async (id: string) => {
   return response.data;
 };
 
-export const updateContent = async (id:string,data:WebSetting) => {
-  const response =await axiosInstance.put(`/web-settings/content/${id}`,data)
+export const updateContent = async (id: string, data: WebSetting) => {
+  const response = await axiosInstance.put(`/web-settings/content/${id}`, data);
   return response.data;
-}
+};
 
-
-export const getCustomerReturnById=async(id:string)=>{
+export const getCustomerReturnById = async (id: string) => {
   const response = await axiosInstance.get(`/customer/${id}`);
   return response.data;
-}
+};
+
+//training center user
+
+export const TrainingCenter = async () => {
+  const response = await axiosInstance.get("/training");
+  return response.data;
+};
+export const TrainingCenterById = async (id) => {
+  const response = await axiosInstance.get(`/training/play/${id}`);
+  return response.data;
+};
+
+// training center end
+
+//my account api
+export const MyAccountGames = async () => {
+  const response = await axiosInstance.get(`/game/get/stats`);
+  return response.data;
+};
+export const MyAccountTournaments = async (offset) => {
+  const limit = 10;
+  const response = await axiosInstance.get(`/tournament/get-my-tournaments`, {
+    params: { limit, offset },
+  });
+  return response.data;
+};
+
+//my account api end

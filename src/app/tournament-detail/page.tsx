@@ -45,7 +45,6 @@ const TournamentDetailPage = () => {
     refetch: refetchTournament,
   } = useGetTournamentById(id);
 
-  
   const { data: currentOffers, isLoading: isLoadingCurrentOffers } =
     useCurrentOffers();
 
@@ -180,11 +179,13 @@ const TournamentDetailPage = () => {
                     className="pl-2 md:pl-4 md:basis-1/2"
                   >
                     <NextTournamentCard
+                      end={tournament.end}
                       id={tournament._id}
                       image={tournament.image}
                       title={tournament.title}
                       name={tournament.name}
-                      game={tournament.game}
+                      game={tournament?.game?.title}
+                      gameImage={tournament?.game?.image}
                       length={tournament.length}
                       startingPrice={tournament.startingPrice}
                       fee={tournament.fee}

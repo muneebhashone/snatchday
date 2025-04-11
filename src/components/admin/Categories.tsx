@@ -137,7 +137,7 @@ const Categories = () => {
                   </TableCell>
                     <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
-                      <EditCategoryDialog category={category} />
+                      <EditCategoryDialog categoryId={category._id} />
                       <Button onClick={() => handleDelete(category._id)} variant="ghost" size="icon" className="text-red-500 hover:text-red-600 transition-colors">
                         <Trash className='w-4 h-4' />
                     </Button>

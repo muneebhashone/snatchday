@@ -30,9 +30,10 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { Pagination } from "@/components/ui/pagination";
+import { DualRangeSlider } from "../tournaments/dualSlider";
 
 interface FilterParams {
-  price?: string[];
+  price?: string;
   limit?: string;
   offset?: string;
   sort_attr?: string;
@@ -66,7 +67,10 @@ export function Product() {
   const queryClient = useQueryClient();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
+  const debouncedSearchTerm = useDebounce(searchTerm, 1000);
+  const debouncedFilters = useDebounce(filters, 1000);
+
+  const [priceRange, setPriceRange] = useState([500, 100000]);
 
   // Update filters when debounced search term changes
   useEffect(() => {
@@ -74,9 +78,9 @@ export function Product() {
   }, [debouncedSearchTerm]);
 
   const { data: productsData, isLoading: isProductsLoading } =
-    useGetProducts(filters);
+    useGetProducts(debouncedFilters);
   const { data: categoriesData } = useGetCategories();
-  
+
   const { mutate: deleteProduct } = useDeleteProduct();
   console.log(categoriesData?.data?.categories);
   const handleDelete = (id: string) => {
@@ -93,9 +97,17 @@ export function Product() {
   };
 
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: key === "price" ? value.split(",") : value,
+    let updatedValue: string[] | string = value;
+
+    if (key === "price") {
+      updatedValue = value.split(",").map((v) => v.trim());
+    }
+    console.log({ [key]: updatedValue });
+
+    // Update filters state with the new value
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [key]: updatedValue,
     }));
   };
 
@@ -106,16 +118,39 @@ export function Product() {
     }));
   };
 
+  const handlePriceRangeChange = (value: number[]) => {
+    setPriceRange(value);
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      price: `[${value.join(",")}]`,
+    }));
+  };
+
   return (
     <div className="py-10">
-      <div className="mb-6 grid grid-cols-3 gap-4">
+      <div className="mb-6 grid grid-cols-3 gap-8">
         <div>
-          <label className="text-sm font-medium mb-2 block">Price Range</label>
-          <Input
+          <label className="text-sm font-medium mb-8 block">Price Range</label>
+          {/* <Input
             placeholder="min,max (e.g., 10,100)"
             value={Array.isArray(filters.price) ? filters.price.join(",") : ""}
             onChange={(e) => handleFilterChange("price", e.target.value)}
+          /> */}
+
+          <DualRangeSlider
+            label={(value) => value}
+            value={priceRange}
+            onValueChange={handlePriceRangeChange}
+            min={10}
+            max={10000}
+            step={50}
           />
+          {priceRange && (
+            <div className="flex items-center justify-between mt-1 text-sm text-gray-500">
+              <span>{priceRange[0].toFixed(2)}€</span>
+              <span>{priceRange[1].toFixed(2)}€</span>
+            </div>
+          )}
         </div>
         <div>
           <label className="text-sm font-medium mb-2 block">Sort By</label>
@@ -218,7 +253,7 @@ export function Product() {
                   Loading...
                 </TableCell>
               </TableRow>
-            ) : (
+            ) : productsData?.data?.products?.length > 0 ? (
               productsData?.data?.products?.map((product: Product) => (
                 <TableRow key={product?._id}>
                   <TableCell>
@@ -239,13 +274,12 @@ export function Product() {
                   <TableCell>{product?.price || "N/A"}</TableCell>
                   <TableCell>{product?.stock || "N/A"}</TableCell>
                   <TableCell>
-                    {product?.categoryIds.map((categoryId) => (
-                      <div key={categoryId}>
-                        {categoriesData?.data?.categories?.find(
-                          (cat) => cat._id === categoryId?._id
-                        )?.displayName || "N/A"}
-                      </div>
-                    ))}
+                    {product?.categoryIds.map((categoryId) => {
+                      console.log(categoryId);
+                      return (
+                        <div key={categoryId}>{categoryId?.displayName}</div>
+                      );
+                    })}
                     {/* {categoriesData?.data?.categories?.find(
                       (category: Category) =>
                         category._id === product.categoryIds[0]._id
@@ -277,6 +311,12 @@ export function Product() {
                   </TableCell>
                 </TableRow>
               ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">
+                  Products not found
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>

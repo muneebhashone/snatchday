@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
+import { CustomMultiSelect } from "./multiselect";
 
 interface Category {
   _id: string;
@@ -70,7 +71,7 @@ const formSchema = z
     stock: z.number().min(0, "Stock must be 0 or greater"),
     price: z.number().min(0, "Price must be 0 or greater"),
     attributes: z.any(),
-    categoryIds: z.string().min(1, "Category is required"),
+    categoryIds: z.any(),
     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
@@ -90,22 +91,62 @@ const formSchema = z
       ctx.addIssue({
         path: ["liscenseKey"],
         code: z.ZodIssueCode.custom,
-        message: "License key is not required when shipping is enable",
+        message: "License key is not required when shipping is enabled",
       });
     } else if (!data.requireShipping && !data.liscenseKey) {
       ctx.addIssue({
         path: ["licenseKey"],
         code: z.ZodIssueCode.custom,
-        message: "License key is required when shipping is not enable",
+        message: "License key is required when shipping is not enabled",
+      });
+    }
+
+    // Custom validation for discounts (dates)
+    if (data.discounts && data.discounts.length > 0) {
+      data.discounts.forEach((discount, index) => {
+        const startDate = new Date(discount.away);
+        const endDate = new Date(discount.until);
+
+        // Check if the start date is in the past
+        if (startDate < new Date()) {
+          ctx.addIssue({
+            path: [`discounts.${index}.away`],
+            code: z.ZodIssueCode.custom,
+            message: "Start Date cannot be in the past",
+          });
+        }
+
+        console.log(data.price, "price");
+        console.log(data.discounts?.[index]?.price, "discount");
+        if (data.price < data.discounts?.[index]?.price) {
+          ctx.addIssue({
+            path: [`discounts.${index}.price`],
+            code: z.ZodIssueCode.custom,
+            message: "Discount price cannot be greater than original price",
+          });
+        }
+
+        // Check if the end date is greater than the start date
+        if (endDate <= startDate) {
+          ctx.addIssue({
+            path: [`discounts.${index}.until`],
+            code: z.ZodIssueCode.custom,
+            message: "End Date must be greater than Start Date",
+          });
+        }
       });
     }
   });
 
 export default function ProductsForm() {
+  const [emptyCategory, setEmptyCategory] = useState(false);
   const [applyDiscounts, setApplyDiscounts] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const { mutate: createProduct, isPending } = useCreateProduct();
-  const { data: getCategories } = useGetCategories();
+  const { data: getCategories } = useGetCategories({
+    limit: "99999999",
+    offset: "0",
+  });
   const [selectedCategory, setSelectedCategory] = useState<object[]>([]);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
 
@@ -122,7 +163,7 @@ export default function ProductsForm() {
       stock: 0,
       price: 0,
       attributes: "",
-      categoryIds: "",
+      categoryIds: [],
       type: "NEW",
       isFeatured: false,
       metaTitle: "",
@@ -160,6 +201,11 @@ export default function ProductsForm() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (selectedCategory.length < 1) {
+      setEmptyCategory(true);
+      return;
+    }
+    setEmptyCategory(false);
     const dataToSend = { ...values };
     if (dataToSend.requireShipping) {
       delete dataToSend.liscenseKey;
@@ -423,6 +469,7 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
+
           <div>
             <FormField
               control={form.control}
@@ -431,7 +478,7 @@ export default function ProductsForm() {
                 <FormItem>
                   <FormLabel>Category *</FormLabel>
                   <Select
-                    // onValueChange={field.onChange}
+                    value=""
                     onValueChange={(value) => {
                       field.onChange(value);
                       const selectedCategoriess =
@@ -443,7 +490,6 @@ export default function ProductsForm() {
                         selectedCategoriess,
                       ]);
                     }}
-                    defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -453,7 +499,13 @@ export default function ProductsForm() {
                     <SelectContent>
                       {getCategories?.data?.categories?.map(
                         (category: Category) => (
-                          <SelectItem key={category._id} value={category._id}>
+                          <SelectItem
+                            key={category._id}
+                            value={category._id}
+                            disabled={selectedCategory.some(
+                              (cat) => cat._id === category._id
+                            )}
+                          >
                             {category.displayName || category.name}
                           </SelectItem>
                         )
@@ -464,27 +516,33 @@ export default function ProductsForm() {
                 </FormItem>
               )}
             />
-            <div className="flex gap-2 mt-2 flex-wrap">
-              {selectedCategory &&
-                selectedCategory?.map((cat, i) => (
-                  <span
-                    className="relative bg-primary text-white text-sm p-1 rounded"
-                    key={i}
-                  >
-                    <X
-                      onClick={() => {
-                        setSelectedCategory((prev) =>
-                          prev.filter((_, index) => index !== i)
-                        );
-                      }}
-                      size={15}
-                      className="bg-white text-primary rounded-full p-[2px] absolute -top-1 -right-2 cursor-pointer"
-                    />
-                    {cat.displayName}
-                  </span>
-                ))}
-            </div>
+            {selectedCategory.length < 1 && emptyCategory && (
+              <p className="text-red-500 text-sm ">
+                *please select atleast one category*
+              </p>
+            )}
           </div>
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {selectedCategory &&
+              selectedCategory?.map((cat, i) => (
+                <span
+                  className="relative bg-primary text-white text-sm p-1 rounded"
+                  key={i}
+                >
+                  <X
+                    onClick={() => {
+                      setSelectedCategory((prev) =>
+                        prev.filter((_, index) => index !== i)
+                      );
+                    }}
+                    size={15}
+                    className="bg-white text-primary rounded-full p-[2px] absolute -top-1 -right-2 cursor-pointer"
+                  />
+                  {cat.displayName}
+                </span>
+              ))}
+          </div>
+
           <FormField
             control={form.control}
             name="metaTitle"
@@ -593,7 +651,14 @@ export default function ProductsForm() {
                               }
                             />
                           </FormControl>
-                          <FormMessage />
+                          {form.formState.errors?.discounts?.[index]?.price && (
+                            <FormMessage>
+                              {
+                                form.formState.errors?.discounts?.[index]?.price
+                                  ?.message
+                              }
+                            </FormMessage>
+                          )}
                         </FormItem>
                       )}
                     />
@@ -727,6 +792,7 @@ export default function ProductsForm() {
                 <FormLabel>Filters name</FormLabel>
                 <FormControl>
                   <Select
+                    value=""
                     onValueChange={(value) => {
                       const currentValues = field.value || [];
                       if (!currentValues.includes(value)) {
@@ -766,7 +832,7 @@ export default function ProductsForm() {
                     {field.value.map((filterName) => (
                       <div
                         key={filterName}
-                        className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                        className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
                       >
                         <span className="text-sm">{filterName}</span>
                         <Button
@@ -875,6 +941,7 @@ export default function ProductsForm() {
                 <FormLabel>Related Products</FormLabel>
                 <FormControl>
                   <Select
+                    value=""
                     onValueChange={(value) => {
                       const currentValues = field.value || [];
                       if (!currentValues.includes(value)) {
@@ -909,7 +976,7 @@ export default function ProductsForm() {
                       return (
                         <div
                           key={productId}
-                          className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                          className="flex items-center gap-1 text-white px-2 py-1 rounded-md bg-primary"
                         >
                           <span className="text-sm">{product?.name}</span>
                           <Button

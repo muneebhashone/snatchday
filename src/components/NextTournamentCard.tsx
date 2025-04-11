@@ -1,4 +1,4 @@
-"use client "
+"use client ";
 import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "./ui/button";
@@ -13,24 +13,24 @@ import { start } from "repl";
 import CountdownDisplay from "./CountdownProps";
 import { ShareTournamentModal } from "./ShareTournamentModal";
 interface NextTournamentCardProps {
-  id: string;
-  article: string;
-  category: string[];
-  createdAt: string;
+  id?: string;
+  // article: string;
+  // category: string[];
+  // createdAt: string;
   end: string;
   fee: number | string;
   game: string;
   image: string;
   length: number;
-  metaDescription: string;
-  metaKeywords: string;
-  metaTitle: string;
+  // metaDescription: string;
+  // metaKeywords: string;
+  // metaTitle: string;
   name: string;
   numberOfParticipants: number;
-  numberOfPieces: number;
-  participants: any[];
-  priceReduction: number;
-  resubmissions: number;
+  // numberOfPieces: number;
+  // participants: any[];
+  // priceReduction: number;
+  // resubmissions: number;
   start: string;
   startingPrice: number;
   status: string;
@@ -40,10 +40,13 @@ interface NextTournamentCardProps {
   updatedAt: string;
   vip: boolean;
   __v: number;
-  _id: string;
+  _id?: string;
+  gameImage: string;
 }
 
 const NextTournamentCard = ({
+  _id,
+  id,
   image,
   title,
   name,
@@ -55,16 +58,15 @@ const NextTournamentCard = ({
   start,
   end,
   tournamentId,
-  _id,
+  gameImage,
 }: NextTournamentCardProps) => {
   const countDown = calculateCountdown(start);
   const endDate = calculateCountdown(end);
   const [isShareModalOpen, setShareModalOpen] = useState(false);
 
-  
-const handleTournamentShare=() =>{
-  setShareModalOpen(true);
-}
+  const handleTournamentShare = () => {
+    setShareModalOpen(true);
+  };
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 bg-white border border-gray-200 rounded-xl hover:shadow-lg hover:border-primary transition-all duration-300 items-center">
       {/* Left Column - Product Image */}
@@ -87,9 +89,6 @@ const handleTournamentShare=() =>{
       {/* Right Column - Tournament Info */}
 
       <div className="xl:border-l pt-5 xl:pt-10 pb-5 xl:pb-12 px-5 sm:px-7 relative">
-        <Button className="xl:block hidden absolute top-8 xl:top-5 right-5 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
-          <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
-        </Button>
         {/* Tournament Badge */}
         <div className="mb-3">
           <h2 className="text-card-foreground font-semibold text-xs sm:text-sm xl:text-normal">
@@ -122,7 +121,7 @@ const handleTournamentShare=() =>{
             <div className="w-12 xl:w-16 h-12 xl:h-16 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
               <Image
                 className=""
-                src={gameIcon}
+                src={gameImage}
                 alt="Game Icon"
                 width={40}
                 height={37}
@@ -189,8 +188,8 @@ const handleTournamentShare=() =>{
         <div className="flex flex-wrap 3xl:gap-0 gap-4 items-start xl:items-center justify-between">
           <div className="flex items-center gap-2">
             <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
-              <Link href={`/tournament-detail?id=${_id}`}>
-                To The Tournament
+              <Link href={`/tournament-detail?id=${id ? id : _id}`}>
+                To The Tournamentasdasdasd
               </Link>
             </Button>
             <div className="bg-orange-200 rounded-full h-6 w-6 flex items-center justify-center">

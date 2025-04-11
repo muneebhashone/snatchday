@@ -300,8 +300,8 @@ export default function OrderHistory() {
                 {isPending ? (
                   <Loader className="animate-spin" size={18} />
                 ) : (
-                  <div className="flex items-center justify-center">
-                    <ChevronDown className="w-4 h-4 mr-2" /> Order status
+                  <div className="flex items-center capitalize justify-center">
+                    update status
                   </div>
                 )}
               </Button>

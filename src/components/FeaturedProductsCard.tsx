@@ -1,21 +1,22 @@
+"use client";
 import React from "react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 
 interface FeaturedProductCardProps {
-  _id: string;
-  title: string;
-  name: string;
-  price: string;
-  oldPrice: string;
-  rating: number;
-  reviews: number;
+  _id?: string;
+  title?: string;
+  name?: string;
+  price?: string;
+  oldPrice?: string;
+  rating?: number;
+  reviews?: number;
   image?: StaticImageData;
   images?: string[];
   isSale?: boolean;
   isNew?: boolean;
-  discounts: string;
-  discount: string;
+  discounts?: [{ price: string }];
+  discount?: string;
 }
 
 const FeaturedProductsCard = ({
@@ -24,8 +25,6 @@ const FeaturedProductsCard = ({
   name,
   discounts,
   price,
-  oldPrice,
-  rating,
   reviews,
   images,
   image,

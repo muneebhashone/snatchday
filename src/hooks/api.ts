@@ -80,6 +80,11 @@ import {
   deleteContent,
   updateContent,
   getCustomerReturnById,
+  getGamesPaths,
+  TrainingCenter,
+  TrainingCenterById,
+  MyAccountGames,
+  MyAccountTournaments,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -172,14 +177,19 @@ export const useCreateProduct = () => {
   });
 };
 
-export const useGetCategories = (params: {
+export const useGetCategories = (params?: {
   limit?: string;
   offset?: string;
   name?: string;
 }) => {
   return useQuery({
     queryKey: ["categories", params],
-    queryFn: () => getCategories(params),
+    queryFn: () =>
+      getCategories({
+        limit: params.limit || "",
+        offset: params.offset || "",
+        name: params.name || "",
+      }),
   });
 };
 
@@ -450,7 +460,6 @@ export const useCustomersPagination = (
   });
 };
 
-
 export const useGetCustomerById = (id) => {
   return useQuery({
     queryKey: ["customer"],
@@ -652,10 +661,10 @@ export const UseCreateGame = () => {
   });
 };
 
-export const useGetGames = (page) => {
+export const useGetGames = (offset?: number, limit?: number) => {
   return useQuery({
-    queryKey: ["games"],
-    queryFn: () => GetGames(page),
+    queryKey: ["games", offset], // Include offset in the queryKey
+    queryFn: () => GetGames(offset, limit), // Pass offset to the API function
   });
 };
 export const useGetGameById = (id) => {
@@ -672,6 +681,13 @@ export const useUpdateGame = (id) => {
 export const useDeleteGame = () => {
   return useMutation({
     mutationFn: (id) => DeleteGame(id),
+  });
+};
+
+export const useGetGamesPaths = () => {
+  return useQuery({
+    queryKey: ["gamePath"],
+    queryFn: getGamesPaths,
   });
 };
 
@@ -695,13 +711,12 @@ export const useAddContent = () => {
   });
 };
 
-export const useGetContent =() =>{
+export const useGetContent = () => {
   return useQuery({
     queryKey: ["content"],
     queryFn: getContent,
-
-  })
-}
+  });
+};
 
 export const useDeleteContent = () => {
   return useMutation({
@@ -714,13 +729,46 @@ export const useUpdateContent = () => {
     mutationFn: (data: WebSetting & { id: string }) => {
       const { id, ...updateData } = data;
       return updateContent(id, updateData);
-    }
+    },
   });
 };
 
-export const useGetCustomerReturnById=(id:string)=>{
+export const useGetCustomerReturnById = (id: string) => {
   return useQuery({
-    queryKey: ["customerReturn",id],
+    queryKey: ["customerReturn", id],
     queryFn: () => getCustomerReturnById(id),
   });
-}
+};
+
+//training center user
+
+export const useTrainingCenter = () => {
+  return useQuery({
+    queryKey: ["trainingCenter"],
+    queryFn: TrainingCenter,
+  });
+};
+export const useTrainingCenterById = (id) => {
+  return useQuery({
+    queryKey: ["trainingCenter", id],
+    queryFn: () => TrainingCenterById(id),
+  });
+};
+
+// training center end
+
+//my account hook
+export const useMyAccountGames = () => {
+  return useQuery({
+    queryKey: ["MyGames"],
+    queryFn: MyAccountGames,
+  });
+};
+
+export const useMyAccountTournaments = (offset) => {
+  return useQuery({
+    queryKey: ["MyTournaments", offset],
+    queryFn: () => MyAccountTournaments(offset),
+  });
+};
+//my account hook end

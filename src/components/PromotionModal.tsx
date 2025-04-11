@@ -61,7 +61,7 @@ export function PromotionModal() {
               <Image
                 className="xl:w-[580px] lg:w-[420px] md:w-[320px] sm:w-[250px] w-[180px] h-[350px]"
                 src={modalImage}
-                alt=""
+                alt="PromationModal"
               />
               <div className="flex items-center justify-between gap-1 md:gap-4 relative z-10 mt-10">
                 {time?.map((item) => (

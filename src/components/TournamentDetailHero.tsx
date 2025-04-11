@@ -41,8 +41,6 @@ const TournamentDetailHero = ({
   const { user } = useUserContext();
   const { mutate: participateTournament, isPending } =
     useParticipateTournament();
- 
-
 
   const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const [isShareModalOpen, setShareModalOpen] = useState(false);
@@ -54,10 +52,9 @@ const TournamentDetailHero = ({
   const closeLoginModal = () => {
     setLoginModalOpen(false);
   };
-  console.log(user,"user")
+  console.log(user, "user");
 
-
-  console.log(tournamentData,"tournamentData")
+  console.log(tournamentData, "tournamentData");
 
   // const handleParticipate = () => {
 
@@ -85,13 +82,12 @@ const TournamentDetailHero = ({
     if (user) {
       const userGroup = user?.user?.group;
       const isVipTournament = tournamentData?.data?.vip;
-  
+
       console.log(userGroup, isVipTournament);
-  
-      // VIP users can only participate in VIP tournaments
-      // Basic/All users can only participate in non-VIP tournaments
-      if ((userGroup === "vip" && isVipTournament) || 
-          (userGroup !== "vip" && !isVipTournament)) {
+
+      // Allow VIP users to participate in any tournament
+      // Only restrict non-VIP users from joining VIP tournaments
+      if (userGroup === "vip" || (!isVipTournament && userGroup !== "vip")) {
         if (tournamentData?.data?._id) {
           participateTournament(tournamentData?.data?._id, {
             onSuccess: () => {
@@ -101,13 +97,11 @@ const TournamentDetailHero = ({
             onError: (error: any) => {
               console.error("Participation failed:", error);
               toast.error(error?.message);
-            }
+            },
           });
         }
       } else {
-        toast.error(userGroup === "vip" 
-          ? "This tournament is for non-VIP users only" 
-          : "This tournament is for VIP users only");
+        toast.error("This tournament is for VIP users only");
       }
     } else {
       setLoginModalOpen(true);
@@ -161,15 +155,17 @@ const TournamentDetailHero = ({
                   <div className=" p-2 rounded-full flex gap-3 items-center">
                     <div className="bg-white shadow-[2px_2px_10px_#d1d5db] h-[98px] w-[98px] rounded-full flex items-center justify-center">
                       <Image
+                        src={tournamentData?.data.game?.image}
+                        alt="Tournamnet line 168"
+                        width={80}
+                        height={80}
                         className="object-contain"
-                        src={powerBlock}
-                        alt=""
                       />
                     </div>
                     <div className="mr-14 flex flex-col justify-center">
                       <h1 className="text-xl font-bold leading-7">Game</h1>
                       <h1 className="text-3xl text-primary font-bold leading-7">
-                        PowerBlocks
+                       {tournamentData?.data?.game?.title}
                       </h1>
                       <p className="text-lg">
                         Duration: {tournamentData?.data?.length || "N/A"}{" "}
@@ -305,7 +301,11 @@ const TournamentDetailHero = ({
                       )}
                     </>
                   </div>
-                  {hasParticipated ? "" : <Image src={questionmark} alt="" />}
+                  {hasParticipated ? (
+                    ""
+                  ) : (
+                    <Image src={questionmark} alt="Tournament line 310" />
+                  )}
                 </Button>
                 <div
                   className="text-gray-300 py-7 px-6 rounded-full shadow-[3px_3px_8px_#BFB3CA] cursor-pointer"
@@ -362,6 +362,7 @@ const TournamentDetailHero = ({
               <div className="flex items-center justify-center gap-1 md:gap-4 relative z-10 mt-10">
                 <CountdownDisplay
                   countdown={calculateCountdown(tournamentData?.data?.start)}
+                  endDate={calculateCountdown(tournamentData?.data?.end)}
                 />
               </div>
             </div>

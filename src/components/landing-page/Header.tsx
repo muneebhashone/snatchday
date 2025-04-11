@@ -33,48 +33,24 @@ import {
   useGetMyProfile,
   useWishList,
 } from "@/hooks/api";
-import { useUserContext } from "@/context/userContext";
-// import iphone from '@/app/images/iphone.png'
-// import laptop1 from '@/app/images/laptop.png'
-// import laptop2 from '@/app/images/laptopv2.png'
-// import { StaticImageData } from "next/image";
-// import { useGetMyProfile } from "@/hooks/api";
 import { useRouter } from "next/navigation";
-import { categoryData, menu } from "@/dummydata";
-import { Category } from "@/types";
-import Loader from "../Loader";
+import { menu } from "@/dummydata";
+import { Category, SubCategory } from "@/types";
 import { useCart } from "@/context/CartContext";
-
-// Define the Category interface
-
-// Define the SubCategory interface
-interface SubCategory {
-  name: string;
-  image: string;
-}
 
 const Header = () => {
   const { data: cartData } = useGetCart();
   const { data: wishlist } = useWishList();
-  // console.log(wishlist?.data.products?.length);
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { cartCount, setCartCount } = useCart();
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
 
-  const [userPoints] = useState({
-    snapPoints: 4875,
-    discountPoints: 750,
-  });
-
   const { data, isLoading } = useGetCategories();
   const [categoryImage, setCategoryImage] = useState("");
-
-  // const { data: myprofile } = useGetMyProfile();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -117,7 +93,6 @@ const Header = () => {
   const handleCartClick = () => {
     router.push("/order");
   };
-  // const { data: myprofile, isLoading } = useGetMyProfile();
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
@@ -208,25 +183,6 @@ const Header = () => {
                                               </li>
                                             )
                                           )}
-                                        {/* {category.subCategories.map(
-                                          (subcategory: SubCategory, index) => (
-                                            <li
-                                              key={index}
-                                              onMouseEnter={() =>
-                                                setCategoryImage(
-                                                  subcategory.image
-                                                )
-                                              }
-                                            >
-                                              <Link
-                                                href={`/product-listing?category=${subcategory._id}`}
-                                                className="text-gray-500 hover:text-primary transition-colors block text-sm"
-                                              >
-                                                {subcategory?.name || "N/A"}
-                                              </Link>
-                                            </li>
-                                          )
-                                        )} */}
                                       </ul>
                                     </div>
                                   );
@@ -405,7 +361,7 @@ const Header = () => {
             href="/wishlist"
             className="relative hover:text-primary bg-transparent p-0 text-[#888888]"
           >
-            <div className="absolute -top-4 -right-3 bg-primary text-white px-[6px] py-[2px] text-xs rounded-full">
+            <div className="absolute -top-4 -right-3 bg-primary text-white px-[7px] py-[2px] text-xs rounded-full">
               {wishlist?.data.products?.length
                 ? wishlist?.data.products?.length
                 : "0"}

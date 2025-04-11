@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useCallback, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -362,8 +363,7 @@ const NewsletterComposer = () => {
                       <span className="text-red-500 mr-1">*</span> News
                     </div>
                     <div className="flex-1">
-                      {/* Rich text editor toolbar */}
-                      {/* <FormField
+                      <FormField
                         control={form.control}
                         name="message"
                         render={({ field }) => (
@@ -376,7 +376,7 @@ const NewsletterComposer = () => {
                             </FormControl>
                           </FormItem>
                         )}
-                      /> */}
+                      />
                     </div>
                   </div>
                   {isPending ? (
@@ -394,6 +394,6 @@ const NewsletterComposer = () => {
       </AdminLayout>
     );
   }
-}
+};
 
 export default NewsletterComposer;

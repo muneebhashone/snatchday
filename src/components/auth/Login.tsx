@@ -37,12 +37,14 @@ interface LoginProps {
   type?: string;
   addToCart?: boolean;
   smallAddtoCart?: boolean;
+  useForTournament?: boolean;
 }
 
 const Login = ({
   type,
   addToCart = false,
   smallAddtoCart = false,
+  useForTournament = false,
 }: LoginProps) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -175,6 +177,8 @@ const Login = ({
             />
           ) : addToCart === false ? (
             <User className="h-6 w-6" />
+          ) : useForTournament ? (
+            <Button className="hover:bg-primary">Play</Button>
           ) : (
             <button
               className={`gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full hover:opacity-90 ${
@@ -188,7 +192,7 @@ const Login = ({
           )}
         </div>
       </DialogTrigger>
-      <DialogContent className="max-w-[682px] p-0 ">
+      <DialogContent className="max-w-[682px] p-0 " hideCloseButton={true}>
         <DialogHeader  className="text-left relative px-24 pt-10 ">
           <DialogTrigger asChild className="absolute -right-5 -top-5 z-30">
             <Button

@@ -53,7 +53,7 @@ const ReturnsPage = () => {
           <h1 className="text-4xl md:text-5xl font-bold text-center mb-16 mt-12">
             Complaint & Return
           </h1>
-          <Image src={box2} alt="" />
+          <Image src={box2} alt="box2" />
         </div>
         <Separator className="my-10" />
         <div className="px-[20%] flex flex-col gap-8 text-foreground">

@@ -8,7 +8,6 @@ import three from "@/app/images/three.svg";
 import four from "@/app/images/four.svg";
 import five from "@/app/images/five.svg";
 import six from "@/app/images/six.svg";
-import iphone from "@/app/images/iphone1.png";
 import PermotionalSection from "./PermotionalSection";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
@@ -18,14 +17,11 @@ import "swiper/css/pagination";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import graphiccard from "@/app/images/graphiccard.png";
-import laptop2 from "@/app/images/promoitonModalImage.png";
 import imgbottom from "@/app/images/imagebottom.png";
 import { LiveIcon } from "../icons/icon";
-import laptop from "@/app/images/detailimage.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { Swiper as SwiperType } from "swiper";
 import { useUpComingTournament } from "@/hooks/api";
-import { TournamentResponse } from "@/types";
 import CountdownDisplay from "../CountdownProps";
 import { calculateCountdown } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
@@ -57,7 +53,6 @@ const HeroSection = () => {
     { src: five, alt: "Featured product five" },
     { src: six, alt: "Featured product six" },
   ];
-
   // Text animation variants (from left)
   const textVariants = {
     hidden: { opacity: 0, y: -50 },
@@ -346,7 +341,7 @@ const HeroSection = () => {
                             <div className="w-12 xl:w-24 h-12 xl:h-24 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
                               <Image
                                 className=""
-                                src={graphiccard}
+                                src={tournament?.game?.image}
                                 alt="Game Icon"
                                 width={70}
                                 height={65}
@@ -358,7 +353,7 @@ const HeroSection = () => {
                                   Game:
                                 </p>
                                 <p className="text-primary text-lg xl:text-xl font-bold">
-                                  {tournament?.game}
+                                  {tournament?.game?.title}
                                 </p>
                               </div>
                               <div className="flex w-max items-center gap-1 text-card-foreground ">

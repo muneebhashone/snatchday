@@ -13,9 +13,9 @@ import { usePathname } from "next/navigation";
 import { User, useUserContext } from "@/context/userContext";
 import Image from "next/image";
 
-const AccountSidebar = ({Userprofile}:{Userprofile:User}) => {
+const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
   const pathname = usePathname();
-  const {user}=useUserContext()
+  const { user } = useUserContext();
 
   const navigationLinks = [
     {
@@ -60,10 +60,23 @@ const AccountSidebar = ({Userprofile}:{Userprofile:User}) => {
       <div className="bg-white rounded-3xl p-8 shadow-xl">
         {/* User Profile */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-32 h-32 rounded-full overflow-hidden mb-4 bg-gray-100 flex items-center justify-center">
-            {Userprofile?.image ? <Image src={Userprofile?.image}   alt="avatar" width={100} height={100} /> : <UserCircle className="w-16 h-16 text-gray-400" />}
+          <div className="rounded-full overflow-hidden mb-4 bg-gray-100 flex items-center justify-center">
+            {Userprofile?.image ? (
+              <Image
+                src={Userprofile?.image}
+                alt="avatar"
+                width={100}
+                height={100}
+                unoptimized
+                objectFit="contain"
+              />
+            ) : (
+              <UserCircle className="w-16 h-16 text-gray-400" />
+            )}
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">{Userprofile?.username || Userprofile?.data?.user?.name}</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            {Userprofile?.username || Userprofile?.data?.user?.name}
+          </h2>
           <p className="text-gray-500">{Userprofile?.email}</p>
         </div>
 

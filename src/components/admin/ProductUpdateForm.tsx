@@ -42,6 +42,7 @@ import { Calendar } from "../ui/calendar";
 import { format, sub } from "date-fns";
 import { Checkbox } from "../ui/checkbox";
 import { get } from "http";
+import { IError } from "@/app/admin/games/create/page";
 
 const discountSchema = z.object({
   // customerGroup: z.string().min(1, "Customer group cannot be empty"),
@@ -91,6 +92,32 @@ const formSchema = z
         message: "License key is required when shipping is not enable",
       });
     }
+
+    // Custom validation for discounts (dates)
+    if (data.discounts && data.discounts.length > 0) {
+      data.discounts.forEach((discount, index) => {
+        const startDate = new Date(discount.away);
+        const endDate = new Date(discount.until);
+
+        // Check if the start date is in the past
+        if (startDate < new Date()) {
+          ctx.addIssue({
+            path: [`discounts.${index}.away`],
+            code: z.ZodIssueCode.custom,
+            message: "Start Date cannot be in the past",
+          });
+        }
+
+        // Check if the end date is greater than the start date
+        if (endDate <= startDate) {
+          ctx.addIssue({
+            path: [`discounts.${index}.until`],
+            code: z.ZodIssueCode.custom,
+            message: "End Date must be greater than Start Date",
+          });
+        }
+      });
+    }
   });
 
 interface Category {
@@ -134,6 +161,22 @@ interface DiscountItem {
   price: number;
 }
 
+export interface ICategoryIds {
+  above: boolean;
+  createdAt: string;
+  description: string;
+  displayName: string;
+  filters: string[];
+  image: string;
+  isActive: boolean;
+  name: string;
+  parentCategory: string;
+  shop: boolean;
+  subCategories: string[];
+  updatedAt: string;
+  _id: string;
+}
+
 interface Product {
   _id: string;
   name: string;
@@ -145,7 +188,7 @@ interface Product {
   price: number;
   discounts: DiscountItem[];
   attributes: Record<string, any>;
-  categoryIds: string[];
+  categoryIds: ICategoryIds[];
   type: "NEW" | "SALE";
   isFeatured: boolean;
   metaTitle: string;
@@ -161,6 +204,7 @@ interface Product {
 }
 
 export default function ProductUpdateForm({ product }: { product: Product }) {
+  const [emptyCategory, setEmptyCategory] = useState(false);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
   const [categories, getCategories] = useState([]);
   const [removedImages, setRemovedImages] = useState<string[]>([]);
@@ -169,8 +213,11 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const [previewUrls, setPreviewUrls] = useState<string[]>(
     product.images || []
   );
-  const { mutate: updateProduct,isPending } = useUpdateProduct();
-  const { data: categoriesData } = useGetCategories() as {
+  const { mutate: updateProduct, isPending } = useUpdateProduct();
+  const { data: categoriesData } = useGetCategories({
+    limit: "99999",
+    offset: "0",
+  }) as {
     data: CategoryResponse;
   };
   const { data: productsData } = useGetProducts() as { data: ProductResponse };
@@ -185,7 +232,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       return acc;
     }, {} as Record<string, string[]>)
   );
-
+  console.log(product.categoryIds);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -198,7 +245,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       price: product.price,
       discounts: product.discounts || [],
       attributes: Object.keys(product.attributes || {}),
-      categoryIds: product.categoryIds?.map((id) => id._id) || "",
+      categoryIds: product.categoryIds[0]?._id || "",
       type: product.type,
       isFeatured: product.isFeatured,
       metaTitle: product.metaTitle,
@@ -218,6 +265,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     control: form.control,
     name: "discounts",
   });
+
   useEffect(() => {
     if (product?.discounts) {
       replace(product.discounts);
@@ -255,6 +303,11 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (categories.length < 1) {
+      setEmptyCategory(true);
+      return;
+    }
+    setEmptyCategory(false);
     const data = { ...values };
     if (data.requireShipping) {
       delete data.liscenseKey;
@@ -318,7 +371,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             router.push("/admin/products");
           },
           onError: (error) => {
-            toast.error(error?.response?.data.message || "Failed to update product");
+            toast.error(
+              (error as unknown as IError)?.response?.data.message ||
+                "Failed to update product"
+            );
             console.error(error);
           },
         }
@@ -515,68 +571,76 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="categoryIds"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={(e) => {
-                    field.onChange(e);
-                    const category = categoriesData?.data?.categories?.find(
-                      (cat) => cat._id === e
-                    );
-                    const exist = categories.find(
-                      (existCategory) => existCategory._id === category._id
-                    );
-                    if (!exist) {
-                      getCategories((prev) => [...prev, category]);
-                    }
-                  }}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {categoriesData?.data?.categories?.map(
-                      (category: Category) => (
-                        <SelectItem key={category._id} value={category._id}>
-                          {category.displayName || category.name}
-                        </SelectItem>
-                      )
-                    )}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-                <div className="flex gap-2">
-                  {categories.map((cat, i) => (
-                    <div
-                      className="relative bg-primary rounded px-2 text-white"
-                      key={i}
-                    >
-                      <X
-                        onClick={() => {
-                          getCategories((prev) =>
-                            prev.filter((_, index) => index !== i)
-                          );
-                        }}
-                        className="rounded-full absolute -top-1 -right-2 bg-white text-primary"
-                        size={13}
-                      />
-                      {
-                        categoriesData?.data?.categories?.find(
-                          (findCat) => findCat._id === cat?._id
-                        )?.displayName
+          <div>
+            <FormField
+              control={form.control}
+              name="categoryIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    onValueChange={(e) => {
+                      field.onChange(e);
+                      const category = categoriesData?.data?.categories?.find(
+                        (cat) => cat._id === e
+                      );
+                      const exist = categories.find(
+                        (existCategory) => existCategory._id === category._id
+                      );
+                      if (!exist) {
+                        getCategories((prev) => [...prev, category]);
                       }
-                    </div>
-                  ))}
-                </div>
-              </FormItem>
+                    }}
+                    value=""
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categoriesData?.data?.categories?.map(
+                        (category: Category) => (
+                          <SelectItem key={category._id} value={category._id}>
+                            {category.displayName || category.name}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                  <div className="flex gap-2">
+                    {categories.map((cat, i) => (
+                      <div
+                        className="relative bg-primary rounded px-2 text-white"
+                        key={i}
+                      >
+                        <X
+                          onClick={() => {
+                            getCategories((prev) =>
+                              prev.filter((_, index) => index !== i)
+                            );
+                          }}
+                          className="rounded-full absolute -top-1 -right-2 bg-white text-primary"
+                          size={13}
+                        />
+                        {
+                          categoriesData?.data?.categories?.find(
+                            (findCat) => findCat._id === cat?._id
+                          )?.displayName
+                        }
+                      </div>
+                    ))}
+                  </div>
+                </FormItem>
+              )}
+            />
+            {categories.length < 1 && emptyCategory && (
+              <p className="text-red-500 text-sm">
+                *Please select atleast one category*
+              </p>
             )}
-          />
+          </div>
 
           <FormField
             control={form.control}
@@ -967,6 +1031,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               <FormItem>
                 <FormLabel>Filters name</FormLabel>
                 <Select
+                  value=""
                   onValueChange={(value) => {
                     const currentValues = field.value || [];
                     if (!currentValues.includes(value)) {
@@ -1001,7 +1066,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                     {field.value.map((filterName) => (
                       <div
                         key={filterName}
-                        className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                        className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
                       >
                         <span className="text-sm">{filterName}</span>
                         <Button
@@ -1038,6 +1103,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               <FormItem>
                 <FormLabel>Related Products</FormLabel>
                 <Select
+                  value=""
                   onValueChange={(value) => {
                     const currentValues = field.value || [];
                     if (!currentValues.includes(value)) {
@@ -1071,7 +1137,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       return (
                         <div
                           key={productId}
-                          className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
+                          className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
                         >
                           <span className="text-sm">{product?.name}</span>
                           <Button

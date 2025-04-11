@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useParams } from "next/navigation";
+import InvoiceButton from "../InvoiceButton ";
 
 const CustomerReturns = () => {
   const { id } = useParams();
@@ -146,16 +147,17 @@ const CustomerReturns = () => {
                 <TableCell>
                   {formatDate(returnItem.createdAt || "", "dd/MM/yyyy")}
                 </TableCell>
-                <TableCell className="text-center flex gap-2 justify-center items-center">
-                  <Link href={`/admin/orders/returns/update/${returnItem._id}`}>
-                    <button className="hover:bg-gray-100 flex items-end">
-                      <Eye className="h-5 w-5 text-foreground" />
-                    </button>
-                  </Link>
-                </TableCell>
                 <TableCell className="text-center">
-                  {/* <InvoiceButton orderDetails={returnItem} /> */}
+                  <div className="flex gap-4 items-center justify-center">
+                    <Link href={`/admin/orders/returns/update/${returnItem._id}`}>
+                      <button className="hover:bg-gray-100 flex items-end">
+                        <Eye className="h-5 w-5 text-foreground" />
+                      </button>
+                    </Link>
+                    {/* <InvoiceButton orderDetails={returnItem} /> */}
+                  </div>
                 </TableCell>
+               
               </TableRow>
             ))
           ) : (
