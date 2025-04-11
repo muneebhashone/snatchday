@@ -18,6 +18,8 @@ import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useState, useEffect } from 'react'
+import { TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Tooltip } from '../ui/tooltip';
 
 interface CategoryType  {
   _id: string;
@@ -138,9 +140,16 @@ const Categories = () => {
                     <TableCell>{new Date(category.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                       <EditCategoryDialog categoryId={category._id} />
-                      <Button onClick={() => handleDelete(category._id)} variant="ghost" size="icon" className="text-red-500 hover:text-red-600 transition-colors">
-                        <Trash className='w-4 h-4' />
-                    </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button onClick={() => handleDelete(category._id)} variant="ghost" size="icon" className="text-red-500 hover:text-red-600 transition-colors">
+                            <Trash className='w-4 h-4' />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Delete Category</p>
+                        </TooltipContent>
+                      </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}
