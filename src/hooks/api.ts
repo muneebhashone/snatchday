@@ -182,14 +182,13 @@ export const useGetCategories = (params?: {
   limit?: string;
   offset?: string;
   name?: string;
+  above?: boolean;
 }) => {
   return useQuery({
     queryKey: ["categories", params],
     queryFn: () =>
       getCategories({
-        limit: params.limit || "",
-        offset: params.offset || "",
-        name: params.name || "",
+        ...params
       }),
   });
 };
