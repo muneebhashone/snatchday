@@ -116,38 +116,44 @@ export default function OrderHistory() {
 
       {/* Order History Table */}
       <div className="p-4 border-b">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[200px] text-primary text-center">
-                Created
-              </TableHead>
-              <TableHead className="text-primary text-center">
-                Remarks
-              </TableHead>
-              <TableHead className="text-primary text-center">status</TableHead>
-              <TableHead className="text-primary text-center">
-                Customer informed
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {order?.data.history.map((odr) => (
-              <TableRow key={odr}>
-                <TableCell className="font-medium text-center">
-                  {odr?.date.split("T")[0]}
-                </TableCell>
-                <TableCell className="text-center">{odr.remarks}</TableCell>
-                <TableCell className="text-center capitalize">
-                  {odr.status}
-                </TableCell>
-                <TableCell className="text-center">
-                  {odr.customerInformed ? "yes" : "no"}
-                </TableCell>
+        {!order?.data.history.length ? (
+          <div className="font-bold text-center">*no orders history*</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[200px] text-primary text-center">
+                  Created
+                </TableHead>
+                <TableHead className="text-primary text-center">
+                  Remarks
+                </TableHead>
+                <TableHead className="text-primary text-center">
+                  status
+                </TableHead>
+                <TableHead className="text-primary text-center">
+                  Customer informed
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {order?.data.history.map((odr) => (
+                <TableRow key={odr}>
+                  <TableCell className="font-medium text-center">
+                    {odr?.date.split("T")[0]}
+                  </TableCell>
+                  <TableCell className="text-center">{odr.remarks}</TableCell>
+                  <TableCell className="text-center capitalize">
+                    {odr.status}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {odr.customerInformed ? "yes" : "no"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
 
       {/* Order Management Section */}

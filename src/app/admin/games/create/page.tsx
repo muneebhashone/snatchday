@@ -1,5 +1,6 @@
 "use client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -30,6 +31,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
 
 export interface IError {
   response: {
@@ -48,21 +50,27 @@ const FormSchema = z.object({
   game: z.string().nonempty("Game Must Be Required"),
   customGame: z.boolean(),
   winnerDetermination: z.object({
-    level: z.enum(["MAX", "MIN"]),
-    score: z.enum(["MAX", "MIN"]),
-    time: z.enum(["MAX", "MIN"]),
+    level: z.enum(["MAX", "MIN"], {
+      errorMap: () => ({ message: "Please select a level determination" })
+    }),
+    score: z.enum(["MAX", "MIN"], {
+      errorMap: () => ({ message: "Please select a score determination" })
+    }),
+    time: z.enum(["MAX", "MIN"], {
+      errorMap: () => ({ message: "Please select a time determination" })
+    }),
   }),
   levels: z.string().nonempty("Levels Must Be Required"),
   maxScore: z.string().nonempty("Max Score Must Be Required"),
-  delay: z.string().nonempty("Levels Must Be Required"),
+  delay: z.string().nonempty("Delay Must Be Required"),
   randomLevels: z.boolean(),
   suitableDuel: z.boolean(),
   suitableTournament: z.boolean(),
   suitableTraining: z.boolean(),
   width: z.string().nonempty("width Must Be Required"),
   height: z.string().nonempty("height Must Be Required"),
-  logo: z.instanceof(File),
-  image: z.instanceof(File),
+  logo: createImageSchema("Logo"),
+  image: createImageSchema("Image"),
 });
 
 type IForm = z.infer<typeof FormSchema>;
@@ -124,6 +132,15 @@ const Page = () => {
   return (
     <AdminLayout>
       <div>
+        <AdminBreadcrumb
+          title="Create Game"
+          items={[
+            {
+              title: "Games",
+              href: "/admin/games"
+            }
+          ]}
+        />
         <h1 className="bg-primary px-4 py-1 text-white font-extrabold text-2xl w-max rounded-md">
           Create Your Game
         </h1>
@@ -222,7 +239,7 @@ const Page = () => {
                         onValueChange={field.onChange}
                       >
                         <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select a fruit" />
+                          <SelectValue placeholder="Select a game" />
                         </SelectTrigger>
                         <SelectContent className="h-52">
                           <SelectGroup>
@@ -242,82 +259,94 @@ const Page = () => {
               />
             </div>
             <div className="grid md:grid-cols-3 gap-5 my-5">
-              <div className="col-span-2">
-                <FormField
-                  control={form.control}
-                  name="winnerDetermination"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel>Winner Determination</FormLabel>
-                      <FormControl>
-                        <div className="flex gap-5 justify-between">
-                          <div className="w-full flex items-center gap-2">
-                            <Label>Level:</Label>
-                            <Select
-                              value={field.value.level || ""}
-                              onValueChange={(value) =>
-                                field.onChange({ ...field.value, level: value })
-                              }
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a level" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Level</SelectLabel>
-                                  <SelectItem value="MAX">Max</SelectItem>
-                                  <SelectItem value="MIN">Min</SelectItem>
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="w-full flex items-center gap-2">
-                            <Label>Score:</Label>
-                            <Select
-                              value={field.value.score || ""}
-                              onValueChange={(value) =>
-                                field.onChange({ ...field.value, score: value })
-                              }
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a Score" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Score</SelectLabel>
-                                  <SelectItem value="MAX">Max</SelectItem>
-                                  <SelectItem value="MIN">Min</SelectItem>
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="w-full flex items-center gap-2">
-                            <Label>Time:</Label>
-                            <Select
-                              value={field.value.time || ""}
-                              onValueChange={(value) =>
-                                field.onChange({ ...field.value, time: value })
-                              }
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a Time" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectGroup>
-                                  <SelectLabel>Time</SelectLabel>
-                                  <SelectItem value="MAX">Max</SelectItem>
-                                  <SelectItem value="MIN">Min</SelectItem>
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="col-span-3">
+                <h3 className="text-lg font-medium mb-2">Winner Determination</h3>
+                <div className="grid md:grid-cols-3 gap-5">
+                  <FormField
+                    control={form.control}
+                    name="winnerDetermination.level"
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <FormLabel>Level Determination</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value || ""}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a level" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Level</SelectLabel>
+                                <SelectItem value="MAX">Max</SelectItem>
+                                <SelectItem value="MIN">Min</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="winnerDetermination.score"
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <FormLabel>Score Determination</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value || ""}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a Score" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Score</SelectLabel>
+                                <SelectItem value="MAX">Max</SelectItem>
+                                <SelectItem value="MIN">Min</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="winnerDetermination.time"
+                    render={({ field, fieldState }) => (
+                      <FormItem>
+                        <FormLabel>Time Determination</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={field.value || ""}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a Time" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Time</SelectLabel>
+                                <SelectItem value="MAX">Max</SelectItem>
+                                <SelectItem value="MIN">Min</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
+            </div>
+            <div className="grid md:grid-cols-3 gap-5 my-5">
               <FormField
                 control={form.control}
                 name="levels"
@@ -420,8 +449,12 @@ const Page = () => {
                         <Input
                           id="logo"
                           type="file"
+                          {...imageInputProps}
                           onChange={(e) => field.onChange(e.target.files?.[0])}
                         />
+                        <p className="text-xs text-muted-foreground">
+                          Accepted formats: JPG, PNG, GIF, WebP
+                        </p>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -439,8 +472,12 @@ const Page = () => {
                         <Input
                           id="image"
                           type="file"
+                          {...imageInputProps}
                           onChange={(e) => field.onChange(e.target.files?.[0])}
                         />
+                        <p className="text-xs text-muted-foreground">
+                          Accepted formats: JPG, PNG, GIF, WebP
+                        </p>
                       </div>
                     </FormControl>
                     <FormMessage />

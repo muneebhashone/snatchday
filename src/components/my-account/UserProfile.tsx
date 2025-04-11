@@ -27,6 +27,7 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/userContext";
+import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -40,6 +41,7 @@ const profileSchema = z.object({
   country: z.string().optional(),
   // federalState: z.string().nonempty("Federal state is required"),
   email: z.string().email("Invalid email").nonempty("Email is required"),
+  image: createImageSchema("Profile image").optional(),
 });
 
 const UserProfile = () => {
@@ -176,10 +178,13 @@ const UserProfile = () => {
                   <input
                     id="file-input"
                     type="file"
-                    accept="image/*"
+                    {...imageInputProps}
                     onChange={handleImageChange}
                     className="hidden"
                   />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Accepted formats: JPG, PNG, GIF, WebP
+                  </p>
                 </div>
 
                 <div className="flex-1 space-y-6">

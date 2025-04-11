@@ -36,9 +36,14 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useState } from "react";
-import { ReturnIcon } from "./icons/icon";
+import { AnnouncementIcon, ReturnIcon } from "./icons/icon";
 
 const navItems = [
+  {
+    title: "Announcements",
+    url: "/admin/announcements",
+    icon: <AnnouncementIcon />,
+  },
   {
     title: "Overview",
     url: "/admin/overview",
@@ -177,7 +182,6 @@ const navItems = [
     ],
   },
 ];
-
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname =

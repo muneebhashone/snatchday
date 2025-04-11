@@ -90,9 +90,18 @@ const formSchema = z
         path: ["until"],
       });
     }
+
+    // Value must not exceed 100 when type is PERCENTAGE
+    if (val.type === "PERCENTAGE" && val.value > 100) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Percentage value cannot exceed 100%",
+        path: ["value"],
+      });
+    }
   });
 
- 
+
 
 
 
@@ -102,7 +111,7 @@ const VoucherForm = () => {
   const { data: productsResponse } = useGetProducts();
   const { data: categoriesResponse } = useGetCategories(
     {
-      limit:'9999999'
+      limit: '9999999'
     }
   );
 
@@ -166,6 +175,7 @@ const VoucherForm = () => {
         </p>
       </div>
 
+      <p className='text-primary italic text-sm font-bold'><span className='text-green-500'>*</span> either product or the category can be selected <span className='text-green-500'>*</span></p>
       <div className="bg-card rounded-lg border p-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

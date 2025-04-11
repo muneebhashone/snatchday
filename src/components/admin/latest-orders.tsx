@@ -9,14 +9,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { cn, formatCurrency } from "@/lib/utils"
 
 interface Order {
   orderNumber: string
   customer: string
   status: "In Progress" | "Complete" | "Paid"
   created: string
-  total: string
+  total: number
 }
 
 const orders: Order[] = [
@@ -25,35 +25,35 @@ const orders: Order[] = [
     customer: "Florian Zander",
     status: "In Progress",
     created: "February 28, 2025",
-    total: "35.04€"
+    total: 35.04
   },
   {
     orderNumber: "1399",
     customer: "Florian Zander",
     status: "In Progress",
     created: "February 28, 2025",
-    total: "35.04€"
+    total: 35.04
   },
   {
     orderNumber: "1398",
     customer: "Tester Test",
     status: "Complete",
     created: "January 30, 2025",
-    total: "5.00€"
+    total: 5.00
   },
   {
     orderNumber: "1396",
     customer: "Tester Test",
     status: "Paid",
     created: "January 23, 2025",
-    total: "15.69€"
+    total: 15.69
   },
   {
     orderNumber: "1395",
     customer: "Sven Hofrichter",
     status: "Complete",
     created: "January 15, 2025",
-    total: "10.00€"
+    total: 10.00
   }
 ]
 
@@ -109,7 +109,7 @@ export function LatestOrders() {
                     </span>
                   </TableCell>
                   <TableCell className="text-muted-foreground">{order.created}</TableCell>
-                  <TableCell className="text-right font-medium">{order.total}</TableCell>
+                  <TableCell className="text-right font-medium">{formatCurrency(order.total)}</TableCell>
                   <TableCell>
                     <Button 
                       variant="ghost" 

@@ -16,6 +16,7 @@ export default function Page() {
     <AdminLayout>
       <div className="p-6 space-y-6">
         <h2 className="text-3xl font-bold tracking-tight">Edit Voucher</h2>
+        <p className='text-primary italic text-sm font-bold'><span className='text-green-500'>*</span> either product or the category can be selected <span className='text-green-500'>*</span></p>
         <EditVoucherForm voucherId={id} />
       </div>
     </AdminLayout>

@@ -30,6 +30,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { Pagination } from "@/components/ui/pagination";
 import { DualRangeSlider } from "../tournaments/dualSlider";
+import { formatCurrency, useCurrency } from "@/lib/utils";
 
 interface FilterParams {
   price?: string;
@@ -234,6 +235,7 @@ export function Product() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>SKU</TableHead>
               <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Price</TableHead>
@@ -254,6 +256,7 @@ export function Product() {
             ) : productsData?.data?.products?.length > 0 ? (
               productsData?.data?.products?.map((product: Product) => (
                 <TableRow key={product?._id}>
+                  <TableCell>{product?.sku || "N/A"}</TableCell>
                   <TableCell>
                     {product?.images && product?.images[0] && (
                       <div className="relative h-16 w-16">
@@ -268,8 +271,14 @@ export function Product() {
                       </div>
                     )}
                   </TableCell>
-                  <TableCell>{product?.name || "N/A"}</TableCell>
-                  <TableCell>{product?.price || "N/A"}</TableCell>
+                  <TableCell>
+                    {product?.name
+                      ? product.name.length > 30
+                        ? `${product.name.substring(0, 30)}...`
+                        : product.name
+                      : "N/A"}
+                  </TableCell>
+                  <TableCell>{formatCurrency(product?.price) || "N/A"}</TableCell>
                   <TableCell>{product?.stock || "N/A"}</TableCell>
                   <TableCell>
                     {product?.categoryIds.map((categoryId) => {

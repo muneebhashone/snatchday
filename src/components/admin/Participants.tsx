@@ -25,7 +25,7 @@ const page = ({ data, isLoading }: { data: User[]; isLoading: boolean }) => {
               <TableHead>Image</TableHead>
               <TableHead>Username</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Vip Status</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -41,7 +41,7 @@ const page = ({ data, isLoading }: { data: User[]; isLoading: boolean }) => {
             ) : data.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={3}
+                  colSpan={4}
                   className="text-center py-8 text-gray-500"
                 >
                   No participants found
@@ -52,20 +52,20 @@ const page = ({ data, isLoading }: { data: User[]; isLoading: boolean }) => {
                 <TableRow key={index}>
                   <TableCell>
                     {user.image && (
-                      <div className="relative h-16 w-16">
+                      <div className="relative h-10 w-16">
                         <Image
                           src={user.image}
                           alt={user.name}
                           width={64}
                           height={64}
-                          className="rounded-md object-cover w-full h-full"
+                          className="rounded-md object-contain w-full h-full"
                         />
                       </div>
                     )}
                   </TableCell>
                   <TableCell>{user.username || "N/A"}</TableCell>
                   <TableCell>{user.email || "N/A"}</TableCell>
-                  <TableCell>{user.vip ? "VIP" : "Regular"}</TableCell>
+                  <TableCell>{user.vip ? "VIP" : "BASIC"}</TableCell>
                 </TableRow>
               ))
             )}

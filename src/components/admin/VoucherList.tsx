@@ -18,14 +18,15 @@ import { Button } from "../ui/button";
 // import { EditVoucherModal } from "./EditVoucherModal";
 import { toast } from "sonner";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 export function VoucherList() {
   const { data: vouchersResponse, isLoading, error } = useGetVouchers();
   const { mutate: deleteVoucher } = useDeleteVoucher();
   const vouchers = vouchersResponse?.data || [];
-  
 
- 
+
+
 
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this voucher?")) {
@@ -89,7 +90,7 @@ export function VoucherList() {
               <TableCell>{voucher.code}</TableCell>
               <TableCell className="capitalize">{voucher.type.toLowerCase()}</TableCell>
               <TableCell>
-                {voucher.type === "PERCENTAGE" ? `${voucher.value}%` : `$${voucher.value}`}
+                {voucher.type === "PERCENTAGE" ? `${voucher.value}%` : `${formatCurrency(voucher.value)}`}
               </TableCell>
               {/* <TableCell>
                 {voucher.products?.map((product) => (
@@ -115,9 +116,9 @@ export function VoucherList() {
               </TableCell>
               <TableCell>
                 <Link href={`/admin/voucher/update/${voucher._id}`}>
-                <Button variant="ghost" size="icon">
-                  <Edit className="h-4 w-4" />
-                </Button>
+                  <Button variant="ghost" size="icon">
+                    <Edit className="h-4 w-4" />
+                  </Button>
                 </Link>
                 <Button variant="ghost" size="icon" onClick={() => handleDelete(voucher._id)}>
                   <Trash className="h-4 w-4" />
@@ -127,7 +128,7 @@ export function VoucherList() {
           ))}
         </TableBody>
       </Table>
- 
+
     </div>
   );
 }

@@ -12,6 +12,14 @@ import {
 } from "@/components/ui/select";
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { usePathname } from "next/navigation";
 import { HomeIcon, Loader, X } from "lucide-react";
 import { useCustomers, useNewsletterMail } from "@/hooks/api";
@@ -134,15 +142,33 @@ const NewsletterComposer = () => {
   } else {
     return (
       <AdminLayout>
-        <AdminBreadcrumb 
-          title="Send Newsletter"
-          items={[
-            {
-              title: "Newsletters",
-              href: "/admin/newsletters"
-            }
-          ]}
-        />
+        <AdminBreadcrumb title="Announcements" />
+        <div className="flex items-center gap-4">
+          {/* <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">
+                  <HomeIcon size={20} className="text-primary font-bold" />
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink
+                  href="/admin"
+                  className="text-primary font-bold cursor-pointer hover:text-primary"
+                >
+                  {pathLinks[1]}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-foreground font-bold">
+                  {pathLinks[pathLinks.length - 1]}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb> */}
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
             <div className="container mx-auto p-4 max-w-8xl">
@@ -164,7 +190,7 @@ const NewsletterComposer = () => {
                       <rect width="20" height="16" x="2" y="4" rx="2" />
                       <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                     </svg>
-                    <span className="font-medium">Newsletter</span>
+                    <span className="font-medium">Announcements</span>
                   </div>
                 </div>
 
