@@ -15,15 +15,18 @@ import { useRouter } from "next/navigation";
 import { useLogout } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 import Image from "next/image";
+import { useSocket } from "@/context/SocketContext";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { mutate: logout, isPending } = useLogout();
   const { user } = useUserContext();
+  const { socket } = useSocket();
 
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: () => {
+        socket.emit("logout");
         localStorage.removeItem("snatchday_user");
         router.push("/admin/login");
       },

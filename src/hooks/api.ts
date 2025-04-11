@@ -85,6 +85,7 @@ import {
   TrainingCenterById,
   MyAccountGames,
   MyAccountTournaments,
+  ITScope,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -772,3 +773,11 @@ export const useMyAccountTournaments = (offset) => {
   });
 };
 //my account hook end
+
+// IT Scope hook
+export const UseITScope = () => {
+  return useMutation({
+    mutationFn: ITScope,
+  });
+};
+// IT Scope hook end
