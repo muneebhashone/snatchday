@@ -4,7 +4,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { Providers } from "./provider";
-import { AuthProvider } from "@/components/context/authContext";
+// import { AuthProvider } from "@/context/authContext";
 import { UserContextProvider } from "@/context/userContext";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/context/CartContext";
@@ -38,7 +38,7 @@ export default function RootLayout({
       >
         <UserContextProvider>
           <SocketProvider>
-            <AuthProvider>
+            {/* <AuthProvider> */}
               <CartProvider>
                 <CheckoutProvider>
                   <Providers>
@@ -47,7 +47,7 @@ export default function RootLayout({
                   </Providers>
                 </CheckoutProvider>
               </CartProvider>
-            </AuthProvider>
+            {/* </AuthProvider> */}
           </SocketProvider>
         </UserContextProvider>
       </body>

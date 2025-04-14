@@ -4,6 +4,7 @@ import {
   UpdateReturnTypes,
 } from "@/types/admin";
 import axiosInstance from "./axios";
+
 import {
   ProductFormData,
   FilterFormData,
@@ -44,7 +45,6 @@ export const fetchItemById = async (id: string) => {
 
 export const authMutation = async (data: any, type: string) => {
   const response = await axiosInstance.post(`/auth/${type}`, data);
-  console.log(response.data, "response.data");
   return response.data;
 };
 
@@ -686,3 +686,7 @@ export const ITScope = async (formData) => {
   return response.data;
 };
 // IT Scope apiend
+
+
+
+
