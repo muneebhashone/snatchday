@@ -32,7 +32,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  description: z.string().min(1, "Description cannot be empty"),
+  description: z.string().optional(),
   image: z.custom<File>((v) => v instanceof File, "Please upload an image"),
   parentCategory: z.string().optional(),
   shop: z.boolean(),
@@ -142,7 +142,7 @@ export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description *</FormLabel>
+                <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea placeholder="Category description" {...field} />
                 </FormControl>

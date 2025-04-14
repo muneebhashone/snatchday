@@ -308,6 +308,16 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       return;
     }
     setEmptyCategory(false);
+
+    // Check if all images are removed and no new images are added
+    if (removedImages.length === product.images.length && !values.images) {
+      form.setError("images", {
+        type: "custom",
+        message: "At least one image is required",
+      });
+      return;
+    }
+
     const data = { ...values };
     if (data.requireShipping) {
       delete data.liscenseKey;
@@ -437,7 +447,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           <FormField
             control={form.control}
             name="images"
-            render={() => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Images</FormLabel>
                 <FormControl>

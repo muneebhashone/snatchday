@@ -55,6 +55,8 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
     },
   ];
 
+  const disbaleTabs = ["Duels","Points Trends","Payment History"];
+
   return (
     <div className="lg:col-span-3 rounded-3xl relative">
       <div className="bg-white rounded-3xl p-8 shadow-xl">
@@ -84,23 +86,20 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
         <nav className="space-y-2">
           {navigationLinks.map((link, index) => {
             const isActive = pathname === link.href;
+            const isDisabled = disbaleTabs.includes(link.text); // Check if the tab should be disabled
             return (
               <Link
                 key={index}
-                href={link.href}
-                className={`flex items-center gap-3 p-3 rounded-lg transition-colors
-                  ${
-                    isActive
-                      ? "bg-primary text-white"
-                      : "text-card-foreground font-medium hover:bg-primary hover:text-white"
-                  }`}
+                href={isDisabled ? "#" : link.href} 
+                className={`group flex items-center gap-3 p-3 rounded-lg transition-colors
+                ${isActive
+                    ? "bg-primary text-white"
+                    : "text-card-foreground font-medium hover:bg-primary hover:text-white"
+                  } ${isDisabled ? "pointer-events-none cursor-not-allowed text-gray-400" : ""}`}
               >
                 <span
-                  className={`${
-                    isActive
-                      ? "text-white"
-                      : "text-primary group-hover:text-white"
-                  }`}
+                  className={`w-5 h-5 ${isActive ? "text-white" : "text-primary group-hover:text-white"
+                    }`}
                 >
                   {link.icon}
                 </span>

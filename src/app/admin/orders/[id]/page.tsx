@@ -1,5 +1,6 @@
 "use client";
 import AdminLayout from "@/components/admin/AdminLayout";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import OrderHistory from "@/components/admin/OrderHistory";
 import OrderItemsTable from "@/components/admin/OrderItemTable";
 import { ProfileIcon } from "@/components/icons/icon";
@@ -28,6 +29,15 @@ const Page = () => {
   return (
     <AdminLayout>
       <div>
+        <AdminBreadcrumb 
+          title={`Order #${paramsId}`}
+          items={[
+            {
+              title: "Orders",
+              href: "/admin/orders"
+            }
+          ]}
+        />
         <div className="grid grid-cols-3 gap-4">
           {/* order details */}
           <Card className="py-2 px-4 flex flex-col gap-2 shadow-md">

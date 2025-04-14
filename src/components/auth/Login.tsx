@@ -183,7 +183,7 @@ const Login = ({
           ) : addToCart === false ? (
             <User className="h-6 w-6" />
           ) : useForTournament ? (
-            <Button className="hover:bg-primary">Play</Button>
+            <Button className="hover:bg-primary ">Play</Button>
           ) : (
             <button
               className={`gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full hover:opacity-90 ${

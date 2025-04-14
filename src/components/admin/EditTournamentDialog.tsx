@@ -147,7 +147,7 @@ export function EditTournamentDialog({
   const [open, setOpen] = useState(false);
   const [openPop, setOpenPop] = useState(false);
   const queryClient = useQueryClient();
-  const findItem = products.find((pro) => pro._id === tournament.article)?.name;
+  const findItem = products?.find((pro) => pro._id === tournament.article)?.name;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

@@ -11,6 +11,7 @@ import { useGetOrders } from "@/hooks/api";
 import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { formatCurrency } from "@/lib/utils";
 
 export function OrdersListTable({
   status,
@@ -52,7 +53,7 @@ export function OrdersListTable({
             <TableCell className="font-bold">{order.orderNumber}</TableCell>
             <TableCell className="">{order.billingDetails.firstName}</TableCell>
             <TableCell>{order.status}</TableCell>
-            <TableCell>{order.cartObject.total.toFixed(2)}</TableCell>
+            <TableCell>{formatCurrency(order.cartObject.total)}</TableCell>
             <TableCell className="">{order.createdAt.split("T")[0]}</TableCell>
             <TableCell className="">{order.updatedAt?.split("T")[0]}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">

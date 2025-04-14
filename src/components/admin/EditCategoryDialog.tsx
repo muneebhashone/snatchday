@@ -51,7 +51,7 @@ interface Category {
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  description: z.string().min(1, "Description cannot be empty"),
+  description: z.string().optional(),
   image: z.any(),
   parentCategory: z.string().optional(),
   shop: z.boolean(),
@@ -63,16 +63,16 @@ interface EditCategoryDialogProps {
 }
 
 export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
-  
-  const {data:  getSingleCategory}=useGetCategoryById(categoryId)
+
+  const { data: getSingleCategory } = useGetCategoryById(categoryId)
 
 
   const [open, setOpen] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string>('')
-  const { mutate: updateCategory,isPending  : isUpdateLoading } = useUpdateCategory()
+  const { mutate: updateCategory, isPending: isUpdateLoading } = useUpdateCategory()
   const queryClient = useQueryClient()
 
- 
+
 
   const { data: getCategories } = useGetCategories({
     limit: "9999999"
@@ -102,7 +102,7 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
         above: getSingleCategory?.data?.above,
       });
     }
-  }, [ getSingleCategory , form]);
+  }, [getSingleCategory, form]);
 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,11 +112,11 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl)
       }
-      
+
       // Create new preview
       const url = URL.createObjectURL(file)
       setPreviewUrl(url)
-      
+
       // Update form
       form.setValue('image', file)
     }
@@ -210,7 +210,7 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description *</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Input placeholder="Category description" {...field} />
                   </FormControl>
@@ -262,30 +262,30 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
               )}
             /> */}
             <FormField
-            control={form.control}
-            name="parentCategory"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Parent Category ID</FormLabel>
-                <FormControl>
-                  {/* <Input placeholder="Parent category ID (optional)" {...field} /> */}
-                  <Select onValueChange={field.onChange} value={field.value} >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select parent category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories?.map((category: Category) => (
-                        <SelectItem key={category._id} value={category._id} >
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              control={form.control}
+              name="parentCategory"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Parent Category ID</FormLabel>
+                  <FormControl>
+                    {/* <Input placeholder="Parent category ID (optional)" {...field} /> */}
+                    <Select onValueChange={field.onChange} value={field.value} >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select parent category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories?.map((category: Category) => (
+                          <SelectItem key={category._id} value={category._id} >
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

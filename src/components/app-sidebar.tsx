@@ -37,13 +37,26 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useState } from "react";
-import { ReturnIcon } from "./icons/icon";
+import { AnnouncementIcon, ReturnIcon } from "./icons/icon";
 
 const navItems = [
+
   {
     title: "Overview",
     url: "/admin/overview",
     icon: <LayoutDashboard className="h-4 w-4" />,
+  },
+
+  {
+    title: "Customers",
+    url: "/admin/customers",
+    icon: <Users className="h-4 w-4" />,
+  },
+
+  {
+    title: "Filters",
+    url: "/admin/filters",
+    icon: <Filter className="h-4 w-4" />,
   },
   {
     title: "Categories",
@@ -67,27 +80,22 @@ const navItems = [
     ],
   },
   {
-    title: "Tournaments",
-    icon: <Trophy className="h-4 w-4" />,
+    title: "Voucher",
+
+    icon: <Gift className="h-4 w-4" />,
     subItems: [
       {
-        title: "All Tournaments",
-        url: "/admin/tournament",
+        title: "All Vouchers",
+        url: "/admin/voucher",
         icon: <List className="h-4 w-4" />,
       },
       {
-        title: "Create Tournament",
-        url: "/admin/tournament/create-tournament",
+        title: "Create Voucher",
+        url: "/admin/voucher/create",
         icon: <Plus className="h-4 w-4" />,
       },
     ],
   },
-  {
-    title: "Filters",
-    url: "/admin/filters",
-    icon: <Filter className="h-4 w-4" />,
-  },
-
   {
     title: "Sale",
     url: "/admin/orders",
@@ -102,39 +110,6 @@ const navItems = [
         title: "Returns",
         url: "/admin/orders/returns",
         icon: <ReturnIcon />,
-      },
-    ],
-  },
-  {
-    title: "Customers",
-    url: "/admin/customers",
-    icon: <Users className="h-4 w-4" />,
-  },
-
-  // {
-  //   title: "Web Settings",
-  //   url: "/admin/web-settings",
-  //   icon: <Settings className="h-4 w-4" />,
-  // },
-  {
-    title: "Newsletters",
-    url: "/admin/newsletters",
-    icon: <Newspaper className="h-4 w-4" />,
-  },
-  {
-    title: "Voucher",
-
-    icon: <Gift className="h-4 w-4" />,
-    subItems: [
-      {
-        title: "All Vouchers",
-        url: "/admin/voucher",
-        icon: <List className="h-4 w-4" />,
-      },
-      {
-        title: "Create Voucher",
-        url: "/admin/voucher/create",
-        icon: <Plus className="h-4 w-4" />,
       },
     ],
   },
@@ -155,6 +130,34 @@ const navItems = [
       },
     ],
   },
+  {
+    title: "Tournaments",
+    icon: <Trophy className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Tournaments",
+        url: "/admin/tournament",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Tournament",
+        url: "/admin/tournament/create-tournament",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
+  },
+  {
+    title: "Newsletters",
+    url: "/admin/newsletters",
+    icon: <Newspaper className="h-4 w-4" />,
+  },
+  {
+    title: "Announcements",
+    url: "/admin/announcements",
+    icon: <AnnouncementIcon />,
+  },
+
+
   {
     title: "Web Settings",
 
@@ -183,7 +186,6 @@ const navItems = [
     icon: <Ticket className="h-4 w-4" />,
   },
 ];
-
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname =
@@ -229,11 +231,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             <span>{item.title}</span>
                           </div>
                           <ChevronDown
-                            className={`h-4 w-4 transition-transform ${
-                              openItems.includes(item.title)
-                                ? "transform rotate-180"
-                                : ""
-                            }`}
+                            className={`h-4 w-4 transition-transform ${openItems.includes(item.title)
+                              ? "transform rotate-180"
+                              : ""
+                              }`}
                           />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
@@ -262,11 +263,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       asChild
                       isActive={pathname === item.url}
                       tooltip={item.title}
-                      className={`text-xl text-white py-7 ${
-                        pathname === item.url
-                          ? "data-[active]:bg-primary data-[active]:text-white"
-                          : "text-foreground bg-transparent"
-                      } hover:bg-primary hover:text-white rounded-md`}
+                      className={`text-xl text-white py-7 ${pathname === item.url
+                        ? "data-[active]:bg-primary data-[active]:text-white"
+                        : "text-foreground bg-transparent"
+                        } hover:bg-primary hover:text-white rounded-md`}
                     >
                       <a
                         href={item.url}

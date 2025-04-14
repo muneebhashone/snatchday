@@ -13,6 +13,7 @@ import {
 import { Loader, LucideEye, ReceiptEuroIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 const CustomerOrdersDataList = () => {
   const params = useParams();
@@ -71,8 +72,8 @@ const CustomerOrdersDataList = () => {
                   <span key={i}>{cart?.product?.article || "N/A"}</span>
                 ))}
               </TableCell>
-              <TableCell>{`${Number(order?.cartObject?.total).toFixed(2)} €`}</TableCell>
-              <TableCell>{`${Number(order?.cartObject?.subTotal).toFixed(2)} €`}</TableCell>
+              <TableCell>{formatCurrency(order?.cartObject?.total)}</TableCell>
+              <TableCell>{formatCurrency(order?.cartObject?.subTotal)}</TableCell>
               <TableCell className="capitalize">
                 <span
                   className={`px-4 py-2 rounded-full ${order?.status === "pending"

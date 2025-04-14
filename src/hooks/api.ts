@@ -118,7 +118,7 @@ export const useGetMyProfile = () => {
   return useQuery({
     queryKey: ["myprofile"],
     queryFn: getMyprofile,
-    enabled: Boolean(user),
+    enabled: Boolean(user?.user),
   });
 };
 

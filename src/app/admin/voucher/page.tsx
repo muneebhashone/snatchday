@@ -1,16 +1,14 @@
 import AdminLayout from '@/components/admin/AdminLayout'
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import { VoucherList } from '@/components/admin/VoucherList'
-
 import React from 'react'
 
 const page = () => {
   return (
-    
-        <AdminLayout>
-            <VoucherList />
-        </AdminLayout>
-    
-    
+    <AdminLayout>
+      <AdminBreadcrumb title="Vouchers" />
+      <VoucherList />
+    </AdminLayout>
   )
 }
 

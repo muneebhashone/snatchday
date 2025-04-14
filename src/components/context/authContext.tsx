@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(userData);
       
       if (userData.user.role === 'admin') {
-        if (window.location.pathname === '/admin/login' || window.location.pathname === '/') {
+        if (window.location.pathname === '/admin/login') {
           router.push("/admin");
         }
       }
