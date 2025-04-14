@@ -58,7 +58,7 @@ const formSchema = z
     description: z.string().min(1, "Description cannot be empty"),
     company: z.string().min(1, "Company cannot be empty"),
     images: z.any(),
-    colors: z.string().min(1, "Colors cannot be empty"),
+    colors: z.string().min(1, "Colors cannot be empty").optional(),
     stock: z.number().min(0, "Stock must be 0 or greater"),
     price: z.number().min(0, "Price must be 0 or greater"),
     // discounts: z.string().optional(),
@@ -67,10 +67,10 @@ const formSchema = z
     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
-    metaDescription: z.string().min(1, "Meta description cannot be empty"),
-    metaKeywords: z.string().min(1, "Meta keywords cannot be empty"),
+    metaDescription: z.string().min(1, "Meta description cannot be empty").optional(),
+    metaKeywords: z.string().min(1, "Meta keywords cannot be empty").optional(),
     article: z.string().min(1, "Article cannot be empty"),
-    sku: z.string().min(1, "SKU cannot be empty"),
+    sku: z.string().min(1, "SKU cannot be empty").optional(),
     barcodeEAN: z.string().min(1, "Barcode EAN cannot be empty"),
     noStockMessage: z.string().min(1, "No stock message cannot be empty"),
     relatedProducts: z.array(z.string()).default([]),
@@ -211,7 +211,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [previewUrls, setPreviewUrls] = useState<string[]>(
-    product.images || []
+    product?.images || []
   );
   const { mutate: updateProduct, isPending } = useUpdateProduct();
   const { data: categoriesData } = useGetCategories({
@@ -227,39 +227,79 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const [selectedFilter, setSelectedFilters] = useState<
     Record<string, string[]>
   >(
-    Object.entries(product.attributes || {}).reduce((acc, [key, value]) => {
+    Object.entries(product?.attributes || {}).reduce((acc, [key, value]) => {
       acc[key] = Array.isArray(value) ? value : [value];
       return acc;
     }, {} as Record<string, string[]>)
   );
-  console.log(product.categoryIds);
+  console.log(product?.categoryIds);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: product.name,
-      description: product.description,
-      company: product.company,
+      name: "",
+      description: "",
+      company: "",
       images: null,
-      colors: product.colors.join(", "),
-      stock: product.stock,
-      price: product.price,
-      discounts: product.discounts || [],
-      attributes: Object.keys(product.attributes || {}),
-      categoryIds: product.categoryIds[0]?._id || "",
-      type: product.type,
-      isFeatured: product.isFeatured,
-      metaTitle: product.metaTitle,
-      metaDescription: product.metaDescription,
-      metaKeywords: product.metaKeywords,
-      article: product.article,
-      sku: product.sku,
-      barcodeEAN: product.barcodeEAN,
-      noStockMessage: product.noStockMessage,
-      relatedProducts: product.relatedProducts,
-      requireShipping: product.requireShipping,
-      liscenseKey: product.liscenseKey,
+      colors: "",
+      stock: 0,
+      price: 0,
+      discounts: [],
+      attributes: [],
+      categoryIds: "",
+      type: "NEW",
+      isFeatured: false,
+      metaTitle: "",
+      metaDescription: "",
+      metaKeywords: "",
+      article: "",
+      sku: "",
+      barcodeEAN: "",
+      noStockMessage: "",
+      relatedProducts: [],
+      requireShipping: true,
+      liscenseKey: "",
     },
   });
+
+  useEffect(() => {
+    if (product) {
+      form.reset({
+        name: product.name,
+        description: product.description,
+        company: product.company,
+        images: null,
+        colors: product.colors?.join(", "),
+        stock: product.stock,
+        price: product.price,
+        discounts: product.discounts || [],
+        attributes: Object.keys(product.attributes || {}),
+        categoryIds: product.categoryIds[0]?._id || "",
+        type: product.type,
+        isFeatured: product.isFeatured,
+        metaTitle: product.metaTitle,
+        metaDescription: product.metaDescription,
+        metaKeywords: product.metaKeywords,
+        article: product.article,
+        sku: product.sku,
+        barcodeEAN: product.barcodeEAN,
+        noStockMessage: product.noStockMessage,
+        relatedProducts: product.relatedProducts,
+        requireShipping: product.requireShipping,
+        liscenseKey: product.liscenseKey,
+      });
+
+      setPreviewUrls(product.images || []);
+      if (product.categoryIds) {
+        getCategories(product.categoryIds);
+      }
+      setSelectedFilters(
+        Object.entries(product.attributes || {}).reduce((acc, [key, value]) => {
+          acc[key] = Array.isArray(value) ? value : [value];
+          return acc;
+        }, {} as Record<string, string[]>)
+      );
+    }
+  }, [product]);
 
   const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
@@ -390,7 +430,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
         }
       );
     } catch (error) {
-      toast.error("Failed to update product");
+      toast.error("Failed to update produc t");
       console.error(error);
     }
   }
