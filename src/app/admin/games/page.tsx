@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { useDeleteGame, useGetGames } from "@/hooks/api";
 import React, { useState } from "react";
-import { Delete, FileEdit, Loader } from "lucide-react";
+import { Delete, Edit, FileEdit, Loader, Trash } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -103,18 +103,18 @@ const Page = () => {
                   </div>
                 </TableCell>
                 <TableCell>{game.createdAt.split("T")[0]}</TableCell>
-                <TableCell className="flex mt-3 justify-end">
-                  <FileEdit
+                <TableCell className="flex gap-2 mt-3 justify-end">
+                  <Edit
                     onClick={() => {
                       router.push(`/admin/games/${game._id}`);
                     }}
-                    className="cursor-pointer text-white px-1 rounded ml-2 bg-primary"
+                    className="h-4 w-4"
                   />
-                  <Delete
+                  <Trash
+                    className="h-4 w-4"
                     onClick={() => {
                       onDelete(game?._id);
                     }}
-                    className="cursor-pointer text-white px-1 rounded ml-2 bg-red-600"
                   />
                 </TableCell>
               </TableRow>

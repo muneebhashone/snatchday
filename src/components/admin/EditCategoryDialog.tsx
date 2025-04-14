@@ -169,7 +169,7 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon" className="text-blue-500 hover:text-blue-600 transition-colors">
+        <Button variant="ghost" size="icon">
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>

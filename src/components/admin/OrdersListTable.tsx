@@ -58,7 +58,7 @@ export function OrdersListTable({
             <TableCell className="">{order.updatedAt?.split("T")[0]}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">
               <Link href={`/admin/orders/${order._id}`}>
-                <Edit className="text-primary" />
+                <Edit className="h-4 w-4" />
               </Link>
               {/* <Link href={`#`}>
                 <Delete className="text-red-500" />

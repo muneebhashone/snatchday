@@ -300,7 +300,7 @@ export function Product() {
                     <div className="flex gap-2">
                       <Button variant="ghost" size="icon" asChild>
                         <Link href={`/admin/products/update/${product._id}`}>
-                          <Edit className="h-4 w-4 text-primary" />
+                          <Edit className="h-4 w-4 " />
                         </Link>
                       </Button>
                       <Button
@@ -308,14 +308,14 @@ export function Product() {
                         size="icon"
                         onClick={() => handleDelete(product._id)}
                       >
-                        <Trash className="h-4 w-4 text-red-600" />
+                        <Trash className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="icon">
                       <Link href={`/admin/tournament/create/${product?._id}`}>
-                        <Trophy className="h-4 w-4 text-blue-600" />
+                        <Trophy className="h-4 w-4" />
                       </Link>
                     </Button>
                   </TableCell>
