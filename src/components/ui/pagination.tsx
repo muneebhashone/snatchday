@@ -11,50 +11,14 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export const Pagination: React.FC<PaginationProps> = ({
-  totalItems,
-  itemsPerPage,
-  currentPage,
-  onPageChange,
-}) => {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-  const handlePageClick = (page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      onPageChange(page);
-    }
-  };
-
-  return (
-    <div className="flex items-center space-x-2">
-      <button
-        className="px-3 py-1 border rounded disabled:opacity-50"
-        onClick={() => handlePageClick(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        Previous
-      </button>
-      {Array.from({ length: totalPages }, (_, index) => (
-        <button
-          key={index}
-          className={`px-3 py-1 rounded ${
-            currentPage === index + 1 ? "bg-primary text-white" : ""
-          }`}
-          onClick={() => handlePageClick(index + 1)}
-        >
-          {index + 1}
-        </button>
-      ))}
-      <button
-        className="px-3 py-1 border rounded disabled:opacity-50"
-        onClick={() => handlePageClick(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        Next
-      </button>
-    </div>
-  );
-};
+const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
+  <nav
+    role="navigation"
+    aria-label="pagination"
+    className={cn("mx-auto flex w-full justify-center", className)}
+    {...props}
+  />
+);
 
 const PaginationContent = React.forwardRef<
   HTMLUListElement,
@@ -149,6 +113,7 @@ const PaginationEllipsis = ({
 PaginationEllipsis.displayName = "PaginationEllipsis";
 
 export {
+  Pagination,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,

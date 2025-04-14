@@ -86,6 +86,13 @@ import {
   MyAccountGames,
   MyAccountTournaments,
   ITScope,
+
+  TicketFormData,
+  TicketParams,
+  getTickets,
+  getTicketById,
+  replyTicket,
+  createTicket,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -780,3 +787,30 @@ export const UseITScope = () => {
   });
 };
 // IT Scope hook end
+export const useCreateTicket = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => createTicket(formData),
+  });
+};
+
+export const useGetTickets = (params: TicketParams) => {
+  return useQuery({
+    queryKey: ["tickets", params],
+    queryFn: () => getTickets(params),
+  });
+};
+
+export const useGetTicketById = (id: string) => {
+  return useQuery({
+    queryKey: ["ticket", id],
+    queryFn: () => getTicketById(id),
+  });
+};
+
+export const useReplyTicket = () => {
+  return useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+      replyTicket(id, formData),
+  });
+};
+

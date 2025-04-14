@@ -21,6 +21,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { MultiSelect } from '../ui/multi-select';
+import { toast } from 'sonner';
 
 // Dynamically import React Quill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { 
@@ -38,7 +39,7 @@ const formSchema = z.object({
   metaTitle: z.string().min(1, 'Meta title is required'),
   metaDescription: z.string().min(1, 'Meta description is required'),
   metaKeywords: z.array(z.string()).min(1, 'Meta keywords are required'),
-  order: z.number().min(0, 'Order must be a positive number'),
+  
 });
 
 const WebSettingForm = () => {
@@ -54,7 +55,7 @@ const WebSettingForm = () => {
       metaTitle: '',
       metaDescription: '',
       metaKeywords: [] as string[],
-      order: 0,
+     
     },
   });
 
@@ -66,6 +67,7 @@ const WebSettingForm = () => {
   const { mutate: createContent , isPending} = useMutation({
     mutationFn: (data: WebSetting) => addContent(data),
     onSuccess: () => {
+      toast.success('Content created successfully');
       router.push('/admin/web-settings');
       router.refresh();
     },
@@ -78,7 +80,7 @@ const WebSettingForm = () => {
       metaTitle: values.metaTitle,
       metaDescription: values.metaDescription,
       metaKeywords: values.metaKeywords.join(','),
-      order: values.order
+      order: 0,
     });
   };
 
@@ -107,7 +109,7 @@ const WebSettingForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -197,7 +199,7 @@ const WebSettingForm = () => {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="order"
           render={({ field }) => (
@@ -214,7 +216,7 @@ const WebSettingForm = () => {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <Button className='hover:bg-primary' type="submit" disabled={isPending}>
           {isPending ? 'Creating...' : 'Create Content'}

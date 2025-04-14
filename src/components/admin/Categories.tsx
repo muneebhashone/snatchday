@@ -1,23 +1,25 @@
 "use client";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Trash, Search, X } from "lucide-react";
-import { useDeleteCategory, useGetCategories } from "@/hooks/api";
-import { CreateCategoryDialog } from "./CreateCategoryDialog";
-import { EditCategoryDialog } from "./EditCategoryDialog";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useState, useEffect } from "react";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table'
+import { Button } from '@/components/ui/button'
+import { Trash, Search, X } from 'lucide-react'
+import { useDeleteCategory, useGetCategories } from '@/hooks/api'
+import { CreateCategoryDialog } from './CreateCategoryDialog'
+import { EditCategoryDialog } from './EditCategoryDialog'
+import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'  
+import { Input } from '@/components/ui/input'
+import { useDebounce } from '@/hooks/useDebounce'
+import { useState, useEffect } from 'react'
+import { TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { Tooltip } from '../ui/tooltip';
 
 interface CategoryType {
   _id: string;
@@ -156,16 +158,19 @@ const Categories = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <EditCategoryDialog categoryId={category._id} />
-                      <Button
-                        onClick={() => handleDelete(category._id)}
-                        variant="ghost"
-                        size="icon"
-                      >
-                        <Trash className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button onClick={() => handleDelete(category._id)} variant="ghost" size="icon" className="text-red-500 hover:text-red-600 transition-colors">
+                            <Trash className='w-4 h-4' />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Delete Category</p>
+                        </TooltipContent>
+                      </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))}
                 {!categories?.length && (
                   <TableRow>
                     <TableCell

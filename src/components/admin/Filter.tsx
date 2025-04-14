@@ -15,6 +15,7 @@ import { CreateFilterDialog } from "./CreateFilterDialog";
 import { EditFilterDialog } from "./EditFilterDialog";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+
 interface Category {
   _id: string;
   name: string;
@@ -33,11 +34,14 @@ interface Filter {
 const Filter = () => {
   // Fetch filters and categories using the hooks
   const queryClient = useQueryClient();
-  const { data: getFilters, isLoading, isError } = useGetFilters();
+  const { data: getFilters, isLoading, isError } = useGetFilters({
+    limit: "10",
+    offset: "0"
+  });
   const { data: getCategories } = useGetCategories();
   const { mutate: deleteFilter } = useDeleteFilter();
 
-  const filters = getFilters?.data;
+  const filters = getFilters?.data.filters || [];
   const categories = getCategories?.data.categories || [];
 
   // Function to get category name by ID
@@ -93,50 +97,47 @@ const Filter = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filters
-                  ?.sort(
-                    (a: Filter, b: Filter) =>
-                      new Date(b.createdAt).getTime() -
-                      new Date(a.createdAt).getTime()
-                  )
-                  .map((filter: Filter) => (
-                    <TableRow key={filter._id} className="hover:bg-gray-50">
-                      <TableCell>{filter.name}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {filter.value.map((value, index) => (
-                            <span
-                              key={index}
-                              className="px-2 py-1 bg-gray-100 rounded-full text-xs"
-                            >
-                              {value}
-                            </span>
-                          ))}
-                        </div>
-                      </TableCell>
-                      {/* <TableCell>{getCategoryName(filter.category)}</TableCell> */}
-                      <TableCell>
-                        {new Date(filter.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <EditFilterDialog filter={filter} />
-                        <Button
-                          onClick={() => handleDelete(filter._id)}
-                          variant="ghost"
-                          size="icon"
-                          // className="text-red-500 hover:text-red-600 transition-colors"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                {!filters?.length && (
+                {filters.length > 0 ? (
+                  filters
+                    .sort(
+                      (a: Filter, b: Filter) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                    )
+                    .map((filter: Filter) => (
+                      <TableRow key={filter._id} className="hover:bg-gray-50">
+                        <TableCell>{filter.name}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {filter.value.map((value, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-1 bg-gray-100 rounded-full text-xs"
+                              >
+                                {value}
+                              </span>
+                            ))}
+                          </div>
+                        </TableCell>
+                        {/* <TableCell>{getCategoryName(filter.category)}</TableCell> */}
+                        <TableCell>
+                          {new Date(filter.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right space-x-2">
+                          <EditFilterDialog filter={filter} />
+                          <Button
+                            onClick={() => handleDelete(filter._id)}
+                            variant="ghost"
+                            size="icon"
+                          >
+                            <Trash className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="text-center py-8 text-gray-500"
-                    >
+                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
                       No filters found
                     </TableCell>
                   </TableRow>

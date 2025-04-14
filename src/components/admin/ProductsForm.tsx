@@ -822,7 +822,7 @@ export default function ProductsForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {filters?.data?.map((filter) => (
+                      {filters?.data.filters?.map((filter) => (
                         <SelectItem key={filter._id} value={filter.name}>
                           {filter.name}
                         </SelectItem>

@@ -30,6 +30,13 @@ import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { Pagination } from "@/components/ui/pagination";
 import { DualRangeSlider } from "../tournaments/dualSlider";
+import {
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { formatCurrency, useCurrency } from "@/lib/utils";
 
 interface FilterParams {
@@ -332,16 +339,59 @@ export function Product() {
         </Table>
       </div>
       <div className="flex justify-center mt-4">
-        <Pagination
-          totalItems={productsData?.data?.total || 0}
-          itemsPerPage={parseInt(filters.limit || "10")}
-          onPageChange={handlePageChange}
-          currentPage={
-            Math.floor(
-              parseInt(filters.offset || "0") / parseInt(filters.limit || "10")
-            ) + 1
-          }
-        />
+        {productsData?.data?.products && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const prevPage = Math.floor(parseInt(filters.offset || "0") / parseInt(filters.limit || "10"));
+                    if (prevPage >= 0) {
+                      handlePageChange(prevPage);
+                    }
+                  }}
+                  className={parseInt(filters.offset || "0") === 0 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+
+              {Array.from({ length: Math.ceil((productsData?.data?.total || 0) / parseInt(filters.limit || "10")) }, (_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(i + 1);
+                    }}
+                    isActive={Math.floor(parseInt(filters.offset || "0") / parseInt(filters.limit || "10")) + 1 === i + 1}
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext 
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const nextPage = Math.floor(parseInt(filters.offset || "0") / parseInt(filters.limit || "10")) + 2;
+                    if (nextPage <= Math.ceil((productsData?.data?.total || 0) / parseInt(filters.limit || "10"))) {
+                      handlePageChange(nextPage);
+                    }
+                  }}
+                  className={
+                    Math.floor(parseInt(filters.offset || "0") / parseInt(filters.limit || "10")) + 1 >= 
+                    Math.ceil((productsData?.data?.total || 0) / parseInt(filters.limit || "10")) 
+                      ? "pointer-events-none opacity-50" 
+                      : ""
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </div>
   );

@@ -5,13 +5,15 @@ const CreateTicket = ({
   image,
   categorytext,
   categorytitle,
+  onClick,
 }: {
   image: StaticImageData;
   categorytext: string;
   categorytitle: string;
+  onClick: () => void;
 }) => {
   return (
-    <div className=" flex flex-col lg:flex-row items-center bg-white justify-start gap-6 shadow-lg py-3 lg:py-12 px-5 lg:pl-16 rounded-xl hover:shadow-xl hover:border hover:border-orange-500">
+    <div onClick={onClick} className=" flex flex-col lg:flex-row items-center bg-white justify-start gap-6 shadow-lg py-3 lg:py-12 px-5 lg:pl-16 rounded-xl hover:shadow-xl hover:border hover:border-orange-500">
       <Image src={image} alt="ticket" />
 
       <div className="text-left">

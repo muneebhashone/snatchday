@@ -11,10 +11,10 @@ export default function EditProductPage() {
   const { data: productsData } = useGetProducts();
   const products = productsData?.data?.products || [];
   const product = products.find((p) => p._id === productId);
-  console.log(product, "product for update");
-  if (!product) {
-    return <div className="p-6">Loading...</div>;
-  }
+  // console.log(product, "product for update");
+  // if (!product) {
+  //   return <div className="p-6">Loading...</div>;
+  // }
 
   return (
     <AdminLayout>
