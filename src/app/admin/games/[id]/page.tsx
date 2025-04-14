@@ -63,10 +63,22 @@ const FormSchema = z.object({
   metaKeywords: z.string().optional(),
   game: z.string().nonempty("Game is required"),
   levels: z.string().nonempty("Levels are required"),
-  maxScore: z.string().optional(),
-  delay: z.string().optional(),
-  width: z.string().optional(),
-  height: z.string().optional(),
+  maxScore: z.string().nonempty("max score is required"),
+  delay: z.string().nonempty("delay is required"),
+  width: z
+    .string()
+    .nonempty("Width is required")
+    .refine((val) => {
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 500 && num <= 1000;
+    }, "Width must be between 500 and 1000"),
+  height: z
+    .string()
+    .nonempty("Height is required")
+    .refine((val) => {
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 500 && num <= 1000;
+    }, "Height must be between 500 and 1000"),
   customGame: z.boolean(),
   randomLevels: z.boolean(),
   suitableDuel: z.boolean(),
@@ -77,8 +89,8 @@ const FormSchema = z.object({
     score: z.enum(["MAX", "MIN"]),
     time: z.enum(["MAX", "MIN"]),
   }),
-  logo: createImageSchema("Logo").optional(),
-  image: createImageSchema("Image").optional(),
+  logo: createImageSchema("Logo"),
+  image: createImageSchema("Image"),
 });
 
 type IForm = z.infer<typeof FormSchema>;
@@ -159,13 +171,13 @@ const Page = () => {
   return (
     <AdminLayout>
       <div>
-        <AdminBreadcrumb 
+        <AdminBreadcrumb
           title="Edit Game"
           items={[
             {
               title: "Games",
-              href: "/admin/games"
-            }
+              href: "/admin/games",
+            },
           ]}
         />
         <div className="grid grid-cols-2 gap-4">
@@ -217,7 +229,7 @@ const Page = () => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>Title *</FormLabel>
                     <FormControl>
                       <Input
                         defaultValue={field.value}
@@ -234,9 +246,8 @@ const Page = () => {
                 name="content"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Content</FormLabel>
+                    <FormLabel>Content *</FormLabel>
                     <FormControl>
-                      {/* <Input placeholder="Enter content..." {...field} /> */}
                       <Textarea
                         placeholder="enter your content here..."
                         {...field}
@@ -251,7 +262,7 @@ const Page = () => {
                 name="metaTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Meta Title</FormLabel>
+                    <FormLabel>Meta Title *</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter meta title..." {...field} />
                     </FormControl>
@@ -295,9 +306,8 @@ const Page = () => {
                 name="game"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Game</FormLabel>
+                    <FormLabel>Game *</FormLabel>
                     <FormControl>
-                      {/* <Input placeholder="Enter path..." {...field} /> */}
                       <Select
                         value={field.value}
                         onValueChange={(value) => field.onChange(value)}
@@ -329,12 +339,12 @@ const Page = () => {
                 name="levels"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Levels</FormLabel>
+                    <FormLabel>Levels *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         onKeyDown={(e) => {
-                          if (e.key === '-') {
+                          if (e.key === "-") {
                             e.preventDefault();
                           }
                         }}
@@ -351,12 +361,12 @@ const Page = () => {
                 name="maxScore"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Max Score</FormLabel>
+                    <FormLabel>Max Score *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         onKeyDown={(e) => {
-                          if (e.key === '-') {
+                          if (e.key === "-") {
                             e.preventDefault();
                           }
                         }}
@@ -373,12 +383,12 @@ const Page = () => {
                 name="delay"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Delay</FormLabel>
+                    <FormLabel>Delay *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         onKeyDown={(e) => {
-                          if (e.key === '-') {
+                          if (e.key === "-") {
                             e.preventDefault();
                           }
                         }}
@@ -397,17 +407,15 @@ const Page = () => {
                 name="width"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Width</FormLabel>
+                    <FormLabel>Width *</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
-                        max={1000}
-                        min={500}
                         onKeyDown={(e) => {
-                          if (e.key === '-') {
+                          if (e.key === "-") {
                             e.preventDefault();
                           }
                         }}
+                        type="number"
                         placeholder="Enter width..."
                         {...field}
                       />
@@ -421,17 +429,15 @@ const Page = () => {
                 name="height"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Height</FormLabel>
+                    <FormLabel>Height *</FormLabel>
                     <FormControl>
                       <Input
-                        max={1000}
-                        min={500}
-                        type="number"
                         onKeyDown={(e) => {
-                          if (e.key === '-') {
+                          if (e.key === "-") {
                             e.preventDefault();
                           }
                         }}
+                        type="number"
                         placeholder="Enter height..."
                         {...field}
                       />
@@ -527,7 +533,7 @@ const Page = () => {
                   name="image"
                   render={({ field }) => (
                     <FormItem className="">
-                      <FormLabel>Image</FormLabel>
+                      <FormLabel>Image *</FormLabel>
                       <FormControl>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                           <Input
@@ -536,7 +542,6 @@ const Page = () => {
                             {...imageInputProps}
                             onChange={
                               (e) => field.onChange(e.target.files?.[0])
-                              // console.log(e.target.files?.[0])
                             }
                           />
                           <p className="text-xs text-muted-foreground">
@@ -563,7 +568,7 @@ const Page = () => {
                   name="logo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Logo</FormLabel>
+                      <FormLabel>Logo *</FormLabel>
                       <FormControl>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                           <Input
