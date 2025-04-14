@@ -17,6 +17,7 @@ import {
   CheckoutTypes,
   PlaceOrder,
   WebSetting,
+  MainProduct,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -54,7 +55,7 @@ export const authMutation = async (data: any, type: string) => {
 // };
 
 export const createProduct = async (formData: FormData) => {
-  const response = await axiosInstance.post<ProductFormData>(
+  const response = await axiosInstance.post<MainProduct>(
     "/product",
     formData,
     {
