@@ -94,7 +94,7 @@ const Filter = () => {
               </TableHeader>
               <TableBody>
                 {filters
-                  ?.sort(
+                  ?.filters?.sort(
                     (a: Filter, b: Filter) =>
                       new Date(b.createdAt).getTime() -
                       new Date(a.createdAt).getTime()

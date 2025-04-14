@@ -378,7 +378,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           onSuccess: () => {
             toast.success("Product updated successfully");
             queryClient.invalidateQueries({ queryKey: ["products"] });
-            router.push("/admin/products");
+            // router.push("/admin/products");
           },
           onError: (error) => {
             toast.error(
@@ -1064,7 +1064,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {filtersData?.data?.map((filter) => (
+                    {filtersData?.data?.filters.map((filter) => (
                       <SelectItem key={filter._id} value={filter.name}>
                         {filter.name}
                       </SelectItem>
