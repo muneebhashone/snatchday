@@ -81,12 +81,15 @@ const Filter = () => {
           <div className="overflow-x-auto">
             <Table className="border border-primary">
               <TableHeader>
-                <TableRow className="">
-                  <TableHead>Name</TableHead>
-                  <TableHead>Values</TableHead>
-                  {/* <TableHead>Category</TableHead> */}
-                  <TableHead>Created At</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="border-b border-primary">
+                  <TableHead className="text-primary font-bold">Name</TableHead>
+                  <TableHead className="text-primary font-bold">
+                    Values
+                  </TableHead>
+                  <TableHead className="text-primary font-bold">
+                    Created At
+                  </TableHead>
+                  <TableHead className="text-right text-primary font-bold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
