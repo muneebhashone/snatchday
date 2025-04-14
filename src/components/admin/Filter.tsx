@@ -15,7 +15,7 @@ import { CreateFilterDialog } from "./CreateFilterDialog";
 import { EditFilterDialog } from "./EditFilterDialog";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 interface Category {
   _id: string;
   name: string;
@@ -125,13 +125,22 @@ const Filter = () => {
                         </TableCell>
                         <TableCell className="text-right space-x-2">
                           <EditFilterDialog filter={filter} />
-                          <Button
-                            onClick={() => handleDelete(filter._id)}
-                            variant="ghost"
-                            size="icon"
-                          >
-                            <Trash className="h-4 w-4" />
-                          </Button>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  onClick={() => handleDelete(filter._id)}
+                                  variant="ghost"
+                                  size="icon"
+                                >
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Delete Filter</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </TableCell>
                       </TableRow>
                     ))

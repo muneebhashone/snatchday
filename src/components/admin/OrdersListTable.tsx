@@ -12,6 +12,7 @@ import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function OrdersListTable({
   status,
@@ -57,12 +58,30 @@ export function OrdersListTable({
             <TableCell className="">{order.createdAt.split("T")[0]}</TableCell>
             <TableCell className="">{order.updatedAt?.split("T")[0]}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">
-              <Link href={`/admin/orders/${order._id}`}>
-                <Edit className="h-4 w-4" />
-              </Link>
-              {/* <Link href={`#`}>
-                <Delete className="text-red-500" />
-              </Link> */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href={`/admin/orders/${order._id}`}>
+                      <Edit className="h-4 w-4" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Edit Order</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              {/* <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href={`#`}>
+                      <Delete className="h-4 w-4 text-red-500" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Delete Order</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider> */}
             </TableCell>
           </TableRow>
         ))}

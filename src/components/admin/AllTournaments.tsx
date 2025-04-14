@@ -40,6 +40,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface FilterParams {
   limit?: string;
@@ -247,11 +248,20 @@ const AllTournaments = () => {
           </Select>
         </div>
         <div className="flex justify-end items-center mt-5">
-          <Button>
-            <Link href="/admin/tournament/create-tournament">
-              Create Tournament
-            </Link>
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button>
+                  <Link href="/admin/tournament/create-tournament">
+                    Create Tournament
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new tournament</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
@@ -316,26 +326,57 @@ const AllTournaments = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <EditTournamentDialog
-                      products={products}
-                      tournament={tournament}
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleCancel(tournament._id)}
-                    >
-                      {tournament.status === "cancelled" ? (
-                        <p>Cancelled</p>
-                      ) : (
-                        <p>Active</p>
-                      )}
-                    </Button>
-                    <Link href={`/admin/tournament/${tournament._id}`}>
-                      <Button variant="ghost" size="icon">
-                        <Users className="h-4 w-4" />
-                      </Button>
-                    </Link>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <EditTournamentDialog
+                              products={products}
+                              tournament={tournament}
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Edit tournament details</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleCancel(tournament._id)}
+                          >
+                            {tournament.status === "cancelled" ? (
+                              <p>Cancelled</p>
+                            ) : (
+                              <p>Active</p>
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Toggle tournament status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link href={`/admin/tournament/${tournament._id}`}>
+                            <Button variant="ghost" size="icon">
+                              <Users className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>View tournament participants</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </TableCell>
               </TableRow>

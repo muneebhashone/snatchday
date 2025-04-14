@@ -12,6 +12,7 @@ import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 export function CustomeListTable({
   search,
@@ -73,9 +74,18 @@ export function CustomeListTable({
             <TableCell className="">{customer.wallet.snapPoints}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">
               <Link href={`/admin/customers/${customer._id}`}>
-                <Button variant="ghost" size="icon">
-                  <Edit className="h-4 w-4" />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Edit Customer</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </Link>
               {/* <Link href={`#`}>
                 <Delete className="text-red-500" />

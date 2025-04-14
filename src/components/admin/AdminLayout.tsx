@@ -44,18 +44,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           <div className="flex items-center justify-between px-8 py-4">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="text-gray-500 hover:text-primary" />
-              <div className="relative">
+              {/* <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
                   type="text"
                   placeholder="Search..."
                   className="pl-10 pr-4 py-2 w-80 bg-gray-50 text-gray-900 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400"
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className="flex items-center gap-6">
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
@@ -68,16 +68,16 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
-              </DropdownMenu>
+              </DropdownMenu> */}
 
               <div className="flex items-center gap-3">
-                <Image
+                {/* <Image
                   src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt="Profile"
                   width={40}
                   height={40}
                   className="h-10 w-10 rounded-xl ring-2 ring-gray-100"
-                />
+                /> */}
                 <div className="text-sm">
                   <p className="font-medium text-gray-900">
                     {user?.user?.name}

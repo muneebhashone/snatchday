@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import InvoiceButton from "../InvoiceButton ";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function ReturnListTable() {
   const [pagination, setPagination] = useState({
@@ -145,11 +146,20 @@ export function ReturnListTable() {
                   {formatDate(returnItem.createdAt || "", "dd/MM/yyyy")}
                 </TableCell>
                 <TableCell className="text-center flex gap-2 justify-center items-center">
-                  <Link href={`/admin/orders/returns/update/${returnItem._id}`}>
-                    <button className="hover:bg-gray-100">
-                      <Eye className="h-5 w-5 text-foreground" />
-                    </button>
-                  </Link>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link href={`/admin/orders/returns/update/${returnItem._id}`}>
+                          <button className="hover:bg-gray-100">
+                            <Eye className="h-5 w-5 text-foreground" />
+                          </button>
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>View Return Details</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TableCell>
                 {/* <TableCell className="text-center">
                   <InvoiceButton orderDetails={returnItem} />
