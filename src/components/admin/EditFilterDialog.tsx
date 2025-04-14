@@ -63,36 +63,35 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
   const [values, setValues] = useState(filter.value);
   const queryClient = useQueryClient();
 
-  const { mutate: updateFilter,isPending } = useUpdateFilter();
+  const { mutate: updateFilter, isPending } = useUpdateFilter();
   const { data: getCategories } = useGetCategories({
-      params: {
-        limit: "99999",
-        offset: "0"
-      }
+    params: {
+      limit: "99999",
+      offset: "0",
+    },
   });
   const categories = getCategories?.data.categories || [];
 
-  console.log(filter,"filter123444")
+  console.log(filter, "filter123444");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       value: [],
-      category: ""
+      category: "",
     },
   });
 
-
-    useEffect(()=>{
-      if(filter){
-        form.reset({
-          name: filter.name,
-          value: filter.value,
-          category: filter?.category?._id,
-        })
-      }
-    },[filter])
+  useEffect(() => {
+    if (filter) {
+      form.reset({
+        name: filter.name,
+        value: filter.value,
+        category: filter?.category?._id,
+      });
+    }
+  }, [filter]);
 
   const handleAddValue = () => {
     if (currentValue.trim()) {
@@ -136,11 +135,7 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-blue-500 hover:text-blue-600 transition-colors"
-        >
+        <Button variant="ghost" size="icon">
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>

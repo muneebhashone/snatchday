@@ -25,9 +25,6 @@ export function VoucherList() {
   const { mutate: deleteVoucher } = useDeleteVoucher();
   const vouchers = vouchersResponse?.data || [];
 
-
-
-
   const handleDelete = (id: string) => {
     if (window.confirm("Are you sure you want to delete this voucher?")) {
       deleteVoucher(id, {
@@ -68,19 +65,21 @@ export function VoucherList() {
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
+    <div className="">
+      <Table className="border border-primary">
         <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Code</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Value</TableHead>
+          <TableRow className="border-b border-primary">
+            <TableHead className="text-primary font-bold">Name</TableHead>
+            <TableHead className="text-primary font-bold">Code</TableHead>
+            <TableHead className="text-primary font-bold">Type</TableHead>
+            <TableHead className="text-primary font-bold">Value</TableHead>
             {/* <TableHead>Products</TableHead> */}
-            <TableHead>Valid From</TableHead>
-            <TableHead>Valid Until</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="text-primary font-bold">Valid From</TableHead>
+            <TableHead className="text-primary font-bold">
+              Valid Until
+            </TableHead>
+            <TableHead className="text-primary font-bold">Status</TableHead>
+            <TableHead className="text-primary font-bold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -88,9 +87,13 @@ export function VoucherList() {
             <TableRow key={voucher._id}>
               <TableCell className="font-medium">{voucher.name}</TableCell>
               <TableCell>{voucher.code}</TableCell>
-              <TableCell className="capitalize">{voucher.type.toLowerCase()}</TableCell>
+              <TableCell className="capitalize">
+                {voucher.type.toLowerCase()}
+              </TableCell>
               <TableCell>
-                {voucher.type === "PERCENTAGE" ? `${voucher.value}%` : `${formatCurrency(voucher.value)}`}
+                {voucher.type === "PERCENTAGE"
+                  ? `${voucher.value}%`
+                  : `${formatCurrency(voucher.value)}`}
               </TableCell>
               {/* <TableCell>
                 {voucher.products?.map((product) => (
@@ -108,7 +111,9 @@ export function VoucherList() {
               <TableCell>
                 <Badge
                   variant={
-                    new Date(voucher.until) > new Date() ? "success" : "destructive"
+                    new Date(voucher.until) > new Date()
+                      ? "success"
+                      : "destructive"
                   }
                 >
                   {new Date(voucher.until) > new Date() ? "Active" : "Expired"}
@@ -120,7 +125,11 @@ export function VoucherList() {
                     <Edit className="h-4 w-4" />
                   </Button>
                 </Link>
-                <Button variant="ghost" size="icon" onClick={() => handleDelete(voucher._id)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleDelete(voucher._id)}
+                >
                   <Trash className="h-4 w-4" />
                 </Button>
               </TableCell>
@@ -128,7 +137,6 @@ export function VoucherList() {
           ))}
         </TableBody>
       </Table>
-
     </div>
   );
 }

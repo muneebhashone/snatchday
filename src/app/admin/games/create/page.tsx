@@ -51,13 +51,13 @@ const FormSchema = z.object({
   customGame: z.boolean(),
   winnerDetermination: z.object({
     level: z.enum(["MAX", "MIN"], {
-      errorMap: () => ({ message: "Please select a level determination" })
+      errorMap: () => ({ message: "Please select a level determination" }),
     }),
     score: z.enum(["MAX", "MIN"], {
-      errorMap: () => ({ message: "Please select a score determination" })
+      errorMap: () => ({ message: "Please select a score determination" }),
     }),
     time: z.enum(["MAX", "MIN"], {
-      errorMap: () => ({ message: "Please select a time determination" })
+      errorMap: () => ({ message: "Please select a time determination" }),
     }),
   }),
   levels: z.string().nonempty("Levels Must Be Required"),
@@ -67,8 +67,24 @@ const FormSchema = z.object({
   suitableDuel: z.boolean(),
   suitableTournament: z.boolean(),
   suitableTraining: z.boolean(),
-  width: z.string().nonempty("width Must Be Required"),
-  height: z.string().nonempty("height Must Be Required"),
+  // width: z.string().nonempty("width Must Be Required"),
+  // height: z.string().nonempty("height Must Be Required"),
+
+  width: z
+    .string()
+    .nonempty("Width is required")
+    .refine((val) => {
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 500 && num <= 1000;
+    }, "Width must be between 500 and 1000"),
+  height: z
+    .string()
+    .nonempty("Height is required")
+    .refine((val) => {
+      const num = parseInt(val);
+      return !isNaN(num) && num >= 500 && num <= 1000;
+    }, "Height must be between 500 and 1000"),
+
   logo: createImageSchema("Logo"),
   image: createImageSchema("Image"),
 });
@@ -137,8 +153,8 @@ const Page = () => {
           items={[
             {
               title: "Games",
-              href: "/admin/games"
-            }
+              href: "/admin/games",
+            },
           ]}
         />
         <h1 className="bg-primary px-4 py-1 text-white font-extrabold text-2xl w-max rounded-md">
@@ -152,7 +168,7 @@ const Page = () => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>Title *</FormLabel>
                     <FormControl>
                       <Input placeholder="input title here..." {...field} />
                     </FormControl>
@@ -165,7 +181,7 @@ const Page = () => {
                 name="content"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Content</FormLabel>
+                    <FormLabel>Content *</FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="enter your content here.."
@@ -182,7 +198,7 @@ const Page = () => {
                 name="metaTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Meta Title</FormLabel>
+                    <FormLabel>Meta Title *</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="input Meta Title here..."
@@ -232,7 +248,7 @@ const Page = () => {
                 name="game"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Games</FormLabel>
+                    <FormLabel>Games *</FormLabel>
                     <FormControl>
                       <Select
                         value={field.value}
@@ -260,14 +276,16 @@ const Page = () => {
             </div>
             <div className="grid md:grid-cols-3 gap-5 my-5">
               <div className="col-span-3">
-                <h3 className="text-lg font-medium mb-2">Winner Determination</h3>
+                <h3 className="text-lg font-medium mb-2">
+                  Winner Determination
+                </h3>
                 <div className="grid md:grid-cols-3 gap-5">
                   <FormField
                     control={form.control}
                     name="winnerDetermination.level"
                     render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel>Level Determination</FormLabel>
+                        <FormLabel>Level Determination *</FormLabel>
                         <FormControl>
                           <Select
                             value={field.value || ""}
@@ -294,7 +312,7 @@ const Page = () => {
                     name="winnerDetermination.score"
                     render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel>Score Determination</FormLabel>
+                        <FormLabel>Score Determination *</FormLabel>
                         <FormControl>
                           <Select
                             value={field.value || ""}
@@ -321,7 +339,7 @@ const Page = () => {
                     name="winnerDetermination.time"
                     render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel>Time Determination</FormLabel>
+                        <FormLabel>Time Determination *</FormLabel>
                         <FormControl>
                           <Select
                             value={field.value || ""}
@@ -352,9 +370,14 @@ const Page = () => {
                 name="levels"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Levels</FormLabel>
+                    <FormLabel>Levels *</FormLabel>
                     <FormControl>
                       <Input
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
                         type="number"
                         placeholder="input Levels here..."
                         {...field}
@@ -372,9 +395,14 @@ const Page = () => {
                 name="maxScore"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Max Score</FormLabel>
+                    <FormLabel>Max Score *</FormLabel>
                     <FormControl>
                       <Input
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
                         type="number"
                         placeholder="input Max Score here..."
                         {...field}
@@ -389,9 +417,14 @@ const Page = () => {
                 name="delay"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Delay</FormLabel>
+                    <FormLabel>Delay *</FormLabel>
                     <FormControl>
                       <Input
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
                         type="number"
                         placeholder="input delay here..."
                         {...field}
@@ -406,9 +439,14 @@ const Page = () => {
                 name="width"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Width</FormLabel>
+                    <FormLabel>Width *</FormLabel>
                     <FormControl>
                       <Input
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
                         type="number"
                         placeholder="input width here..."
                         {...field}
@@ -426,9 +464,14 @@ const Page = () => {
                 name="height"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Height</FormLabel>
+                    <FormLabel>Height *</FormLabel>
                     <FormControl>
                       <Input
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
                         type="number"
                         placeholder="input height here..."
                         {...field}
@@ -443,7 +486,7 @@ const Page = () => {
                 name="logo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Logo</FormLabel>
+                    <FormLabel>Logo *</FormLabel>
                     <FormControl>
                       <div className="grid w-full max-w-sm items-center gap-1.5">
                         <Input
@@ -466,7 +509,7 @@ const Page = () => {
                 name="image"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image</FormLabel>
+                    <FormLabel>Image *</FormLabel>
                     <FormControl>
                       <div className="grid w-full max-w-sm items-center gap-1.5">
                         <Input

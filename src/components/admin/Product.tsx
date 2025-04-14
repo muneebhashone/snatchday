@@ -231,19 +231,21 @@ export function Product() {
         </div>
       </div>
 
-      <div className="rounded-md border">
+      <div className="border border-primary">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>SKU</TableHead>
-              <TableHead>Image</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Stock</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Actions</TableHead>
-              <TableHead>Tournament</TableHead>
+            <TableRow className="border-b border-primary">
+              <TableHead className="text-primary font-bold">SKU</TableHead>
+              <TableHead className="text-primary font-bold">Image</TableHead>
+              <TableHead className="text-primary font-bold">Name</TableHead>
+              <TableHead className="text-primary font-bold">Price</TableHead>
+              <TableHead className="text-primary font-bold">Stock</TableHead>
+              <TableHead className="text-primary font-bold">Category</TableHead>
+              <TableHead className="text-primary font-bold">Type</TableHead>
+              <TableHead className="text-primary font-bold">Actions</TableHead>
+              <TableHead className="text-primary font-bold">
+                Tournament
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -278,7 +280,9 @@ export function Product() {
                         : product.name
                       : "N/A"}
                   </TableCell>
-                  <TableCell>{formatCurrency(product?.price) || "N/A"}</TableCell>
+                  <TableCell>
+                    {formatCurrency(product?.price) || "N/A"}
+                  </TableCell>
                   <TableCell>{product?.stock || "N/A"}</TableCell>
                   <TableCell>
                     {product?.categoryIds.map((categoryId) => {

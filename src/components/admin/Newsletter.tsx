@@ -32,11 +32,11 @@ const Newsletter = () => {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <Table>
+            <Table className="border border-primary rounded-md">
               <TableHeader>
-                <TableRow>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Created At</TableHead>
+                <TableRow className="border-b border-primary">
+                  <TableHead className="text-primary font-bold">Email</TableHead>
+                  <TableHead className="text-primary font-bold">Created At</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

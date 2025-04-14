@@ -11,6 +11,7 @@ import { useCustomersPagination } from "@/hooks/api";
 import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { Button } from "./ui/button";
 
 export function CustomeListTable({
   search,
@@ -62,7 +63,9 @@ export function CustomeListTable({
             <TableCell className="font-bold">{customer.name}</TableCell>
             <TableCell className="">{customer.email}</TableCell>
             <TableCell>{customer.group}</TableCell>
-            <TableCell>{customer.approved ? "Approved" : "Not Approve"}</TableCell>
+            <TableCell>
+              {customer.approved ? "Approved" : "Not Approve"}
+            </TableCell>
             <TableCell className="">{customer.ip}</TableCell>
             <TableCell className="">
               {customer.createdAt.split("T")[0]}
@@ -70,7 +73,9 @@ export function CustomeListTable({
             <TableCell className="">{customer.wallet.snapPoints}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">
               <Link href={`/admin/customers/${customer._id}`}>
-                <Edit className="text-primary" />
+                <Button variant="ghost" size="icon">
+                  <Edit className="h-4 w-4" />
+                </Button>
               </Link>
               {/* <Link href={`#`}>
                 <Delete className="text-red-500" />

@@ -181,19 +181,19 @@ const AllTournaments = () => {
       </div>
 
       <div className="rounded-md border">
-        <Table>
+        <Table className="border border-primary">
           <TableHeader>
-            <TableRow>
-              <TableHead>Image</TableHead>
-              <TableHead>Tournament Title</TableHead>
-              <TableHead>Game</TableHead>
-              <TableHead>Starting Price</TableHead>
-              <TableHead>Calculated Amount</TableHead>
-              <TableHead>Participants</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>Length (min)</TableHead>
-              <TableHead>VIP</TableHead>
-              <TableHead>Actions</TableHead>
+            <TableRow className="border-b border-primary">
+              <TableHead className="text-primary font-bold">Image</TableHead>
+              <TableHead className="text-primary font-bold">Tournament Title</TableHead>
+              <TableHead className="text-primary font-bold">Game</TableHead>
+              <TableHead className="text-primary font-bold">Starting Price</TableHead>
+              <TableHead className="text-primary font-bold">Calculated Amount</TableHead>
+              <TableHead className="text-primary font-bold">Participants</TableHead>
+              <TableHead className="text-primary font-bold">Start Date</TableHead>
+              <TableHead className="text-primary font-bold">Length (min)</TableHead>
+              <TableHead className="text-primary font-bold">VIP</TableHead>
+              <TableHead className="text-primary font-bold">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -231,11 +231,11 @@ const AllTournaments = () => {
                 <TableCell>
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${tournament.vip
-                      ? "bg-purple-100 text-purple-800"
+                      ? "bg-primary text-white"
                       : "bg-gray-100 text-gray-800"
                       }`}
                   >
-                    {tournament.vip ? "VIP" : "Regular"}
+                    {tournament.vip ? "VIP" : "BASIC"}
                   </span>
                 </TableCell>
                 <TableCell>
