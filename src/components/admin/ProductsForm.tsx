@@ -38,7 +38,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Calendar } from "../ui/calendar";
 import { format } from "date-fns";
 import { CustomMultiSelect } from "./multiselect";
-import { createMultipleImagesSchema, imageInputProps } from "@/lib/imageValidation";
+import {
+  createMultipleImagesSchema,
+  imageInputProps,
+} from "@/lib/imageValidation";
+import Select2 from "react-select";
 
 interface Category {
   _id: string;
@@ -117,8 +121,8 @@ const formSchema = z
           });
         }
 
-        console.log(data.price, "price");
-        console.log(data.discounts?.[index]?.price, "discount");
+        // console.log(data.price, "price");
+        // console.log(data.discounts?.[index]?.price, "discount");
         if (data.price < data.discounts?.[index]?.price) {
           ctx.addIssue({
             path: [`discounts.${index}.price`],
@@ -149,6 +153,7 @@ export default function ProductsForm() {
     offset: "0",
   });
   const [selectedCategory, setSelectedCategory] = useState<object[]>([]);
+  // const [selectedFilters, setSelectedFilters] = useState<object[]>([]);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
 
   const { data: getProducts } = useGetProducts();
@@ -188,7 +193,10 @@ export default function ProductsForm() {
     name: "discounts",
   });
 
-  const [selectedFilter, setSelectedFilters] = useState<string | null>(null);
+  // const [selectedFilters, setSelectedFilters] = useState<object[] | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null); // Track selected filter
+  const [filterValues, setFilterValues] = useState<string[]>([]); // Track filter values
+  const [attributes, setAttributes] = useState<Record<string, string>>({}); // Track attributes as a single object
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -200,8 +208,26 @@ export default function ProductsForm() {
       form.setValue("images", fileArray, { shouldValidate: true });
     }
   };
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+    // const flatSelectedFilters = selectedFilters.flat();
+    // const dataToSend = { ...values };
+    // Object.entries(dataToSend).forEach(([key, value]) => {
+    //   if (key === "attributes") {
+    //     const attributesObject = (attributes || []).reduce(
+    //       (acc: Record<any, any>, filter: any) => {
+    //         console.log(JSON.stringify(acc));
+    //         console.log(filter.label, filter.value);
+    //         acc[filter.label] = filter.value || [];
+    //         return acc;
+    //       }
+    //     );
+    //     console.log(JSON.stringify(attributesObject));
+    //   }
+    // });
+  }
+
+  async function onSubmit2(values: z.infer<typeof formSchema>) {
     if (selectedCategory.length < 1) {
       setEmptyCategory(true);
       return;
@@ -216,10 +242,8 @@ export default function ProductsForm() {
       const formData = new FormData();
       Object.entries(dataToSend).forEach(([key, value]) => {
         if (key === "categoryIds") {
-          formData.append(
-            "categoryIds",
-            JSON.stringify(selectedCategory.map((cat: Category) => cat._id))
-          );
+          const categoryIds = selectedCategory.map((cat: Category) => cat._id);
+          formData.append("categoryIds", JSON.stringify(categoryIds));
         } else if (key === "images") {
           const files = value as File[];
           if (files) {
@@ -234,18 +258,15 @@ export default function ProductsForm() {
             .filter(Boolean);
           formData.append("colors", JSON.stringify(colorsArray));
         } else if (key === "attributes") {
-          console.log(selectedFilter, "selectedFilter");
-          const attributesObject = Object.entries(selectedFilter).reduce(
-            (acc, [filterName, filterValues]) => {
-              filterValues.forEach((value) => {
-                acc[filterName] = value;
-              });
-              return acc;
-            },
-            {}
-          );
-
-          formData.append("attributes", JSON.stringify(attributesObject));
+          // const flatSelectedFilters = selectedFilters?.flat() || [];
+          // const attributesObject = flatSelectedFilters.reduce(
+          //   (acc: Record<string, string>, filter: any) => {
+          //     acc[filter.label] = String(filter.value || ""); // Ensure value is a string
+          //     return acc;
+          //   },
+          //   {}
+          // );
+          formData.append("attributes", JSON.stringify(attributes));
         } else if (key === "relatedProducts") {
           const productIds = Array.isArray(value) ? value : [];
           formData.append("relatedProducts", JSON.stringify(productIds));
@@ -259,7 +280,6 @@ export default function ProductsForm() {
                   discount.away &&
                   discount.until
               );
-
               formData.append("discounts", JSON.stringify(validDiscounts));
             } else {
               console.error("Discounts field is not an array:", value);
@@ -283,7 +303,6 @@ export default function ProductsForm() {
           toast.success("Product created successfully");
           setPreviewUrls([]);
           form.reset();
-          window.location.href = "/admin/products";
         },
         onError: (error) => {
           toast.error("Failed to create product");
@@ -481,41 +500,40 @@ export default function ProductsForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category *</FormLabel>
-                  <Select
-                    value=""
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      const selectedCategoriess =
-                        getCategories?.data?.categories?.find(
-                          (category: Category) => category._id === value
-                        );
-                      setSelectedCategory([
-                        ...selectedCategory,
-                        selectedCategoriess,
-                      ]);
-                    }}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {getCategories?.data?.categories?.map(
-                        (category: Category) => (
-                          <SelectItem
-                            key={category._id}
-                            value={category._id}
-                            disabled={selectedCategory.some(
-                              (cat) => cat._id === category._id
-                            )}
-                          >
-                            {category.displayName || category.name}
-                          </SelectItem>
-                        )
+                  <FormControl>
+                    <Select2
+                      isMulti
+                      options={getCategories?.data?.categories?.map(
+                        (category: Category) => ({
+                          value: category._id,
+                          label: category.displayName || category.name,
+                        })
                       )}
-                    </SelectContent>
-                  </Select>
+                      value={selectedCategory.map((cat) => ({
+                        value: cat._id,
+                        label: cat.displayName || cat.name,
+                      }))}
+                      onChange={(selectedOptions) => {
+                        const selectedCategories = selectedOptions.map(
+                          (option) => ({
+                            _id: option.value,
+                            name: option.label,
+                          })
+                        );
+                        setSelectedCategory(selectedCategories);
+                        field.onChange(
+                          selectedCategories.map((cat) => cat._id)
+                        );
+                      }}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                    />
+                  </FormControl>
+                  {selectedCategory.length < 1 && emptyCategory && (
+                    <p className="text-red-500 text-sm">
+                      *Please select at least one category*
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -525,26 +543,6 @@ export default function ProductsForm() {
                 *please select atleast one category*
               </p>
             )}
-          </div>
-          <div className="flex gap-2 mt-2 flex-wrap">
-            {selectedCategory &&
-              selectedCategory?.map((cat, i) => (
-                <span
-                  className="relative bg-primary text-white text-sm p-1 rounded"
-                  key={i}
-                >
-                  <X
-                    onClick={() => {
-                      setSelectedCategory((prev) =>
-                        prev.filter((_, index) => index !== i)
-                      );
-                    }}
-                    size={15}
-                    className="bg-white text-primary rounded-full p-[2px] absolute -top-1 -right-2 cursor-pointer"
-                  />
-                  {cat.displayName}
-                </span>
-              ))}
           </div>
 
           <FormField
@@ -608,7 +606,7 @@ export default function ProductsForm() {
           {applyDiscounts && (
             <div className="bg-gray-100 p-4 rounded-lg">
               {fields.map((field, index) => (
-                <div key={field.id} className="mb-4">
+                <div key={`${index} + ${field.id}`} className="mb-4">
                   {/* Discount Type */}
                   <div className="flex items-center justify-center gap-5">
                     <FormField
@@ -959,9 +957,9 @@ export default function ProductsForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {getProducts?.data?.products?.map((product) => (
+                      {getProducts?.data?.products?.map((product, i) => (
                         <SelectItem
-                          key={product._id}
+                          key={i}
                           value={product._id}
                           disabled={field.value?.includes(product._id)}
                         >
@@ -973,13 +971,13 @@ export default function ProductsForm() {
                 </FormControl>
                 {field.value?.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {field.value.map((productId) => {
+                    {field.value.map((productId, i) => {
                       const product = getProducts?.data?.products?.find(
                         (p) => p._id === productId
                       );
                       return (
                         <div
-                          key={productId}
+                          key={i}
                           className="flex items-center gap-1 text-white px-2 py-1 rounded-md bg-primary"
                         >
                           <span className="text-sm">{product?.name}</span>

@@ -97,54 +97,45 @@ const Filter = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filters.length > 0 ? (
-                  filters
-                    .sort(
-                      (a: Filter, b: Filter) =>
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime()
-                    )
-                    .map((filter: Filter) => (
-                      <TableRow key={filter._id} className="hover:bg-gray-50">
-                        <TableCell>{filter.name}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {filter.value.map((value, index) => (
-                              <span
-                                key={index}
-                                className="px-2 py-1 bg-gray-100 rounded-full text-xs"
-                              >
-                                {value}
-                              </span>
-                            ))}
-                          </div>
-                        </TableCell>
-                        {/* <TableCell>{getCategoryName(filter.category)}</TableCell> */}
-                        <TableCell>
-                          {new Date(filter.createdAt).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell className="text-right space-x-2">
-                          <EditFilterDialog filter={filter} />
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  onClick={() => handleDelete(filter._id)}
-                                  variant="ghost"
-                                  size="icon"
-                                >
-                                  <Trash className="h-4 w-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>Delete Filter</p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                ) : (
+                {filters
+                  ?.filters?.sort(
+                    (a: Filter, b: Filter) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                  )
+                  .map((filter: Filter) => (
+                    <TableRow key={filter._id} className="hover:bg-gray-50">
+                      <TableCell>{filter.name}</TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1">
+                          {filter.value.map((value, index) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 bg-gray-100 rounded-full text-xs"
+                            >
+                              {value}
+                            </span>
+                          ))}
+                        </div>
+                      </TableCell>
+                      {/* <TableCell>{getCategoryName(filter.category)}</TableCell> */}
+                      <TableCell>
+                        {new Date(filter.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right space-x-2">
+                        <EditFilterDialog filter={filter} />
+                        <Button
+                          onClick={() => handleDelete(filter._id)}
+                          variant="ghost"
+                          size="icon"
+                          // className="text-red-500 hover:text-red-600 transition-colors"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                {!filters?.length && (
                   <TableRow>
                     <TableCell colSpan={4} className="text-center py-8 text-gray-500">
                       No filters found
