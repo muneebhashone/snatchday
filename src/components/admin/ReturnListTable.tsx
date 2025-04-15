@@ -15,6 +15,27 @@ import { useState, useEffect } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import InvoiceButton from "../InvoiceButton ";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+
+interface ReturnResponse {
+  data: {
+    returns: ReturnItem[];
+    total: number;
+  };
+}
+
+interface ReturnItem {
+  _id: string;
+  orderNumber: string;
+  returnNumber: string;
+  status: string;
+  createdAt: string;
+  productsData: {
+    product: {
+      article: string;
+    };
+  }[];
+}
 
 export function ReturnListTable() {
   const [pagination, setPagination] = useState({
@@ -37,28 +58,22 @@ export function ReturnListTable() {
     limit: pagination.pageSize,
     offset: (pagination.currentPage - 1) * pagination.pageSize,
     ...debouncedFilters,
-  });
-  console.log(returns, "returns11user");
+  }) as { data: ReturnResponse | undefined; isLoading: boolean };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
-    setPagination((prev) => ({ ...prev, currentPage: 1 })); // Reset currentPage on filter change
+    setPagination((prev) => ({ ...prev, currentPage: 1 }));
   };
 
-  const handleNextPage = () => {
+  const handlePageChange = (newPage: number) => {
     setPagination((prev) => ({
       ...prev,
-      currentPage: prev.currentPage + 1,
+      currentPage: newPage,
     }));
   };
 
-  const handlePreviousPage = () => {
-    setPagination((prev) => ({
-      ...prev,
-      currentPage: Math.max(prev.currentPage - 1, 1),
-    }));
-  };
+  const totalItems = returns?.data?.total || 0;
 
   return isLoading ? (
     <div className="flex items-center justify-center">
@@ -161,9 +176,6 @@ export function ReturnListTable() {
                     </Tooltip>
                   </TooltipProvider>
                 </TableCell>
-                {/* <TableCell className="text-center">
-                  <InvoiceButton orderDetails={returnItem} />
-                </TableCell> */}
               </TableRow>
             ))
           ) : (
@@ -177,56 +189,17 @@ export function ReturnListTable() {
         <TableFooter className="w-full">
           <TableRow>
             <TableCell colSpan={8} className="text-center">
-              <button
-                className={`${
-                  pagination.currentPage === 1
-                    ? "text-gray-300 cursor-not-allowed"
-                    : ""
-                }`}
-                disabled={pagination.currentPage === 1}
-                onClick={handlePreviousPage}
-              >
-                Prev
-              </button>
-              {Array.from(
-                {
-                  length: Math.ceil(
-                    (returns?.data?.total || 0) / pagination.pageSize
-                  ),
-                },
-                (_, index) => {
-                  return (
-                    <button
-                      key={index}
-                      className={`page-indicator m-1 ${
-                        index + 1 === pagination.currentPage
-                          ? "bg-primary px-2 text-white"
-                          : ""
-                      }`}
-                      onClick={() =>
-                        setPagination({ ...pagination, currentPage: index + 1 })
-                      }
-                    >
-                      {index + 1}
-                    </button>
-                  );
-                }
-              )}
-              <button
-                className={`${
-                  pagination.currentPage ===
-                  Math.ceil((returns?.data?.total || 0) / pagination.pageSize)
-                    ? "text-gray-300 cursor-not-allowed"
-                    : ""
-                }`}
-                disabled={
-                  pagination.currentPage ===
-                  Math.ceil((returns?.data?.total || 0) / pagination.pageSize)
-                }
-                onClick={handleNextPage}
-              >
-                Next
-              </button>
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-sm text-gray-500">
+                  Showing {((pagination.currentPage - 1) * pagination.pageSize) + 1} to {Math.min(pagination.currentPage * pagination.pageSize, totalItems)} of {totalItems} entries
+                </div>
+                <DynamicPagination
+                  totalItems={totalItems}
+                  itemsPerPage={pagination.pageSize}
+                  currentPage={pagination.currentPage}
+                  onPageChange={handlePageChange}
+                />
+              </div>
             </TableCell>
           </TableRow>
         </TableFooter>

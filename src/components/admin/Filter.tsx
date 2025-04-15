@@ -23,6 +23,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useState } from "react";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+
 interface Category {
   _id: string;
   name: string;
@@ -38,6 +40,13 @@ interface Filter {
   updatedAt: string;
 }
 
+interface FilterResponse {
+  data: {
+    filters: Filter[];
+    total: number;
+  };
+}
+
 const Filter = () => {
   const [page, setPage] = useState(0);
   const skip = 10;
@@ -49,13 +58,14 @@ const Filter = () => {
   } = useGetFilters({
     limit: skip.toString(),
     offset: page.toString(),
-  });
-  console.log(page)
+  }) as { data: FilterResponse | undefined; isLoading: boolean; isError: boolean };
+
   const { data: getCategories } = useGetCategories();
   const { mutate: deleteFilter } = useDeleteFilter();
-  console.log(getFilters);
-  const filters = getFilters?.data.filters || [];
-  const categories = getCategories?.data.categories || [];
+  
+  const filters = getFilters?.data?.filters || [];
+  const categories = getCategories?.data?.categories || [];
+  const totalItems = getFilters?.data?.total || 0;
 
   const handleDelete = (id: string) => {
     deleteFilter(id, {
@@ -68,6 +78,10 @@ const Filter = () => {
         console.error(error);
       },
     });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage((newPage - 1) * skip);
   };
 
   return (
@@ -165,58 +179,17 @@ const Filter = () => {
               <TableFooter className="w-full">
                 <TableRow>
                   <TableCell colSpan={8} className="text-center">
-                    <button
-                      className={`border px-2 py-1 mr-2 ${
-                        page === 0 ? "text-gray-300 cursor-not-allowed" : ""
-                      }`}
-                      disabled={page === 0}
-                      onClick={() => {
-                        setPage((prev) => Math.max(prev - skip, 0)); // Prevent going negative
-                      }}
-                    >
-                      Prev
-                    </button>
-                    {Array.from(
-                      {
-                        length: Math.ceil(
-                          (getFilters?.data?.total || 0) / skip
-                        ),
-                      },
-                      (_, index) => {
-                        return (
-                          <button
-                            key={index}
-                            className={`page-indicator m-1 mr-2 ${
-                              index === page / skip
-                                ? "bg-primary px-2 text-white"
-                                : ""
-                            }`}
-                            onClick={() => setPage(index * skip)}
-                          >
-                            {index + 1}
-                          </button>
-                        );
-                      }
-                    )}
-                    <button
-                      className={`border px-2 py-1 ml-2 ${
-                        page + skip >=
-                          (getFilters?.data?.total || 0) && "text-gray-300"
-                      }`}
-                      disabled={
-                        page + skip >= (getFilters?.data?.total || 0)
-                      }
-                      onClick={() => {
-                        setPage((prev) =>
-                          Math.min(
-                            prev + skip,
-                            (getFilters?.data?.total || 0) - page
-                          )
-                        );
-                      }}
-                    >
-                      Next
-                    </button>
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="text-sm text-gray-500">
+                        Showing {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
+                      </div>
+                      <DynamicPagination
+                        totalItems={totalItems}
+                        itemsPerPage={skip}
+                        currentPage={Math.floor(page / skip) + 1}
+                        onPageChange={handlePageChange}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               </TableFooter>

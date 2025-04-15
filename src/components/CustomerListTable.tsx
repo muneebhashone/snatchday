@@ -18,6 +18,29 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+
+interface CustomerResponse {
+  data: {
+    customers: {
+      data: Customer[];
+      total: { total: number }[];
+    }[];
+  };
+}
+
+interface Customer {
+  _id: string;
+  name: string;
+  email: string;
+  group: string;
+  approved: boolean;
+  spendings?: string;
+  createdAt: string;
+  wallet: {
+    snapPoints: number;
+  };
+}
 
 export function CustomeListTable({
   search,
@@ -38,7 +61,15 @@ export function CustomeListTable({
     group,
     date,
     isActive
-  );
+  ) as { data: CustomerResponse | undefined; isLoading: boolean };
+
+  const totalItems = customers?.data?.customers[0]?.total[0]?.total || 0;
+  const currentPage = Math.floor(page / skip) + 1;
+
+  const handlePageChange = (newPage: number) => {
+    setPage((newPage - 1) * skip);
+  };
+
   return isLoading ? (
     <div className="flex items-center justify-center">
       <Loader size={25} className="animate-spin text-primary" />
@@ -102,58 +133,17 @@ export function CustomeListTable({
       <TableFooter className="w-full">
         <TableRow>
           <TableCell colSpan={8} className="text-center">
-            <button
-              className={`border px-2 py-1 mr-2 ${
-                page === 0 ? "text-gray-300 cursor-not-allowed" : ""
-              }`}
-              disabled={page === 0}
-              onClick={() => {
-                setPage((prev) => Math.max(prev - skip, 0)); // Prevent going negative
-              }}
-            >
-              Prev
-            </button>
-            {Array.from(
-              {
-                length: Math.ceil(
-                  (customers?.data?.customers[0]?.total[0]?.total || 0) / skip
-                ),
-              },
-              (_, index) => {
-                return (
-                  <button
-                    key={index}
-                    className={`page-indicator m-1 mr-2 ${
-                      index === page / skip ? "bg-primary px-2 text-white" : ""
-                    }`}
-                    onClick={() => setPage(index * skip)}
-                  >
-                    {index + 1}
-                  </button>
-                );
-              }
-            )}
-            <button
-              className={`border px-2 py-1 ml-2 ${
-                page + skip >=
-                  (customers?.data?.customers[0]?.total[0]?.total || 0) &&
-                "text-gray-300"
-              }`}
-              disabled={
-                page + skip >=
-                (customers?.data?.customers[0]?.total[0]?.total || 0)
-              }
-              onClick={() => {
-                setPage((prev) =>
-                  Math.min(
-                    prev + skip,
-                    (customers?.data?.customers[0]?.total[0]?.total || 0) - page
-                  )
-                );
-              }}
-            >
-              Next
-            </button>
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-sm text-gray-500">
+                Showing {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
+              </div>
+              <DynamicPagination
+                totalItems={totalItems}
+                itemsPerPage={skip}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
           </TableCell>
         </TableRow>
       </TableFooter>

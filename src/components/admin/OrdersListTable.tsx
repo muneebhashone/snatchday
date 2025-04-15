@@ -13,6 +13,28 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+
+interface OrderResponse {
+  data: {
+    orders: Order[];
+    total: number;
+  };
+}
+
+interface Order {
+  _id: string;
+  orderNumber: string;
+  billingDetails: {
+    firstName: string;
+  };
+  status: string;
+  cartObject: {
+    total: number;
+  };
+  createdAt: string;
+  updatedAt?: string;
+}
 
 export function OrdersListTable({
   status,
@@ -23,10 +45,15 @@ export function OrdersListTable({
 }) {
   const [page, setPage] = useState(0);
   const skip = 10;
-  const { data: customers, isLoading } = useGetOrders(page, status, date);
+  const { data: customers, isLoading } = useGetOrders(page, status, date) as { data: OrderResponse | undefined; isLoading: boolean };
 
-  customers?.data.orders.map((order) => console.log(order.orderNumber));
-  console.log(customers?.data.total, "total");
+  const totalItems = customers?.data?.total || 0;
+  const currentPage = Math.floor(page / skip) + 1;
+
+  const handlePageChange = (newPage: number) => {
+    setPage((newPage - 1) * skip);
+  };
+
   return isLoading ? (
     <div className="flex items-center justify-center">
       <Loader size={25} className="animate-spin text-primary" />
@@ -89,48 +116,17 @@ export function OrdersListTable({
       <TableFooter className="w-full">
         <TableRow>
           <TableCell colSpan={8} className="text-center">
-            <button
-              className={`${
-                page === 0 ? "text-gray-300 cursor-not-allowed" : ""
-              }`}
-              disabled={page === 0}
-              onClick={() => {
-                setPage((prev) => Math.max(prev - skip, 0)); // Prevent going negative
-              }}
-            >
-              Prev
-            </button>
-            {Array.from(
-              {
-                length: Math.ceil((customers?.data?.total || 0) / skip),
-              },
-              (_, index) => {
-                return (
-                  <button
-                    key={index}
-                    className={`page-indicator m-1 ${
-                      index === page / skip ? "bg-primary px-2 text-white" : ""
-                    }`}
-                    onClick={() => setPage(index * skip)}
-                  >
-                    {index + 1}
-                  </button>
-                );
-              }
-            )}
-            <button
-              className={`${
-                page + skip >= (customers?.data?.total || 0) && "text-gray-300"
-              }`}
-              disabled={page + skip >= (customers?.data?.total || 0)}
-              onClick={() => {
-                setPage((prev) =>
-                  Math.min(prev + skip, customers?.data?.total - page)
-                );
-              }}
-            >
-              Next
-            </button>
+            <div className="flex flex-col items-center gap-4">
+              <div className="text-sm text-gray-500">
+                Showing {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
+              </div>
+              <DynamicPagination
+                totalItems={totalItems}
+                itemsPerPage={skip}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
           </TableCell>
         </TableRow>
       </TableFooter>
