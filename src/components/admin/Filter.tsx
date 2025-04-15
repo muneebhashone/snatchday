@@ -58,11 +58,15 @@ const Filter = () => {
   } = useGetFilters({
     limit: skip.toString(),
     offset: page.toString(),
-  }) as { data: FilterResponse | undefined; isLoading: boolean; isError: boolean };
+  }) as {
+    data: FilterResponse | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
 
   const { data: getCategories } = useGetCategories();
   const { mutate: deleteFilter } = useDeleteFilter();
-  
+
   const filters = getFilters?.data?.filters || [];
   const categories = getCategories?.data?.categories || [];
   const totalItems = getFilters?.data?.total || 0;
@@ -181,7 +185,9 @@ const Filter = () => {
                   <TableCell colSpan={8} className="text-center">
                     <div className="flex flex-col items-center gap-4">
                       <div className="text-sm text-gray-500">
-                        Showing {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
+                        Showing {page + 1} to{" "}
+                        {Math.min(page + skip, totalItems)} of {totalItems}{" "}
+                        entries
                       </div>
                       <DynamicPagination
                         totalItems={totalItems}

@@ -81,7 +81,7 @@ const OrdersTable = () => {
                 Loading...
               </TableCell>
             </TableRow>
-          ) : (
+          ) : orders?.data?.orders.length > 0 ? (
             orders?.data?.orders.map((order, index) => (
               <TableRow key={index}>
                 <TableCell>{order?.orderNumber || "N/A"}</TableCell>
@@ -133,6 +133,14 @@ const OrdersTable = () => {
                 </TableCell>
               </TableRow>
             ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={10} className="text-center">
+                <p className="text-center font-bold italic">
+                  *No orders found*
+                </p>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>
