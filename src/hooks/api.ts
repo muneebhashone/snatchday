@@ -86,7 +86,6 @@ import {
   MyAccountGames,
   MyAccountTournaments,
   ITScope,
-
   TicketFormData,
   TicketParams,
   getTickets,
@@ -195,7 +194,7 @@ export const useGetCategories = (params?: {
     queryKey: ["categories", params],
     queryFn: () =>
       getCategories({
-        ...params
+        ...params,
       }),
   });
 };
@@ -233,10 +232,10 @@ export const useCreateFilter = () => {
   });
 };
 
-export const useGetFilters = () => {
+export const useGetFilters = (params?: { limit?: string; offset?: string }) => {
   return useQuery({
-    queryKey: ["filters"],
-    queryFn: getFilters,
+    queryKey: ["filters", params],
+    queryFn: () => getFilters(params),
   });
 };
 
@@ -813,4 +812,3 @@ export const useReplyTicket = () => {
       replyTicket(id, formData),
   });
 };
-

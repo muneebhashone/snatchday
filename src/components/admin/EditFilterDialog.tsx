@@ -72,7 +72,7 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
   });
   const categories = getCategories?.data.categories || [];
 
-  console.log(filter, "filter123444");
+  // console.log(filter, "filter123444");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

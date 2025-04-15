@@ -4,6 +4,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -15,7 +16,13 @@ import { CreateFilterDialog } from "./CreateFilterDialog";
 import { EditFilterDialog } from "./EditFilterDialog";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useState } from "react";
 interface Category {
   _id: string;
   name: string;
@@ -32,22 +39,23 @@ interface Filter {
 }
 
 const Filter = () => {
-  // Fetch filters and categories using the hooks
+  const [page, setPage] = useState(0);
+  const skip = 10;
   const queryClient = useQueryClient();
-  const { data: getFilters, isLoading, isError } = useGetFilters();
+  const {
+    data: getFilters,
+    isLoading,
+    isError,
+  } = useGetFilters({
+    limit: skip.toString(),
+    offset: page.toString(),
+  });
+  console.log(page)
   const { data: getCategories } = useGetCategories();
   const { mutate: deleteFilter } = useDeleteFilter();
-
+  console.log(getFilters);
   const filters = getFilters?.data.filters || [];
   const categories = getCategories?.data.categories || [];
-
-  // Function to get category name by ID
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((cat: Category) => cat._id === categoryId);
-    return category
-      ? category.displayName || category.name
-      : "Unknown Category";
-  };
 
   const handleDelete = (id: string) => {
     deleteFilter(id, {
@@ -90,7 +98,9 @@ const Filter = () => {
                   <TableHead className="text-primary font-bold">
                     Created At
                   </TableHead>
-                  <TableHead className="text-right text-primary font-bold">Actions</TableHead>
+                  <TableHead className="text-right text-primary font-bold">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -121,25 +131,95 @@ const Filter = () => {
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         <EditFilterDialog filter={filter} />
-                        <Button
-                          onClick={() => handleDelete(filter._id)}
-                          variant="ghost"
-                          size="icon"
-                          // className="text-red-500 hover:text-red-600 transition-colors"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                onClick={() => handleDelete(filter._id)}
+                                variant="ghost"
+                                size="icon"
+                                // className="text-red-500 hover:text-red-600 transition-colors"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete Filter</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </TableCell>
                     </TableRow>
                   ))}
                 {!filters?.length && (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                    <TableCell
+                      colSpan={4}
+                      className="text-center py-8 text-gray-500"
+                    >
                       No filters found
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
+              <TableFooter className="w-full">
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center">
+                    <button
+                      className={`border px-2 py-1 mr-2 ${
+                        page === 0 ? "text-gray-300 cursor-not-allowed" : ""
+                      }`}
+                      disabled={page === 0}
+                      onClick={() => {
+                        setPage((prev) => Math.max(prev - skip, 0)); // Prevent going negative
+                      }}
+                    >
+                      Prev
+                    </button>
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          (getFilters?.data?.total || 0) / skip
+                        ),
+                      },
+                      (_, index) => {
+                        return (
+                          <button
+                            key={index}
+                            className={`page-indicator m-1 mr-2 ${
+                              index === page / skip
+                                ? "bg-primary px-2 text-white"
+                                : ""
+                            }`}
+                            onClick={() => setPage(index * skip)}
+                          >
+                            {index + 1}
+                          </button>
+                        );
+                      }
+                    )}
+                    <button
+                      className={`border px-2 py-1 ml-2 ${
+                        page + skip >=
+                          (getFilters?.data?.total || 0) && "text-gray-300"
+                      }`}
+                      disabled={
+                        page + skip >= (getFilters?.data?.total || 0)
+                      }
+                      onClick={() => {
+                        setPage((prev) =>
+                          Math.min(
+                            prev + skip,
+                            (getFilters?.data?.total || 0) - page
+                          )
+                        );
+                      }}
+                    >
+                      Next
+                    </button>
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
             </Table>
           </div>
         )}
