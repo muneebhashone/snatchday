@@ -1,19 +1,21 @@
 "use client";
 
 import ProductUpdateForm from "@/components/admin/ProductUpdateForm";
-import { useGetProducts } from "@/hooks/api";
+import { useGetProductById, useGetProducts } from "@/hooks/api";
 import { useParams } from "next/navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useState, useEffect } from "react";
+import { MainProduct } from "@/types";
 
 export default function EditProductPage() {
   const params = useParams();
   const productId = params.id as string;
-  const { data: productsData, isLoading } = useGetProducts();
+  const { data: productsData, isLoading } = useGetProductById(productId);
+  console.log(productsData, "productsData");
+
   const [productLoaded, setProductLoaded] = useState(false);
   
-  const products = productsData?.data?.products || [];
-  const product = products.find((p) => p._id === productId);
+  const product = productsData?.data;
   
   useEffect(() => {
     if (product && Object.keys(product).length > 0) {
@@ -23,7 +25,7 @@ export default function EditProductPage() {
 
   return (
     <AdminLayout>
-      {isLoading ? (
+      {isLoading ? (   
         <div className="p-6 flex items-center justify-center h-64">
           <div className="text-lg font-medium">Loading product data...</div>
         </div>
@@ -33,7 +35,7 @@ export default function EditProductPage() {
           <p className="text-gray-500 mt-2">The product you&apos;re looking for could not be found.</p>
         </div>
       ) : productLoaded ? (
-        <ProductUpdateForm product={product as any} />
+        <ProductUpdateForm product={product} />
       ) : (
         <div className="p-6 flex items-center justify-center h-64">
           <div className="text-lg font-medium">Preparing product data...</div>

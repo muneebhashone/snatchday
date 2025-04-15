@@ -9,6 +9,7 @@ import {
   useUpdateProduct,
   useGetCategories,
   useGetFilters,
+  useGetProductById,
   useGetProducts,
 } from "@/hooks/api";
 import { Button } from "@/components/ui/button";
@@ -218,7 +219,7 @@ interface Product {
 export default function ProductUpdateForm({ product }: { product: Product }) {
   const [emptyCategory, setEmptyCategory] = useState(false);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
-  const [categories, getCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [removedImages, setRemovedImages] = useState<string[]>([]);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -232,10 +233,13 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   }) as {
     data: CategoryResponse;
   };
-  const { data: productsData } = useGetProducts() as { data: ProductResponse };
-  const { data: filtersData } = useGetFilters() as { data: FilterResponse };
   const params = useParams();
   const productId = params.id as string;
+  const { data: productsData } = useGetProducts({
+    limit: "99999",
+    offset: "0",
+  });
+  const { data: filtersData } = useGetFilters() as { data: FilterResponse };
   const [selectedFilter, setSelectedFilters] = useState<
     Record<string, string[]>
   >(
@@ -302,7 +306,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
 
       setPreviewUrls(product.images || []);
       if (product.categoryIds) {
-        getCategories(product.categoryIds);
+        setCategories(product.categoryIds);
       }
       setSelectedFilters(
         Object.entries(product.attributes || {}).reduce((acc, [key, value]) => {
@@ -311,7 +315,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
         }, {} as Record<string, string[]>)
       );
     }
-  }, [product]);
+  }, [product, form]);
 
   const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
@@ -323,9 +327,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       replace(product.discounts);
     }
     if (product && product.categoryIds) {
-      getCategories(product?.categoryIds);
+      setCategories(product?.categoryIds);
     }
-  }, [categoriesData?.data?.categories, product, replace]);
+  }, [product, replace, setCategories]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -650,7 +654,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                         (existCategory) => existCategory._id === category._id
                       );
                       if (!exist) {
-                        getCategories((prev) => [...prev, category]);
+                        setCategories((prev) => [...prev, category]);
                       }
                     }}
                     value=""
@@ -679,7 +683,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       >
                         <X
                           onClick={() => {
-                            getCategories((prev) =>
+                            setCategories((prev) =>
                               prev.filter((_, index) => index !== i)
                             );
                           }}
