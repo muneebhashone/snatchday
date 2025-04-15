@@ -666,114 +666,131 @@ const MainProduct = () => {
                           <FormItem>
                             <FormLabel>Product Filters</FormLabel>
                             <FormDescription>
-                              Select attributes and values for product filtering
+                              Select product attributes and values
                             </FormDescription>
                             
                             <div className="space-y-4">
-                              {/* Filter selection */}
-                              <div>
-                                <FormLabel>Select Filters</FormLabel>
-                                <div className="flex flex-col space-y-2">
-                                  {filtersArray.map((filter: any) => (
-                                    <div key={filter._id} className="flex items-start space-x-2">
-                                      <Checkbox 
-                                        id={`filter-${filter._id}`}
-                                        checked={selectedFilters[filter.name] !== undefined}
-                                        onCheckedChange={(checked) => {
-                                          setSelectedFilters(prev => {
-                                            const newFilters = {...prev};
-                                            
-                                            if (checked) {
-                                              // Add filter
-                                              newFilters[filter.name] = [];
-                                            } else {
-                                              // Remove filter
-                                              delete newFilters[filter.name];
-                                            }
-                                            
-                                            // Update the form field with the new object
-                                            field.onChange(newFilters);
-                                            
-                                            return newFilters;
-                                          });
-                                        }}
-                                      />
-                                      <div className="grid gap-1.5 leading-none">
-                                        <label
-                                          htmlFor={`filter-${filter._id}`}
-                                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                        >
-                                          {filter.name}
-                                        </label>
-                                        
-                                        {/* If filter is selected, show value selection */}
-                                        {selectedFilters[filter.name] !== undefined && (
-                                          <div className="pl-6 mt-2">
-                                            <FormLabel className="text-xs">Select Values</FormLabel>
-                                            <div className="flex flex-wrap gap-2 mt-1">
-                                              {filter.value.map((value) => (
-                                                <Button
-                                                  key={value}
-                                                  type="button"
-                                                  size="sm"
-                                                  variant={selectedFilters[filter.name]?.includes(value) ? "default" : "outline"}
-                                                  className="text-xs h-7"
-                                                  onClick={() => {
-                                                    setSelectedFilters(prev => {
-                                                      const newFilters = {...prev};
-                                                      const currentValues = newFilters[filter.name] || [];
-                                                      
-                                                      if (currentValues.includes(value)) {
-                                                        // Remove the value
-                                                        newFilters[filter.name] = currentValues.filter(v => v !== value);
-                                                      } else {
-                                                        // Add the value
-                                                        newFilters[filter.name] = [...currentValues, value];
-                                                      }
-                                                      
-                                                      // Update the form field
-                                                      field.onChange(newFilters);
-                                                      
-                                                      return newFilters;
-                                                    });
-                                                  }}
-                                                >
-                                                  {value}
-                                                </Button>
-                                              ))}
-                                            </div>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                              
-                              {/* Show selected filters summary */}
-                              {Object.keys(selectedFilters).length > 0 && (
-                                <div className="border rounded-md p-3 bg-muted/20">
-                                  <h4 className="text-sm font-medium mb-2">Selected Attributes</h4>
-                                  <div className="space-y-2">
-                                    {Object.entries(selectedFilters).map(([filterName, values]) => (
-                                      <div key={filterName} className="flex flex-col">
-                                        <span className="text-sm font-medium">{filterName}</span>
-                                        <div className="flex flex-wrap gap-1 mt-1">
-                                          {values.length > 0 ? (
-                                            values.map((value) => (
-                                              <span key={value} className="bg-primary/10 text-primary text-xs rounded px-2 py-1">
-                                                {value}
-                                              </span>
+                              {/* Add filter button & dropdown */}
+                              <div className="flex flex-col space-y-4">
+                                <div className="flex justify-between items-center">
+                                  <h3 className="text-sm font-medium">Attributes</h3>
+                                  
+                                  <Popover>
+                                    <PopoverTrigger asChild>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm"
+                                        className="flex items-center gap-1"
+                                        disabled={Object.keys(selectedFilters).length === filtersArray.length}
+                                      >
+                                        <PlusCircle className="h-4 w-4" />
+                                        Add Attribute
+                                      </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-64 p-0" align="end">
+                                      <Command>
+                                        <CommandInput placeholder="Search attributes..." />
+                                        <CommandEmpty>No attributes found.</CommandEmpty>
+                                        <CommandGroup className="max-h-48 overflow-auto">
+                                          {filtersArray
+                                            .filter(filter => !selectedFilters.hasOwnProperty(filter.name))
+                                            .map((filter: any) => (
+                                              <CommandItem
+                                                key={filter._id}
+                                                value={filter.name}
+                                                onSelect={() => {
+                                                  setSelectedFilters(prev => {
+                                                    const newFilters = {...prev};
+                                                    // Initialize with empty array
+                                                    newFilters[filter.name] = [];
+                                                    // Update form field
+                                                    field.onChange(newFilters);
+                                                    return newFilters;
+                                                  });
+                                                }}
+                                              >
+                                                {filter.name}
+                                              </CommandItem>
                                             ))
-                                          ) : (
-                                            <span className="text-xs text-muted-foreground">No values selected</span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
+                                          }
+                                        </CommandGroup>
+                                      </Command>
+                                    </PopoverContent>
+                                  </Popover>
                                 </div>
-                              )}
+                              
+                                {/* Selected filters with their radio button selections */}
+                                {Object.keys(selectedFilters).length > 0 ? (
+                                  <div className="space-y-4 border rounded-md p-3">
+                                    {Object.entries(selectedFilters).map(([filterName, values]) => {
+                                      // Find the corresponding filter object to get available values
+                                      const filter = filtersArray.find(f => f.name === filterName);
+                                      if (!filter) return null;
+                                      
+                                      return (
+                                        <div key={filterName} className="space-y-2 pb-3 border-b last:border-b-0 last:pb-0">
+                                          <div className="flex justify-between items-center">
+                                            <h4 className="text-sm font-medium">{filterName}</h4>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              className="h-8 w-8 p-0"
+                                              onClick={() => {
+                                                setSelectedFilters(prev => {
+                                                  const newFilters = {...prev};
+                                                  delete newFilters[filterName];
+                                                  field.onChange(newFilters);
+                                                  return newFilters;
+                                                });
+                                              }}
+                                            >
+                                              <X className="h-4 w-4" />
+                                            </Button>
+                                          </div>
+                                          
+                                          <div className="grid grid-cols-2 gap-2">
+                                            {filter.value.map((value: string) => {
+                                              // Check if this value is the selected one
+                                              const isSelected = values[0] === value;
+                                              
+                                              return (
+                                                <div key={value} className="flex items-center space-x-2">
+                                                  <input
+                                                    type="radio"
+                                                    id={`${filterName}-${value}`}
+                                                    name={`filter-${filterName}`}
+                                                    className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                                                    checked={isSelected}
+                                                    onChange={() => {
+                                                      setSelectedFilters(prev => {
+                                                        const newFilters = {...prev};
+                                                        // Set single value
+                                                        newFilters[filterName] = [value];
+                                                        field.onChange(newFilters);
+                                                        return newFilters;
+                                                      });
+                                                    }}
+                                                  />
+                                                  <label 
+                                                    htmlFor={`${filterName}-${value}`}
+                                                    className="text-sm font-medium leading-none cursor-pointer"
+                                                  >
+                                                    {value}
+                                                  </label>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                ) : (
+                                  <div className="text-center p-4 border rounded-md text-muted-foreground text-sm">
+                                    No attributes selected. Click &quot;Add Attribute&quot; to select product attributes.
+                                  </div>
+                                )}
+                              </div>
                             </div>
                             
                             <FormMessage />
