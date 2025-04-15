@@ -2,9 +2,9 @@
 
 import { useCreateProduct, useGetCategories, useGetProducts, useGetFilters } from '@/hooks/api'
 import { zodResolver } from '@hookform/resolvers/zod'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
-import { any, z } from 'zod'
+import { z } from 'zod'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { 
@@ -27,24 +27,16 @@ import { Button } from '../ui/button'
 import { Switch } from '../ui/switch'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Checkbox } from '../ui/checkbox'
-import { CalendarIcon, Check, PlusCircle, X } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
-import { Calendar } from '../ui/calendar'
-import { format } from 'date-fns'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
-import { cn } from '@/lib/utils'
-import { ChevronsUpDown } from 'lucide-react'
-import Image from 'next/image'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+
+// Import component parts
+
+// import SimpleImageUpload from './product/SimpleImageUpload'
+import ProductAttributesField from './product/ProductAttributesField'
+import ProductCategoryField from './product/ProductCategoryField'
+import ProductDiscountField from './product/ProductDiscountField'
+import ProductRelatedField from './product/ProductRelatedField'
+import { X } from 'lucide-react';
+import Image from 'next/image';
 
 const discountSchema = z.object({
     customerGroup: z.string().optional(),
@@ -68,52 +60,40 @@ const productFormSchema = z.object({
     discounts: z.array(discountSchema).optional(),
     attributes: z.record(z.string(), z.array(z.string())).optional(),
   
-    isFeatured: z.boolean().default(false),
-    metaTitle: z.string().min(1, "Meta title is required"),
-    metaDescription: z.string().min(1, "Meta description is required"),
-    metaKeywords: z.string().min(1, "Meta keywords are required"),
-    article: z.string().min(1, "Article is required"),
-    sku: z.string().min(1, "SKU is required"),
-    barcodeEAN: z.string().optional(),
-    noStockMessage: z.string().optional(),
-    relatedProducts: z.array(z.string()).optional(),
-    requireShipping: z.boolean().default(true),
-    liscenseKey: z.string().optional(),
+  isFeatured: z.boolean().default(false),
+  metaTitle: z.string().min(1, "Meta title is required"),
+  metaDescription: z.string().min(1, "Meta description is required"),
+  metaKeywords: z.string().min(1, "Meta keywords are required"),
+  article: z.string().min(1, "Article is required"),
+  sku: z.string().min(1, "SKU is required"),
+  barcodeEAN: z.string().optional(),
+  noStockMessage: z.string().optional(),
+  relatedProducts: z.array(z.string()).optional(),
+  requireShipping: z.boolean().default(true),
+  liscenseKey: z.string().optional(),
 })
 
 type ProductFormValues = z.infer<typeof productFormSchema>
-
-// Define the proper interface for the filter data structure
-interface FilterResponse {
-    filters: Array<{
-        _id: string;
-        name: string;
-        value: string[];
-        category: string;
-        createdAt: string;
-        updatedAt: string;
-    }>;
-}
 
 const MainProduct = () => {
     const router = useRouter()
     const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({})
     const [categoriesOpen, setCategoriesOpen] = useState(false)
+    const [relatedProductsOpen, setRelatedProductsOpen] = useState(false)
     const { mutate: createProduct, isPending } = useCreateProduct()
+    
     const { data: categoriesData } = useGetCategories({
         limit: "99999999",
         offset: "0",
     })
-    const { data: filtersResponse } = useGetFilters() as { data: any }
     
-    // Extract the filters array from the response if it exists
+    const { data: filtersResponse } = useGetFilters() as { data: any }
     const filtersArray = filtersResponse?.data?.filters || [];
-    console.log("Filters array:", filtersArray);
+    
     const { data: productsData, isLoading: productsLoading } = useGetProducts({
         limit: "99999999",
         offset: "0",
     })
-    const [relatedProductsOpen, setRelatedProductsOpen] = useState(false)
     
     // Add state for attribute dialog
     const [attributeDialogOpen, setAttributeDialogOpen] = useState(false)
@@ -154,8 +134,6 @@ const MainProduct = () => {
         control: form.control,
         name: "discounts"
     })
-
-    const [attributes, setAttributes] = useState<Record<string, string>>({});
 
     const onSubmit = (values: ProductFormValues) => {
         const formData = new FormData()
@@ -206,15 +184,11 @@ const MainProduct = () => {
                 });
                 formData.append(key, JSON.stringify(validItems));
             } else if (key === 'attributes') {
-                
-
-                // loop through selectedFilter and convert all the values to an string then convert it again to an object and then append to formData
+                // Convert attributes for API
                 const attributesObject = Object.entries(selectedFilters).reduce((acc: Record<string, string>, [key, value]) => {
-                    acc[key] = value.join(',');
+                    acc[key] = value[0] || "";
                     return acc;
                 }, {});
-
-
                 formData.append(key, JSON.stringify(attributesObject));
             } else if (typeof value === 'boolean') {
                 formData.append(key, value.toString());
@@ -267,19 +241,23 @@ const MainProduct = () => {
             
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name *</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Product name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    {/* Basic Information Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Basic Information</h2>
+                        
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name *</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Product name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
                     <FormField
                         control={form.control}
@@ -502,483 +480,186 @@ const MainProduct = () => {
                         )}
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField
-                            control={form.control}
-                            name="price"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Price *</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                            type="number" 
-                                            step="0.01" 
-                                            placeholder="0.00" 
-                                            {...field} 
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                                control={form.control}
+                                name="price"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Price *</FormLabel>
+                                        <FormControl>
+                                            <Input 
+                                                type="number" 
+                                                step="0.01" 
+                                                placeholder="0.00" 
+                                                {...field} 
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="stock"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Stock *</FormLabel>
+                                        <FormControl>
+                                            <Input 
+                                                type="number" 
+                                                placeholder="0" 
+                                                {...field} 
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <FormField
                             control={form.control}
-                            name="stock"
+                            name="type"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Stock *</FormLabel>
-                                    <FormControl>
-                                        <Input 
-                                            type="number" 
-                                            placeholder="0" 
-                                            {...field} 
-                                        />
-                                    </FormControl>
+                                    <FormLabel>Product Type *</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select product type" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="NEW">New</SelectItem>
+                                            <SelectItem value="SALE">Sale</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
                     </div>
 
-                    <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Product Type *</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select product type" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="NEW">New</SelectItem>
-                                        <SelectItem value="SALE">Sale</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    {/* Categories Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Categories</h2>
+                        <ProductCategoryField 
+                            control={form.control}
+                            name="categoryIds"
+                            categories={categoriesData?.data?.categories || []}
+                            open={categoriesOpen}
+                            setOpen={setCategoriesOpen}
+                        />
+                    </div>
 
-                    <div className="space-y-4 border p-4 rounded-md">
-                        <h2 className="text-lg font-medium">Categories *</h2>
+                    {/* Product Attributes/Filters Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Product Attributes</h2>
+                        <ProductAttributesField
+                            control={form.control}
+                            name="attributes"
+                            filtersArray={filtersArray}
+                            selectedFilters={selectedFilters}
+                            setSelectedFilters={setSelectedFilters}
+                        />
+                    </div>
+
+                    {/* Discounts Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Discounts</h2>
+                        <ProductDiscountField
+                            control={form.control}
+                            discountFields={discountFields}
+                            append={appendDiscount}
+                            remove={removeDiscount}
+                        />
+                    </div>
+
+                    {/* Product Options Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Product Options</h2>
                         
                         <FormField
                             control={form.control}
-                            name="categoryIds"
+                            name="isFeatured"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Product Categories</FormLabel>
-                                    <Popover open={categoriesOpen} onOpenChange={setCategoriesOpen}>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    role="combobox"
-                                                    className={cn(
-                                                        "w-full justify-between",
-                                                        !field.value?.length && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value?.length
-                                                        ? `${field.value.length} categories selected`
-                                                        : "Select categories"}
-                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-full p-0">
-                                            <Command>
-                                                <CommandInput placeholder="Search categories..." />
-                                                <CommandEmpty>No categories found.</CommandEmpty>
-                                                <CommandGroup className="max-h-48 overflow-auto">
-                                                    {categoriesData?.data?.categories?.map((category) => (
-                                                        <CommandItem
-                                                            key={category._id}
-                                                            value={category.name}
-                                                            onSelect={() => {
-                                                                const currentCategories = field.value || [];
-                                                                const selected = currentCategories.includes(category._id);
-                                                                
-                                                                const updatedCategories = selected
-                                                                    ? currentCategories.filter(id => id !== category._id)
-                                                                    : [...currentCategories, category._id];
-                                                                
-                                                                field.onChange(updatedCategories);
-                                                            }}
-                                                        >
-                                                            <Check
-                                                                className={cn(
-                                                                    "mr-2 h-4 w-4",
-                                                                    field.value?.includes(category._id) ? "opacity-100" : "opacity-0"
-                                                                )}
-                                                            />
-                                                            {category.name}
-                                                        </CommandItem>
-                                                    ))}
-                                                </CommandGroup>
-                                            </Command>
-                                        </PopoverContent>
-                                    </Popover>
-                                    
-                                    {field.value?.length > 0 && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {field.value.map(categoryId => {
-                                                const category = categoriesData?.data?.categories?.find(c => c._id === categoryId);
-                                                return category ? (
-                                                    <div 
-                                                        key={categoryId}
-                                                        className="flex items-center bg-primary text-primary-foreground rounded-full px-3 py-1 text-sm"
-                                                    >
-                                                        {category.name}
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-auto p-0 ml-1 hover:bg-transparent"
-                                                            onClick={() => {
-                                                                field.onChange(field.value.filter(id => id !== categoryId));
-                                                            }}
-                                                        >
-                                                            <X className="h-3 w-3" />
-                                                        </Button>
-                                                    </div>
-                                                ) : null;
-                                            })}
-                                        </div>
-                                    )}
-                                    
-                                    <FormDescription>
-                                        Select one or more categories for this product
-                                    </FormDescription>
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                        <FormLabel className="text-base">Featured Product</FormLabel>
+                                        <FormDescription>
+                                            Display this product in featured sections
+                                        </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="sku"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>SKU *</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Stock Keeping Unit" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="barcodeEAN"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Barcode EAN</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Barcode EAN" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="noStockMessage"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Out of Stock Message</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Message when product is out of stock" {...field} />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
                     </div>
 
-                    <FormField
-                        control={form.control}
-                        name="attributes"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Product Filters</FormLabel>
-                            <FormDescription>
-                              Select product attributes and values
-                            </FormDescription>
-                            
-                            <div className="space-y-4">
-                              {/* Add filter button & dropdown */}
-                              <div className="flex flex-col space-y-4">
-                                <div className="flex justify-between items-center">
-                                  <h3 className="text-sm font-medium">Attributes</h3>
-                                  
-                                  <Popover>
-                                    <PopoverTrigger asChild>
-                                      <Button 
-                                        variant="outline" 
-                                        size="sm"
-                                        className="flex items-center gap-1"
-                                        disabled={Object.keys(selectedFilters).length === filtersArray.length}
-                                      >
-                                        <PlusCircle className="h-4 w-4" />
-                                        Add Attribute
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-64 p-0" align="end">
-                                      <Command>
-                                        <CommandInput placeholder="Search attributes..." />
-                                        <CommandEmpty>No attributes found.</CommandEmpty>
-                                        <CommandGroup className="max-h-48 overflow-auto">
-                                          {filtersArray
-                                            .filter(filter => !selectedFilters.hasOwnProperty(filter.name))
-                                            .map((filter: any) => (
-                                              <CommandItem
-                                                key={filter._id}
-                                                value={filter.name}
-                                                onSelect={() => {
-                                                  setSelectedFilters(prev => {
-                                                    const newFilters = {...prev};
-                                                    // Initialize with empty array
-                                                    newFilters[filter.name] = [];
-                                                    // Update form field
-                                                    field.onChange(newFilters);
-                                                    return newFilters;
-                                                  });
-                                                }}
-                                              >
-                                                {filter.name}
-                                              </CommandItem>
-                                            ))
-                                          }
-                                        </CommandGroup>
-                                      </Command>
-                                    </PopoverContent>
-                                  </Popover>
-                                </div>
-                              
-                                {/* Selected filters with their radio button selections */}
-                                {Object.keys(selectedFilters).length > 0 ? (
-                                  <div className="space-y-4 border rounded-md p-3">
-                                    {Object.entries(selectedFilters).map(([filterName, values]) => {
-                                      // Find the corresponding filter object to get available values
-                                      const filter = filtersArray.find(f => f.name === filterName);
-                                      if (!filter) return null;
-                                      
-                                      return (
-                                        <div key={filterName} className="space-y-2 pb-3 border-b last:border-b-0 last:pb-0">
-                                          <div className="flex justify-between items-center">
-                                            <h4 className="text-sm font-medium">{filterName}</h4>
-                                            <Button
-                                              variant="ghost"
-                                              size="sm"
-                                              className="h-8 w-8 p-0"
-                                              onClick={() => {
-                                                setSelectedFilters(prev => {
-                                                  const newFilters = {...prev};
-                                                  delete newFilters[filterName];
-                                                  field.onChange(newFilters);
-                                                  return newFilters;
-                                                });
-                                              }}
-                                            >
-                                              <X className="h-4 w-4" />
-                                            </Button>
-                                          </div>
-                                          
-                                          <div className="grid grid-cols-2 gap-2">
-                                            {filter.value.map((value: string) => {
-                                              // Check if this value is the selected one
-                                              const isSelected = values[0] === value;
-                                              
-                                              return (
-                                                <div key={value} className="flex items-center space-x-2">
-                                                  <input
-                                                    type="radio"
-                                                    id={`${filterName}-${value}`}
-                                                    name={`filter-${filterName}`}
-                                                    className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                                                    checked={isSelected}
-                                                    onChange={() => {
-                                                      setSelectedFilters(prev => {
-                                                        const newFilters = {...prev};
-                                                        // Set single value
-                                                        newFilters[filterName] = [value];
-                                                        field.onChange(newFilters);
-                                                        return newFilters;
-                                                      });
-                                                    }}
-                                                  />
-                                                  <label 
-                                                    htmlFor={`${filterName}-${value}`}
-                                                    className="text-sm font-medium leading-none cursor-pointer"
-                                                  >
-                                                    {value}
-                                                  </label>
-                                                </div>
-                                              );
-                                            })}
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                ) : (
-                                  <div className="text-center p-4 border rounded-md text-muted-foreground text-sm">
-                                    No attributes selected. Click &quot;Add Attribute&quot; to select product attributes.
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                    {/* Discounts section */}
-                    <div className="border rounded-md p-4 space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-medium">Discounts</h3>
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                size="sm" 
-                                onClick={() => appendDiscount({ customerGroup: 'BASIC', price: 0 })}
-                            >
-                                <PlusCircle className="h-4 w-4 mr-2" /> Add Discount
-                            </Button>
-                        </div>
-
-                        {discountFields.map((field, index) => (
-                            <div key={field.id} className="space-y-4 border-b pb-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        control={form.control}
-                                        name={`discounts.${index}.customerGroup`}
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Customer Group</FormLabel>
-                                                <Select onValueChange={field.onChange} value={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select customer group" />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        <SelectItem value="BASIC">Basic</SelectItem>
-                                                        <SelectItem value="VIP">VIP</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name={`discounts.${index}.price`}
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Discount Price</FormLabel>
-                                                <FormControl>
-                                                    <Input 
-                                                        type="number" 
-                                                        placeholder="Discounted price"
-                                                        {...field}
-                                                        onChange={(e) => field.onChange(Number(e.target.value))}
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <FormField
-                                        control={form.control}
-                                        name={`discounts.${index}.away`}
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Start Date</FormLabel>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <FormControl>
-                                                            <Button
-                                                                variant={"outline"}
-                                                                className="w-full pl-3 text-left font-normal"
-                                                            >
-                                                                {field.value
-                                                                    ? format(new Date(field.value), "PPP")
-                                                                    : "Pick a start date"}
-                                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                            </Button>
-                                                        </FormControl>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={field.value ? new Date(field.value) : undefined}
-                                                            onSelect={(date) => field.onChange(date?.toISOString())}
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name={`discounts.${index}.until`}
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>End Date</FormLabel>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <FormControl>
-                                                            <Button
-                                                                variant={"outline"}
-                                                                className="w-full pl-3 text-left font-normal"
-                                                            >
-                                                                {field.value
-                                                                    ? format(new Date(field.value), "PPP")
-                                                                    : "Pick an end date"}
-                                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                            </Button>
-                                                        </FormControl>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={field.value ? new Date(field.value) : undefined}
-                                                            onSelect={(date) => field.onChange(date?.toISOString())}
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="flex justify-end">
-                                    <Button
-                                        type="button"
-                                        variant="destructive"
-                                        size="sm"
-                                        onClick={() => removeDiscount(index)}
-                                    >
-                                        Remove Discount
-                                    </Button>
-                                </div>
-                            </div>
-                        ))}
-
-                        {discountFields.length === 0 && (
-                            <p className="text-sm text-muted-foreground">No discounts added yet.</p>
-                        )}
+                    {/* Related Products Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Related Products</h2>
+                        <ProductRelatedField
+                            control={form.control}
+                            name="relatedProducts"
+                            products={productsData?.data?.products || []}
+                            open={relatedProductsOpen}
+                            setOpen={setRelatedProductsOpen}
+                        />
                     </div>
 
-                    <FormField
-                        control={form.control}
-                        name="isFeatured"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                    <FormLabel className="text-base">Featured Product</FormLabel>
-                                    <FormDescription>
-                                        Display this product in featured sections
-                                    </FormDescription>
-                                </div>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="sku"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>SKU *</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Stock Keeping Unit" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="space-y-4 border p-4 rounded-md">
-                        <h2 className="text-lg font-medium">SEO Information</h2>
+                    {/* SEO Information Section */}
+                    <div className="space-y-6 border p-4 rounded-md">
+                        <h2 className="text-xl font-semibold">SEO Information</h2>
                         
                         <FormField
                             control={form.control}
@@ -1023,181 +704,68 @@ const MainProduct = () => {
                         />
                     </div>
 
-                    <FormField
-                        control={form.control}
-                        name="article"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Article *</FormLabel>
-                                <FormControl>
-                                    <Textarea placeholder="Product article content" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="barcodeEAN"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Barcode EAN</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Barcode EAN" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="noStockMessage"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Out of Stock Message</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Message when product is out of stock" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="space-y-4 border p-4 rounded-md">
-                        <h2 className="text-lg font-medium">Related Products</h2>
+                    {/* Content Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Content</h2>
                         
                         <FormField
                             control={form.control}
-                            name="relatedProducts"
+                            name="article"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Related Products</FormLabel>
-                                    <Popover open={relatedProductsOpen} onOpenChange={setRelatedProductsOpen}>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant="outline"
-                                                    role="combobox"
-                                                    className={cn(
-                                                        "w-full justify-between",
-                                                        !field.value?.length && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value?.length
-                                                        ? `${field.value.length} products selected`
-                                                        : "Select related products"}
-                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-full p-0">
-                                            <Command>
-                                                <CommandInput placeholder="Search products..." />
-                                                <CommandEmpty>No products found.</CommandEmpty>
-                                                <CommandGroup className="max-h-48 overflow-auto">
-                                                    {productsData?.data?.products?.map((product) => (
-                                                        <CommandItem
-                                                            key={product._id}
-                                                            value={product.name}
-                                                            onSelect={() => {
-                                                                const currentProducts = field.value || [];
-                                                                const selected = currentProducts.includes(product._id);
-                                                                
-                                                                const updatedProducts = selected
-                                                                    ? currentProducts.filter(id => id !== product._id)
-                                                                    : [...currentProducts, product._id];
-                                                                
-                                                                field.onChange(updatedProducts);
-                                                            }}
-                                                        >
-                                                            <Check
-                                                                className={cn(
-                                                                    "mr-2 h-4 w-4",
-                                                                    field.value?.includes(product._id) ? "opacity-100" : "opacity-0"
-                                                                )}
-                                                            />
-                                                            {product.name}
-                                                        </CommandItem>
-                                                    ))}
-                                                </CommandGroup>
-                                            </Command>
-                                        </PopoverContent>
-                                    </Popover>
-                                    
-                                    {field.value?.length > 0 && (
-                                        <div className="flex flex-wrap gap-2 mt-2">
-                                            {field.value.map(productId => {
-                                                const product = productsData?.data?.products?.find(p => p._id === productId);
-                                                return product ? (
-                                                    <div 
-                                                        key={productId}
-                                                        className="flex items-center bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm"
-                                                    >
-                                                        {product.name}
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            className="h-auto p-0 ml-1 hover:bg-transparent"
-                                                            onClick={() => {
-                                                                field.onChange(field.value.filter(id => id !== productId));
-                                                            }}
-                                                        >
-                                                            <X className="h-3 w-3" />
-                                                        </Button>
-                                                    </div>
-                                                ) : null;
-                                            })}
-                                        </div>
-                                    )}
-                                    
-                                    <FormDescription>
-                                        Products that are related to this one and may be shown together
-                                    </FormDescription>
+                                <FormItem>
+                                    <FormLabel>Article *</FormLabel>
+                                    <FormControl>
+                                        <Textarea placeholder="Product article content" {...field} />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
                     </div>
 
-                    <FormField
-                        control={form.control}
-                        name="requireShipping"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                    <FormLabel className="text-base">Requires Shipping</FormLabel>
-                                    <FormDescription>
-                                        Does this product require shipping?
-                                    </FormDescription>
-                                </div>
-                                <FormControl>
-                                    <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-
-                    {!form.watch("requireShipping") && (
+                    {/* Shipping Settings Section */}
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-semibold">Shipping Settings</h2>
+                        
                         <FormField
                             control={form.control}
-                            name="liscenseKey"
+                            name="requireShipping"
                             render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>License Key</FormLabel>
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                        <FormLabel className="text-base">Requires Shipping</FormLabel>
+                                        <FormDescription>
+                                            Does this product require shipping?
+                                        </FormDescription>
+                                    </div>
                                     <FormControl>
-                                        <Input placeholder="License key for digital products" {...field} />
+                                        <Switch
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
                                     </FormControl>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
-                    )}
 
+                        {!form.watch("requireShipping") && (
+                            <FormField
+                                control={form.control}
+                                name="liscenseKey"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>License Key</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="License key for digital products" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+                    </div>
+
+                    {/* Form Submission */}
                     <div className="flex justify-end space-x-4">
                         <Button
                             type="button"
