@@ -32,17 +32,15 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarIcon, X } from "lucide-react";
+import { CalendarIcon, X, PlusCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { formatDate } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
-import { format, sub } from "date-fns";
-import { Checkbox } from "../ui/checkbox";
-import { get } from "http";
+import { format } from "date-fns";
 import { IError } from "@/app/admin/games/create/page";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const discountSchema = z.object({
   // customerGroup: z.string().min(1, "Customer group cannot be empty"),
@@ -61,7 +59,6 @@ const formSchema = z
     colors: z.string().min(1, "Colors cannot be empty").optional(),
     stock: z.number().min(0, "Stock must be 0 or greater"),
     price: z.number().min(0, "Price must be 0 or greater"),
-    // discounts: z.string().optional(),
     attributes: z.any(),
     categoryIds: z.any(),
     type: z.enum(["NEW", "SALE"]),
@@ -151,7 +148,16 @@ interface ProductResponse {
 }
 
 interface FilterResponse {
-  data: FilterData[];
+  data: {
+    filters: Array<{
+      _id: string;
+      name: string;
+      value: string[];
+      category: string;
+      createdAt: string;
+      updatedAt: string;
+    }>;
+  };
 }
 
 interface DiscountItem {
@@ -224,9 +230,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const { data: filtersData } = useGetFilters() as { data: FilterResponse };
   const params = useParams();
   const productId = params.id as string;
-  const [selectedFilter, setSelectedFilters] = useState<
-    Record<string, string[]>
-  >(
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>(
     Object.entries(product?.attributes || {}).reduce((acc, [key, value]) => {
       acc[key] = Array.isArray(value) ? value : [value];
       return acc;
@@ -236,28 +240,28 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      company: "",
+      name: product?.name || "",
+      description: product?.description || "",
+      company: product?.company || "",
       images: null,
-      colors: "",
-      stock: 0,
-      price: 0,
-      discounts: [],
-      attributes: [],
-      categoryIds: "",
-      type: "NEW",
-      isFeatured: false,
-      metaTitle: "",
-      metaDescription: "",
-      metaKeywords: "",
-      article: "",
-      sku: "",
-      barcodeEAN: "",
-      noStockMessage: "",
-      relatedProducts: [],
-      requireShipping: true,
-      liscenseKey: "",
+      colors: product?.colors?.join(", ") || "",
+      stock: product?.stock || 0,
+      price: product?.price || 0,
+      discounts: product?.discounts || [],
+      attributes: Object.keys(product?.attributes || {}),
+      categoryIds: product?.categoryIds[0]?._id || "",
+      type: product?.type || "NEW",
+      isFeatured: product?.isFeatured || false,
+      metaTitle: product?.metaTitle || "",
+      metaDescription: product?.metaDescription || "",
+      metaKeywords: product?.metaKeywords || "",
+      article: product?.article || "",
+      sku: product?.sku || "",
+      barcodeEAN: product?.barcodeEAN || "",
+      noStockMessage: product?.noStockMessage || "",
+      relatedProducts: product?.relatedProducts || [],
+      requireShipping: product?.requireShipping ?? true,
+      liscenseKey: product?.liscenseKey || "",
     },
   });
 
@@ -386,7 +390,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             .filter(Boolean);
           formData.append("colors", JSON.stringify(colorsArray));
         } else if (key === "attributes") {
-          const attributesObject = Object.entries(selectedFilter).reduce(
+          const attributesObject = Object.entries(selectedFilters).reduce(
             (acc, [filterName, filterValues]) => {
               filterValues.forEach((value) => {
                 acc[filterName] = value;
@@ -438,32 +442,18 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const [discountRemove, setDiscountRemove] = useState(false);
 
   return (
-    <div className="p-6">
+    <div className="p-6 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Update Product</h2>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Name *</FormLabel>
                 <FormControl>
                   <Input placeholder="Product name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="company"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Company</FormLabel>
-                <FormControl>
-                  <Input placeholder="Company name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -475,7 +465,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>Description *</FormLabel>
                 <FormControl>
                   <Textarea placeholder="Product description" {...field} />
                 </FormControl>
@@ -486,68 +476,208 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
 
           <FormField
             control={form.control}
-            name="images"
+            name="company"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Images</FormLabel>
+                <FormLabel>Company *</FormLabel>
                 <FormControl>
-                  <Input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
+                  <Input placeholder="Company name" {...field} />
                 </FormControl>
-                <div className="flex gap-4 my-2">
-                  {previewUrls.map((url, index) => (
-                    <div
-                      key={index}
-                      className="relative aspect-square w-20 h-20 rounded-lg overflow-hidden border"
-                    >
-                      <Image
-                        src={url}
-                        alt={`Preview ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                      <button
-                        type="button"
-                        className="absolute top-0 right-0 bg-white rounded-full p-1 shadow"
-                        onClick={() => {
-                          if (url.startsWith("blob:")) {
-                            URL.revokeObjectURL(url);
-                          }
-                          setRemovedImages((prev) => [...prev, url]);
-                          setPreviewUrls((prev) =>
-                            prev.filter((_, i) => i !== index)
-                          );
-                        }}
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="images"
+            render={({ field: { onChange, value, ...field } }) => (
+              <FormItem className="space-y-4">
+                <FormLabel>Images *</FormLabel>
+                <div
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer relative"
+                  onClick={() => document.getElementById("image-upload")?.click()}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.classList.add("border-primary");
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.classList.remove("border-primary");
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.currentTarget.classList.remove("border-primary");
+
+                    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                      const files = Array.from(e.dataTransfer.files).filter(
+                        (file) => file.type.startsWith("image/")
+                      );
+
+                      if (files.length > 0) {
+                        const existingFiles = Array.isArray(value) ? [...value] : [];
+                        const updatedFiles = [...existingFiles, ...files];
+
+                        previewUrls.forEach((url) => URL.revokeObjectURL(url));
+                        const newUrls = updatedFiles.map((file) =>
+                          URL.createObjectURL(file)
+                        );
+                        setPreviewUrls(newUrls);
+                        onChange(updatedFiles);
+                      }
+                    }
+                  }}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="bg-gray-100 p-3 rounded-full">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6 text-gray-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="text-gray-600 font-medium">
+                      {previewUrls.length > 0
+                        ? `Add more images (${previewUrls.length} selected)`
+                        : "Drag & drop images here"}
+                    </div>
+                    <div className="text-gray-500 text-sm">or click to browse</div>
+                    <input
+                      id="image-upload"
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageChange}
+                      {...field}
+                    />
+                  </div>
+                </div>
+
+                {previewUrls.length === 0 && (
+                  <div className="text-center text-amber-600 text-sm bg-amber-50 p-2 rounded-md">
+                    <strong>Image required!</strong> Please upload at least one
+                    product image.
+                    <p className="text-gray-500 mt-1">
+                      Supported formats: JPG, PNG, WebP
+                    </p>
+                  </div>
+                )}
+
+                {previewUrls.length > 0 && (
+                  <div className="space-y-3 border rounded-md p-4 bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">
+                          {previewUrls.length} image
+                          {previewUrls.length !== 1 ? "s" : ""} selected
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Click on an image to remove it
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          previewUrls.forEach((url) => URL.revokeObjectURL(url));
+                          setPreviewUrls([]);
+                          onChange([]);
+                        }}
+                      >
+                        Clear All
+                      </Button>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      {previewUrls.map((url, index) => (
+                        <div
+                          key={index}
+                          className="relative group cursor-pointer rounded-md overflow-hidden border"
+                          onClick={() => {
+                            URL.revokeObjectURL(url);
+                            const newPreviews = [...previewUrls];
+                            newPreviews.splice(index, 1);
+                            setPreviewUrls(newPreviews);
+
+                            if (Array.isArray(value)) {
+                              const newFiles = [...value];
+                              newFiles.splice(index, 1);
+                              onChange(newFiles);
+                            }
+                          }}
+                        >
+                          <div className="aspect-square w-full overflow-hidden bg-white">
+                            <Image
+                              src={url}
+                              alt={`Preview ${index + 1}`}
+                              width={200}
+                              height={200}
+                              className="object-contain w-full h-full"
+                            />
+                          </div>
+                          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <X className="h-6 w-6 text-white" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="colors"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Colors *</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Colors (comma separated: Red, Blue, Green)"
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>Enter colors separated by commas</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={form.control}
               name="price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price</FormLabel>
+                  <FormLabel>Price *</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
+                      step="0.01"
                       placeholder="0.00"
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
                       {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -560,13 +690,17 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               name="stock"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stock</FormLabel>
+                  <FormLabel>Stock *</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       placeholder="0"
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
                       {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
                     />
                   </FormControl>
                   <FormMessage />
@@ -580,14 +714,11 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+                <FormLabel>Product Type *</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select type" />
+                      <SelectValue placeholder="Select product type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -600,34 +731,14 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="isFeatured"
-            render={({ field }) => (
-              <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel>Featured Product</FormLabel>
-                  <FormDescription>
-                    Display this product in featured sections
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <div>
+          <div className="space-y-4 border p-4 rounded-md">
+            <h2 className="text-lg font-medium">Categories *</h2>
             <FormField
               control={form.control}
               name="categoryIds"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category</FormLabel>
+                <FormItem className="flex flex-col">
+                  <FormLabel>Product Categories</FormLabel>
                   <Select
                     onValueChange={(e) => {
                       field.onChange(e);
@@ -649,16 +760,13 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categoriesData?.data?.categories?.map(
-                        (category: Category) => (
-                          <SelectItem key={category._id} value={category._id}>
-                            {category.displayName || category.name}
-                          </SelectItem>
-                        )
-                      )}
+                      {categoriesData?.data?.categories?.map((category) => (
+                        <SelectItem key={category._id} value={category._id}>
+                          {category.displayName || category.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
                   <div className="flex gap-2">
                     {categories.map((cat, i) => (
                       <div
@@ -682,6 +790,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       </div>
                     ))}
                   </div>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -694,373 +803,144 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
 
           <FormField
             control={form.control}
-            name="colors"
+            name="attributes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Colors</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Product colors (comma-separated)"
-                    {...field}
-                  />
-                </FormControl>
+                <FormLabel>Product Filters</FormLabel>
                 <FormDescription>
-                  Enter colors separated by commas (e.g., Red, Blue, Green)
+                  Select attributes and values for product filtering
                 </FormDescription>
+
+                <div className="space-y-4">
+                  <div>
+                    <FormLabel>Select Filters</FormLabel>
+                    <div className="flex flex-col space-y-2">
+                      {filtersData?.data?.filters?.map((filter) => (
+                        <div key={filter._id} className="flex items-start space-x-2">
+                          <Checkbox
+                            id={`filter-${filter._id}`}
+                            checked={selectedFilters[filter.name] !== undefined}
+                            onCheckedChange={(checked) => {
+                              setSelectedFilters((prev) => {
+                                const newFilters = { ...prev };
+
+                                if (checked) {
+                                  newFilters[filter.name] = [];
+                                } else {
+                                  delete newFilters[filter.name];
+                                }
+
+                                field.onChange(newFilters);
+                                return newFilters;
+                              });
+                            }}
+                          />
+                          <div className="grid gap-1.5 leading-none">
+                            <label
+                              htmlFor={`filter-${filter._id}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                              {filter.name}
+                            </label>
+
+                            {selectedFilters[filter.name] !== undefined && (
+                              <div className="pl-6 mt-2">
+                                <FormLabel className="text-xs">
+                                  Select Values
+                                </FormLabel>
+                                <div className="flex flex-wrap gap-2 mt-1">
+                                  {filter.value.map((value) => (
+                                    <Button
+                                      key={value}
+                                      type="button"
+                                      size="sm"
+                                      variant={
+                                        selectedFilters[filter.name]?.includes(value)
+                                          ? "default"
+                                          : "outline"
+                                      }
+                                      className="text-xs h-7"
+                                      onClick={() => {
+                                        setSelectedFilters((prev) => {
+                                          const newFilters = { ...prev };
+                                          const currentValues =
+                                            newFilters[filter.name] || [];
+
+                                          if (currentValues.includes(value)) {
+                                            newFilters[filter.name] =
+                                              currentValues.filter((v) => v !== value);
+                                          } else {
+                                            newFilters[filter.name] = [
+                                              ...currentValues,
+                                              value,
+                                            ];
+                                          }
+
+                                          field.onChange(newFilters);
+                                          return newFilters;
+                                        });
+                                      }}
+                                    >
+                                      {value}
+                                    </Button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {Object.keys(selectedFilters).length > 0 && (
+                    <div className="border rounded-md p-3 bg-muted/20">
+                      <h4 className="text-sm font-medium mb-2">
+                        Selected Attributes
+                      </h4>
+                      <div className="space-y-2">
+                        {Object.entries(selectedFilters).map(
+                          ([filterName, values]) => (
+                            <div key={filterName} className="flex flex-col">
+                              <span className="text-sm font-medium">
+                                {filterName}
+                              </span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {values.length > 0 ? (
+                                  values.map((value) => (
+                                    <span
+                                      key={value}
+                                      className="bg-primary/10 text-primary text-xs rounded px-2 py-1"
+                                    >
+                                      {value}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <span className="text-xs text-muted-foreground">
+                                    No values selected
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {fields.length > 0 ? (
-            <div className="bg-gray-100 p-4 rounded-lg">
-              {fields.map((field, index) => (
-                <div key={field.id} className="mb-4">
-                  {/* Discount Type */}
-                  <div className="flex items-center justify-center gap-5">
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.customerGroup`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>Discount Type</FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select discount type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="BASIC">Basic</SelectItem>
-                                <SelectItem value="VIP">VIP</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Discount Price */}
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.price`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>Discount</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter discount price"
-                              type="number"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value ? Number(e.target.value) : ""
-                                )
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-center gap-5">
-                    {/* Start Date */}
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.away`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col mt-5 flex-1">
-                          <FormLabel>Start Date</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className="w-full pl-3 text-left font-normal"
-                                >
-                                  {field.value
-                                    ? format(new Date(field.value), "PPP")
-                                    : "Pick a date"}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={
-                                  field.value
-                                    ? new Date(field.value)
-                                    : undefined
-                                }
-                                onSelect={(date) =>
-                                  field.onChange(date?.toISOString())
-                                }
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* End Date */}
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.until`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col mt-5 flex-1">
-                          <FormLabel>End Date</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className="w-full pl-3 text-left font-normal"
-                                >
-                                  {field.value
-                                    ? format(new Date(field.value), "PPP")
-                                    : "Pick a date"}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={
-                                  field.value
-                                    ? new Date(field.value)
-                                    : undefined
-                                }
-                                onSelect={(date) =>
-                                  field.onChange(date?.toISOString())
-                                }
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Remove Discount Button */}
-                  <Button
-                    type="button"
-                    className="mt-2 bg-red-500 hover:bg-red-500 text-white"
-                    onClick={() => remove(index)}
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ))}
-
-              {/* Add Discount Button */}
+          <div className="border rounded-md p-4 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium">Discounts</h3>
               <Button
                 type="button"
-                className="mt-4 bg-blue-500 text-white mr-2"
-                onClick={() => {
-                  const currentDiscounts = form.getValues("discounts") || [];
-                  form.setValue(
-                    "discounts",
-                    [
-                      ...currentDiscounts, // Keep existing discounts
-                      {
-                        customerGroup: "BASIC",
-                        price: 0,
-                        away: undefined,
-                        until: undefined,
-                      },
-                    ],
-                    {
-                      shouldValidate: true,
-                      shouldDirty: true,
-                    }
-                  );
-                }}
-              >
-                Add Another Discount
-              </Button>
-            </div>
-          ) : (
-            <div className="bg-gray-100 p-4 rounded-lg">
-              {fields.map((field, index) => (
-                <div key={field.id} className="mb-4">
-                  {/* Discount Type */}
-                  <div className="flex items-center justify-center gap-5">
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.customerGroup`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>Discount Type</FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select discount type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="BASIC">Basic</SelectItem>
-                                <SelectItem value="VIP">VIP</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* Discount Price */}
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.price`}
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel>Discount</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Enter discount price"
-                              type="number"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value ? Number(e.target.value) : ""
-                                )
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-center gap-5">
-                    {/* Start Date */}
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.away`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col mt-5 flex-1">
-                          <FormLabel>Start Date</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className="w-full pl-3 text-left font-normal"
-                                >
-                                  {field.value
-                                    ? format(new Date(field.value), "PPP")
-                                    : "Pick a date"}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={
-                                  field.value
-                                    ? new Date(field.value)
-                                    : undefined
-                                }
-                                onSelect={(date) =>
-                                  field.onChange(date?.toISOString())
-                                }
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {/* End Date */}
-                    <FormField
-                      control={form.control}
-                      name={`discounts.${index}.until`}
-                      render={({ field }) => (
-                        <FormItem className="flex flex-col mt-5 flex-1">
-                          <FormLabel>End Date</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={"outline"}
-                                  className="w-full pl-3 text-left font-normal"
-                                >
-                                  {field.value
-                                    ? format(new Date(field.value), "PPP")
-                                    : "Pick a date"}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={
-                                  field.value
-                                    ? new Date(field.value)
-                                    : undefined
-                                }
-                                onSelect={(date) =>
-                                  field.onChange(date?.toISOString())
-                                }
-                                disabled={(date) => date < new Date()}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Remove Discount Button */}
-                  <Button
-                    type="button"
-                    className="mt-2 bg-red-500 hover:bg-red-500 text-white"
-                    onClick={() => remove(index)}
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ))}
-
-              {/* Add Discount Button */}
-              <Button
-                type="button"
-                className="mt-4 bg-blue-500 hover:bg-blue-500 text-white mr-2"
+                variant="outline"
+                size="sm"
                 onClick={() =>
                   append({
                     customerGroup: "BASIC",
@@ -1070,204 +950,166 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                   })
                 }
               >
-                Add Discount
+                <PlusCircle className="h-4 w-4 mr-2" /> Add Discount
               </Button>
             </div>
-          )}
-          <FormField
-            control={form.control}
-            name="attributes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Filters name</FormLabel>
-                <Select
-                  value=""
-                  onValueChange={(value) => {
-                    const currentValues = field.value || [];
-                    if (!currentValues.includes(value)) {
-                      field.onChange([...currentValues, value]);
-                      const filter = filtersData?.data?.find(
-                        (f) => f.name === value
-                      );
-                      if (filter) {
-                        setSelectedFilters((prevFilters) => ({
-                          ...prevFilters,
-                          [filter.name]: filter.value,
-                        }));
-                      }
-                    }
-                  }}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select filter" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {filtersData?.data.filters?.map((filter) => (
-                      <SelectItem key={filter._id} value={filter.name}>
-                        {filter.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {field.value?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {field.value.map((filterName) => (
-                      <div
-                        key={filterName}
-                        className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
-                      >
-                        <span className="text-sm">{filterName}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
-                          onClick={() => {
-                            field.onChange(
-                              field.value.filter((name) => name !== filterName)
-                            );
-                            setSelectedFilters((prevFilters) => {
-                              const updatedFilters = { ...prevFilters };
-                              delete updatedFilters[filterName];
-                              return updatedFilters;
-                            });
-                          }}
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <FormMessage />
-              </FormItem>
+
+            {fields.map((field, index) => (
+              <div key={field.id} className="space-y-4 border-b pb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`discounts.${index}.customerGroup`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Customer Group</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select customer group" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="BASIC">Basic</SelectItem>
+                            <SelectItem value="VIP">VIP</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`discounts.${index}.price`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Discount Price</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Discounted price"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name={`discounts.${index}.away`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Start Date</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className="w-full pl-3 text-left font-normal"
+                              >
+                                {field.value
+                                  ? format(new Date(field.value), "PPP")
+                                  : "Pick a start date"}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) =>
+                                field.onChange(date?.toISOString())
+                              }
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`discounts.${index}.until`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>End Date</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className="w-full pl-3 text-left font-normal"
+                              >
+                                {field.value
+                                  ? format(new Date(field.value), "PPP")
+                                  : "Pick an end date"}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) =>
+                                field.onChange(date?.toISOString())
+                              }
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => remove(index)}
+                  >
+                    Remove Discount
+                  </Button>
+                </div>
+              </div>
+            ))}
+
+            {fields.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                No discounts added yet.
+              </p>
             )}
-          />
+          </div>
 
           <FormField
             control={form.control}
-            name="relatedProducts"
+            name="isFeatured"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Related Products</FormLabel>
-                <Select
-                  value=""
-                  onValueChange={(value) => {
-                    const currentValues = field.value || [];
-                    if (!currentValues.includes(value)) {
-                      field.onChange([...currentValues, value]);
-                    }
-                  }}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select related products" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {productsData?.data?.products?.map((product) => (
-                      <SelectItem
-                        key={product._id}
-                        value={product._id}
-                        disabled={field.value?.includes(product._id)}
-                      >
-                        {product.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {field.value?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {field.value.map((productId) => {
-                      const product = productsData?.data?.products?.find(
-                        (p) => p._id === productId
-                      );
-                      return (
-                        <div
-                          key={productId}
-                          className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
-                        >
-                          <span className="text-sm">{product?.name}</span>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
-                            onClick={() => {
-                              field.onChange(
-                                field.value.filter((id) => id !== productId)
-                              );
-                            }}
-                          >
-                            ×
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-                <FormDescription>
-                  Select multiple products to relate to this product
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="metaTitle"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Meta Title</FormLabel>
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Featured Product</FormLabel>
+                  <FormDescription>
+                    Display this product in featured sections
+                  </FormDescription>
+                </div>
                 <FormControl>
-                  <Input placeholder="SEO meta title" {...field} />
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="metaDescription"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Meta Description</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="SEO meta description" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="metaKeywords"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Meta Keywords</FormLabel>
-                <FormControl>
-                  <Input placeholder="SEO meta keywords" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="article"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Article</FormLabel>
-                <FormControl>
-                  <Input placeholder="Product article" {...field} />
-                </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -1277,9 +1119,69 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             name="sku"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>SKU</FormLabel>
+                <FormLabel>SKU *</FormLabel>
                 <FormControl>
                   <Input placeholder="Stock Keeping Unit" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="space-y-4 border p-4 rounded-md">
+            <h2 className="text-lg font-medium">SEO Information</h2>
+
+            <FormField
+              control={form.control}
+              name="metaTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Meta Title *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="SEO meta title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="metaDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Meta Description *</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="SEO meta description" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="metaKeywords"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Meta Keywords *</FormLabel>
+                  <FormControl>
+                    <Input placeholder="SEO meta keywords" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <FormField
+            control={form.control}
+            name="article"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Article *</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="Product article content" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -1293,7 +1195,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
               <FormItem>
                 <FormLabel>Barcode EAN</FormLabel>
                 <FormControl>
-                  <Input placeholder="Barcode EAN number" {...field} />
+                  <Input placeholder="Barcode EAN" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -1305,10 +1207,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             name="noStockMessage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>No Stock Message</FormLabel>
+                <FormLabel>Out of Stock Message</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Message to show when out of stock"
+                    placeholder="Message when product is out of stock"
                     {...field}
                   />
                 </FormControl>
@@ -1317,31 +1219,98 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             )}
           />
 
+          <div className="space-y-4 border p-4 rounded-md">
+            <h2 className="text-lg font-medium">Related Products</h2>
+
+            <FormField
+              control={form.control}
+              name="relatedProducts"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Related Products</FormLabel>
+                  <Select
+                    value=""
+                    onValueChange={(value) => {
+                      const currentValues = field.value || [];
+                      if (!currentValues.includes(value)) {
+                        field.onChange([...currentValues, value]);
+                      }
+                    }}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select related products" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {productsData?.data?.products?.map((product) => (
+                        <SelectItem
+                          key={product._id}
+                          value={product._id}
+                          disabled={field.value?.includes(product._id)}
+                        >
+                          {product.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {field.value?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {field.value.map((productId) => {
+                        const product = productsData?.data?.products?.find(
+                          (p) => p._id === productId
+                        );
+                        return (
+                          <div
+                            key={productId}
+                            className="flex items-center bg-secondary text-secondary-foreground rounded-full px-3 py-1 text-sm"
+                          >
+                            {product?.name}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-auto p-0 ml-1 hover:bg-transparent"
+                              onClick={() => {
+                                field.onChange(
+                                  field.value.filter((id) => id !== productId)
+                                );
+                              }}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <FormDescription>
+                    Products that are related to this one and may be shown together
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
             control={form.control}
             name="requireShipping"
-            render={({ field }) => {
-              setDisableLicenseKey(field.value);
-              return (
-                <FormItem className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel>Require Shipping</FormLabel>
-                    <FormDescription>
-                      Does this product require shipping?
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              );
-            }}
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Requires Shipping</FormLabel>
+                  <FormDescription>
+                    Does this product require shipping?
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+              </FormItem>
+            )}
           />
 
-          {!disableLicenseKey && (
+          {!form.watch("requireShipping") && (
             <FormField
               control={form.control}
               name="liscenseKey"
@@ -1349,7 +1318,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                 <FormItem>
                   <FormLabel>License Key</FormLabel>
                   <FormControl>
-                    <Input placeholder="Product license key" {...field} />
+                    <Input
+                      placeholder="License key for digital products"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -1357,7 +1329,14 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             />
           )}
 
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.push("/admin/products")}
+            >
+              Cancel
+            </Button>
             <Button type="submit" disabled={isPending}>
               {isPending ? "Updating..." : "Update Product"}
             </Button>

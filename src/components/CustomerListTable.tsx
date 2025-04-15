@@ -12,7 +12,12 @@ import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 export function CustomeListTable({
   search,
@@ -50,7 +55,7 @@ export function CustomeListTable({
             Customer group
           </TableHead>
           <TableHead className="text-primary font-bold">Approve</TableHead>
-          <TableHead className="text-primary font-bold">IP</TableHead>
+          <TableHead className="text-primary font-bold">Spendings</TableHead>
           <TableHead className="text-primary font-bold">Created</TableHead>
           <TableHead className="text-primary font-bold">Points</TableHead>
           <TableHead className="text-primary font-bold text-right">
@@ -67,7 +72,7 @@ export function CustomeListTable({
             <TableCell>
               {customer.approved ? "Approved" : "Not Approve"}
             </TableCell>
-            <TableCell className="">{customer.ip}</TableCell>
+            <TableCell className="">{customer?.spendings || "N/A"}</TableCell>
             <TableCell className="">
               {customer.createdAt.split("T")[0]}
             </TableCell>

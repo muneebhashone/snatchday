@@ -34,10 +34,7 @@ interface Filter {
 const Filter = () => {
   // Fetch filters and categories using the hooks
   const queryClient = useQueryClient();
-  const { data: getFilters, isLoading, isError } = useGetFilters({
-    limit: "10",
-    offset: "0"
-  });
+  const { data: getFilters, isLoading, isError } = useGetFilters();
   const { data: getCategories } = useGetCategories();
   const { mutate: deleteFilter } = useDeleteFilter();
 
@@ -98,7 +95,7 @@ const Filter = () => {
               </TableHeader>
               <TableBody>
                 {filters
-                  ?.filters?.sort(
+                  ?.sort(
                     (a: Filter, b: Filter) =>
                       new Date(b.createdAt).getTime() -
                       new Date(a.createdAt).getTime()
