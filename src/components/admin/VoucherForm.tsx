@@ -400,6 +400,11 @@ const VoucherForm = () => {
                         type="number"
                         placeholder="Enter value"
                         {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
                         className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                     </FormControl>

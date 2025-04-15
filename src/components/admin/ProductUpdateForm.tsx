@@ -9,6 +9,7 @@ import {
   useUpdateProduct,
   useGetCategories,
   useGetFilters,
+  useGetProductById,
   useGetProducts,
 } from "@/hooks/api";
 import { Button } from "@/components/ui/button";
@@ -32,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarIcon, X } from "lucide-react";
+import { CalendarIcon, X, PlusCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
@@ -43,6 +44,13 @@ import { format, sub } from "date-fns";
 import { Checkbox } from "../ui/checkbox";
 import { get } from "http";
 import { IError } from "@/app/admin/games/create/page";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
 
 const discountSchema = z.object({
   // customerGroup: z.string().min(1, "Customer group cannot be empty"),
@@ -58,7 +66,7 @@ const formSchema = z
     description: z.string().min(1, "Description cannot be empty"),
     company: z.string().min(1, "Company cannot be empty"),
     images: z.any(),
-    colors: z.string().min(1, "Colors cannot be empty"),
+    colors: z.string().min(1, "Colors cannot be empty").optional(),
     stock: z.number().min(0, "Stock must be 0 or greater"),
     price: z.number().min(0, "Price must be 0 or greater"),
     // discounts: z.string().optional(),
@@ -67,10 +75,13 @@ const formSchema = z
     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
-    metaDescription: z.string().min(1, "Meta description cannot be empty"),
-    metaKeywords: z.string().min(1, "Meta keywords cannot be empty"),
+    metaDescription: z
+      .string()
+      .min(1, "Meta description cannot be empty")
+      .optional(),
+    metaKeywords: z.string().min(1, "Meta keywords cannot be empty").optional(),
     article: z.string().min(1, "Article cannot be empty"),
-    sku: z.string().min(1, "SKU cannot be empty"),
+    sku: z.string().min(1, "SKU cannot be empty").optional(),
     barcodeEAN: z.string().min(1, "Barcode EAN cannot be empty"),
     noStockMessage: z.string().min(1, "No stock message cannot be empty"),
     relatedProducts: z.array(z.string()).default([]),
@@ -130,6 +141,9 @@ interface FilterData {
   _id: string;
   name: string;
   value: string[];
+  category: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface ProductData {
@@ -151,7 +165,9 @@ interface ProductResponse {
 }
 
 interface FilterResponse {
-  data: FilterData[];
+  data: {
+    filters: FilterData[];
+  };
 }
 
 interface DiscountItem {
@@ -206,12 +222,12 @@ interface Product {
 export default function ProductUpdateForm({ product }: { product: Product }) {
   const [emptyCategory, setEmptyCategory] = useState(false);
   const [disableLicenseKey, setDisableLicenseKey] = useState(false);
-  const [categories, getCategories] = useState([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [removedImages, setRemovedImages] = useState<string[]>([]);
   const router = useRouter();
   const queryClient = useQueryClient();
   const [previewUrls, setPreviewUrls] = useState<string[]>(
-    product.images || []
+    product?.images || []
   );
   const { mutate: updateProduct, isPending } = useUpdateProduct();
   const { data: categoriesData } = useGetCategories({
@@ -220,46 +236,89 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   }) as {
     data: CategoryResponse;
   };
-  const { data: productsData } = useGetProducts() as { data: ProductResponse };
-  const { data: filtersData } = useGetFilters() as { data: FilterResponse };
   const params = useParams();
   const productId = params.id as string;
+  const { data: productsData } = useGetProducts({
+    limit: "99999",
+    offset: "0",
+  });
+  const { data: filtersData } = useGetFilters() as { data: FilterResponse };
   const [selectedFilter, setSelectedFilters] = useState<
     Record<string, string[]>
   >(
-    Object.entries(product.attributes || {}).reduce((acc, [key, value]) => {
+    Object.entries(product?.attributes || {}).reduce((acc, [key, value]) => {
       acc[key] = Array.isArray(value) ? value : [value];
       return acc;
     }, {} as Record<string, string[]>)
   );
-  console.log(product.categoryIds);
+  console.log(product?.categoryIds);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: product.name,
-      description: product.description,
-      company: product.company,
+      name: "",
+      description: "",
+      company: "",
       images: null,
-      colors: product.colors.join(", "),
-      stock: product.stock,
-      price: product.price,
-      discounts: product.discounts || [],
-      attributes: Object.keys(product.attributes || {}),
-      categoryIds: product.categoryIds[0]?._id || "",
-      type: product.type,
-      isFeatured: product.isFeatured,
-      metaTitle: product.metaTitle,
-      metaDescription: product.metaDescription,
-      metaKeywords: product.metaKeywords,
-      article: product.article,
-      sku: product.sku,
-      barcodeEAN: product.barcodeEAN,
-      noStockMessage: product.noStockMessage,
-      relatedProducts: product.relatedProducts,
-      requireShipping: product.requireShipping,
-      liscenseKey: product.liscenseKey,
+      colors: "",
+      stock: 0,
+      price: 0,
+      discounts: [],
+      attributes: [],
+      categoryIds: "",
+      type: "NEW",
+      isFeatured: false,
+      metaTitle: "",
+      metaDescription: "",
+      metaKeywords: "",
+      article: "",
+      sku: "",
+      barcodeEAN: "",
+      noStockMessage: "",
+      relatedProducts: [],
+      requireShipping: true,
+      liscenseKey: "",
     },
   });
+
+  useEffect(() => {
+    if (product) {
+      form.reset({
+        name: product.name,
+        description: product.description,
+        company: product.company,
+        images: null,
+        colors: product.colors?.join(", "),
+        stock: product.stock,
+        price: product.price,
+        discounts: product.discounts || [],
+        attributes: Object.keys(product.attributes || {}),
+        categoryIds: product.categoryIds[0]?._id || "",
+        type: product.type,
+        isFeatured: product.isFeatured,
+        metaTitle: product.metaTitle,
+        metaDescription: product.metaDescription,
+        metaKeywords: product.metaKeywords,
+        article: product.article,
+        sku: product.sku,
+        barcodeEAN: product.barcodeEAN,
+        noStockMessage: product.noStockMessage,
+        relatedProducts: product.relatedProducts,
+        requireShipping: product.requireShipping,
+        liscenseKey: product.liscenseKey,
+      });
+
+      setPreviewUrls(product.images || []);
+      if (product.categoryIds) {
+        setCategories(product.categoryIds);
+      }
+      setSelectedFilters(
+        Object.entries(product.attributes || {}).reduce((acc, [key, value]) => {
+          acc[key] = Array.isArray(value) ? value : [value];
+          return acc;
+        }, {} as Record<string, string[]>)
+      );
+    }
+  }, [product, form]);
 
   const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
@@ -271,9 +330,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       replace(product.discounts);
     }
     if (product && product.categoryIds) {
-      getCategories(product?.categoryIds);
+      setCategories(product?.categoryIds);
     }
-  }, [categoriesData?.data?.categories, product, replace]);
+  }, [product, replace, setCategories]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -346,14 +405,14 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             .filter(Boolean);
           formData.append("colors", JSON.stringify(colorsArray));
         } else if (key === "attributes") {
+          // Convert selectedFilters to the format expected by the API
           const attributesObject = Object.entries(selectedFilter).reduce(
-            (acc, [filterName, filterValues]) => {
-              filterValues.forEach((value) => {
-                acc[filterName] = value;
-              });
+            (acc: Record<string, string>, [key, value]) => {
+              // Use the first value since we're using radio buttons (single selection)
+              acc[key] = value[0] || "";
               return acc;
             },
-            {} as Record<string, string>
+            {}
           );
           formData.append("attributes", JSON.stringify(attributesObject));
         } else if (key === "relatedProducts") {
@@ -378,7 +437,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           onSuccess: () => {
             toast.success("Product updated successfully");
             queryClient.invalidateQueries({ queryKey: ["products"] });
-            router.push("/admin/products");
+            // router.push("/admin/products");
           },
           onError: (error) => {
             toast.error(
@@ -390,7 +449,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
         }
       );
     } catch (error) {
-      toast.error("Failed to update product");
+      toast.error("Failed to update produc t");
       console.error(error);
     }
   }
@@ -598,7 +657,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                         (existCategory) => existCategory._id === category._id
                       );
                       if (!exist) {
-                        getCategories((prev) => [...prev, category]);
+                        setCategories((prev) => [...prev, category]);
                       }
                     }}
                     value=""
@@ -627,7 +686,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       >
                         <X
                           onClick={() => {
-                            getCategories((prev) =>
+                            setCategories((prev) =>
                               prev.filter((_, index) => index !== i)
                             );
                           }}
@@ -1039,68 +1098,149 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
             name="attributes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Filters name</FormLabel>
-                <Select
-                  value=""
-                  onValueChange={(value) => {
-                    const currentValues = field.value || [];
-                    if (!currentValues.includes(value)) {
-                      field.onChange([...currentValues, value]);
-                      const filter = filtersData?.data?.find(
-                        (f) => f.name === value
-                      );
-                      if (filter) {
-                        setSelectedFilters((prevFilters) => ({
-                          ...prevFilters,
-                          [filter.name]: filter.value,
-                        }));
-                      }
-                    }
-                  }}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select filter" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {filtersData?.data?.map((filter) => (
-                      <SelectItem key={filter._id} value={filter.name}>
-                        {filter.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {field.value?.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {field.value.map((filterName) => (
-                      <div
-                        key={filterName}
-                        className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
-                      >
-                        <span className="text-sm">{filterName}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
-                          onClick={() => {
-                            field.onChange(
-                              field.value.filter((name) => name !== filterName)
+                <FormLabel>Product Filters</FormLabel>
+                <FormDescription>
+                  Select product attributes and values
+                </FormDescription>
+
+                <div className="space-y-4">
+                  {/* Add filter button & dropdown */}
+                  <div className="flex flex-col space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-sm font-medium">Attributes</h3>
+
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            disabled={
+                              Object.keys(selectedFilter).length ===
+                              filtersData?.data?.filters?.length
+                            }
+                          >
+                            <PlusCircle className="h-4 w-4" />
+                            Add Attribute
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-64 p-0" align="end">
+                          <Command>
+                            <CommandInput placeholder="Search attributes..." />
+                            <CommandEmpty>No attributes found.</CommandEmpty>
+                            <CommandGroup className="max-h-48 overflow-auto">
+                              {filtersData?.data?.filters
+                                ?.filter(
+                                  (filter) =>
+                                    !selectedFilter.hasOwnProperty(filter.name)
+                                )
+                                .map((filter) => (
+                                  <CommandItem
+                                    key={filter._id}
+                                    value={filter.name}
+                                    onSelect={() => {
+                                      setSelectedFilters((prev) => {
+                                        const newFilters = { ...prev };
+                                        // Initialize with empty array
+                                        newFilters[filter.name] = [];
+                                        return newFilters;
+                                      });
+                                    }}
+                                  >
+                                    {filter.name}
+                                  </CommandItem>
+                                ))}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+
+                    {/* Selected filters with their radio button selections */}
+                    {Object.keys(selectedFilter).length > 0 ? (
+                      <div className="space-y-4 border rounded-md p-3">
+                        {Object.entries(selectedFilter).map(
+                          ([filterName, values]) => {
+                            // Find the corresponding filter object to get available values
+                            const filter = filtersData?.data?.filters?.find(
+                              (f) => f.name === filterName
                             );
-                            setSelectedFilters((prevFilters) => {
-                              const updatedFilters = { ...prevFilters };
-                              delete updatedFilters[filterName];
-                              return updatedFilters;
-                            });
-                          }}
-                        >
-                          ×
-                        </Button>
+                            if (!filter) return null;
+
+                            return (
+                              <div
+                                key={filterName}
+                                className="space-y-2 pb-3 border-b last:border-b-0 last:pb-0"
+                              >
+                                <div className="flex justify-between items-center">
+                                  <h4 className="text-sm font-medium">
+                                    {filterName}
+                                  </h4>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 w-8 p-0"
+                                    onClick={() => {
+                                      setSelectedFilters((prev) => {
+                                        const newFilters = { ...prev };
+                                        delete newFilters[filterName];
+                                        return newFilters;
+                                      });
+                                    }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-2">
+                                  {filter.value.map((value: string) => {
+                                    // Check if this value is the selected one
+                                    const isSelected = values[0] === value;
+
+                                    return (
+                                      <div
+                                        key={value}
+                                        className="flex items-center space-x-2"
+                                      >
+                                        <input
+                                          type="radio"
+                                          id={`${filterName}-${value}`}
+                                          name={`filter-${filterName}`}
+                                          className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                                          checked={isSelected}
+                                          onChange={() => {
+                                            setSelectedFilters((prev) => {
+                                              const newFilters = { ...prev };
+                                              // Set single value
+                                              newFilters[filterName] = [value];
+                                              return newFilters;
+                                            });
+                                          }}
+                                        />
+                                        <label
+                                          htmlFor={`${filterName}-${value}`}
+                                          className="text-sm font-medium leading-none cursor-pointer"
+                                        >
+                                          {value}
+                                        </label>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          }
+                        )}
                       </div>
-                    ))}
+                    ) : (
+                      <div className="text-center p-4 border rounded-md text-muted-foreground text-sm">
+                        No attributes selected. Click &quot;Add Attribute&quot;
+                        to select product attributes.
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+
                 <FormMessage />
               </FormItem>
             )}

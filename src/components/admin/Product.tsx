@@ -8,6 +8,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -28,9 +29,15 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import { Pagination } from "@/components/ui/pagination";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { formatCurrency } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { DualRangeSlider } from "../tournaments/dualSlider";
-import { formatCurrency, useCurrency } from "@/lib/utils";
 
 interface FilterParams {
   price?: string;
@@ -51,12 +58,26 @@ interface Product {
   images: string[];
   categoryIds: string[];
   type: "NEW" | "SALE";
+  sku?: string;
 }
 
 interface Category {
   _id: string;
   name: string;
   displayName: string;
+}
+
+interface ProductResponse {
+  data: {
+    products: Product[];
+    total: number;
+  };
+}
+
+interface CategoryResponse {
+  data: {
+    categories: Category[];
+  };
 }
 
 export function Product() {
@@ -72,14 +93,17 @@ export function Product() {
 
   const [priceRange, setPriceRange] = useState([10, 100000]);
 
-  // Update filters when debounced search term changes
   useEffect(() => {
     setFilters((prev) => ({ ...prev, name: debouncedSearchTerm }));
   }, [debouncedSearchTerm]);
 
-  const { data: productsData, isLoading: isProductsLoading } =
-    useGetProducts(debouncedFilters);
-  const { data: categoriesData } = useGetCategories();
+  const { data: productsData, isLoading: isProductsLoading } = useGetProducts(
+    debouncedFilters
+  ) as { data: ProductResponse | undefined; isLoading: boolean };
+
+  const { data: categoriesData } = useGetCategories() as {
+    data: CategoryResponse | undefined;
+  };
 
   const { mutate: deleteProduct } = useDeleteProduct();
   const handleDelete = (id: string) => {
@@ -101,9 +125,7 @@ export function Product() {
     if (key === "price") {
       updatedValue = value.split(",").map((v) => v.trim());
     }
-    console.log({ [key]: updatedValue });
 
-    // Update filters state with the new value
     setFilters((prevFilters) => ({
       ...prevFilters,
       [key]: updatedValue,
@@ -124,6 +146,13 @@ export function Product() {
       price: `[${value.join(",")}]`,
     }));
   };
+
+  const currentPage =
+    Math.floor(
+      parseInt(filters.offset || "0") / parseInt(filters.limit || "10")
+    ) + 1;
+  const totalItems = productsData?.data?.total || 0;
+  const itemsPerPage = parseInt(filters.limit || "10");
 
   return (
     <div className="py-10">
@@ -287,37 +316,66 @@ export function Product() {
                   <TableCell>
                     {product?.categoryIds.map((categoryId) => {
                       return (
-                        <div key={categoryId}>{categoryId?.displayName}</div>
+                        <div key={categoryId._id}>
+                          {categoryId?.displayName || "N/A"}
+                        </div>
                       );
                     })}
-                    {/* {categoriesData?.data?.categories?.find(
-                      (category: Category) =>
-                        category._id === product.categoryIds[0]._id
-                    )?.displayName || "N/A"} */}
                   </TableCell>
                   <TableCell>{product?.type}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link href={`/admin/products/update/${product._id}`}>
-                          <Edit className="h-4 w-4 " />
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(product._id)}
-                      >
-                        <Trash className="h-4 w-4" />
-                      </Button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" asChild>
+                              <Link
+                                href={`/admin/products/update/${product._id}`}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit Product</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(product._id)}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete Product</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Button variant="ghost" size="icon">
-                      <Link href={`/admin/tournament/create/${product?._id}`}>
-                        <Trophy className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <Link
+                              href={`/admin/tournament/create/${product?._id}`}
+                            >
+                              <Trophy className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Create Tournament</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </TableCell>
                 </TableRow>
               ))
@@ -329,19 +387,28 @@ export function Product() {
               </TableRow>
             )}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={8} className="text-center">
+                <div className="flex flex-col items-center gap-4 mt-4">
+                  <div className="text-sm text-gray-500">
+                    Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                    {Math.min(currentPage * itemsPerPage, totalItems)} of{" "}
+                    {totalItems} entries
+                  </div>
+                  {productsData?.data?.products && (
+                    <DynamicPagination
+                      totalItems={totalItems}
+                      itemsPerPage={itemsPerPage}
+                      currentPage={currentPage}
+                      onPageChange={handlePageChange}
+                    />
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
-      </div>
-      <div className="flex justify-center mt-4">
-        <Pagination
-          totalItems={productsData?.data?.total || 0}
-          itemsPerPage={parseInt(filters.limit || "10")}
-          onPageChange={handlePageChange}
-          currentPage={
-            Math.floor(
-              parseInt(filters.offset || "0") / parseInt(filters.limit || "10")
-            ) + 1
-          }
-        />
       </div>
     </div>
   );

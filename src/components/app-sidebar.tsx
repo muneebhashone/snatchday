@@ -29,6 +29,7 @@ import {
   ListOrdered,
   Gamepad,
   Heart,
+  Ticket,
 } from "lucide-react";
 import {
   Collapsible,
@@ -172,12 +173,17 @@ const navItems = [
         url: "/admin/web-settings/create",
         icon: <Plus className="h-4 w-4" />,
       },
-      {
-        title: "Edit Web Setting",
-        url: "/admin/web-settings/edit",
-        icon: <List className="h-4 w-4" />,
-      },
+      // {
+      //   title: "Edit Web Setting",
+      //   url: "/admin/web-settings/edit",
+      //   icon: <List className="h-4 w-4" />,
+      // },
     ],
+  },
+  {
+    title: "Tickets",
+    url: "/admin/tickets",
+    icon: <Ticket className="h-4 w-4" />,
   },
 ];
 

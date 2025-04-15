@@ -16,6 +16,7 @@ import { Delete, Edit, FileEdit, Loader, Trash } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const Page = () => {
   const { mutate: deleteGame } = useDeleteGame();
@@ -104,18 +105,37 @@ const Page = () => {
                 </TableCell>
                 <TableCell>{game.createdAt.split("T")[0]}</TableCell>
                 <TableCell className="flex gap-2 mt-3 justify-end">
-                  <Edit
-                    onClick={() => {
-                      router.push(`/admin/games/${game._id}`);
-                    }}
-                    className="h-4 w-4"
-                  />
-                  <Trash
-                    className="h-4 w-4"
-                    onClick={() => {
-                      onDelete(game?._id);
-                    }}
-                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Edit
+                          onClick={() => {
+                            router.push(`/admin/games/${game._id}`);
+                          }}
+                          className="h-4 w-4 cursor-pointer"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Edit Game</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Trash
+                          className="h-4 w-4 cursor-pointer"
+                          onClick={() => {
+                            onDelete(game?._id);
+                          }}
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Delete Game</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TableCell>
               </TableRow>
             ))}

@@ -364,3 +364,31 @@ export interface WebSetting {
   metaKeywords: string;
   order: number;
 }
+
+
+export interface MainProduct {
+  name: string;
+  description: string;
+  company: string;
+  images: File[];
+  colors: string[];
+  stock: number;
+  price: number;
+  discounts: Array<{
+    amount: number;
+    type: "PERCENTAGE";
+    customerGroup: "BASIC" | "VIP";
+    price: number;
+  }>;
+  attributes: Record<string, string[]>;
+  categoryIds: Array<string>;
+  type: "NEW" | "SALE";
+  isFeatured: boolean;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+  article: string;
+  sku: string;
+  barcodeEAN: string;
+  data?: any;
+}

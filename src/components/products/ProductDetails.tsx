@@ -343,6 +343,11 @@ const ProductDetails = ({
                   onChange={(e) =>
                     setQuantity(Math.max(1, parseInt(e.target.value) || 1))
                   }
+                  onKeyDown={(e) => {
+                    if (e.key === "-") {
+                      e.preventDefault();
+                    }
+                  }}
                   className="w-[70px] h-[40px] pl-4 pr-8 text-base bg-white border border-[#E5E7EB] rounded-full focus:outline-none focus:ring-1 focus:ring-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <div className="absolute right-0 top-0 bottom-0 w-8 flex flex-col border-l border-[#E5E7EB]">

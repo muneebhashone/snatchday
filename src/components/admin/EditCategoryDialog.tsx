@@ -30,6 +30,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import { Tooltip } from "../ui/tooltip"
 
 interface Category {
   _id: string;
@@ -168,11 +170,18 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+          <Tooltip>
+            <TooltipTrigger asChild>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Edit className="h-4 w-4" />
-        </Button>
+            <Button variant="ghost" size="icon" className="text-blue-500 hover:text-blue-600 transition-colors">
+              <Edit className="h-4 w-4" />
+            </Button>
       </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Edit Category</p>
+          </TooltipContent>
+        </Tooltip>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>

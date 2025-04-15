@@ -21,6 +21,7 @@ import { Loader2 } from 'lucide-react';
 import { useGetContent, useUpdateContent } from '@/hooks/api';
 import { Select, SelectItem } from '../ui/select';
 import { MultiSelect } from '../ui/multi-select';
+import { toast } from 'sonner';
 
 // Dynamically import React Quill to avoid SSR issues
 const ReactQuill = dynamic(() => import('react-quill'), { 
@@ -34,7 +35,7 @@ const formSchema = z.object({
   metaTitle: z.string().min(1, 'Meta title is required'),
   metaDescription: z.string().min(1, 'Meta description is required'),
   metaKeywords: z.array(z.string()).min(1, 'Meta keywords are required'),
-  order: z.number().min(0, 'Order must be a positive number'),
+
 });
 
 const WebSettingEditForm = () => {
@@ -55,8 +56,7 @@ const WebSettingEditForm = () => {
       metaTitle: '',
       metaDescription: '',
       metaKeywords: [] as string[],
-      order: 0,
-    },
+     },
   });
 
 
@@ -74,7 +74,7 @@ useEffect(() => {
         metaTitle: currentContent.metaTitle,
         metaDescription: currentContent.metaDescription,
         metaKeywords: currentContent.metaKeywords,
-        order: currentContent.order,
+   
       });
       setQuillContent(currentContent.content);
     }
@@ -106,9 +106,10 @@ useEffect(() => {
       metaTitle: values.metaTitle,
       metaDescription: values.metaDescription,
       metaKeywords: values.metaKeywords.join(','),
-      order: values.order
+      order: 0,
     }, {
       onSuccess: () => {
+        toast.success('Content updated successfully');
         router.push('/admin/web-settings');
         router.refresh();
       }
@@ -149,7 +150,7 @@ useEffect(() => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -239,7 +240,7 @@ useEffect(() => {
           )}
         />
 
-        <FormField
+        {/* <FormField
           control={form.control}
           name="order"
           render={({ field }) => (
@@ -256,7 +257,7 @@ useEffect(() => {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         <Button className='hover:bg-transparent' type="submit" disabled={isPending}>
           {isPending ? 'Updating...' : 'Update Content'}

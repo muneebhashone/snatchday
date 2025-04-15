@@ -361,6 +361,11 @@ const CartTable = () => {
                   type="number"
                   {...register("snapPoints")}
                   placeholder="Points"
+                  onKeyDown={(e) => {
+                    if (e.key === "-") {
+                      e.preventDefault();
+                    }
+                  }}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F37835]"
                 />
                 {errors.snapPoints && (
@@ -377,6 +382,11 @@ const CartTable = () => {
                   type="number"
                   {...register("discountPoints")}
                   placeholder="Points"
+                  onKeyDown={(e) => {
+                    if (e.key === "-") {
+                      e.preventDefault();
+                    }
+                  }}
                   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F37835]"
                 />
                 {errors.discountPoints && (

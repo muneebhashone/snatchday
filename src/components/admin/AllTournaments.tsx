@@ -31,7 +31,8 @@ import { EditTournamentDialog } from "./EditTournamentDialog";
 import Link from "next/link";
 import Image from "next/image";
 import { formatCurrency } from "@/lib/utils";
-import { Pagination } from "../ui/pagination";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface FilterParams {
   limit?: string;
@@ -50,6 +51,11 @@ interface FilterParams {
   status?: string;
 }
 
+interface Game {
+  _id: string;
+  title: string;
+}
+
 interface Tournament {
   _id: string;
   name: string;
@@ -62,7 +68,7 @@ interface Tournament {
   startingPrice: number;
   priceReduction: number;
   numberOfPieces: number;
-  game: object;
+  game: Game;
   start: string;
   length: number;
   fee: number;
@@ -72,27 +78,46 @@ interface Tournament {
   image: string;
   productId: string;
   end: string;
+  status: "active" | "cancelled";
+  participants: { _id: string }[];
 }
 
+interface TournamentResponse {
+  data: {
+    tournaments: Tournament[];
+    total: number;
+  };
+}
+
+const ITEMS_PER_PAGE = 10;
+
 const AllTournaments = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterParams>({
-    limit: "10",
+    limit: ITEMS_PER_PAGE.toString(),
     offset: "0",
   });
 
-  const { data: getGames } = useGetGames(0, 100)
+  const { data: getGames } = useGetGames(0, 100);
   const queryClient = useQueryClient();
   const { data: getProducts } = useGetProducts({ limit: `100000` });
   const products = getProducts?.data?.products || [];
 
-  const { data: getTournaments, isLoading } = useGetTournaments(filters);
-  //   const { mutate: deleteTournament } = useDeleteTournament();
+  const { data: getTournaments, isLoading } = useGetTournaments({
+    ...filters,
+    limit: ITEMS_PER_PAGE.toString(),
+    offset: ((currentPage - 1) * ITEMS_PER_PAGE).toString(),
+  }) as { data: TournamentResponse; isLoading: boolean };
+
   const { mutate: cancelTournament } = useCancelTournament();
 
   const tournaments = getTournaments?.data?.tournaments || [];
+  const totalItems = getTournaments?.data?.total || 0;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
   const handleFilterChange = (key: keyof FilterParams, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
+    setCurrentPage(1); // Reset to first page when filters change
   };
 
   const handleCancel = (id: string) => {
@@ -106,6 +131,11 @@ const AllTournaments = () => {
       },
     });
   };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -113,13 +143,6 @@ const AllTournaments = () => {
       </div>
     );
   }
-
-  const handlePageChange = (page: number) => {
-    setFilters((prev) => ({
-      ...prev,
-      offset: ((page - 1) * parseInt(filters.limit || "10")).toString(),
-    }));
-  };
 
   return (
     <div className="py-10 px-6">
@@ -144,15 +167,15 @@ const AllTournaments = () => {
             value={filters.game}
             onValueChange={(value) => handleFilterChange("game", value)}
           >
-
             <SelectTrigger>
               <SelectValue placeholder="Select game" />
             </SelectTrigger>
             <SelectContent>
-              {getGames
-                ?.data?.games?.map((game) =>
-                  <SelectItem key={game._id} value={game?._id}>{game.title}</SelectItem>
-                )}
+              {getGames?.data?.games?.map((game) => (
+                <SelectItem key={game._id} value={game._id}>
+                  {game.title}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -172,11 +195,20 @@ const AllTournaments = () => {
           </Select>
         </div>
         <div className="flex justify-end items-center mt-5">
-          <Button>
-            <Link href="/admin/tournament/create-tournament">
-              Create Tournament
-            </Link>
-          </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button>
+                  <Link href="/admin/tournament/create-tournament">
+                    Create Tournament
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new tournament</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
 
@@ -197,7 +229,7 @@ const AllTournaments = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tournaments.map((tournament: Tournament) => (
+            {tournaments.map((tournament) => (
               <TableRow key={tournament._id}>
                 <TableCell>
                   {tournament.image && (
@@ -213,7 +245,7 @@ const AllTournaments = () => {
                   )}
                 </TableCell>
                 <TableCell>{tournament.title}</TableCell>
-                <TableCell>{tournament?.game?.title}</TableCell>
+                <TableCell>{tournament.game?.title}</TableCell>
                 <TableCell>{formatCurrency(tournament.startingPrice)}</TableCell>
                 <TableCell>
                   {formatCurrency(tournament.priceReduction * tournament.participants?.length)}
@@ -230,49 +262,76 @@ const AllTournaments = () => {
                 <TableCell>{tournament.length}</TableCell>
                 <TableCell>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${tournament.vip
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 text-gray-800"
-                      }`}
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      tournament.vip
+                        ? "bg-primary text-white"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
                   >
                     {tournament.vip ? "VIP" : "BASIC"}
                   </span>
                 </TableCell>
                 <TableCell>
-                  <>
-                    <div className="flex gap-2">
-                      <EditTournamentDialog
-                        products={products}
-                        tournament={tournament}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        // onClick={() => {
-                        //   console.log(tournament);
-                        // }}
-                        onClick={() => handleCancel(tournament._id)}
-                      >
-                        {tournament.status === "cancelled" ? (
-                          <p>Cancelled</p>
-                        ) : (
-                          <p>Active</p>
-                        )}
-                      </Button>
-                      <Link href={`/admin/tournament/${tournament._id}`}>
-                        <Button variant="ghost" size="icon">
-                          <Users className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </>
+                  <div className="flex gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div>
+                            <EditTournamentDialog
+                              products={products}
+                              tournament={tournament}
+                            />
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Edit tournament details</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleCancel(tournament._id)}
+                          >
+                            {tournament.status === "cancelled" ? (
+                              <p>Cancelled</p>
+                            ) : (
+                              <p>Active</p>
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Toggle tournament status</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Link href={`/admin/tournament/${tournament._id}`}>
+                            <Button variant="ghost" size="icon">
+                              <Users className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>View tournament participants</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
             {!tournaments.length && (
               <TableRow>
                 <TableCell
-                  colSpan={9}
+                  colSpan={10}
                   className="text-center py-8 text-gray-500"
                 >
                   No tournaments found
@@ -282,16 +341,17 @@ const AllTournaments = () => {
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end mt-5 mr-2">
-        <Pagination
-          totalItems={getTournaments?.data?.total || 0}
-          itemsPerPage={parseInt(filters.limit || "10")}
+
+      <div className="flex flex-col justify-between items-center gap-4 mt-4">
+        <div className="text-sm text-gray-500">
+          Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} of {totalItems} entries
+        </div>
+
+        <DynamicPagination
+          totalItems={totalItems}
+          itemsPerPage={ITEMS_PER_PAGE}
+          currentPage={currentPage}
           onPageChange={handlePageChange}
-          currentPage={
-            Math.floor(
-              parseInt(filters.offset || "0") / parseInt(filters.limit || "10")
-            ) + 1
-          }
         />
       </div>
     </div>

@@ -25,6 +25,7 @@ import {
   DialogClose,
 } from '@/components/ui/dialog';
 import { useDeleteContent, useGetContent } from '@/hooks/api';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const WebSettingsList = () => {
   const router = useRouter();
@@ -69,9 +70,18 @@ console.log(webSettings)
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Web Settings</h2>
-        <Button onClick={handleCreate}>
-          <Plus className="mr-2 h-4 w-4" /> Add New Content
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button onClick={handleCreate}>
+                <Plus className="mr-2 h-4 w-4" /> Add New Content
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Create new web content</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <Table>
@@ -90,21 +100,40 @@ console.log(webSettings)
               <TableCell>{setting.metaTitle}</TableCell>
               <TableCell>{setting.order}</TableCell>
               <TableCell className="text-right">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mr-2"
-                  onClick={() => handleEdit(setting._id)}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleDelete(setting._id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mr-2"
+                        onClick={() => handleEdit(setting._id)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Edit content</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(setting._id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Delete content</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </TableCell>
             </TableRow>
           ))}
