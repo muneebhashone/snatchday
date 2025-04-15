@@ -154,6 +154,18 @@ export function Product() {
   const totalItems = productsData?.data?.total || 0;
   const itemsPerPage = parseInt(filters.limit || "10");
 
+  const clearFilters = () => {
+    setPriceRange([10, 100000]);
+    setSearchTerm("");
+    setFilters({
+      name: "",
+      category: "",
+      type: "",
+      sort_attr: "",
+      sort: "",
+    });
+  };
+
   return (
     <div className="py-10">
       <div className="mb-6 grid grid-cols-3 gap-8">
@@ -258,6 +270,15 @@ export function Product() {
             </SelectContent>
           </Select>
         </div>
+      </div>
+      <div className="flex items-center justify-center w-full mb-5 ">
+        <Button
+          className="bg-white text-primary border border-primary rounded-md hover:bg-primary hover:text-white"
+          variant="outline"
+          onClick={() => clearFilters()}
+        >
+          Clear Filters
+        </Button>
       </div>
 
       <div className="border border-primary">

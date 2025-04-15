@@ -52,23 +52,23 @@ const discountSchema = z.object({
 
 const productFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  company: z.string().min(1, "Company name is required"),
+  description: z.string().optional(),
+  company: z.string().optional(),
   images: z.array(z.instanceof(File)).min(1, "At least one image is required"),
   colors: z.string().min(1, "Colors are required"),
   stock: z.coerce.number().min(0, "Stock must be 0 or greater"),
   price: z.coerce.number().min(0, "Price must be 0 or greater"),
   categoryIds: z.array(z.string()).min(1, "At least one category is required"),
-  type: z.enum(["NEW", "SALE"]),
+  type: z.enum(["NEW", "SALE"]).optional(),
   discounts: z.array(discountSchema).optional(),
   attributes: z.record(z.string(), z.array(z.string())).optional(),
 
   isFeatured: z.boolean().default(false),
   metaTitle: z.string().min(1, "Meta title is required"),
-  metaDescription: z.string().min(1, "Meta description is required"),
-  metaKeywords: z.string().min(1, "Meta keywords are required"),
+  metaDescription: z.string().optional(),
+  metaKeywords: z.string().optional(),
   article: z.string().min(1, "Article is required"),
-  sku: z.string().min(1, "SKU is required"),
+  sku: z.string().optional(),
   barcodeEAN: z.string().optional(),
   noStockMessage: z.string().optional(),
   relatedProducts: z.array(z.string()).optional(),
@@ -184,34 +184,51 @@ const MainProduct = () => {
 
     // Handle other fields
     Object.entries(dataToSend).forEach(([key, value]) => {
+      // Skip if value is empty, undefined, or null
+      if (value === undefined || value === null || value === "") {
+        return;
+      }
+
       if (key === "colors" && typeof value === "string") {
         // Convert comma-separated colors to array
         const colorsArray = value
           .split(",")
           .map((color) => color.trim())
           .filter(Boolean);
-        formData.append("colors", JSON.stringify(colorsArray));
+        if (colorsArray.length > 0) {
+          formData.append("colors", JSON.stringify(colorsArray));
+        }
       } else if (key === "categoryIds" || key === "relatedProducts") {
-        formData.append(key, JSON.stringify(value));
+        if (Array.isArray(value) && value.length > 0) {
+          formData.append(key, JSON.stringify(value));
+        }
       } else if (key === "discounts" && Array.isArray(value)) {
         // Only include non-empty discounts
         const validItems = value.filter((item) => {
-          return Object.values(item).some((v) => v !== undefined && v !== "");
+          return Object.values(item).some(
+            (v) => v !== undefined && v !== "" && v !== null
+          );
         });
-        formData.append(key, JSON.stringify(validItems));
+        if (validItems.length > 0) {
+          formData.append(key, JSON.stringify(validItems));
+        }
       } else if (key === "attributes") {
         // Convert attributes for API
         const attributesObject = Object.entries(selectedFilters).reduce(
           (acc: Record<string, string>, [key, value]) => {
-            acc[key] = value[0] || "";
+            if (value && value[0]) {
+              acc[key] = value[0];
+            }
             return acc;
           },
           {}
         );
-        formData.append(key, JSON.stringify(attributesObject));
+        if (Object.keys(attributesObject).length > 0) {
+          formData.append(key, JSON.stringify(attributesObject));
+        }
       } else if (typeof value === "boolean") {
         formData.append(key, value.toString());
-      } else if (value !== undefined && value !== null) {
+      } else {
         formData.append(key, value.toString());
       }
     });
@@ -289,7 +306,7 @@ const MainProduct = () => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description *</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Product description" {...field} />
                   </FormControl>
@@ -303,7 +320,7 @@ const MainProduct = () => {
               name="company"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Company *</FormLabel>
+                  <FormLabel>Company</FormLabel>
                   <FormControl>
                     <Input placeholder="Company name" {...field} />
                   </FormControl>
@@ -562,6 +579,11 @@ const MainProduct = () => {
                         type="number"
                         step="0.01"
                         placeholder="0.00"
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
                         {...field}
                       />
                     </FormControl>
@@ -577,7 +599,16 @@ const MainProduct = () => {
                   <FormItem>
                     <FormLabel>Stock *</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0" {...field} />
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -678,7 +709,7 @@ const MainProduct = () => {
               name="sku"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>SKU *</FormLabel>
+                  <FormLabel>SKU</FormLabel>
                   <FormControl>
                     <Input placeholder="Stock Keeping Unit" {...field} />
                   </FormControl>
@@ -754,7 +785,7 @@ const MainProduct = () => {
               name="metaDescription"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Meta Description *</FormLabel>
+                  <FormLabel>Meta Description</FormLabel>
                   <FormControl>
                     <Textarea placeholder="SEO meta description" {...field} />
                   </FormControl>
@@ -768,7 +799,7 @@ const MainProduct = () => {
               name="metaKeywords"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Meta Keywords *</FormLabel>
+                  <FormLabel>Meta Keywords</FormLabel>
                   <FormControl>
                     <Input placeholder="SEO meta keywords" {...field} />
                   </FormControl>

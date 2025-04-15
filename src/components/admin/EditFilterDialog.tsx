@@ -31,7 +31,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 interface Category {
   _id: string;
   name: string;
@@ -134,20 +139,20 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-      <DialogTrigger asChild>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Edit className="h-4 w-4" />
               </Button>
-      </DialogTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Edit Filter</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Edit Filter</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Edit Filter</DialogTitle>
