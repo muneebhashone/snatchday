@@ -100,12 +100,17 @@ const formSchema = z.object({
   article: z.string().nonempty("Article is required"),
   startingPrice: z.coerce.number().min(1, "Starting price must be positive"),
   priceReduction: z.coerce.number().min(1, "Price reduction must be positive"),
-  numberOfPieces: z.coerce.number().min(1, "Number of pieces must be at least 1"),
+  numberOfPieces: z.coerce
+    .number()
+    .min(1, "Number of pieces must be at least 1"),
   game: z.string().nonempty("Game is required"),
   start: z.string().nonempty("Start date is required"),
+  end: z.string().nonempty("End date is required"),
   length: z.coerce.number().min(1, "Length must be at least 1"),
   fee: z.coerce.number().min(1, "Fee must be positive"),
-  numberOfParticipants: z.coerce.number().min(1, "Number of participants must be at least 1"),
+  numberOfParticipants: z.coerce
+    .number()
+    .min(1, "Number of participants must be at least 1"),
   vip: z.boolean(),
   resubmissions: z.coerce.number().min(1, "Resubmissions must be positive"),
 });
@@ -155,6 +160,7 @@ export function EditTournamentDialog({
     resolver: zodResolver(formSchema),
   });
   useEffect(() => {
+    console.log(tournament);
     if (tournament) {
       form.reset({
         id: tournament._id,
@@ -170,6 +176,7 @@ export function EditTournamentDialog({
         numberOfPieces: tournament?.numberOfPieces,
         game: tournament?.game?._id,
         start: tournament?.start,
+        end: tournament?.end,
         length: tournament?.length,
         fee: tournament?.fee,
         numberOfParticipants: tournament?.numberOfParticipants,
@@ -387,6 +394,15 @@ export function EditTournamentDialog({
                           onSelect={(date) =>
                             field.onChange(date?.toISOString())
                           }
+                          disabled={(date) => {
+                            if (form.getValues("end")) {
+                              return (
+                                date > new Date(form.getValues("end")) ||
+                                date < new Date()
+                              );
+                            }
+                            return date < new Date();
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
