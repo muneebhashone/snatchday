@@ -42,9 +42,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     
     const handleScroll = () => {
       if (window.scrollY > 10) {
-        header?.classList.add('shadow-md');
+        header?.classList.add('shadow-lg');
+        header?.classList.add('bg-white');
       } else {
-        header?.classList.remove('shadow-md');
+        header?.classList.remove('shadow-lg');
+        header?.classList.remove('bg-white');
       }
     };
     

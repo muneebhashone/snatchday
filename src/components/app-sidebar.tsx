@@ -220,7 +220,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {isExpanded ? (
             <>
               <p className="text-2xl font-bold">Snatch Day</p>
-              <p className="text-sm text-gray-100">Admin</p>
+              <p className="text-sm text-primary">Admin</p>
             </>
           ) : (
             <p className="text-xl font-bold">SD</p>

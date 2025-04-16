@@ -66,10 +66,10 @@ const OverviewUsersTable = () => {
         },
       ]
   return (
-    <Card className='h-[500px]'>
+    <Card className=''>
     <CardContent className="p-0">
-      <div className="overflow-x-auto overflow-y-auto">
-        <table className="w-full">
+      <div className="overflow-x-auto overflow-y-auto h-[500px]">
+        <table className="">
           <thead>
             <tr className="border-b">
               <th className="text-left p-4 font-medium text-sm">USER</th>
@@ -78,7 +78,7 @@ const OverviewUsersTable = () => {
               <th className="text-left p-4 font-medium text-sm">STATUS</th>
             </tr>
           </thead>
-          <tbody >
+          <tbody className=''>
             {users.map((user, i) => (
               <tr key={i} className="border-b last:border-0">
                 <td className="p-4">
