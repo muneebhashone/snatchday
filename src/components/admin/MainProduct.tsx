@@ -46,8 +46,8 @@ import Image from "next/image";
 const discountSchema = z.object({
   customerGroup: z.string().optional(),
   price: z.number().nonnegative("Price must be 0 or greater").optional(),
-  away: z.coerce.date().optional(),
-  until: z.coerce.date().optional(),
+  away: z.coerce.date().min(new Date(), "Start date must be in the future"),
+  until: z.coerce.date().min(new Date(), "End date must be in the future"),
 });
 
 const productFormSchema = z.object({

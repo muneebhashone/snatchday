@@ -29,6 +29,7 @@ import { useEffect, useState } from "react";
 import { useSocket } from "@/context/SocketContext";
 import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 
 const formSchema = z.object({
   file: z
@@ -86,9 +87,8 @@ export default function ProductsPage() {
   };
   return (
     <AdminLayout>
-      {/* <Progress value={progress} className="w-[20%] h-[10px]" /> */}
+      <AdminBreadcrumb title="Products" items={[]} />
       <div className="w-full flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Products</h1>
         {/* <Button className="mb-4">
           <Link href="/admin/products/create">Create Product</Link>
         </Button> */}
