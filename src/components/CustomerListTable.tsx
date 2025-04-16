@@ -10,7 +10,7 @@ import {
 import { useCustomersPagination } from "@/hooks/api";
 import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Tooltip,
@@ -42,19 +42,27 @@ interface Customer {
   };
 }
 
+interface CustomeListTableProps {
+  search: string;
+  group: string;
+  date: string;
+  isActive: string;
+}
+
 export function CustomeListTable({
   search,
   group,
   date,
   isActive,
-}: {
-  search: string;
-  group: string;
-  date: string;
-  isActive: string;
-}) {
+}: CustomeListTableProps) {
   const [page, setPage] = useState(0);
   const skip = 10;
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(0);
+  }, [search, group, date, isActive]);
+
   const { data: customers, isLoading } = useCustomersPagination(
     page,
     search,
@@ -107,7 +115,7 @@ export function CustomeListTable({
             <TableCell className="">
               {customer.createdAt.split("T")[0]}
             </TableCell>
-            <TableCell className="">{customer.wallet.snapPoints}</TableCell>
+            <TableCell className="">{customer?.wallet?.snapPoints || "0"}</TableCell>
             <TableCell className="text-right flex gap-2 items-center justify-end">
               <Link href={`/admin/customers/${customer._id}`}>
                 <TooltipProvider>

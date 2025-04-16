@@ -92,6 +92,7 @@ import {
   getTicketById,
   replyTicket,
   createTicket,
+  deleteCustomer,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -489,10 +490,10 @@ export const useGetCustomerTournaments = (id, offset) => {
   });
 };
 
-export const useGetCustomerOrdersData = (page, status, user, date) => {
+export const useGetCustomerOrdersData = (page, status, user, date, limit?) => {
   return useQuery({
-    queryKey: ["customerOrdersData"],
-    queryFn: () => getCustomerOrdersData(page, status, user, date),
+    queryKey: ["customerOrdersData", page],
+    queryFn: () => getCustomerOrdersData(page, status, user, date, limit),
   });
 };
 
@@ -812,3 +813,11 @@ export const useReplyTicket = () => {
       replyTicket(id, formData),
   });
 };
+
+// customer delete
+export const useDeleteCustomer = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteCustomer(id),
+  });
+};
+// customer delete end

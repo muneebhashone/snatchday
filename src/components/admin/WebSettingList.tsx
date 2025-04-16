@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import React, { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+// import { toast } from 'react-hot-toast';
 
-import { Loader2, Pencil, Trash2, Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Loader2, Pencil, Trash2, Plus, Loader } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,7 +14,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -23,38 +24,68 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from '@/components/ui/dialog';
-import { useDeleteContent, useGetContent } from '@/hooks/api';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+} from "@/components/ui/dialog";
+import { useDeleteContent, useGetContent } from "@/hooks/api";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+import { toast } from "sonner";
 
 const WebSettingsList = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  
-
 
   // Fetch all web settings
-  const { data: webSettings, isLoading } = useGetContent();
-console.log(webSettings)
+  const { data: webSettings, isLoading, refetch } = useGetContent();
+  console.log(webSettings);
 
   // Delete mutation
-  const { mutate: deleteWebSetting} = useDeleteContent();
+  const { mutate: deleteWebSetting } = useDeleteContent();
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedSettingId, setSelectedSettingId] = useState<string | null>(
+    null
+  );
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = (id: string) => {
-    deleteWebSetting(id, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['content'] });
-      }
-    });
+    setSelectedSettingId(id);
+    setShowDeleteModal(true);
   };
 
+  const handleConfirmDelete = () => {
+    if (selectedSettingId) {
+      setIsDeleting(true);
+      deleteWebSetting(selectedSettingId, {
+        onSuccess: () => {
+          toast.success("Web setting deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["webSettings"] });
+          refetch();
+          setShowDeleteModal(false);
+          setSelectedSettingId(null);
+          setIsDeleting(false);
+        },
+        onError: (error) => {
+          toast.error("Failed to delete web setting");
+          console.error(error);
+          setShowDeleteModal(false);
+          setSelectedSettingId(null);
+          setIsDeleting(false);
+        },
+      });
+    }
+  };
 
   const handleEdit = (id: string) => {
     router.push(`/admin/web-settings/edit/${id}`);
   };
 
   const handleCreate = () => {
-    router.push('/admin/web-settings/create');
+    router.push("/admin/web-settings/create");
   };
 
   if (isLoading) {
@@ -122,11 +153,18 @@ console.log(webSettings)
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
-                        variant="destructive"
-                        size="sm"
                         onClick={() => handleDelete(setting._id)}
+                        variant="ghost"
+                        size="icon"
+                        disabled={
+                          isDeleting && selectedSettingId === setting._id
+                        }
                       >
-                        <Trash2 className="h-4 w-4" />
+                        {isDeleting && selectedSettingId === setting._id ? (
+                          <Loader className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -147,6 +185,19 @@ console.log(webSettings)
         </TableBody>
       </Table>
 
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedSettingId(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Web Setting?"
+        description="Are you sure you want to delete this web setting? This action cannot be undone."
+        confirmText="Delete Setting"
+        cancelText="Keep Setting"
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

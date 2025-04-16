@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { Trash, Loader } from "lucide-react";
 import { useDeleteFilter, useGetFilters, useGetCategories } from "@/hooks/api";
 import { CreateFilterDialog } from "./CreateFilterDialog";
 import { EditFilterDialog } from "./EditFilterDialog";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useState } from "react";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 
 interface Category {
   _id: string;
@@ -71,17 +72,35 @@ const Filter = () => {
   const categories = getCategories?.data?.categories || [];
   const totalItems = getFilters?.data?.total || 0;
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDelete = (id: string) => {
-    deleteFilter(id, {
-      onSuccess: () => {
-        toast.success("Filter deleted successfully");
-        queryClient.invalidateQueries({ queryKey: ["filters"] });
-      },
-      onError: (error) => {
-        toast.error("Failed to delete filter");
-        console.error(error);
-      },
-    });
+    setSelectedFilterId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedFilterId) {
+      setIsDeleting(true);
+      deleteFilter(selectedFilterId, {
+        onSuccess: () => {
+          toast.success("Filter deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["filters"] });
+          setShowDeleteModal(false);
+          setSelectedFilterId(null);
+          setIsDeleting(false);
+        },
+        onError: (error) => {
+          toast.error("Failed to delete filter");
+          console.error(error);
+          setShowDeleteModal(false);
+          setSelectedFilterId(null);
+          setIsDeleting(false);
+        },
+      });
+    }
   };
 
   const handlePageChange = (newPage: number) => {
@@ -156,9 +175,13 @@ const Filter = () => {
                                 onClick={() => handleDelete(filter._id)}
                                 variant="ghost"
                                 size="icon"
-                                // className="text-red-500 hover:text-red-600 transition-colors"
+                                disabled={isDeleting && selectedFilterId === filter._id}
                               >
-                                <Trash className="h-4 w-4" />
+                                {isDeleting && selectedFilterId === filter._id ? (
+                                  <Loader className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash className="h-4 w-4" />
+                                )}
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -203,6 +226,20 @@ const Filter = () => {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedFilterId(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Filter?"
+        description="Are you sure you want to delete this filter? This action cannot be undone."
+        confirmText="Delete Filter"
+        cancelText="Keep Filter"
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

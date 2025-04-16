@@ -206,31 +206,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar 
       {...props} 
       className={cn(
-        "border-none shadow-2xl transition-all duration-300 ease-in-out",
+        "border-r border-gray-200 shadow-lg transition-all duration-300 ease-in-out",
         isExpanded ? "w-64" : "w-16",
-       
       )}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
-      <SidebarHeader className="bg-gray-100 text-primary">
-        <div className={cn("text-primary rounded-lg", 
-          isExpanded ? "px-4 py-2" : "py-1 flex justify-center"
+      <SidebarHeader className="bg-white border-b border-gray-200">
+        <div className={cn("flex flex-col items-center", 
+          isExpanded ? "px-4 py-4" : "py-3"
         )}>
           {isExpanded ? (
             <>
-              <p className="text-2xl font-bold">Snatch Day</p>
-              <p className="text-sm text-primary">Admin</p>
+              <p className="text-2xl font-bold text-gray-800">Snatch Day</p>
+              <p className="text-sm text-gray-500">Admin Panel</p>
             </>
           ) : (
-            <p className="text-xl font-bold">SD</p>
+            <p className="text-xl font-bold text-gray-800">SD</p>
           )}
         </div>
       </SidebarHeader>
-      <SidebarContent className="py-6 bg-gray-100 text-primary">
+      <SidebarContent className="py-4 bg-white">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   {item.subItems ? (
@@ -241,33 +240,42 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
                           className={cn(
-                            "w-full text-xl py-3 flex items-center hover:bg-gray-100 hover:text-primary rounded-md",
-                            isExpanded ? "justify-between px-4" : "justify-center"
+                            "w-full py-2.5 flex items-center transition-colors duration-200",
+                            "hover:bg-gray-50 hover:text-primary rounded-md",
+                            isExpanded ? "justify-between px-4" : "justify-center",
+                            openItems.includes(item.title) ? "text-primary" : "text-gray-600"
                           )}
                           tooltip={!isExpanded ? item.title : undefined}
                         >
                           <div className={cn("flex items-center", isExpanded ? "gap-3" : "")}>
                             {item.icon}
-                            {isExpanded && <span>{item.title}</span>}
+                            {isExpanded && <span className="text-sm font-medium">{item.title}</span>}
                           </div>
                           {isExpanded && (
                             <ChevronDown
-                              className={`h-4 w-4 transition-transform ${
+                              className={cn(
+                                "h-4 w-4 transition-transform duration-200",
                                 openItems.includes(item.title) ? "transform rotate-180" : ""
-                              }`}
+                              )}
                             />
                           )}
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       {isExpanded && (
-                        <CollapsibleContent className="pl-8 mt-2 space-y-2">
+                        <CollapsibleContent className="pl-4 mt-1 space-y-1">
                           {item.subItems.map((subItem) => (
                             <SidebarMenuButton
                               key={subItem.title}
                               asChild
                               isActive={pathname === subItem.url}
                               tooltip={!isExpanded ? subItem.title : undefined}
-                              className="[&[data-active]]:bg-gray-100 [&[data-active]]:text-primary text-primary rounded-md m-0"
+                              className={cn(
+                                "w-full py-2 px-4 text-sm font-medium transition-colors duration-200",
+                                "hover:bg-gray-50 hover:text-primary rounded-md",
+                                pathname === subItem.url 
+                                  ? "bg-primary/10 text-primary" 
+                                  : "text-gray-600"
+                              )}
                             >
                               <a
                                 href={subItem.url}
@@ -287,22 +295,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       isActive={pathname === item.url}
                       tooltip={!isExpanded ? item.title : undefined}
                       className={cn(
-                        "text-xl text-primary py-3 hover:bg-gray-100 hover:text-primary rounded-md",
+                        "w-full py-2.5 flex items-center transition-colors duration-200",
+                        "hover:bg-gray-50 hover:text-primary rounded-md",
                         isExpanded ? "px-4" : "justify-center",
-                        pathname === item.url
-                          ? "data-[active]:bg-primary data-[active]:text-white"
-                          : "text-foreground bg-transparent"
+                        pathname === item.url 
+                          ? "bg-primary/10 text-primary" 
+                          : "text-gray-600"
                       )}
                     >
                       <a
                         href={item.url}
                         className={cn(
-                          "flex items-center text-primary",
+                          "flex items-center",
                           isExpanded ? "gap-3" : "justify-center"
                         )}
                       >
                         {item.icon}
-                        {isExpanded && <span>{item.title}</span>}
+                        {isExpanded && <span className="text-sm font-medium">{item.title}</span>}
                       </a>
                     </SidebarMenuButton>
                   )}

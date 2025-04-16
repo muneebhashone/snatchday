@@ -13,27 +13,45 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { Edit, Loader2, Trash } from "lucide-react";
+import { Edit, Loader2, Trash, Loader } from "lucide-react";
 import { Button } from "../ui/button";
 // import { EditVoucherModal } from "./EditVoucherModal";
 import { toast } from "sonner";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 
 export function VoucherList() {
-  const { data: vouchersResponse, isLoading, error } = useGetVouchers();
+  const { data: vouchersResponse, isLoading, error,refetch } = useGetVouchers();
   const { mutate: deleteVoucher } = useDeleteVoucher();
   const vouchers = vouchersResponse?.data || [];
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedVoucherId, setSelectedVoucherId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this voucher?")) {
-      deleteVoucher(id, {
+    setSelectedVoucherId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedVoucherId) {
+      setIsDeleting(true);
+      deleteVoucher(selectedVoucherId, {
         onSuccess: () => {
           toast.success("Voucher deleted successfully");
+          setShowDeleteModal(false);
+          setSelectedVoucherId(null);
+          setIsDeleting(false);
+          refetch();
         },
-        onError: (error: Error) => {
-          toast.error(error.message || "Failed to delete voucher");
+        onError: (error) => {
+          toast.error("Failed to delete voucher");
+          console.error(error);
+          setShowDeleteModal(false);
+          setSelectedVoucherId(null);
+          setIsDeleting(false);
         },
       });
     }
@@ -142,8 +160,13 @@ export function VoucherList() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(voucher._id)}
+                        disabled={isDeleting && selectedVoucherId === voucher._id}
                       >
-                        <Trash className="h-4 w-4" />
+                        {isDeleting && selectedVoucherId === voucher._id ? (
+                          <Loader className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash className="h-4 w-4" />
+                        )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -156,6 +179,19 @@ export function VoucherList() {
           ))}
         </TableBody>
       </Table>
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedVoucherId(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Voucher?"
+        description="Are you sure you want to delete this voucher? This action cannot be undone."
+        confirmText="Delete Voucher"
+        cancelText="Keep Voucher"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

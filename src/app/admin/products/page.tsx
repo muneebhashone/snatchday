@@ -88,12 +88,9 @@ export default function ProductsPage() {
   return (
     <AdminLayout>
       <AdminBreadcrumb title="Products" items={[]} />
-      <div className="w-full flex items-center justify-between">
-        {/* <Button className="mb-4">
-          <Link href="/admin/products/create">Create Product</Link>
-        </Button> */}
-
-        <div className="flex items-center gap-2">
+      <div className="w-full flex items-center justify-between px-5 bg-white">
+        <h1 className="text-2xl font-bold">Products</h1>
+        <div className="flex items-center justify-end w-full  gap-2 mt-4">
           <Button className="bg-primary border border-primary text-white hover:text-white hover:bg-primary">
             <Link href="/admin/products/create">Create Product</Link>
           </Button>

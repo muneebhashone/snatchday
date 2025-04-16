@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Trash, Search, X } from "lucide-react";
+import { Trash, Search, X, Loader } from "lucide-react";
 import { useDeleteCategory, useGetCategories } from "@/hooks/api";
 import { CreateCategoryDialog } from "./CreateCategoryDialog";
 import { EditCategoryDialog } from "./EditCategoryDialog";
@@ -22,6 +22,7 @@ import { useState, useEffect } from "react";
 import { TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Tooltip } from "../ui/tooltip";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 
 interface CategoryType {
   _id: string;
@@ -78,17 +79,35 @@ const Categories = () => {
   const { mutate: deleteCategory } = useDeleteCategory();
   const queryClient = useQueryClient();
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDelete = (id: string) => {
-    deleteCategory(id, {
-      onSuccess: () => {
-        toast.success("Category deleted successfully");
-        queryClient.invalidateQueries({ queryKey: ["categories"] });
-      },
-      onError: (error) => {
-        toast.error("Failed to delete category");
-        console.error(error);
-      },
-    });
+    setSelectedCategoryId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedCategoryId) {
+      setIsDeleting(true);
+      deleteCategory(selectedCategoryId, {
+        onSuccess: () => {
+          toast.success("Category deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["categories"] });
+          setShowDeleteModal(false);
+          setSelectedCategoryId(null);
+          setIsDeleting(false);
+        },
+        onError: (error) => {
+          toast.error("Failed to delete category");
+          console.error(error);
+          setShowDeleteModal(false);
+          setSelectedCategoryId(null);
+          setIsDeleting(false);
+        },
+      });
+    }
   };
 
   const handlePageChange = (page: number) => {
@@ -183,9 +202,13 @@ const Categories = () => {
                             onClick={() => handleDelete(category._id)}
                             variant="ghost"
                             size="icon"
-                            className="text-red-500 hover:text-red-600 transition-colors"
+                            disabled={isDeleting && selectedCategoryId === category._id}
                           >
-                            <Trash className="w-4 h-4" />
+                            {isDeleting && selectedCategoryId === category._id ? (
+                              <Loader className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash className="h-4 w-4" />
+                            )}
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -234,6 +257,20 @@ const Categories = () => {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedCategoryId(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Category?"
+        description="Are you sure you want to delete this category? This action cannot be undone."
+        confirmText="Delete Category"
+        cancelText="Keep Category"
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

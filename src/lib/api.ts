@@ -296,10 +296,16 @@ export const getCustomerTournaments = async (id, offset) => {
   return response.data;
 };
 
-export const getCustomerOrdersData = async (page, status, user, date) => {
-  const limit = 10;
+export const getCustomerOrdersData = async (
+  page,
+  status,
+  user,
+  date,
+  limit
+) => {
+  const limit1 = 10;
   const response = await axiosInstance.get("order/order/get/all", {
-    params: { limit, offset: page, status, user, date },
+    params: { limit: limit ? limit : limit1, offset: page, status, user, date },
   });
   return response.data;
 };
@@ -734,3 +740,10 @@ export const replyTicket = async (id: string, formData: FormData) => {
   });
   return response.data;
 };
+
+/// customer delete
+export const deleteCustomer = async (id: string) => {
+  const response = await axiosInstance.delete(`/auth/account/${id}`);
+  return response.data;
+};
+/// customer delete end
