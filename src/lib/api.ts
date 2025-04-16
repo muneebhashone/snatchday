@@ -23,8 +23,14 @@ import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
 import { group } from "console";
 
+
 export const fetchItems = async () => {
   const response = await axiosInstance.get("/items");
+  return response.data;
+};
+
+export const VerifyEmail = async (email: string, emailVerificationToken: string) => {
+  const response = await axiosInstance.post("/auth/verifyEmail", { email, emailVerificationToken });
   return response.data;
 };
 
@@ -42,6 +48,12 @@ export const fetchItemById = async (id: string) => {
   const response = await axiosInstance.get(`/items/${id}`);
   return response.data;
 };
+
+export const requestEmailToken = async (email: string) => {
+  const response = await axiosInstance.post("/auth/requestEmailToken", { email });
+  return response.data;
+};
+
 
 export const authMutation = async (data: any, type: string) => {
   const response = await axiosInstance.post(`/auth/${type}`, data);

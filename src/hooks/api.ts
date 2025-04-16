@@ -86,6 +86,8 @@ import {
   MyAccountGames,
   MyAccountTournaments,
   ITScope,
+  VerifyEmail,
+  requestEmailToken,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -125,6 +127,8 @@ export const useLogout = () => {
   });
 };
 
+
+
 // Create a new item
 export const useAuthApi = () => {
   return useMutation({
@@ -154,6 +158,21 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: ({ data, type }: { data: any; type: string }) =>
       authMutation(data, type),
+  });
+};
+
+export const useVerifyEmail = () => {
+  return useMutation({
+    mutationFn: ({ email, emailVerificationToken }: { email: string; emailVerificationToken: string }) =>
+      VerifyEmail(email, emailVerificationToken),
+  });
+};
+
+
+export const useRequestEmailToken = () => {
+  return useMutation({
+    mutationFn: ({ email }: { email: string }) =>
+      requestEmailToken(email),
   });
 };
 

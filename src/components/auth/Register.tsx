@@ -1,34 +1,38 @@
-import React, { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
-import { FacebookIcon } from "../icons/icon";
-import Link from "next/link";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "../ui/separator";
-import { z } from "zod";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthApi } from "@/hooks/api";
-import { toast } from "sonner";
+"use client"
+
+import { useState } from "react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { X, ArrowRight, ArrowLeft, Check } from "lucide-react"
+import { FacebookIcon } from "../icons/icon"
+import Link from "next/link"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Separator } from "../ui/separator"
+import { z } from "zod"
+import { useForm, Controller, FormProvider, useFormContext } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useAuthApi } from "@/hooks/api"
+import { toast } from "sonner"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useRouter } from "next/navigation"
+import OtpModal from "@/otpmodal"
+
 interface RegisterProps {
-  onBack: () => void;
+  onBack: () => void
 }
 
-const registerSchema = z
+// Define separate schemas for each step
+const accountStepSchema = z
   .object({
     name: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email address"),
-    password: z.string()
-    .min(6, "Password must be at least 6 characters")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character"),    confirmPassword: z.string().min(6, "Confirm Password is required"),
+    password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain at least one special character"),
+    confirmPassword: z.string().min(6, "Confirm Password is required"),
     terms: z.boolean().refine((val) => val === true, {
       message: "required",
     }),
@@ -38,206 +42,632 @@ const registerSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
-    path: ["confirmPassword"], // Path to the error
-  });
+    path: ["confirmPassword"],
+  })
+
+const personalStepSchema = z.object({
+  personalInfo: z.object({
+    salutation: z.string().min(1, "Salutation is required"),
+    title: z.string().min(1, "Title is required"),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters")
+      .max(20, "Username cannot exceed 20 characters")
+      .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
+    lastName: z
+      .string()
+      .min(2, "Last name must be at least 2 characters")
+      .max(50, "Last name cannot exceed 50 characters"),
+    firstName: z
+      .string()
+      .min(2, "First name must be at least 2 characters")
+      .max(50, "First name cannot exceed 50 characters"),
+    street: z.string().min(5, "Street must be at least 5 characters").max(100, "Street cannot exceed 100 characters"),
+    zip: z.string().min(3, "ZIP code must be at least 3 characters").max(10, "ZIP code cannot exceed 10 characters"),
+    location: z
+      .string()
+      .min(2, "Location must be at least 2 characters")
+      .max(50, "Location cannot exceed 50 characters"),
+    country: z.string().min(1, "Country is required"),
+    federalState: z.string().min(2, "State must be at least 2 characters").max(50, "State cannot exceed 50 characters"),
+  }),
+})
+
+// Define types for each step
+type AccountStepData = z.infer<typeof accountStepSchema>
+type PersonalStepData = z.infer<typeof personalStepSchema>
+
+// Combined type for the full form
+type FormData = AccountStepData & PersonalStepData
+
+// Step indicator component
+const StepIndicator = ({ currentStep }: { currentStep: number }) => {
+  return (
+    <div className="flex items-center justify-center mb-8">
+      {/* Step 1 - Account */}
+      <div className="flex flex-col items-center">
+        <div
+          className={`flex items-center justify-center w-10 h-10 rounded-full 
+            
+               gradient-primary text-white
+               
+          `}
+        >
+          {currentStep > 1 ? <Check className="h-5 w-5" /> : <span className="text-white">01</span>}
+        </div>
+        <div className="mt-2 ">
+          <p className={`font-medium ${currentStep === 1 ? "text-[#FF6B3D]" : "text-gray-500"}`}>Account</p>
+          <p className={`text-xs  ${currentStep === 1 ? "text-[#FF6B3D]" : "text-gray-500"} `}>Account Details</p>
+        </div>
+      </div>
+
+      {/* Connector */}
+      <div className="w-24 h-[1px] bg-gray-200 mx-2"></div>
+
+      {/* Step 2 - Personal */}
+      <div className="flex flex-col items-center">
+        <div
+          className={`flex items-center justify-center w-10 h-10 rounded-full 
+           
+              gradient-primary text-white
+             
+          `}
+        >
+          {currentStep > 2 ? <Check className="h-5 w-5" /> : <span className="text-white">02</span>}
+        </div>
+        <div className="mt-2">
+          <p className={`font-medium ${currentStep === 2 ? "text-[#FF6B3D]" : "text-gray-500"}`}>Personal</p>
+          <p
+            className={`text-xs  
+              ${currentStep === 2 ? "text-[#FF6B3D]" : "text-gray-500"}
+            `}
+          >
+            Enter Information
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Account Step Component
+const AccountStep = () => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<AccountStepData>()
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Account Information</h2>
+        <p className="text-gray-600">Enter Your Account Details</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="User Name"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
+        </div>
+        <div>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="email"
+                placeholder="E-Mail Address"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
+        </div>
+        <div>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                placeholder="Password"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
+        </div>
+        <div>
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="password"
+                placeholder="Repeat Password"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword.message}</span>}
+        </div>
+      </div>
+      <div className="space-y-4 mt-6">
+        <div className="flex items-start space-x-3">
+          <Controller
+            name="newsletter"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id="newsletter"
+                className="mt-1 rounded-full"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+          <label htmlFor="newsletter" className="text-foreground">
+            Yes, I would like to be informed about tournaments, special offers and news and receive newsletters from
+            Snatch Day
+          </label>
+        </div>
+        {errors.newsletter && <span className="text-red-500 text-sm">{errors.newsletter.message}</span>}
+
+        <div className="flex items-start space-x-3 ">
+          <Controller
+            name="terms"
+            control={control}
+            render={({ field }) => (
+              <Checkbox
+                id="terms"
+                className="mt-1 rounded-full"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            )}
+          />
+          <label htmlFor="terms" className="text-foreground">
+            I agree to the{" "}
+            <Link href="#" className="text-[#FF6B3D] hover:underline">
+              privacy policy
+            </Link>{" "}
+            and the{" "}
+            <Link href="#" className="text-[#FF6B3D] hover:underline">
+              terms and conditions
+            </Link>
+          </label>
+        </div>
+        {errors.terms && <span className="text-red-500 text-sm">{errors.terms.message}</span>}
+      </div>
+    </div>
+  )
+}
+
+// Personal Step Component
+const PersonalStep = () => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<PersonalStepData>()
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Personal Information</h2>
+        <p className="text-gray-600">Enter Your Personal Details</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Controller
+            name="personalInfo.salutation"
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10">
+                  <SelectValue placeholder="Select Salutation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Mr">Mr</SelectItem>
+                  <SelectItem value="Mrs">Mrs</SelectItem>
+                  <SelectItem value="Ms">Ms</SelectItem>
+                  <SelectItem value="Dr">Dr</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.personalInfo?.salutation && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.salutation.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.title"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="Title"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.title && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.title.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.username"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="Username"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.username && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.username.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.firstName"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="First Name"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.firstName && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.firstName.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.lastName"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="Last Name"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.lastName && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.lastName.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.street"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="Street"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.street && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.street.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.zip"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="ZIP Code"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.zip && <span className="text-red-500 text-sm">{errors.personalInfo.zip.message}</span>}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.location"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="Location"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.location && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.location.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.country"
+            control={control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10">
+                  <SelectValue placeholder="Select Country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="USA">United States</SelectItem>
+                  <SelectItem value="UK">United Kingdom</SelectItem>
+                  <SelectItem value="CA">Canada</SelectItem>
+                  <SelectItem value="AU">Australia</SelectItem>
+                  <SelectItem value="DE">Germany</SelectItem>
+                  <SelectItem value="FR">France</SelectItem>
+                  <SelectItem value="JP">Japan</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.personalInfo?.country && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.country.message}</span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.federalState"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="Federal State"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+              />
+            )}
+          />
+          {errors.personalInfo?.federalState && (
+            <span className="text-red-500 text-sm">{errors.personalInfo.federalState.message}</span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const Register = ({ onBack }: RegisterProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(true)
+  const [currentStep, setCurrentStep] = useState(1)
+  const [email, setEmail] = useState("")
+  const [isotpOpen, setIsotpOpen] = useState(false)
 
-  // Initialize useForm with zodResolver
-  const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: zodResolver(registerSchema),
-    defaultValues:{
-      newsletter:false,
-      terms:false
-    } // Use Zod schema for validation
-  });
+  const router = useRouter()
+
+  // Create separate form instances for each step
+  const accountStepMethods = useForm<AccountStepData>({
+    resolver: zodResolver(accountStepSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      newsletter: false,
+      terms: false,
+    },
+    mode: "onChange",
+  })
+
+  const personalStepMethods = useForm<PersonalStepData>({
+    resolver: zodResolver(personalStepSchema),
+    defaultValues: {
+      personalInfo: {
+        salutation: "",
+        title: "",
+        username: "",
+        firstName: "",
+        lastName: "",
+        street: "",
+        zip: "",
+        location: "",
+        country: "",
+        federalState: "",
+      },
+    },
+    mode: "onChange",
+  })
 
   const { mutate: register, isPending } = useAuthApi()
 
-
   const handleClose = () => {
-    setIsOpen(false);
-    onBack();
-  };
+    setIsOpen(false)
+    onBack()
+  }
 
-  const onSubmit = (data: z.infer<typeof registerSchema>) => {
-    const { name, email, password } = data
-    register({ data: { name, email, password }, type: "register" }, {
-      onSuccess: ({ data }) => {
-        toast.success("Registration successfull")
-        handleClose()
+  const goToNextStep = async () => {
+    if (currentStep === 1) {
+      const isValid = await accountStepMethods.trigger()
+      if (isValid) {
+        setCurrentStep(2)
+      }
+    }
+  }
+
+  const goToPreviousStep = () => {
+    setCurrentStep(1)
+  }
+
+  const onSubmit = async () => {
+    // For the final step, validate the current step first
+    const isValid = await personalStepMethods.trigger()
+
+    if (!isValid) return
+
+    // Combine data from both steps
+    const accountData = accountStepMethods.getValues()
+    const personalData = personalStepMethods.getValues()
+
+    const formData = {
+      ...accountData,
+      ...personalData,
+    }
+
+    console.log(formData, "formdata")
+
+    const { confirmPassword, terms, newsletter, personalInfo, ...rest } = formData
+
+    const registrationData = {
+      ...rest,
+      ...personalInfo,
+    }
+
+    register(
+      { data: registrationData, type: "register" },
+      {
+        onSuccess: ({ data }) => {
+          setEmail(data?.email)
+          setIsotpOpen(true)
+          console.log(data, "res")
+          toast.success("Registration successful")
+        },
+        onError: (error: any) => {
+          toast.error(error.response.data.message)
+        },
       },
-      onError: (error: any) => {
-        toast.error(error.response.data.message)
-      },
-    })
-  };
+    )
+  }
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <FormProvider {...accountStepMethods}>
+            <AccountStep />
+          </FormProvider>
+        )
+      case 2:
+        return (
+          <FormProvider {...personalStepMethods}>
+            <PersonalStep />
+          </FormProvider>
+        )
+      default:
+        return null
+    }
+  }
+
+  if (isotpOpen) {
+    return <OtpModal open={isotpOpen} onClose={() => setIsotpOpen(false)} isOpenLogin={handleClose} email={email} />
+  }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-[1170px] p-0" hideCloseButton={true}>
-        <DialogHeader className="text-left relative px-24 pt-10">
-          <button
-            onClick={handleClose}
-            className="absolute -right-5 -top-5 z-30 h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100 flex items-center justify-center"
-          >
-            <X className="h-6 w-6" />
-          </button>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-[48px] font-extrabold">
-              Register
-            </DialogTitle>
-          </div>
-        </DialogHeader>
-
-        <div className="mt-5 px-24 pb-16">
-          {/* Form Inputs */}
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Controller
-                  name="name"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="text"
-                      placeholder="User Name"
-                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                    />
-                  )}
-                />
-                {errors.name && <span className="text-red-500">{errors.name.message}</span>}
-              </div>
-              <div>
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="email"
-                      placeholder="E-Mail Address"
-                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                    />
-                  )}
-                />
-                {errors.email && <span className="text-red-500">{errors.email.message}</span>}
-              </div>
-              <div>
-                <Controller
-                  name="password"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="Password"
-                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                    />
-                  )}
-                />
-                {errors.password && <span className="text-red-500">{errors.password.message}</span>}
-              </div>
-              <div>
-                <Controller
-                  name="confirmPassword"
-                  control={control}
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="Repeat Password"
-                      className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-                    />
-                  )}
-                />
-                {errors.confirmPassword && <span className="text-red-500">{errors.confirmPassword.message}</span>}
-              </div>
-            </div>
-
-            {/* Terms and Newsletter Checkbox */}
-            <div className="mt-10">
-              <div className="flex items-start space-x-3">
-                <Controller
-                  name="newsletter"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox {...field} id="newsletter" className="mt-1 rounded-full" checked={field.value}            onCheckedChange={field.onChange} />
-                  )}
-                />
-                <label htmlFor="newsletter" className="text-foreground">
-                  Yes, I would like to be informed about tournaments, special
-                  offers and news and receive newsletters from Snatch Day
-                </label>
-                {errors.newsletter && <span className="text-red-500">{errors.newsletter.message}</span>}
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-3 mt-2">
-              <div className="flex items-start space-x-3 mt-2">
-                <Controller
-                  name="terms"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="flex items-start space-x-3 mt-2">
-                      <Checkbox
-                        id="terms"
-                        className="mt-1 rounded-full"
-                        checked={field.value}
-                        onCheckedChange={field.onChange} 
-                        />
-                      <label htmlFor="terms" className="text-foreground">
-                        I agree to the{" "}
-                        <Link href="#" className="text-[#FF6B3D] hover:underline">
-                          privacy policy
-                        </Link>{" "}
-                        and the{" "}
-                        <Link href="#" className="text-[#FF6B3D] hover:underline">
-                          terms and conditions
-                        </Link>
-                      </label>
-                      {errors.terms && <span className="text-red-500">{errors.terms.message}</span>}
-                    </div>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Register Button */}
-            <Button
-              type="submit"
-              disabled={isPending}
-              className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-8 px-11"
+    <>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="max-w-[1170px] p-0" hideCloseButton={true}>
+          <DialogHeader className="text-left relative px-24 pt-10">
+            <button
+              onClick={handleClose}
+              className="absolute -right-5 -top-5 z-30 h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100 flex items-center justify-center"
             >
-              {isPending ? "Registering..." : "Register Your Account"}
-            </Button>
-          </form>
-          <Separator className="mt-16 mb-6" />
+              <X className="h-6 w-6" />
+            </button>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-[48px] font-extrabold">Register</DialogTitle>
+            </div>
+          </DialogHeader>
 
-          {/* Social Register */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center justify-center gap-4">
-              <p className="text-gray-600">Or Register with Social Media</p>
-              <FacebookIcon />
+          <div className="mt-5 px-24 pb-16">
+            {/* Step Indicator */}
+            <StepIndicator currentStep={currentStep} />
+
+            {/* Form Content */}
+            {renderStepContent()}
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between mt-8">
+              {currentStep > 1 ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={goToPreviousStep}
+                  className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full px-11"
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Previous
+                </Button>
+              ) : (
+                <div></div> // Empty div to maintain layout
+              )}
+
+              {currentStep < 2 ? (
+                <Button
+                  type="button"
+                  onClick={goToNextStep}
+                  className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full px-11"
+                >
+                  Next
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={onSubmit}
+                  disabled={isPending}
+                  className="min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full px-11"
+                >
+                  {isPending ? "Registering..." : "Register Your Account"}
+                </Button>
+              )}
             </div>
 
-            {/* Login Link */}
-            <div className="text-gray-600">
-              Already have an account?{" "}
-              <button
-                onClick={handleClose}
-                className="text-[#FF6B3D] hover:underline"
-              >
-                Login Now
-              </button>
-            </div>
+            {currentStep === 1 && (
+              <>
+                <Separator className="mt-16 mb-6" />
+
+                {/* Social Register */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-center gap-4">
+                    <p className="text-gray-600">Or Register with Social Media</p>
+                    <FacebookIcon />
+                  </div>
+
+                  {/* Login Link */}
+                  <div className="text-gray-600">
+                    Already have an account?{" "}
+                    <button onClick={handleClose} className="text-[#FF6B3D] hover:underline">
+                      Login Now
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
+        </DialogContent>
+      </Dialog>
+    </>
+  )
+}
 
-export default Register;
+export default Register

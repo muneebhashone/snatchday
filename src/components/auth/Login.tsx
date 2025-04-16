@@ -12,6 +12,7 @@ import { User, X, LogOut, Loader2, ShoppingCartIcon } from "lucide-react";
 import { FacebookIcon } from "../icons/icon";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
+import { useRequestEmailToken } from "@/hooks/api";
 import Register from "./Register";
 import {
   DropdownMenu,
@@ -29,6 +30,7 @@ import { useUserContext } from "@/context/userContext";
 import { useRouter } from "next/navigation";
 import GredientButton from "../GredientButton";
 import { useSocket } from "@/context/SocketContext";
+import OtpModal from "@/otpmodal";
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -50,16 +52,24 @@ const Login = ({
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(true);
+  const [showResendButton, setShowResendButton] = useState(false);
+  const [isOtpOpen, setIsOtpOpen] = useState(false);
+
+
   const { user, setUserData, logout } = useUserContext();
   const router = useRouter();
   const { mutate: login, isPending } = useAuthApi();
   const { data: myProfile, isPending: isMyProfilePending } = useGetMyProfile();
   const { mutate: Userlogout } = useLogout();
+  const { mutate: requestEmailToken, isPending: isResending } = useRequestEmailToken();
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
+    getValues, 
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -82,7 +92,8 @@ const Login = ({
         socket.emit("logout");
         setUserData(null);
         setIsLoggedIn(false);
-        document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie =
+          "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         logout();
         toast.success("Logout successfully");
         router.push("/");
@@ -94,11 +105,18 @@ const Login = ({
     });
   };
 
+
+
   useEffect(() => {
     if (user) {
       setIsLoggedIn(true);
     }
   }, [user]);
+  
+  if (isOtpOpen) {
+    return <OtpModal open={isOtpOpen} onClose={() => setIsOtpOpen(false)}      email={getValues("email")}
+    />
+  }
 
   const onSubmit = (data: z.infer<typeof loginSchema>) => {
     login(
@@ -118,12 +136,17 @@ const Login = ({
           toast.success("Login successful");
         },
         onError: (error) => {
+          
           toast.error(error?.response?.data?.message || "Login failed", {
             style: {
               background: "#ff4d4f",
               color: "#fff",
             },
           });
+          if (error?.response?.data?.message === "User not approved yet") {
+            setIsEmailVerified(false);
+            setShowResendButton(true);
+          }
           console.error("Login failed:", error);
         },
       }
@@ -169,6 +192,20 @@ const Login = ({
       </DropdownMenu>
     );
   }
+  const handleResendVerification = (e:any) => {
+    e.preventDefault()
+    const email = getValues("email");
+    requestEmailToken({ email }, {
+      onSuccess: () => {
+        toast.success("Verification email sent successfully");
+        setIsOtpOpen(true)
+      },
+      onError: (error) => {
+        toast.error(error?.response?.data?.message || "Failed to resend email");
+      }
+    });
+  };
+  
 
   return (
     <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
@@ -235,6 +272,17 @@ const Login = ({
             />
             {errors.password && (
               <p className="text-red-500">{errors.password.message}</p>
+            )}
+            {showResendButton && (
+              <Button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={isResending}
+
+                className="w-full min-h-[60px] text-lg font-semibold bg-orange-500 text-white rounded-full mt-4"
+              >
+                  {isResending ? "Resending..." : "Resend Verification Code"}
+              </Button>
             )}
             <Button
               type="submit"
