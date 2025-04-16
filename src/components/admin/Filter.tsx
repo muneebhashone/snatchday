@@ -74,7 +74,7 @@ const Filter = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-md shadow-sm">
+      <div className="rounded-md shadow-sm">
         {isLoading ? (
           <div className="p-8 text-center">Loading filters...</div>
         ) : isError ? (

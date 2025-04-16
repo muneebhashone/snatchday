@@ -6,7 +6,7 @@ const ActivityTimelineCard = () => {
  
       <>
         {/* Activity Timeline Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
+        <div className="bg-white rounded-2xl shadow-lg p-6 h-[500px]">
           <h2 className="text-xl font-semibold text-gray-800 mb-6">Activity Timeline</h2>
           
           <div className="space-y-8">

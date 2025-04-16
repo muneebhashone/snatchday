@@ -9,7 +9,12 @@ import Image from "next/image"
 import SlideProducts from "./SlideProducts"
 import TopRefferalCard from "./TopRefferalCard"
 import ActivityCards from "./ActivityTimelineCard"
-
+import ImpressionCard from "./ImpressionCard"
+import LiveVisitorCard from "./LiveVisitorCard"
+import OrdersCard from "./OrdersCard"
+import OverviewUsersTable from "./OverviewUsersTable"
+import VisitorByDayCard from "./VisitorByDayCard"
+import MarketingCarosel from "./MarketingCarosel"
 
 const NewOverview = () => {
 
@@ -117,14 +122,29 @@ const NewOverview = () => {
           />
         </div>
       </div>
-      <div className="col-span-4">
+      <div className="col-span-2">
         <SlideProducts />
       </div>
+      <div className="col-span-2 flex flex-col gap-4 justify-between">
+        <ImpressionCard />
+        <OrdersCard />
+      </div>
+      <div className="col-span-2 flex flex-col gap-4 justify-between">
+        <LiveVisitorCard />
+        <MarketingCarosel />
+
+      </div>
+     
       <div className="col-span-2 h-full">
         <ActivityCards />
       </div>
       <div className="col-span-2 h-full">
         <TopRefferalCard />
+      </div>
+      <div className="col-span-2 h-full">
+        <OverviewUsersTable />
+      </div>
+      <div className="col-span-2 h-full">
       </div>
     </div>
     

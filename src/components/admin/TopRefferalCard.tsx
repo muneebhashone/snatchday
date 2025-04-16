@@ -4,7 +4,7 @@ import React from 'react'
 
 const TopRefferalCard = () => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
+    <div className="bg-white rounded-2xl shadow-lg p-6 h-[500px]">
     <div className="flex justify-between items-center mb-6">
       <div>
         <h2 className="text-xl font-semibold text-gray-800">Top Referral Sources</h2>

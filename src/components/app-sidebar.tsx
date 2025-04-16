@@ -213,8 +213,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
-      <SidebarHeader className="bg-primary text-primary">
-        <div className={cn("text-gray-100 bg-primary rounded-lg", 
+      <SidebarHeader className="bg-gray-100 text-primary">
+        <div className={cn("text-primary rounded-lg", 
           isExpanded ? "px-4 py-2" : "py-1 flex justify-center"
         )}>
           {isExpanded ? (
@@ -227,7 +227,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           )}
         </div>
       </SidebarHeader>
-      <SidebarContent className="py-6 bg-primary text-white">
+      <SidebarContent className="py-6 bg-gray-100 text-primary">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -267,7 +267,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                               asChild
                               isActive={pathname === subItem.url}
                               tooltip={!isExpanded ? subItem.title : undefined}
-                              className="[&[data-active]]:bg-gray-100 [&[data-active]]:text-primary text-white rounded-md m-0"
+                              className="[&[data-active]]:bg-gray-100 [&[data-active]]:text-primary text-primary rounded-md m-0"
                             >
                               <a
                                 href={subItem.url}
@@ -287,7 +287,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       isActive={pathname === item.url}
                       tooltip={!isExpanded ? item.title : undefined}
                       className={cn(
-                        "text-xl text-white py-3 hover:bg-gray-100 hover:text-primary rounded-md",
+                        "text-xl text-primary py-3 hover:bg-gray-100 hover:text-primary rounded-md",
                         isExpanded ? "px-4" : "justify-center",
                         pathname === item.url
                           ? "data-[active]:bg-primary data-[active]:text-white"
@@ -297,7 +297,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <a
                         href={item.url}
                         className={cn(
-                          "flex items-center text-white",
+                          "flex items-center text-primary",
                           isExpanded ? "gap-3" : "justify-center"
                         )}
                       >

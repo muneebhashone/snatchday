@@ -63,17 +63,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider className="!bg-gray-100 gap-10">
       <AppSidebar />
       {/* <SidebarInset className="!bg-gray-100"> */}
-      <div className="bg-gray-100">
+      <div className="bg-gray-100 container w-[80%] mr-auto">
         <header className="bg-gray-100 sticky top-0 right-0 z-50 transition-shadow duration-300" 
           id="admin-header"
         >
-          <div className="flex items-center justify-between px-8 py-4">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-end px-8 py-4">
+            {/* <div className="flex items-center gap-4">
               <SidebarTrigger className="text-gray-500 hover:text-primary" />
             
-            </div>
+            </div> */}
 
-            <div className="flex items-center gap-6">
+            
           
 
               <div className="flex items-center gap-3">
@@ -95,7 +95,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
-          </div>
+          
         </header>
         <div className="bg-gray-100 min-h-screen">{children}</div>
       </div>
