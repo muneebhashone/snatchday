@@ -89,8 +89,8 @@ const FormSchema = z.object({
     score: z.enum(["MAX", "MIN"]),
     time: z.enum(["MAX", "MIN"]),
   }),
-  logo: createImageSchema("Logo"),
-  image: createImageSchema("Image"),
+  logo: createImageSchema("Logo").optional(),
+  image: createImageSchema("Image").optional(),
 });
 
 type IForm = z.infer<typeof FormSchema>;
@@ -540,8 +540,8 @@ const Page = () => {
                             id="image"
                             type="file"
                             {...imageInputProps}
-                            onChange={
-                              (e) => field.onChange(e.target.files?.[0])
+                            onChange={(e) =>
+                              field.onChange(e.target.files?.[0])
                             }
                           />
                           <p className="text-xs text-muted-foreground">

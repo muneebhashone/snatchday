@@ -1,31 +1,63 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
-import { Control, UseFieldArrayAppend, UseFieldArrayRemove } from 'react-hook-form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import {
+  Control,
+  UseFieldArrayAppend,
+  UseFieldArrayRemove,
+} from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { useState } from "react";
 
 interface ProductDiscountFieldProps {
   control: Control<any>;
   discountFields: any[];
-  append: UseFieldArrayAppend<any, 'discounts'>;
+  append: UseFieldArrayAppend<any, "discounts">;
   remove: UseFieldArrayRemove;
 }
 
-const ProductDiscountField = ({ control, discountFields, append, remove }: ProductDiscountFieldProps) => {
+const ProductDiscountField = ({
+  control,
+  discountFields,
+  append,
+  remove,
+}: ProductDiscountFieldProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   return (
     <div className="border rounded-md p-4 space-y-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Discounts</h3>
-        <Button 
-          type="button" 
-          variant="outline" 
-          size="sm" 
-          onClick={() => append({ customerGroup: 'BASIC', price: 0 })}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => {
+            setStartDate(null);
+            setEndDate(null);
+            append({ customerGroup: "BASIC", price: 0 });
+          }}
         >
           <PlusCircle className="h-4 w-4 mr-2" /> Add Discount
         </Button>
@@ -62,9 +94,14 @@ const ProductDiscountField = ({ control, discountFields, append, remove }: Produ
                 <FormItem>
                   <FormLabel>Discount Price</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="number" 
+                    <Input
+                      type="number"
                       placeholder="Discounted price"
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
@@ -99,8 +136,25 @@ const ProductDiscountField = ({ control, discountFields, append, remove }: Produ
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value ? new Date(field.value) : undefined}
-                        onSelect={(date) => field.onChange(date?.toISOString())}
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
+                        onSelect={(date) => {
+                          field.onChange(date?.toISOString());
+                          if (date) {
+                            const nextDay = new Date(date);
+                            nextDay.setDate(nextDay.getDate() + 1);
+                            setStartDate(nextDay);
+                          }
+                        }}
+                        disabled={(date) => {
+                          if (endDate) {
+                            return (
+                              date > new Date(endDate) || date < new Date()
+                            );
+                          }
+                          return date < new Date();
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -132,8 +186,25 @@ const ProductDiscountField = ({ control, discountFields, append, remove }: Produ
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value ? new Date(field.value) : undefined}
-                        onSelect={(date) => field.onChange(date?.toISOString())}
+                        selected={
+                          field.value ? new Date(field.value) : undefined
+                        }
+                        onSelect={(date) => {
+                          field.onChange(date?.toISOString());
+                          if (date) {
+                            const previousDay = new Date(date);
+                            previousDay.setDate(previousDay.getDate() - 1);
+                            setEndDate(previousDay);
+                          }
+                        }}
+                        disabled={(date) => {
+                          if (startDate) {
+                            return (
+                              date < new Date(startDate) || date < new Date()
+                            );
+                          }
+                          return date < new Date();
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -143,7 +214,7 @@ const ProductDiscountField = ({ control, discountFields, append, remove }: Produ
               )}
             />
           </div>
-          
+
           <div className="flex justify-end">
             <Button
               type="button"
@@ -164,4 +235,4 @@ const ProductDiscountField = ({ control, discountFields, append, remove }: Produ
   );
 };
 
-export default ProductDiscountField; 
+export default ProductDiscountField;

@@ -657,7 +657,7 @@ const Page = () => {
                 disabled={isPending}
               >
                 {isPending ? (
-                  <Loader className="text-primary animate-spin" size={18} />
+                  <Loader className="text-white animate-spin" size={18} />
                 ) : (
                   "Create Game"
                 )}

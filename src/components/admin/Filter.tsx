@@ -4,6 +4,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -15,7 +16,15 @@ import { CreateFilterDialog } from "./CreateFilterDialog";
 import { EditFilterDialog } from "./EditFilterDialog";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useState } from "react";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+
 interface Category {
   _id: string;
   name: string;
@@ -31,26 +40,36 @@ interface Filter {
   updatedAt: string;
 }
 
+interface FilterResponse {
+  data: {
+    filters: Filter[];
+    total: number;
+  };
+}
+
 const Filter = () => {
-  // Fetch filters and categories using the hooks
+  const [page, setPage] = useState(0);
+  const skip = 10;
   const queryClient = useQueryClient();
-  const { data: getFilters, isLoading, isError } = useGetFilters({
-    limit: "10",
-    offset: "0"
-  });
+  const {
+    data: getFilters,
+    isLoading,
+    isError,
+  } = useGetFilters({
+    limit: skip.toString(),
+    offset: page.toString(),
+  }) as {
+    data: FilterResponse | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
+
   const { data: getCategories } = useGetCategories();
   const { mutate: deleteFilter } = useDeleteFilter();
 
-  const filters = getFilters?.data.filters || [];
-  const categories = getCategories?.data.categories || [];
-
-  // Function to get category name by ID
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((cat: Category) => cat._id === categoryId);
-    return category
-      ? category.displayName || category.name
-      : "Unknown Category";
-  };
+  const filters = getFilters?.data?.filters || [];
+  const categories = getCategories?.data?.categories || [];
+  const totalItems = getFilters?.data?.total || 0;
 
   const handleDelete = (id: string) => {
     deleteFilter(id, {
@@ -63,6 +82,10 @@ const Filter = () => {
         console.error(error);
       },
     });
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage((newPage - 1) * skip);
   };
 
   return (
@@ -93,12 +116,14 @@ const Filter = () => {
                   <TableHead className="text-primary font-bold">
                     Created At
                   </TableHead>
-                  <TableHead className="text-right text-primary font-bold">Actions</TableHead>
+                  <TableHead className="text-right text-primary font-bold">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filters
-                  ?.filters?.sort(
+                  ?.sort(
                     (a: Filter, b: Filter) =>
                       new Date(b.createdAt).getTime() -
                       new Date(a.createdAt).getTime()
@@ -124,25 +149,56 @@ const Filter = () => {
                       </TableCell>
                       <TableCell className="text-right space-x-2">
                         <EditFilterDialog filter={filter} />
-                        <Button
-                          onClick={() => handleDelete(filter._id)}
-                          variant="ghost"
-                          size="icon"
-                          // className="text-red-500 hover:text-red-600 transition-colors"
-                        >
-                          <Trash className="h-4 w-4" />
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                onClick={() => handleDelete(filter._id)}
+                                variant="ghost"
+                                size="icon"
+                                // className="text-red-500 hover:text-red-600 transition-colors"
+                              >
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete Filter</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </TableCell>
                     </TableRow>
                   ))}
                 {!filters?.length && (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                    <TableCell
+                      colSpan={4}
+                      className="text-center py-8 text-gray-500"
+                    >
                       No filters found
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
+              <TableFooter className="w-full">
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="text-sm text-gray-500">
+                        Showing {page + 1} to{" "}
+                        {Math.min(page + skip, totalItems)} of {totalItems}{" "}
+                        entries
+                      </div>
+                      <DynamicPagination
+                        totalItems={totalItems}
+                        itemsPerPage={skip}
+                        currentPage={Math.floor(page / skip) + 1}
+                        onPageChange={handlePageChange}
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
             </Table>
           </div>
         )}

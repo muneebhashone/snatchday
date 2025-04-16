@@ -406,6 +406,11 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                   <Input
                     type="number"
                     placeholder="Enter value"
+                    onKeyDown={(e) => {
+                      if (e.key === "-") {
+                        e.preventDefault();
+                      }
+                    }}
                     {...field}
                     className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />

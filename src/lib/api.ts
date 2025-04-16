@@ -55,15 +55,11 @@ export const authMutation = async (data: any, type: string) => {
 // };
 
 export const createProduct = async (formData: FormData) => {
-  const response = await axiosInstance.post<MainProduct>(
-    "/product",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  const response = await axiosInstance.post<MainProduct>("/product", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
@@ -546,8 +542,13 @@ export const createFilter = async (formData: FilterFormData) => {
   return response.data;
 };
 
-export const getFilters = async () => {
-  const response = await axiosInstance.get<FilterFormData[]>("/filter");
+export const getFilters = async (params: {
+  limit?: string;
+  offset?: string;
+}) => {
+  const response = await axiosInstance.get<FilterFormData[]>("/filter", {
+    params,
+  });
   return response.data;
 };
 
@@ -696,9 +697,9 @@ export interface TicketFormData {
 }
 
 export const createTicket = async (formData: FormData) => {
-  const response = await axiosInstance.post('/ticket', formData, {
+  const response = await axiosInstance.post("/ticket", formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      "Content-Type": "multipart/form-data",
     },
   });
   return response.data;
@@ -712,9 +713,7 @@ export interface TicketParams {
   sort?: string;
 }
 
-
-  export const getTickets = async (params: TicketParams) => { 
-
+export const getTickets = async (params: TicketParams) => {
   const limit = 10;
   const response = await axiosInstance.get("/ticket", {
     params: { limit, ...params },
@@ -722,19 +721,16 @@ export interface TicketParams {
   return response.data;
 };
 
-
-
 export const getTicketById = async (id: string) => {
   const response = await axiosInstance.get(`/ticket/${id}`);
   return response.data;
 };
 
-export const replyTicket = async (id: string, formData: FormData ) => {
+export const replyTicket = async (id: string, formData: FormData) => {
   const response = await axiosInstance.post(`/ticket/${id}`, formData, {
     headers: {
-      'Content-Type': 'multipart/form-data',
+      "Content-Type": "multipart/form-data",
     },
   });
   return response.data;
 };
-

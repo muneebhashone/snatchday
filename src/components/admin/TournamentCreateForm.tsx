@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format, setDate } from "date-fns";
 import { useCreateTournament, useGetGames, useGetProducts } from "@/hooks/api";
 
 import { Button } from "@/components/ui/button";
@@ -51,9 +51,7 @@ import {
 
 const formSchema = z
   .object({
-    name: z
-      .string({ required_error: "Name is required" })
-      .min(3, "Name must be at least 3 characters"),
+    name: z.string().optional(),
     title: z
       .string({ required_error: "Title is required" })
       .min(3, "Title must be at least 3 characters"),
@@ -72,12 +70,10 @@ const formSchema = z
     article: z
       .string({ required_error: "Product selection is required" })
       .min(1, "Please select a product"),
-    startingPrice: z.coerce
-      .number({ required_error: "Starting price is required" })
-      .min(0, "Starting price must be positive"),
+    startingPrice: z.coerce.number().optional(),
     priceReduction: z.coerce
       .number({ required_error: "Price reduction is required" })
-      .min(0, "Price reduction must be positive"),
+      .min(1, "Price reduction must be at least 1"),
     numberOfPieces: z.coerce
       .number({ required_error: "Number of pieces is required" })
       .min(1, "Number of pieces must be at least 1"),
@@ -105,14 +101,14 @@ const formSchema = z
       .min(1, "Length must be at least 1"),
     fee: z.coerce
       .number({ required_error: "Fee is required" })
-      .min(0, "Fee must be positive"),
+      .min(1, "Fee must be at least 1"),
     numberOfParticipants: z.coerce
       .number({ required_error: "Number of participants is required" })
       .min(1, "Number of participants must be at least 1"),
     vip: z.boolean(),
     resubmissions: z.coerce
       .number({ required_error: "Resubmissions is required" })
-      .min(0, "Resubmissions must be positive"),
+      .min(1, "Resubmissions must be at least 1"),
     image: z.string(),
   })
 
@@ -296,6 +292,11 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
               </Command>
             </PopoverContent>
           </Popover>
+          <FormDescription className="text-xs text-primary">
+            <span className="text-black">*</span> if you select an article then
+            the strating price and product name will be automatically filled{" "}
+            <span className="text-black">*</span>
+          </FormDescription>
           <FormMessage />
         </FormItem>
       )}
@@ -324,7 +325,7 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Tournament name" {...field} />
+                      <Input placeholder="Product name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -396,7 +397,16 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="0.00" {...field} />
+                      <Input
+                        type="number"
+                        placeholder="0.00"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -413,7 +423,16 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="1" {...field} />
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -491,7 +510,10 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                         }
                         onSelect={(date) => field.onChange(date?.toISOString())}
                         disabled={(date) =>
-                          date < new Date() || date < new Date("1900-01-01")
+                          form.getValues("end")
+                            ? date > new Date(form.getValues("end")) ||
+                              date < new Date()
+                            : date < new Date() || date < new Date("1900-01-01")
                         }
                         initialFocus
                       />
@@ -512,6 +534,11 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                       field.onChange(onchange?.toISOString());
                     }}
                   />
+                  <FormDescription className="text-xs text-primary">
+                    <span className="text-black">*</span> The start date is same
+                    as the end date then make sure the end time is greater than
+                    the start time <span className="text-black">*</span>
+                  </FormDescription>
                 </FormItem>
               )}
             />
@@ -549,10 +576,13 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                         selected={
                           field.value ? new Date(field.value) : undefined
                         }
-                        onSelect={(date) => field.onChange(date?.toISOString())}
                         disabled={(date) =>
-                          date < new Date() || date < new Date("1900-01-01")
+                          form.getValues("start")
+                            ? date < new Date(form.getValues("start")) ||
+                              date == new Date(form.getValues("start"))
+                            : date < new Date() || date < new Date("1900-01-01")
                         }
+                        onSelect={(date) => field.onChange(date?.toISOString())}
                         initialFocus
                       />
                     </PopoverContent>
@@ -589,7 +619,16 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="1" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      {...field}
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -606,7 +645,16 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0.00" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="0.00"
+                      {...field}
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -623,7 +671,16 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="1" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      {...field}
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -640,7 +697,16 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                     <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      {...field}
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

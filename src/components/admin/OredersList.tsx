@@ -61,22 +61,22 @@ export default function OrdersList() {
   };
 
   return (
-    <div className="max-w-full mx-auto rounded-sm border">
-      <div className="w-full pl-4 flex items-center gap-1">
+    <div className="max-w-full mx-auto rounded-sm ">
+      {/* <div className="w-full pl-4 flex items-center gap-1">
         <List size={18} />
         Overview
-      </div>
+      </div> */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-1 grid grid-cols-4 items-center justify-center gap-2 bg-gray-100 pl-24 pt-4 pb-8"
+          className="flex justify-between items-center gap-5 w-full pl-5"
         >
           {/* status */}
           <FormField
             control={form.control}
             name="status"
             render={({ field }) => (
-              <FormItem className="col-span-1">
+              <FormItem className="w-[400px]">
                 <FormLabel>Status</FormLabel>
                 <Select
                   onValueChange={field.onChange}

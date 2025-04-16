@@ -90,24 +90,29 @@ import { TimePickerDemo } from "../ui/TimePicker1";
 //   resubmissions: z.coerce.number().min(0, "Resubmissions must be positive"),
 // });
 const formSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().optional(),
-  title: z.string().optional(),
-  textForBanner: z.string().optional(),
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(),
-  article: z.string().optional(),
-  startingPrice: z.coerce.number().optional(),
-  priceReduction: z.coerce.number().optional(),
-  numberOfPieces: z.coerce.number().optional(),
-  game: z.string().optional(),
-  start: z.string().optional(),
-  length: z.coerce.number().optional(),
-  fee: z.coerce.number().optional(),
-  numberOfParticipants: z.coerce.number().optional(),
-  vip: z.boolean().optional(),
-  resubmissions: z.coerce.number().optional(),
+  id: z.string().nonempty("ID is required"),
+  name: z.string().nonempty("Name is required"),
+  title: z.string().nonempty("Title is required"),
+  textForBanner: z.string().nonempty("Banner text is required"),
+  metaTitle: z.string().nonempty("Meta title is required"),
+  metaDescription: z.string().nonempty("Meta description is required"),
+  metaKeywords: z.string().nonempty("Meta keywords is required"),
+  article: z.string().nonempty("Article is required"),
+  startingPrice: z.coerce.number().min(1, "Starting price must be positive"),
+  priceReduction: z.coerce.number().min(1, "Price reduction must be positive"),
+  numberOfPieces: z.coerce
+    .number()
+    .min(1, "Number of pieces must be at least 1"),
+  game: z.string().nonempty("Game is required"),
+  start: z.string().nonempty("Start date is required"),
+  end: z.string().nonempty("End date is required"),
+  length: z.coerce.number().min(1, "Length must be at least 1"),
+  fee: z.coerce.number().min(1, "Fee must be positive"),
+  numberOfParticipants: z.coerce
+    .number()
+    .min(1, "Number of participants must be at least 1"),
+  vip: z.boolean(),
+  resubmissions: z.coerce.number().min(1, "Resubmissions must be positive"),
 });
 
 interface Tournament {
@@ -147,12 +152,15 @@ export function EditTournamentDialog({
   const [open, setOpen] = useState(false);
   const [openPop, setOpenPop] = useState(false);
   const queryClient = useQueryClient();
-  const findItem = products?.find((pro) => pro._id === tournament.article)?.name;
+  const findItem = products?.find(
+    (pro) => pro._id === tournament.article
+  )?.name;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
   useEffect(() => {
+    console.log(tournament);
     if (tournament) {
       form.reset({
         id: tournament._id,
@@ -168,6 +176,7 @@ export function EditTournamentDialog({
         numberOfPieces: tournament?.numberOfPieces,
         game: tournament?.game?._id,
         start: tournament?.start,
+        end: tournament?.end,
         length: tournament?.length,
         fee: tournament?.fee,
         numberOfParticipants: tournament?.numberOfParticipants,
@@ -222,8 +231,7 @@ export function EditTournamentDialog({
                   return (
                     <FormItem>
                       <FormLabel className="flex items-center gap-1">
-                        Article
-                        <span className="text-red-500">*</span>
+                        Article *
                       </FormLabel>
 
                       <Popover open={openPop} onOpenChange={setOpenPop}>
@@ -316,7 +324,7 @@ export function EditTournamentDialog({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>Name *</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -329,7 +337,7 @@ export function EditTournamentDialog({
                 name="game"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Game</FormLabel>
+                    <FormLabel>Game *</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -386,6 +394,15 @@ export function EditTournamentDialog({
                           onSelect={(date) =>
                             field.onChange(date?.toISOString())
                           }
+                          disabled={(date) => {
+                            if (form.getValues("end")) {
+                              return (
+                                date > new Date(form.getValues("end")) ||
+                                date < new Date()
+                              );
+                            }
+                            return date < new Date();
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
@@ -399,7 +416,7 @@ export function EditTournamentDialog({
                 name="start"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Time</FormLabel>
+                    <FormLabel>Time *</FormLabel>
                     <TimePickerDemo
                       date={field.value ? new Date(field.value) : undefined}
                       setDate={(onchange) => {
@@ -415,9 +432,17 @@ export function EditTournamentDialog({
                 name="startingPrice"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Starting Price</FormLabel>
+                    <FormLabel>Starting Price *</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -428,9 +453,17 @@ export function EditTournamentDialog({
                 name="priceReduction"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price Reduction</FormLabel>
+                    <FormLabel>Price Reduction *</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -441,9 +474,17 @@ export function EditTournamentDialog({
                 name="numberOfPieces"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Pieces</FormLabel>
+                    <FormLabel>Number of Pieces *</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -454,9 +495,17 @@ export function EditTournamentDialog({
                 name="length"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Length (minutes)</FormLabel>
+                    <FormLabel>Length (minutes) *</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -467,9 +516,17 @@ export function EditTournamentDialog({
                 name="fee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fee</FormLabel>
+                    <FormLabel>Fee *</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -480,9 +537,17 @@ export function EditTournamentDialog({
                 name="numberOfParticipants"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Participants</FormLabel>
+                    <FormLabel>Number of Participants *</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -493,9 +558,17 @@ export function EditTournamentDialog({
                 name="resubmissions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Resubmissions</FormLabel>
+                    <FormLabel>Resubmissions *</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onKeyDown={(e) => {
+                          if (e.key === "-") {
+                            e.preventDefault();
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -528,7 +601,7 @@ export function EditTournamentDialog({
                 name="metaTitle"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Meta Title</FormLabel>
+                    <FormLabel>Meta Title *</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -541,7 +614,7 @@ export function EditTournamentDialog({
                 name="metaDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Meta Description</FormLabel>
+                    <FormLabel>Meta Description *</FormLabel>
                     <FormControl>
                       <Textarea {...field} />
                     </FormControl>
@@ -555,7 +628,7 @@ export function EditTournamentDialog({
                 name="metaKeywords"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Meta Keywords</FormLabel>
+                    <FormLabel>Meta Keywords *</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>

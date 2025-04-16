@@ -109,7 +109,7 @@ const ReturnOrdersTable = () => {
                 Loading...
               </TableCell>
             </TableRow>
-          ) : (
+          ) : returns?.data?.returns?.length > 0 ? (
             returns?.data?.returns?.map((returnItem, index) => (
               <TableRow key={index}>
                 <TableCell>
@@ -153,6 +153,14 @@ const ReturnOrdersTable = () => {
                 </TableCell>
               </TableRow>
             ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={10} className="text-center">
+                <p className="text-center font-bold italic">
+                  *No returns found*
+                </p>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>

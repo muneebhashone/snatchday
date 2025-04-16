@@ -1,25 +1,27 @@
 "use client";
 
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Trash, Search, X } from 'lucide-react'
-import { useDeleteCategory, useGetCategories } from '@/hooks/api'
-import { CreateCategoryDialog } from './CreateCategoryDialog'
-import { EditCategoryDialog } from './EditCategoryDialog'
-import { useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'  
-import { Input } from '@/components/ui/input'
-import { useDebounce } from '@/hooks/useDebounce'
-import { useState, useEffect } from 'react'
-import { TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import { Tooltip } from '../ui/tooltip';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Trash, Search, X } from "lucide-react";
+import { useDeleteCategory, useGetCategories } from "@/hooks/api";
+import { CreateCategoryDialog } from "./CreateCategoryDialog";
+import { EditCategoryDialog } from "./EditCategoryDialog";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useState, useEffect } from "react";
+import { TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip } from "../ui/tooltip";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
 
 interface CategoryType {
   _id: string;
@@ -37,6 +39,13 @@ interface CategoryType {
   updatedAt: string;
 }
 
+interface CategoryResponse {
+  data: {
+    categories: CategoryType[];
+    total: number;
+  };
+}
+
 const Categories = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -52,11 +61,17 @@ const Categories = () => {
   }, [debouncedSearchTerm]);
 
   // Fetch categories using the hook with filters
-  const { data: getCategories, isLoading, isError } = useGetCategories(filters);
+  const {
+    data: getCategories,
+    isLoading,
+    isError,
+  } = useGetCategories(filters) as {
+    data: CategoryResponse | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
   const categories = getCategories?.data?.categories;
-  const totalCount =
-    getCategories?.data?.total || getCategories?.data?.categories?.length || 0;
-  const totalPages = Math.ceil(totalCount / parseInt(filters.limit));
+  const totalCount = getCategories?.data?.total || 0;
   const currentPage =
     Math.floor(parseInt(filters.offset) / parseInt(filters.limit)) + 1;
 
@@ -120,23 +135,27 @@ const Categories = () => {
             <Table className="border border-primary">
               <TableHeader>
                 <TableRow className="border-b border-primary">
-                  {/* <TableHead className="w-[40px]">
-                  <input type="checkbox" className="rounded border-gray-300" />
-                  </TableHead> */}
                   <TableHead className="text-primary font-bold">Name</TableHead>
-                  <TableHead className="text-primary font-bold">Display Name</TableHead>
-                  <TableHead className="text-primary font-bold">Description</TableHead>
-                  <TableHead className="text-primary font-bold">Status</TableHead>
-                  <TableHead className="text-primary font-bold">Created At</TableHead>
-                  <TableHead className="text-right text-primary font-bold">Actions</TableHead>
+                  <TableHead className="text-primary font-bold">
+                    Display Name
+                  </TableHead>
+                  <TableHead className="text-primary font-bold">
+                    Description
+                  </TableHead>
+                  <TableHead className="text-primary font-bold">
+                    Status
+                  </TableHead>
+                  <TableHead className="text-primary font-bold">
+                    Created At
+                  </TableHead>
+                  <TableHead className="text-right text-primary font-bold">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {categories?.map((category: CategoryType) => (
                   <TableRow key={category._id} className="hover:bg-gray-50">
-                    {/* <TableCell>
-                      <input type="checkbox" className="rounded border-gray-300" />
-                    </TableCell> */}
                     <TableCell>{category.name}</TableCell>
                     <TableCell>{category.displayName}</TableCell>
                     <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
@@ -160,17 +179,22 @@ const Categories = () => {
                       <EditCategoryDialog categoryId={category._id} />
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button onClick={() => handleDelete(category._id)} variant="ghost" size="icon" className="text-red-500 hover:text-red-600 transition-colors">
-                            <Trash className='w-4 h-4' />
+                          <Button
+                            onClick={() => handleDelete(category._id)}
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-500 hover:text-red-600 transition-colors"
+                          >
+                            <Trash className="w-4 h-4" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Delete Category</p>
                         </TooltipContent>
                       </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
+                    </TableCell>
+                  </TableRow>
+                ))}
                 {!categories?.length && (
                   <TableRow>
                     <TableCell
@@ -182,49 +206,31 @@ const Categories = () => {
                   </TableRow>
                 )}
               </TableBody>
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center">
+                    {totalCount > 0 && (
+                      <div className="flex flex-col justify-between items-center gap-4 mt-4 p-4">
+                        <div className="text-sm text-gray-500">
+                          Showing {parseInt(filters.offset) + 1} to{" "}
+                          {Math.min(
+                            parseInt(filters.offset) + parseInt(filters.limit),
+                            totalCount
+                          )}{" "}
+                          of {totalCount} entries
+                        </div>
+                        <DynamicPagination
+                          totalItems={totalCount}
+                          itemsPerPage={parseInt(filters.limit)}
+                          currentPage={currentPage}
+                          onPageChange={handlePageChange}
+                        />
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              </TableFooter>
             </Table>
-            {totalCount > 0 && (
-              <div className="flex items-center justify-between px-4 py-4 border-t">
-                <div className="text-sm text-gray-500">
-                  Showing {parseInt(filters.offset) + 1} to{" "}
-                  {Math.min(
-                    parseInt(filters.offset) + parseInt(filters.limit),
-                    totalCount
-                  )}{" "}
-                  of {totalCount} entries
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  >
-                    Previous
-                  </Button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                      >
-                        {page}
-                      </Button>
-                    )
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            )}
           </div>
         )}
       </div>

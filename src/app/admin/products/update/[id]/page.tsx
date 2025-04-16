@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useState, useEffect } from "react";
 import { MainProduct } from "@/types";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 
 export default function EditProductPage() {
   const params = useParams();
@@ -25,6 +26,15 @@ export default function EditProductPage() {
 
   return (
     <AdminLayout>
+      <AdminBreadcrumb
+        title="Edit Product"
+        items={[
+          {
+            title: "Products",
+            href: "/admin/products",
+          },
+        ]}
+      />
       {isLoading ? (   
         <div className="p-6 flex items-center justify-center h-64">
           <div className="text-lg font-medium">Loading product data...</div>

@@ -36,7 +36,6 @@ import {
 import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
 import { Category, SubCategory } from "@/types";
-import { useCart } from "@/context/CartContext";
 
 const Header = () => {
   const { data: cartData } = useGetCart();
@@ -181,7 +180,6 @@ const Header = () => {
                               ))}
                           </div>
                         </div>
-                        {console.log(categoryImage,"categoryImage")}
 
                         {/* Category Image */}
                         <div className="col-span-4">

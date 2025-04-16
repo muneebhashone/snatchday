@@ -417,11 +417,13 @@ export default function ProductsForm() {
                   <FormControl>
                     <Input
                       type="number"
+                      min="0"
                       placeholder="0.00"
                       {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        field.onChange(value < 0 ? 0 : value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -438,9 +440,13 @@ export default function ProductsForm() {
                   <FormControl>
                     <Input
                       type="number"
+                      min="0"
                       placeholder="0"
                       {...field}
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        field.onChange(value < 0 ? 0 : value);
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -645,12 +651,12 @@ export default function ProductsForm() {
                             <Input
                               placeholder="Enter discount price"
                               type="number"
+                              min="0"
                               {...field}
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value ? Number(e.target.value) : ""
-                                )
-                              }
+                              onChange={(e) => {
+                                const value = Number(e.target.value);
+                                field.onChange(value < 0 ? 0 : value);
+                              }}
                             />
                           </FormControl>
                           {form.formState.errors?.discounts?.[index]?.price && (
