@@ -700,5 +700,20 @@ export const ITScope = async (formData) => {
 // IT Scope apiend
 
 
+export const getAddresses=async()=>{
+  const response=await axiosInstance.get('/address')
+  return response.data
+}
+
+export const createAddress=async(data:Address)=>{
+  const response=await axiosInstance.post('/address',data)
+  return response.data
+}
+
+export const deleteAddress=async(id:string)=>{
+  const response=await axiosInstance.delete(`/address/${id}`)
+  return response.data
+}
+
 
 

@@ -88,6 +88,9 @@ import {
   ITScope,
   VerifyEmail,
   requestEmailToken,
+  getAddresses,
+  createAddress,
+  deleteAddress,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -520,10 +523,11 @@ export const useGetOrders = (page, status, date) => {
   });
 };
 
-export const useGetOrderById = (id) => {
+export const useGetOrderById = (id:string) => {
   return useQuery({
     queryKey: ["order"],
     queryFn: () => getOrderById(id),
+    enabled: !!id,
   });
 };
 
@@ -799,3 +803,24 @@ export const UseITScope = () => {
   });
 };
 // IT Scope hook end
+
+export const useGetAddresses=()=>{
+  return useQuery({
+    queryKey:['addresses'],
+    queryFn:getAddresses
+  })
+}
+export const useCreateAddress=()=>{ 
+  return useMutation({
+    mutationFn:createAddress
+  })
+}
+
+export const useDeleteAddress=()=>{
+  return useMutation({
+    mutationFn: (id:string) => deleteAddress(id)
+  })
+}
+
+
+
