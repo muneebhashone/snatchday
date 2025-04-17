@@ -30,6 +30,7 @@ import {
   Gamepad,
   Heart,
   Ticket,
+  RefreshCw,
 } from "lucide-react";
 import {
   Collapsible,
@@ -110,7 +111,7 @@ const navItems = [
       {
         title: "Returns",
         url: "/admin/orders/returns",
-        icon: <ReturnIcon />,
+        icon: <RefreshCw className="h-4 w-4" />,
       },
     ],
   },

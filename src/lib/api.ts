@@ -155,8 +155,6 @@ export const manageTournament = async (data: TournamentFormData) => {
 export const getNewsletters = async (params?: {
   limit?: string;
   offset?: string;
-  sort_attr?: string;
-  sort?: string;
 }) => {
   const response = await axiosInstance.get<NewsletterTypes>("/newsletter", {
     params,

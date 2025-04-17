@@ -159,6 +159,7 @@ export function EditTournamentDialog({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
   useEffect(() => {
     console.log(tournament);
     if (tournament) {
@@ -195,7 +196,6 @@ export function EditTournamentDialog({
             toast.success("Tournament updated successfully");
             queryClient.invalidateQueries({ queryKey: ["tournaments"] });
             setOpen(false);
-            setOpen(false);
           },
           onError: (error) => {
             toast.error("Failed to update tournament");
@@ -216,433 +216,482 @@ export function EditTournamentDialog({
           <Edit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 [&::-webkit-scrollbar-track]:my-4">
         <DialogHeader>
           <DialogTitle>Edit Tournament</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="article"
-                render={({ field }) => {
-                  console.log(field.value);
-                  return (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1">
-                        Article *
-                      </FormLabel>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Tournament Information Section */}
+              <div className="bg-white rounded-lg border p-6 col-span-2">
+                <h2 className="text-lg font-semibold mb-6">Tournament Information</h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="article"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1">Article *</FormLabel>
+                        <Popover open={openPop} onOpenChange={setOpenPop}>
+                          <PopoverTrigger asChild>
+                            <Button className="w-[200px] justify-between hover:bg-primary">
+                              {findItem}
+                              <ChevronsUpDown className="opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                              <CommandInput placeholder="Search product..." className="h-9" />
+                              <CommandList>
+                                <CommandEmpty>No product found.</CommandEmpty>
+                                <CommandGroup className="overflow-y-scroll max-h-60">
+                                  {products?.map((product: any) => (
+                                    <CommandItem
+                                      key={product._id}
+                                      value={product.title}
+                                      onSelect={(currentValue) => {
+                                        field.onChange(currentValue);
+                                        const selectedProduct = products.find(
+                                          (p: any) => p.name === currentValue
+                                        );
+                                        if (selectedProduct) {
+                                          form.setValue("name", selectedProduct.name);
+                                          form.setValue("title", selectedProduct.title);
+                                          form.setValue("startingPrice", selectedProduct.price);
+                                          setValue(selectedProduct._id);
+                                        }
+                                        setOpenPop(false);
+                                      }}
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        {product.images[0] && (
+                                          <div className="relative w-8 h-8 rounded overflow-hidden">
+                                            <Image
+                                              src={product.images[0]}
+                                              alt={product.name}
+                                              fill
+                                              className="object-cover"
+                                            />
+                                          </div>
+                                        )}
+                                        <span>{product.name}</span>
+                                      </div>
+                                      <Check
+                                        className={cn(
+                                          "ml-auto",
+                                          field.value === product._id
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                      <Popover open={openPop} onOpenChange={setOpenPop}>
-                        <PopoverTrigger asChild>
-                          <Button className="w-[200px] justify-between hover:bg-primary">
-                            {findItem}
-                            <ChevronsUpDown className="opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
-                          <Command>
-                            <CommandInput
-                              placeholder="Search product..."
-                              className="h-9"
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name *</FormLabel>
+                        <FormControl>
+                          <Input disabled {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title *</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="textForBanner"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Banner Text *</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="game"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Game *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select game" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {games?.data?.games?.map((game) => (
+                              <SelectItem key={game._id} value={game._id}>
+                                {game.game}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Tournament Settings Section */}
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">Tournament Settings</h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="startingPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Starting Price *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="priceReduction"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price Reduction *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="numberOfPieces"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Number of Pieces *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="fee"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Fee *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Tournament Schedule Section */}
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">Tournament Schedule</h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="start"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col">
+                        <FormLabel>Start Date *</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(new Date(field.value), "PPP")
+                                ) : (
+                                  <span>Pick a date</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => field.onChange(date?.toISOString())}
+                              disabled={(date) => {
+                                if (form.getValues("end")) {
+                                  return (
+                                    date > new Date(form.getValues("end")) ||
+                                    date < new Date()
+                                  );
+                                }
+                                return date < new Date();
+                              }}
+                              initialFocus
                             />
-                            <CommandList>
-                              <CommandEmpty>No product found.</CommandEmpty>
-                              <CommandGroup className="overflow-y-scroll max-h-60     ">
-                                {products?.map((product: any) => (
-                                  <CommandItem
-                                    key={product._id}
-                                    value={product.title}
-                                    onSelect={(currentValue) => {
-                                      field.onChange(currentValue);
-                                      const selectedProduct = products.find(
-                                        (p: any) => p.name === currentValue
-                                      );
-                                      console.log(
-                                        selectedProduct,
-                                        "selectedProduct"
-                                      );
-                                      if (selectedProduct) {
-                                        form.setValue(
-                                          "name",
-                                          selectedProduct.name
-                                        );
-                                        form.setValue(
-                                          "title",
-                                          selectedProduct.title
-                                        );
-                                        form.setValue(
-                                          "startingPrice",
-                                          selectedProduct.price
-                                        );
-                                        form.setValue(
-                                          "image",
-                                          selectedProduct.images[0] || ""
-                                        );
-                                        setValue(selectedProduct._id);
-                                      }
-                                      setOpenPop(false);
-                                    }}
-                                  >
-                                    <div className="flex items-center gap-2">
-                                      {product.images[0] && (
-                                        <div className="relative w-8 h-8 rounded overflow-hidden">
-                                          <Image
-                                            src={product.images[0]}
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover"
-                                          />
-                                        </div>
-                                      )}
-                                      <span>{product.name}</span>
-                                    </div>
-                                    <Check
-                                      className={cn(
-                                        "ml-auto",
-                                        field.value === product._id
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="start"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Time *</FormLabel>
+                        <TimePickerDemo
+                          date={field.value ? new Date(field.value) : undefined}
+                          setDate={(date) => {
+                            field.onChange(date?.toISOString());
+                          }}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="length"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Length (minutes) *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Tournament Options Section */}
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">Tournament Options</h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="numberOfParticipants"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Number of Participants *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="resubmissions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Resubmissions *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="vip"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">VIP Tournament</FormLabel>
+                          <FormDescription>
+                            Mark this tournament as VIP for special access
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* SEO Information Section */}
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-6">SEO Information</h2>
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="metaTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Title *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
-                  );
-                }}
-              />
-              <FormField
-                disabled={true}
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name *</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="game"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Game *</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="metaDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Description *</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select game" />
-                        </SelectTrigger>
+                        <Textarea {...field} />
                       </FormControl>
-                      <SelectContent>
-                        {games?.data?.games?.map((game) => (
-                          <SelectItem key={game._id} value={game._id}>
-                            {game.game}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="start"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Start Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(new Date(field.value), "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={
-                            field.value ? new Date(field.value) : undefined
-                          }
-                          onSelect={(date) =>
-                            field.onChange(date?.toISOString())
-                          }
-                          disabled={(date) => {
-                            if (form.getValues("end")) {
-                              return (
-                                date > new Date(form.getValues("end")) ||
-                                date < new Date()
-                              );
-                            }
-                            return date < new Date();
-                          }}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="start"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Time *</FormLabel>
-                    <TimePickerDemo
-                      date={field.value ? new Date(field.value) : undefined}
-                      setDate={(onchange) => {
-                        field.onChange(onchange?.toISOString());
-                      }}
-                    />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                disabled={true}
-                control={form.control}
-                name="startingPrice"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Starting Price *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="priceReduction"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price Reduction *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="numberOfPieces"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Number of Pieces *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="length"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Length (minutes) *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="fee"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Fee *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="numberOfParticipants"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Number of Participants *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="resubmissions"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Resubmissions *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <FormField
-              control={form.control}
-              name="vip"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">VIP Tournament</FormLabel>
-                    <FormDescription>
-                      Mark this tournament as VIP for special access
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <div className="space-y-4">
-              <FormField
-                control={form.control}
-                name="metaTitle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Title *</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="metaDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Description *</FormLabel>
-                    <FormControl>
-                      <Textarea {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="metaKeywords"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Keywords *</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="metaKeywords"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Keywords *</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="article"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Article *</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
+
             <div className="flex justify-end">
-              <Button
-                disabled={isPending}
-                className={`hover:bg-primary`}
-                type="submit"
-              >
+              <Button type="submit" disabled={isPending}>
                 {isPending ? (
                   <Loader className="animate-spin" size={20} />
                 ) : (

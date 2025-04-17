@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -32,6 +33,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
+import { Switch } from "@/components/ui/switch";
 
 export interface IError {
   response: {
@@ -120,6 +122,7 @@ const Page = () => {
       image: undefined,
     },
   });
+
   const onSubmit = (data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
@@ -145,217 +148,174 @@ const Page = () => {
 
     console.log(data, "formdata");
   };
+
   return (
     <AdminLayout>
-      <div>
-        <AdminBreadcrumb
-          title="Create Game"
-          items={[
-            {
-              title: "Games",
-              href: "/admin/games",
-            },
-          ]}
-        />
-        <h1 className="bg-primary px-4 py-1 text-white font-extrabold text-2xl w-max rounded-md">
-          Create Your Game
-        </h1>
+      <AdminBreadcrumb
+        items={[
+          { title: "Games", href: "/admin/games" },
+        ]}
+        title="Create New Game"
+      />
+      <div className="py-6 max-w-full mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Create New Game</h1>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => router.push("/admin/games")}
+            >
+              Discard
+            </Button>
+            <Button type="submit" form="game-form" disabled={isPending}>
+              {isPending ? "Saving..." : "Save Game"}
+            </Button>
+          </div>
+        </div>
+
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="grid md:grid-cols-3 gap-5 my-5">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="input title here..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content *</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="enter your content here.."
-                        className="h-10"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="metaTitle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Title *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="input Meta Title here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid md:grid-cols-3 gap-5 my-5">
-              <FormField
-                control={form.control}
-                name="metaDescription"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Description</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="input Meta Description here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="metaKeywords"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Meta Keywords</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="input Meta Keywords here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="game"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Games *</FormLabel>
-                    <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select a game" />
-                        </SelectTrigger>
-                        <SelectContent className="h-52">
-                          <SelectGroup>
-                            <SelectLabel>Paths</SelectLabel>
-                            {Paths?.map((path, i) => (
-                              <SelectItem key={i} value={path}>
-                                {path}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid md:grid-cols-3 gap-5 my-5">
-              <div className="col-span-3">
-                <h3 className="text-lg font-medium mb-2">
-                  Winner Determination
-                </h3>
-                <div className="grid md:grid-cols-3 gap-5">
+          <form
+            id="game-form"
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6"
+          >
+            {/* Basic Information Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="bg-white rounded-lg border p-6 col-span-2">
+                <h2 className="text-lg font-semibold mb-6">
+                  Basic Information
+                </h2>
+                <div className="space-y-6">
                   <FormField
                     control={form.control}
-                    name="winnerDetermination.level"
-                    render={({ field, fieldState }) => (
+                    name="title"
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Level Determination *</FormLabel>
+                        <FormLabel>Title *</FormLabel>
                         <FormControl>
-                          <Select
-                            value={field.value || ""}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a level" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Level</SelectLabel>
-                                <SelectItem value="MAX">Max</SelectItem>
-                                <SelectItem value="MIN">Min</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
+                          <Input placeholder="Game title" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
-                    name="winnerDetermination.score"
-                    render={({ field, fieldState }) => (
+                    name="content"
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Score Determination *</FormLabel>
+                        <FormLabel>Content *</FormLabel>
                         <FormControl>
-                          <Select
-                            value={field.value || ""}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a Score" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Score</SelectLabel>
-                                <SelectItem value="MAX">Max</SelectItem>
-                                <SelectItem value="MIN">Min</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
+                          <Textarea placeholder="Game content" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
-                    name="winnerDetermination.time"
-                    render={({ field, fieldState }) => (
+                    name="game"
+                    render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Time Determination *</FormLabel>
-                        <FormControl>
-                          <Select
-                            value={field.value || ""}
-                            onValueChange={field.onChange}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a Time" />
+                        <FormLabel>Game Path *</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a game" />
                             </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Time</SelectLabel>
-                                <SelectItem value="MAX">Max</SelectItem>
-                                <SelectItem value="MIN">Min</SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
+                          </FormControl>
+                          <SelectContent className="h-52">
+                            <SelectGroup>
+                              <SelectLabel>Paths</SelectLabel>
+                              {Paths?.map((path, i) => (
+                                <SelectItem key={i} value={path}>
+                                  {path}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Game Configuration Section */}
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">
+                  Game Configuration
+                </h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="levels"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Levels *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Number of levels"
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="maxScore"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Max Score *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Maximum score"
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="delay"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Delay *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Game delay"
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -364,304 +324,370 @@ const Page = () => {
                 </div>
               </div>
             </div>
-            <div className="grid md:grid-cols-3 gap-5 my-5">
-              <FormField
-                control={form.control}
-                name="levels"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Levels *</FormLabel>
-                    <FormControl>
-                      <Input
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                        type="number"
-                        placeholder="input Levels here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
+            {/* Winner Determination & Dimensions */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">
+                  Winner Determination
+                </h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="winnerDetermination.level"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Level Determination *</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select level determination" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="MAX">Max</SelectItem>
+                            <SelectItem value="MIN">Min</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="winnerDetermination.score"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Score Determination *</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select score determination" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="MAX">Max</SelectItem>
+                            <SelectItem value="MIN">Min</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="winnerDetermination.time"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Time Determination *</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value || ""}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select time determination" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="MAX">Max</SelectItem>
+                            <SelectItem value="MIN">Min</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">Game Dimensions</h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="width"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Width *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Game width (500-1000)"
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="height"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Height *</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Game height (500-1000)"
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-5 my-5">
-              <FormField
-                control={form.control}
-                name="maxScore"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Max Score *</FormLabel>
-                    <FormControl>
-                      <Input
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                        type="number"
-                        placeholder="input Max Score here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="delay"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Delay *</FormLabel>
-                    <FormControl>
-                      <Input
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                        type="number"
-                        placeholder="input delay here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="width"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Width *</FormLabel>
-                    <FormControl>
-                      <Input
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                        type="number"
-                        placeholder="input width here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* Game Options & Media */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">Game Options</h2>
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="customGame"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Custom Game
+                          </FormLabel>
+                          <FormDescription>
+                            Is this a custom game?
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="randomLevels"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Random Levels
+                          </FormLabel>
+                          <FormDescription>
+                            Enable random level generation?
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="suitableDuel"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Suitable for Duel
+                          </FormLabel>
+                          <FormDescription>
+                            Can this game be used in duels?
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="suitableTournament"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Suitable for Tournament
+                          </FormLabel>
+                          <FormDescription>
+                            Can this game be used in tournaments?
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="suitableTraining"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Suitable for Training
+                          </FormLabel>
+                          <FormDescription>
+                            Can this game be used in training?
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">Media Files</h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="logo"
+                    render={({ field: { value, onChange, ...field } }) => (
+                      <FormItem>
+                        <FormLabel>Logo *</FormLabel>
+                        <FormControl>
+                          <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Input
+                              type="file"
+                              {...imageInputProps}
+                              onChange={(e) => onChange(e.target.files?.[0])}
+                              {...field}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Accepted formats: JPG, PNG, GIF, WebP
+                            </p>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field: { value, onChange, ...field } }) => (
+                      <FormItem>
+                        <FormLabel>Image *</FormLabel>
+                        <FormControl>
+                          <div className="grid w-full max-w-sm items-center gap-1.5">
+                            <Input
+                              type="file"
+                              {...imageInputProps}
+                              onChange={(e) => onChange(e.target.files?.[0])}
+                              {...field}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Accepted formats: JPG, PNG, GIF, WebP
+                            </p>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-5 my-5">
-              <FormField
-                control={form.control}
-                name="height"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Height *</FormLabel>
-                    <FormControl>
-                      <Input
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                        type="number"
-                        placeholder="input height here..."
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="logo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Logo *</FormLabel>
-                    <FormControl>
-                      <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Input
-                          id="logo"
-                          type="file"
-                          {...imageInputProps}
-                          onChange={(e) => field.onChange(e.target.files?.[0])}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Accepted formats: JPG, PNG, GIF, WebP
-                        </p>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="image"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image *</FormLabel>
-                    <FormControl>
-                      <div className="grid w-full max-w-sm items-center gap-1.5">
-                        <Input
-                          id="image"
-                          type="file"
-                          {...imageInputProps}
-                          onChange={(e) => field.onChange(e.target.files?.[0])}
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Accepted formats: JPG, PNG, GIF, WebP
-                        </p>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="grid md:grid-cols-5 gap-5 mt-10 mb-5">
-              <FormField
-                control={form.control}
-                name="suitableDuel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="suitableDuel"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="suitableDuel"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Suitable Duel?
-                        </label>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="suitableTournament"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="suitableTournament"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="suitableTournament"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Suitable Tournament?
-                        </label>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="suitableTraining"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="suitableTraining"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="suitableTraining"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Suitable Training
-                        </label>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="customGame"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="customGame"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="customGame"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Custom Game?
-                        </label>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="randomLevels"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="randomLevels"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <label
-                          htmlFor="randomLevels"
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                        >
-                          Random Levels?
-                        </label>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex items-center justify-start mt-14">
-              <Button
-                className="bg-primary text-white"
-                type="submit"
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <Loader className="text-white animate-spin" size={18} />
-                ) : (
-                  "Create Game"
-                )}
-              </Button>
+            {/* SEO Information */}
+            <div className="grid grid-cols-1 gap-6">
+              <div className="bg-white rounded-lg border p-6">
+                <h2 className="text-lg font-semibold mb-6">SEO Information</h2>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="metaTitle"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Title *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="SEO meta title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="metaDescription"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="SEO meta description"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="metaKeywords"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Meta Keywords</FormLabel>
+                        <FormControl>
+                          <Input placeholder="SEO meta keywords" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </div>
           </form>
         </Form>

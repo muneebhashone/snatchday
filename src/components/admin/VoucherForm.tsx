@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format, getDate, setDate } from "date-fns";
 import { toast } from "sonner";
 import { useCreateVoucher } from "@/hooks/api";
 import { useRouter } from "next/navigation";
@@ -71,7 +71,6 @@ const formSchema = z
     usagePerUser: z.coerce.number().min(1, "Usage per user must be at least 1"),
   })
   .superRefine((val, ctx) => {
-    // At least one of `products` or `categories` must be non-empty
     if (val.products.length === 0 && val.categories.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -85,7 +84,6 @@ const formSchema = z
       });
     }
 
-    // End date must be after start date
     if (new Date(val.until) <= new Date(val.from)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -94,7 +92,6 @@ const formSchema = z
       });
     }
 
-    // Value must not exceed 100 when type is PERCENTAGE
     if (val.type === "PERCENTAGE" && val.value > 100) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -573,10 +570,12 @@ const VoucherForm = () => {
                               onSelect={(date) =>
                                 field.onChange(date?.toISOString())
                               }
-                              disabled={(date) =>
-                                date < new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => {
+                                const untilDate = form.getValues("until");
+                                if (!untilDate) return date < new Date();
+                                const until = new Date(untilDate);
+                                return date >= until || date < new Date();
+                              }}
                               initialFocus
                             />
                           </PopoverContent>
@@ -623,10 +622,14 @@ const VoucherForm = () => {
                               onSelect={(date) =>
                                 field.onChange(date?.toISOString())
                               }
-                              disabled={(date) =>
-                                date < new Date() ||
-                                date < new Date("1900-01-01")
-                              }
+                              disabled={(date) => {
+                                const fromDate = form.getValues("from");
+                                if (!fromDate) return date < new Date();
+                                const from = new Date(fromDate);
+                                from.setDate(from.getDate() + 1);
+
+                                return date < from;
+                              }}
                               initialFocus
                             />
                           </PopoverContent>
@@ -648,6 +651,11 @@ const VoucherForm = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
                             type="number"
                             placeholder="Enter number of usage"
                             {...field}
@@ -670,6 +678,11 @@ const VoucherForm = () => {
                         </FormLabel>
                         <FormControl>
                           <Input
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
                             type="number"
                             placeholder="Enter usage per user"
                             {...field}

@@ -102,7 +102,6 @@ export default function OrdersList() {
 
   return (
     <div className="max-w-full mx-auto rounded-sm bg-white p-4">
-      <button onClick={() => setOffset((prev) => prev + 10)}>load more </button>
       <h1 className="text-2xl font-bold mb-8">Orders</h1>
       <Form {...form}>
         <form
@@ -130,7 +129,8 @@ export default function OrdersList() {
                       <SelectItem value="pending">Pending</SelectItem>
                       <SelectItem value="dispatch">Dispatch</SelectItem>
                       <SelectItem value="cancelled">Cancelled</SelectItem>
-                      <SelectItem value="return">Return</SelectItem>
+                      <SelectItem value="returned">Returned</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

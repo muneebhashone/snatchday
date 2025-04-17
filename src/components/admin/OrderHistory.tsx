@@ -94,122 +94,115 @@ export default function OrderHistory() {
   }
 
   return (
-    <div className="mt-5 border bg-white">
-      {/* Header */}
-      <div className="w-full bg-primary text-white p-2">
-        <div className="flex items-center gap-2">
-          <MessageCircle className="w-5 h-5" />
-          <h2 className="text-lg font-medium">Order history</h2>
-        </div>
-      </div>
+    <div className="mt-6">
+      <Card className="shadow-sm">
+        <div className="p-6">
+          {/* Order History Table */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">Order History</h2>
+            </div>
+            {!order?.data.history.length ? (
+              <div className="text-center py-4 text-gray-500">No order history available</div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead>Created</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Remarks</TableHead>
+                    <TableHead className="text-center">Customer Informed</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {order?.data.history.map((odr, index) => (
+                    <TableRow key={index} className="hover:bg-transparent">
+                      <TableCell>{new Date(odr.date).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          odr.status === "completed" 
+                            ? "bg-green-50 text-green-700"
+                            : odr.status === "pending"
+                            ? "bg-yellow-50 text-yellow-700"
+                            : "bg-blue-50 text-blue-700"
+                        }`}>
+                          {odr.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>{odr.remarks}</TableCell>
+                      <TableCell className="text-center">
+                        {odr.customerInformed ? (
+                          <span className="text-green-600">Yes</span>
+                        ) : (
+                          <span className="text-red-600">No</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
 
-      {/* Tabs */}
-      {/* <div className="p-4 border-b">
-        <Tabs defaultValue="course">
-          <TabsList className="grid w-full max-w-xs grid-cols-3">
-            <TabsTrigger value="course">Course</TabsTrigger>
-            <TabsTrigger value="refund">Refund points</TabsTrigger>
-            <TabsTrigger value="more">More</TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div> */}
-
-      {/* Order History Table */}
-      <div className="p-4 border-b">
-        {!order?.data.history.length ? (
-          <div className="font-bold text-center">*no orders history*</div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[200px] text-primary text-center">
-                  Created
-                </TableHead>
-                <TableHead className="text-primary text-center">
-                  Remarks
-                </TableHead>
-                <TableHead className="text-primary text-center">
-                  status
-                </TableHead>
-                <TableHead className="text-primary text-center">
-                  Customer informed
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {order?.data.history.map((odr) => (
-                <TableRow key={odr}>
-                  <TableCell className="font-medium text-center">
-                    {odr?.date.split("T")[0]}
-                  </TableCell>
-                  <TableCell className="text-center">{odr.remarks}</TableCell>
-                  <TableCell className="text-center capitalize">
-                    {odr.status}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {odr.customerInformed ? "yes" : "no"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
-
-      {/* Order Management Section */}
-      <div className="p-4">
-        <h3 className="text-lg font-medium mb-6 flex items-center text-primary">
-          <span>+</span> Order history
-        </h3>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <Card className="mb-6">
-              <CardContent className="p-4">
-                {/* Order Status */}
+          {/* Update Order Form */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">Update Order Status</h3>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
                   name="status"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4">
-                      <FormLabel className="text-right pr-4 font-medium">
-                        Order status
-                      </FormLabel>
-                      <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          defaultValue=""
-                        >
-                          <SelectTrigger className="w-full max-w-md">
+                    <FormItem>
+                      <FormLabel className="font-medium">Order Status</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select status" />
                           </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="dispatch">Dispatch</SelectItem>
-                            <SelectItem value="cancelled">Cancelled</SelectItem>
-                            <SelectItem value="return">Return</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="dispatch">Dispatch</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                          <SelectItem value="returned">Returned</SelectItem>
+
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                {/* Inform customer */}
+
                 <FormField
                   control={form.control}
                   name="customerInformed"
                   render={({ field }) => (
-                    <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4 border-t pt-4">
-                      <FormLabel className="text-right pr-4 font-medium">
-                        Inform customer
-                      </FormLabel>
+                    <FormItem className="flex items-center gap-2">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel className="font-medium !mt-0">Inform Customer</FormLabel>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="remarks"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-medium">Comments</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          {...field} 
+                          placeholder="Add any comments or notes..."
+                          className="min-h-[100px] resize-none"
                         />
                       </FormControl>
                       <FormMessage />
@@ -217,104 +210,23 @@ export default function OrderHistory() {
                   )}
                 />
 
-                {/* Comment */}
-                <FormField
-                  control={form.control}
-                  name="remarks"
-                  render={({ field }) => (
-                    <FormItem className="grid grid-cols-[200px_1fr] items-start mb-4 border-t pt-4">
-                      <FormLabel className="text-right pr-4 pt-2 font-medium">
-                        comment
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea {...field} className="min-h-[150px] w-full" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Attachments */}
-            {/* <div className="mt-8">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="uppercase text-xs font-semibold text-primary">
-                      Order Attachments
-                    </TableHead>
-                    <TableHead className="uppercase text-xs font-semibold text-primary">
-                      Order Attachment ID
-                    </TableHead>
-                    <TableHead className="uppercase text-xs font-semibold text-primary">
-                      File Location
-                    </TableHead>
-                    <TableHead className="uppercase text-xs font-semibold text-primary">
-                      Date Added
-                    </TableHead>
-                    <TableHead className="uppercase text-xs font-semibold text-primary">
-                      Action
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center">
-                      No attachments added
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div> */}
-
-            {/* Upload Wizard */}
-            {/* <div className="grid grid-cols-[200px_1fr] items-center mt-8">
-              <div className="text-right pr-4 font-medium">Upload Wizard</div>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <FormField
-                    control={form.control}
-                    name="fileUpload"
-                    render={({ field }) => (
-                      <FormItem className="grid grid-cols-[200px_1fr] items-start mb-4 border-t pt-4">
-                        <FormControl>
-                          <Input type="file" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="flex justify-end">
+                  <Button 
+                    type="submit" 
+                    disabled={isPending}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    {isPending ? (
+                      <Loader className="w-4 h-4 animate-spin mr-2" />
+                    ) : null}
+                    Update Status
+                  </Button>
                 </div>
-                <Button
-                  type="button"
-                  onClick={handleUpload}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  <Upload className="w-4 h-4 mr-2" /> UPLOAD
-                </Button>
-              </div>
-            </div> */}
-
-            {/* Order Status Button */}
-            <div className="flex justify-end mt-8">
-              <Button
-                disabled={isPending}
-                type="submit"
-                className="bg-primary hover:bg-primary"
-              >
-                {isPending ? (
-                  <Loader className="animate-spin" size={18} />
-                ) : (
-                  <div className="flex items-center capitalize justify-center">
-                    update status
-                  </div>
-                )}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </div>
+              </form>
+            </Form>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGetOrders } from "@/hooks/api";
-import { Delete, Edit, Loader } from "lucide-react";
+import { Delete, Edit, Eye, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
@@ -85,10 +85,10 @@ export function OrdersListTable({
                   <TableCell className="font-medium">{order.orderNumber}</TableCell>
                   <TableCell>{order.billingDetails.firstName}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      order.status === "COMPLETED" 
+                    <span className={`px-2 py-1 rounded-full text-xs capitalize ${
+                      order.status === "completed" 
                         ? "bg-green-100 text-green-800"
-                        : order.status === "PENDING"
+                        : order.status === "pending"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-red-100 text-red-800"
                     }`}>
@@ -104,11 +104,11 @@ export function OrdersListTable({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Link href={`/admin/orders/${order._id}`}>
-                              <Edit className="h-4 w-4" />
+                              <Eye className="h-4 w-4" />
                             </Link>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Edit Order</p>
+                            <p>View Order</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
