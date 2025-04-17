@@ -105,10 +105,14 @@ export default function OtpModal({ open, onClose, email, isOpenLogin }: OtpModal
     }
   }, [open]);
 
+const handleCloseOtpModal=()=>{
 
+  onClose()
+  isOpenLogin();
+}
 
   return (
-    <Dialog open={open}   onOpenChange={()=>onClose()}>
+    <Dialog open={open}   onOpenChange={handleCloseOtpModal}>
       <DialogContent className="max-w-lg">
         <div className="flex flex-col items-center">
           <Image
