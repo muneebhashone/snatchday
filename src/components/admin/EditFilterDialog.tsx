@@ -7,7 +7,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
+import { Edit, Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useUpdateFilter, useGetCategories } from "@/hooks/api";
 import { toast } from "sonner";
@@ -259,7 +259,11 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Updating..." : "Update Filter"}
+                {isPending ? (
+                  <Loader className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Update Filter"
+                )}
               </Button>
             </div>
           </form>

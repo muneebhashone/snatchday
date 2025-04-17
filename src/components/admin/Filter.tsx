@@ -108,123 +108,130 @@ const Filter = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Filters</h1>
-        <div className="flex gap-2">
-          <CreateFilterDialog />
+    <div className="p-4 bg-white">
+      <h1 className="text-2xl font-bold mb-4">Filters</h1>
+      <div className="space-y-4">
+        <div className="flex justify-end items-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <CreateFilterDialog />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Create a new filter</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-      </div>
 
-      <div className="rounded-md shadow-sm">
-        {isLoading ? (
-          <div className="p-8 text-center">Loading filters...</div>
-        ) : isError ? (
-          <div className="p-8 text-center text-red-500">
-            Error loading filters
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table className="border border-primary">
-              <TableHeader>
-                <TableRow className="border-b border-primary">
-                  <TableHead className="text-primary font-bold">Name</TableHead>
-                  <TableHead className="text-primary font-bold">
-                    Values
-                  </TableHead>
-                  <TableHead className="text-primary font-bold">
-                    Created At
-                  </TableHead>
-                  <TableHead className="text-right text-primary font-bold">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filters
-                  ?.sort(
-                    (a: Filter, b: Filter) =>
-                      new Date(b.createdAt).getTime() -
-                      new Date(a.createdAt).getTime()
-                  )
-                  .map((filter: Filter) => (
-                    <TableRow key={filter._id} className="hover:bg-gray-50">
-                      <TableCell>{filter.name}</TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {filter.value.map((value, index) => (
-                            <span
-                              key={index}
-                              className="px-2 py-1 bg-gray-100 rounded-full text-xs"
-                            >
-                              {value}
-                            </span>
-                          ))}
-                        </div>
-                      </TableCell>
-                      {/* <TableCell>{getCategoryName(filter.category)}</TableCell> */}
-                      <TableCell>
-                        {new Date(filter.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-right space-x-2">
-                        <EditFilterDialog filter={filter} />
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                onClick={() => handleDelete(filter._id)}
-                                variant="ghost"
-                                size="icon"
-                                disabled={isDeleting && selectedFilterId === filter._id}
+        <div className="border rounded-md bg-white">
+          {isLoading ? (
+            <div className="p-8 text-center">
+              <div className="flex items-center justify-center w-full">
+                <Loader className="h-4 w-4 animate-spin text-primary" />
+              </div>
+            </div>
+          ) : isError ? (
+            <div className="p-8 text-center text-red-500">
+              Error loading filters
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="text-gray-500">NAME</TableHead>
+                    <TableHead className="text-gray-500">VALUES</TableHead>
+                    <TableHead className="text-gray-500">CREATED AT</TableHead>
+                    <TableHead className="text-right text-gray-500">ACTIONS</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filters
+                    ?.sort(
+                      (a: Filter, b: Filter) =>
+                        new Date(b.createdAt).getTime() -
+                        new Date(a.createdAt).getTime()
+                    )
+                    .map((filter: Filter) => (
+                      <TableRow key={filter._id} className="hover:bg-gray-50">
+                        <TableCell className="text-gray-900">{filter.name}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1">
+                            {filter.value.map((value, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-1 bg-gray-100 rounded-full text-xs"
                               >
-                                {isDeleting && selectedFilterId === filter._id ? (
-                                  <Loader className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <Trash className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Delete Filter</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                                {value}
+                              </span>
+                            ))}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-gray-500">
+                          {new Date(filter.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right space-x-2">
+                          <EditFilterDialog filter={filter} />
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  onClick={() => handleDelete(filter._id)}
+                                  variant="ghost"
+                                  size="icon"
+                                  disabled={isDeleting && selectedFilterId === filter._id}
+                                  className="hover:bg-gray-100"
+                                >
+                                  {isDeleting && selectedFilterId === filter._id ? (
+                                    <Loader className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Trash className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Delete Filter</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  {!filters?.length && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={4}
+                        className="text-center py-8 text-gray-500"
+                      >
+                        No filters found
                       </TableCell>
                     </TableRow>
-                  ))}
-                {!filters?.length && (
+                  )}
+                </TableBody>
+                <TableFooter className="w-full">
                   <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No filters found
+                    <TableCell colSpan={4} className="text-center">
+                      <div className="flex flex-col items-center gap-4">
+                        <div className="text-sm text-gray-500">
+                          Showing {page + 1} to{" "}
+                          {Math.min(page + skip, totalItems)} of {totalItems}{" "}
+                          entries
+                        </div>
+                        <DynamicPagination
+                          totalItems={totalItems}
+                          itemsPerPage={skip}
+                          currentPage={Math.floor(page / skip) + 1}
+                          onPageChange={handlePageChange}
+                        />
+                      </div>
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-              <TableFooter className="w-full">
-                <TableRow>
-                  <TableCell colSpan={8} className="text-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <div className="text-sm text-gray-500">
-                        Showing {page + 1} to{" "}
-                        {Math.min(page + skip, totalItems)} of {totalItems}{" "}
-                        entries
-                      </div>
-                      <DynamicPagination
-                        totalItems={totalItems}
-                        itemsPerPage={skip}
-                        currentPage={Math.floor(page / skip) + 1}
-                        onPageChange={handlePageChange}
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableFooter>
-            </Table>
-          </div>
-        )}
+                </TableFooter>
+              </Table>
+            </div>
+          )}
+        </div>
       </div>
 
       <ConfirmationModal

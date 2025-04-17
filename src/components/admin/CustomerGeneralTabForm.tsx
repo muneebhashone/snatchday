@@ -28,36 +28,32 @@ import { toast } from "sonner";
 import { Switch } from "../ui/switch";
 
 const formSchema = z.object({
-  salutation: z.enum(["Mister", "Miss", "Doctor"], {
-    required_error: "Salutation is required",
-  }),
-
-  title: z.enum(["Dr.", "Prof.", "Mr.", "Ms."], {
-    required_error: "Title is required",
-  }),
-
+  salutation: z.string().optional(),
+  title: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   street: z.string().optional(),
   location: z.string().optional(),
-  country: z.enum(["Germany", "USA", "France", "UK"], {
-    required_error: "Country is required",
-  }),
+  country: z.string().optional(),
   email: z.string().email("Invalid email format"),
   approved: z.boolean().optional(),
 });
 
 type IForm = z.infer<typeof formSchema>;
 
-export default function CustomerForm() {
+export default function CustomerForm({
+  onClose,
+}: {
+  onClose: (isOpen: boolean) => void;
+}) {
   const router = useRouter();
   const params = useParams();
   const paramsId = params.id;
   const { data: customer } = useGetCustomerById(paramsId);
   const customerData = customer?.data.customer;
   const { mutate: updateCustomer, isPending } = useUpdateCustomer(paramsId);
-  console.log(customerData,"datacustomer");
+  console.log(customerData, "datacustomer");
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
@@ -90,7 +86,7 @@ export default function CustomerForm() {
         approved: customerData?.approved || false,
       });
     }
-  }, [ customerData, form]);
+  }, [customerData, form]);
 
   const onSubmitted = (values: any) => {
     const cleanedValues = JSON.parse(
@@ -101,7 +97,8 @@ export default function CustomerForm() {
     updateCustomer(cleanedValues, {
       onSuccess: () => {
         toast.success("customer updated successfully");
-        router.push("/admin/customers");
+        onClose(false);
+        window.location.reload();
       },
       onError: (error) => {
         console.log(error, "error on customer update");
@@ -146,7 +143,9 @@ export default function CustomerForm() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Personal Information Section */}
             <div className="bg-white rounded-lg border p-6">
-              <h2 className="text-lg font-semibold mb-6">Personal Information</h2>
+              <h2 className="text-lg font-semibold mb-6">
+                Personal Information
+              </h2>
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -154,7 +153,7 @@ export default function CustomerForm() {
                     name="salutation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Salutation *</FormLabel>
+                        <FormLabel>Salutation</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -180,7 +179,7 @@ export default function CustomerForm() {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title *</FormLabel>
+                        <FormLabel>Title</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -254,7 +253,11 @@ export default function CustomerForm() {
                     <FormItem>
                       <FormLabel>Email *</FormLabel>
                       <FormControl>
-                        <Input type="email" {...field} placeholder="Enter email" />
+                        <Input
+                          type="email"
+                          {...field}
+                          placeholder="Enter email"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -265,7 +268,9 @@ export default function CustomerForm() {
 
             {/* Address Information Section */}
             <div className="bg-white rounded-lg border p-6">
-              <h2 className="text-lg font-semibold mb-6">Address Information</h2>
+              <h2 className="text-lg font-semibold mb-6">
+                Address Information
+              </h2>
               <div className="space-y-6">
                 <FormField
                   control={form.control}
@@ -300,7 +305,7 @@ export default function CustomerForm() {
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Country *</FormLabel>
+                      <FormLabel>Country</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
@@ -328,7 +333,9 @@ export default function CustomerForm() {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Approval Status</FormLabel>
+                        <FormLabel className="text-base">
+                          Approval Status
+                        </FormLabel>
                         <FormDescription>
                           Approve or reject this customer
                         </FormDescription>

@@ -187,7 +187,7 @@ const ProductCard = ({
                           }
                         />
                       </div>
-                    ) : user ? (
+                    ) : !user ? (
                       <button
                         onClick={handleAddToCart}
                         disabled={isAddToCartPending}

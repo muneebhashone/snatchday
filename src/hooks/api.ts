@@ -437,18 +437,19 @@ export const useNewsletterMail = () => {
 };
 
 //customers
-export const useCustomers = (filters) => {
+export const useCustomers = (limit, offset, search) => {
   return useInfiniteQuery({
-    queryKey: ["customers", filters],
-    queryFn: ({ pageParam }) => {
-      // return getCustomers({ ...filters, offset: pageParam });
-      return getCustomers({ ...filters, offset: pageParam });
+    queryKey: ["customers", limit, offset, search],
+    queryFn: ({ pageParam=20 }) => {
+      console.log(pageParam, "pageParam");
+      return getCustomers({ limit, offset: pageParam, search });
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
+      console.log(lastPage, allPages, "lastPage");
       const customers = lastPage.data.customers[0].data;
       const total = lastPage.data.customers[0].total[0].total;
-      return customers.length < 10 ? undefined : filters.offset;
+      return customers.length < 10 ? undefined : customers.length;
     },
   });
 };
@@ -501,10 +502,10 @@ export const useGetCustomerOrdersData = (page, status, user, date, limit?) => {
 
 // order api start
 
-export const useGetOrders = (page, status, date) => {
+export const useGetOrders = (page, status, date, user) => {
   return useQuery({
-    queryKey: ["customers", page, status, date],
-    queryFn: () => getOrders(page, status, date),
+    queryKey: ["customers", page, status, date, user],
+    queryFn: () => getOrders(page, status, date, user),
   });
 };
 
@@ -626,10 +627,24 @@ export const useCreateVoucher = () => {
   });
 };
 
-export const useGetVouchers = () => {
+export const useGetVouchers = (params: {
+  limit?: string;
+  offset?: string;
+  name?: string;
+  code?: string;
+  type?: string;
+  registered?: string;
+  from?: string;
+  until?: string;
+  noShipping?: string;
+  products?: string;
+  categories?: string;
+  sort_attr?: string;
+  sort?: string;
+}) => {
   return useQuery({
-    queryKey: ["vouchers"],
-    queryFn: getVouchers,
+    queryKey: ["vouchers", params],
+    queryFn: () => getVouchers(params),
   });
 };
 

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -6,15 +6,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Edit } from "lucide-react"
-import { useEffect, useState } from "react"
-import { useGetCategories, useGetCategoryById, useUpdateCategory } from "@/hooks/api"
-import { toast } from "sonner"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  useGetCategories,
+  useGetCategoryById,
+  useUpdateCategory,
+} from "@/hooks/api";
+import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -23,15 +27,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
-import { useQueryClient } from "@tanstack/react-query"
-import Image from "next/image"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { TooltipContent, TooltipTrigger } from "../ui/tooltip"
-import { Tooltip } from "../ui/tooltip"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Tooltip } from "../ui/tooltip";
 
 interface Category {
   _id: string;
@@ -56,87 +66,81 @@ const formSchema = z.object({
   parentCategory: z.string().optional(),
   shop: z.boolean(),
   above: z.boolean(),
-})
+});
 
 interface EditCategoryDialogProps {
   categoryId: string;
 }
 
 export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
+  const { data: getSingleCategory } = useGetCategoryById(categoryId);
 
-  const { data: getSingleCategory } = useGetCategoryById(categoryId)
-
-
-  const [open, setOpen] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string>('')
-  const { mutate: updateCategory, isPending: isUpdateLoading } = useUpdateCategory()
-  const queryClient = useQueryClient()
-
-
+  const [open, setOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const { mutate: updateCategory, isPending: isUpdateLoading } =
+    useUpdateCategory();
+  const queryClient = useQueryClient();
 
   const { data: getCategories } = useGetCategories({
-    limit: "9999999"
-  })
-  const categories = getCategories?.data?.categories
-
+    limit: "9999999",
+  });
+  const categories = getCategories?.data?.categories;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: getSingleCategory?.data?.name || '',
-      description: getSingleCategory?.data?.description || '',
-      parentCategory: getSingleCategory?.data?.parentCategory || '',
+      name: getSingleCategory?.data?.name || "",
+      description: getSingleCategory?.data?.description || "",
+      parentCategory: getSingleCategory?.data?.parentCategory || "",
       shop: getSingleCategory?.data?.shop || false,
       above: getSingleCategory?.data?.above || false,
     },
-  })
-
+  });
 
   useEffect(() => {
     if (getSingleCategory) {
       form.reset({
         name: getSingleCategory?.data?.name,
         description: getSingleCategory?.data?.description,
-        parentCategory: getSingleCategory?.data?.parentCategory || '',
+        parentCategory: getSingleCategory?.data?.parentCategory || "",
         shop: getSingleCategory?.data?.shop,
         above: getSingleCategory?.data?.above,
       });
     }
   }, [getSingleCategory, form]);
 
-
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
       // Clear previous preview
       if (previewUrl) {
-        URL.revokeObjectURL(previewUrl)
+        URL.revokeObjectURL(previewUrl);
       }
 
       // Create new preview
-      const url = URL.createObjectURL(file)
-      setPreviewUrl(url)
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
 
       // Update form
-      form.setValue('image', file)
+      form.setValue("image", file);
     }
-  }
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const formData = new FormData()
+      const formData = new FormData();
 
       // Append all form fields to FormData
       Object.entries(values).forEach(([key, value]) => {
-        if (key === 'image') {
-          const file = value as File
+        if (key === "image") {
+          const file = value as File;
           if (file) {
-            formData.append('image', file)
+            formData.append("image", file);
           }
         } else if (value !== undefined && value !== null) {
-          formData.append(key, value.toString())
+          formData.append(key, value.toString());
         }
-      })
+      });
 
       const dataTosend = {
         name: values.name,
@@ -144,50 +148,50 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
         image: values.image,
         shop: values.shop,
         above: values.above,
-        ...(values.parentCategory && { parentCategoryId: values.parentCategory })
+        ...(values.parentCategory && {
+          parentCategoryId: values.parentCategory,
+        }),
       };
 
       updateCategory(
         { id: categoryId, data: dataTosend },
         {
           onSuccess: () => {
-            toast.success("Category updated successfully")
-            setOpen(false)
-            queryClient.invalidateQueries({ queryKey: ['categories'] });
-            form.reset()
+            toast.success("Category updated successfully");
+            setOpen(false);
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
+            form.reset();
           },
           onError: (error) => {
-            toast.error("Failed to update category")
-            console.error(error)
-          }
+            toast.error("Failed to update category");
+            console.error(error);
+          },
         }
-      )
+      );
     } catch (error) {
-      toast.error("Failed to update category")
-      console.error(error)
+      toast.error("Failed to update category");
+      console.error(error);
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-      <DialogTrigger asChild>
-            <Button variant="ghost" size="icon" className="text-blue-500 hover:text-blue-600 transition-colors">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="icon" className="">
               <Edit className="h-4 w-4" />
             </Button>
-      </DialogTrigger>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Edit Category</p>
-          </TooltipContent>
-        </Tooltip>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Edit Category</p>
+        </TooltipContent>
+      </Tooltip>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>
-          <DialogDescription>
-            Update category information
-          </DialogDescription>
+          <DialogDescription>Update category information</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -269,13 +273,13 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
                   <FormLabel>Parent Category ID</FormLabel>
                   <FormControl>
                     {/* <Input placeholder="Parent category ID (optional)" {...field} /> */}
-                    <Select onValueChange={field.onChange} value={field.value} >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select parent category" />
                       </SelectTrigger>
                       <SelectContent>
                         {categories?.map((category: Category) => (
-                          <SelectItem key={category._id} value={category._id} >
+                          <SelectItem key={category._id} value={category._id}>
                             {category.name}
                           </SelectItem>
                         ))}
@@ -294,9 +298,7 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel>Shop</FormLabel>
-                    <FormDescription>
-                      Is this a shop category?
-                    </FormDescription>
+                    <FormDescription>Is this a shop category?</FormDescription>
                   </div>
                   <FormControl>
                     <Switch
@@ -330,7 +332,11 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
             />
 
             <div className="flex justify-end gap-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isUpdateLoading}>
@@ -341,5 +347,5 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
         </Form>
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

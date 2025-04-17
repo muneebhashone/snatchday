@@ -22,7 +22,7 @@ export function CreateCategoryDialog() {
           Add Category
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[70vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[70vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 [&::-webkit-scrollbar-track]:my-4">
         <DialogHeader>
           <DialogTitle>Create Category</DialogTitle>
           <DialogDescription>

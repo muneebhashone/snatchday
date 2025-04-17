@@ -314,7 +314,7 @@ export const getCustomerOrdersData = async (
 
 // order api
 
-export const getOrders = async (pageParams, status, date) => {
+export const getOrders = async (pageParams, status, date, user) => {
   const limit = 10;
   const response = await axiosInstance.get("/order/order/get/all", {
     params: {
@@ -322,6 +322,7 @@ export const getOrders = async (pageParams, status, date) => {
       offset: pageParams,
       status,
       date,
+      user
     },
   });
   console.log(pageParams);
@@ -489,8 +490,24 @@ export const vouchers = async (data: CreateVoucherData) => {
   return response.data;
 };
 
-export const getVouchers = async () => {
-  const response = await axiosInstance.get<VoucherResponse>("/voucher");
+export const getVouchers = async (params: {
+  limit?: string;
+  offset?: string;
+  name?: string;
+  code?: string;
+  type?: string;
+  registered?: string;
+  from?: string;
+  until?: string;
+  noShipping?: string;
+  products?: string;
+  categories?: string;
+  sort_attr?: string;
+  sort?: string;
+}) => {
+  const response = await axiosInstance.get<VoucherResponse>("/voucher", {
+    params,
+  });
   return response.data;
 };
 

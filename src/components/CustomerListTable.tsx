@@ -78,83 +78,101 @@ export function CustomeListTable({
     setPage((newPage - 1) * skip);
   };
 
-  return isLoading ? (
-    <div className="flex items-center justify-center">
-      <Loader size={25} className="animate-spin text-primary" />
+  return (
+    <div className="p-4 bg-white">
+      <div className="border rounded-md bg-white">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead className="text-gray-500">NAME</TableHead>
+              <TableHead className="text-gray-500">E-MAIL</TableHead>
+              <TableHead className="text-gray-500">CUSTOMER GROUP</TableHead>
+              <TableHead className="text-gray-500">APPROVE</TableHead>
+              <TableHead className="text-gray-500">SPENDINGS</TableHead>
+              <TableHead className="text-gray-500">CREATED</TableHead>
+              <TableHead className="text-gray-500">POINTS</TableHead>
+              <TableHead className="text-gray-500 text-right">ACTIONS</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow className="h-44">
+                <TableCell colSpan={8} className="text-center">
+                  <div className="flex items-center justify-center w-full">
+                    <Loader className="h-4 w-4 animate-spin text-primary" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : customers?.data?.customers[0].data?.length > 0 ? (
+              customers.data.customers[0].data.map((customer) => (
+                <TableRow key={customer.name} className="hover:bg-gray-50">
+                  <TableCell className="font-medium text-gray-900">
+                    {customer.name}
+                  </TableCell>
+                  <TableCell className="text-gray-500">{customer.email}</TableCell>
+                  <TableCell className="text-gray-500">{customer.group}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        customer.approved
+                          ? "bg-primary text-white"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {customer.approved ? "Approved" : "Not Approved"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer?.spendings || "N/A"}
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer.createdAt.split("T")[0]}
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer?.wallet?.snapPoints || "0"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-2 justify-end">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link href={`/admin/customers/${customer._id}`}>
+                              <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit Customer</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center text-gray-500">
+                  No customers found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="flex items-center justify-between py-4">
+        <p className="text-sm text-gray-500">
+          Displaying {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
+        </p>
+        <DynamicPagination
+          totalItems={totalItems}
+          itemsPerPage={skip}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
-  ) : (
-    <Table className="border border-primary">
-      <TableHeader>
-        <TableRow className="border border-primary">
-          <TableHead className="text-primary font-bold w-[100px]">
-            Name
-          </TableHead>
-          <TableHead className="text-primary font-bold">E-mail</TableHead>
-          <TableHead className="text-primary font-bold">
-            Customer group
-          </TableHead>
-          <TableHead className="text-primary font-bold">Approve</TableHead>
-          <TableHead className="text-primary font-bold">Spendings</TableHead>
-          <TableHead className="text-primary font-bold">Created</TableHead>
-          <TableHead className="text-primary font-bold">Points</TableHead>
-          <TableHead className="text-primary font-bold text-right">
-            Actions
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {customers?.data?.customers[0].data?.map((customer) => (
-          <TableRow className="" key={customer.name}>
-            <TableCell className="font-bold">{customer.name}</TableCell>
-            <TableCell className="">{customer.email}</TableCell>
-            <TableCell>{customer.group}</TableCell>
-            <TableCell>
-              {customer.approved ? "Approved" : "Not Approve"}
-            </TableCell>
-            <TableCell className="">{customer?.spendings || "N/A"}</TableCell>
-            <TableCell className="">
-              {customer.createdAt.split("T")[0]}
-            </TableCell>
-            <TableCell className="">{customer?.wallet?.snapPoints || "0"}</TableCell>
-            <TableCell className="text-right flex gap-2 items-center justify-end">
-              <Link href={`/admin/customers/${customer._id}`}>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Edit Customer</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </Link>
-              {/* <Link href={`#`}>
-                <Delete className="text-red-500" />
-              </Link> */}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter className="w-full">
-        <TableRow>
-          <TableCell colSpan={8} className="text-center">
-            <div className="flex flex-col items-center gap-4">
-              <div className="text-sm text-gray-500">
-                Showing {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
-              </div>
-              <DynamicPagination
-                totalItems={totalItems}
-                itemsPerPage={skip}
-                currentPage={currentPage}
-                onPageChange={handlePageChange}
-              />
-            </div>
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
   );
 }

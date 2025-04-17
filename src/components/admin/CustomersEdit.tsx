@@ -50,7 +50,7 @@ export function CustomerdEdit() {
   const user = paramsId;
   const date = "";
   const status = "";
-  const { data: orders, isLoading } = useGetCustomerOrdersData(
+  const { data: orders, isLoading, refetch } = useGetCustomerOrdersData(
     page,
     status,
     user,
@@ -86,7 +86,7 @@ export function CustomerdEdit() {
             <DialogTitle>Edit Customer Details</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <CustomerGeneralTabForm />
+            <CustomerGeneralTabForm onClose={setIsEditDialogOpen} />
           </div>
         </DialogContent>
       </Dialog>
