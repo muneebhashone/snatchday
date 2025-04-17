@@ -56,7 +56,6 @@ const Login = ({
   const [showResendButton, setShowResendButton] = useState(false);
   const [isOtpOpen, setIsOtpOpen] = useState(false);
 
-
   const { user, setUserData, logout } = useUserContext();
   const router = useRouter();
   const { mutate: login, isPending } = useAuthApi();
@@ -105,13 +104,18 @@ const Login = ({
     });
   };
 
-
-
   useEffect(() => {
     if (user) {
       setIsLoggedIn(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (isLoginOpen) {
+      setShowResendButton(false);
+      setIsEmailVerified(true);
+    }
+  }, [isLoginOpen]);
   
   if (isOtpOpen) {
     return <OtpModal open={isOtpOpen} onClose={() => setIsOtpOpen(false)}      email={getValues("email")}
@@ -133,6 +137,8 @@ const Login = ({
           setIsLoggedIn(true);
           setUserData(data);
           setIsLoginOpen(false);
+          setIsEmailVerified(true);
+            setShowResendButton(false);
           toast.success("Login successful");
         },
         onError: (error) => {
@@ -205,6 +211,8 @@ const Login = ({
       }
     });
   };
+
+
   
 
   return (

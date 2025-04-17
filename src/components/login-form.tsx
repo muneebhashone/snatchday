@@ -71,8 +71,6 @@ export function LoginForm({
         onSuccess: ({ data }) => {
           socket.emit("join", data?.user?._id);
           setUserData(data);
-          document.cookie = `user=${encodeURIComponent(JSON.stringify(data?.user))}; path=/;`;
-
           toast.success("Login successfully");
           router.push("/admin");
         },

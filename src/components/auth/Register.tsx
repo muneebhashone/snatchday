@@ -422,11 +422,6 @@ const PersonalStep = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="USA">United States</SelectItem>
-                  <SelectItem value="UK">United Kingdom</SelectItem>
-                  <SelectItem value="CA">Canada</SelectItem>
-                  <SelectItem value="AU">Australia</SelectItem>
-                  <SelectItem value="DE">Germany</SelectItem>
-                  <SelectItem value="FR">France</SelectItem>
                   <SelectItem value="JP">Japan</SelectItem>
                 </SelectContent>
               </Select>
