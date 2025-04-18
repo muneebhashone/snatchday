@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -19,7 +19,13 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { CalendarIcon, ChevronsUpDown, Check, List } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronsUpDown,
+  Check,
+  List,
+  Loader,
+} from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
@@ -43,15 +49,43 @@ const formSchema = z.object({
 });
 
 export default function OrdersList() {
-  const [offset, setOffset] = useState(0);
+  const [data, setData] = useState<any[]>([]);
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
-  const { data: customers } = useCustomers({
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const {
+    data: customers,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useCustomers({
     limit: 10,
-    offset: offset,
-    search: "",
+    search: debouncedSearch,
   });
-  // console.log(customers.pages);
+
+  useEffect(() => {
+    if (customers?.pages) {
+      const allCustomers = customers.pages.flatMap(
+        (page) => page.data.customers[0].data
+      );
+      setData(allCustomers);
+    }
+    console.log(data, "data");
+  }, [customers]);
+
+  const handleScrollInCommand = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    const scrolledToBottom =
+      Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) <
+      5;
+
+    if (scrolledToBottom && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const divRef = useRef<HTMLDivElement | null>(null);
 
   const [status, setStatus] = useState<string>("");
   const [date, setDate] = useState<string[]>([]);
@@ -100,9 +134,20 @@ export default function OrdersList() {
     form.handleSubmit(onSubmit)();
   }, [debouncedStatus, debouncedFromDate, debouncedUntilDate, debouncedUser]);
 
+  // const loadMore = () => {
+  //   if (hasNextPage) {
+  //     fetchNextPage();
+  //   }
+  //   console.log(customers?.pages);
+  // };
+
   return (
     <div className="max-w-full mx-auto rounded-sm bg-white p-4">
       <h1 className="text-2xl font-bold mb-8">Orders</h1>
+      {/* <div ref={divRef} className="h-[500px] overflow-y-auto">
+        <div className="h-[1000px] bg-red-500">jhgajsgjg</div>
+      </div> */}
+      {/* <button onClick={loadMore}>load more</button> */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -171,6 +216,15 @@ export default function OrdersList() {
                               field.onChange(date.toISOString());
                             }
                           }}
+                          disabled={(date) => {
+                            const untilDate = form.getValues("untilDate");
+                            if (!untilDate) {
+                              return undefined;
+                            }
+                            const until = new Date(untilDate);
+                            until.setDate(until.getDate() - 1);
+                            return date > until || date < new Date();
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
@@ -214,6 +268,15 @@ export default function OrdersList() {
                               field.onChange(date.toISOString());
                             }
                           }}
+                          disabled={(date) => {
+                            const fromDate = form.getValues("fromDate");
+                            if (!fromDate) {
+                              return undefined;
+                            }
+                            const from = new Date(fromDate);
+                            from.setDate(from.getDate() + 1);
+                            return date < from;
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
@@ -240,10 +303,9 @@ export default function OrdersList() {
                           className="w-[200px] justify-between"
                         >
                           {value
-                            ? customers?.pages?.[0]?.data?.customers[0]?.data.find(
-                                (user: any) => user._id === value
-                              )?.name
-                            : "Select framework..."}
+                            ? data?.find((user: any) => user._id === value)
+                                ?.name
+                            : "Select user..."}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </PopoverTrigger>
@@ -252,36 +314,46 @@ export default function OrdersList() {
                           <CommandInput
                             placeholder="Search framework..."
                             className="h-9"
+                            value={search}
+                            onValueChange={setSearch}
                           />
-                          <CommandList>
-                            <CommandEmpty>No framework found.</CommandEmpty>
+                          <CommandList
+                            onScroll={handleScrollInCommand}
+                            className="max-h-[200px] overflow-y-auto"
+                          >
+                            <CommandEmpty>
+                              {isFetchingNextPage
+                                ? "Loading..."
+                                : "No users found"}
+                            </CommandEmpty>
                             <CommandGroup>
-                              {customers?.pages?.[0]?.data?.customers[0]?.data.map(
-                                (user: any) => (
-                                  <CommandItem
-                                    key={user._id}
-                                    value={user._id}
-                                    onSelect={(currentValue) => {
-                                      setValue(
-                                        currentValue === value
-                                          ? ""
-                                          : currentValue
-                                      );
-                                      field.onChange(currentValue);
-                                      setOpen(false);
-                                    }}
-                                  >
-                                    {user.name}
-                                    <Check
-                                      className={cn(
-                                        "ml-auto",
-                                        value === user._id
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                  </CommandItem>
-                                )
+                              {data?.map((user: any) => (
+                                <CommandItem
+                                  key={user?._id}
+                                  value={user?._id}
+                                  onSelect={(currentValue) => {
+                                    setValue(
+                                      currentValue === value ? "" : currentValue
+                                    );
+                                    field.onChange(currentValue);
+                                    setOpen(false);
+                                  }}
+                                >
+                                  {user?.name}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      value === user?._id
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                              {isFetchingNextPage && (
+                                <CommandItem className="flex justify-center items-center w-full">
+                                  <Loader className="animate-spin w-4 h-4 text-primary" />
+                                </CommandItem>
                               )}
                             </CommandGroup>
                           </CommandList>

@@ -437,19 +437,42 @@ export const useNewsletterMail = () => {
 };
 
 //customers
-export const useCustomers = (limit, offset, search) => {
+// export const useCustomers = (limit, offset, search) => {
+//   return useInfiniteQuery({
+//     queryKey: ["customers", limit, offset, search],
+//     queryFn: ({ pageParam=20 }) => {
+//       console.log(pageParam, "pageParam");
+//       return getCustomers({ limit, offset: pageParam, search });
+//     },
+//     initialPageParam: 1,
+//     getNextPageParam: (lastPage, allPages) => {
+//       console.log(lastPage, allPages, "lastPage");
+//       const customers = lastPage.data.customers[0].data;
+//       const total = lastPage.data.customers[0].total[0].total;
+//       return customers.length < 10 ? undefined : customers.length;
+//     },
+//   });
+// };
+
+export const useCustomers = ({
+  limit,
+  search,
+}: {
+  limit: number;
+  search: string;
+}) => {
   return useInfiniteQuery({
-    queryKey: ["customers", limit, offset, search],
-    queryFn: ({ pageParam=20 }) => {
-      console.log(pageParam, "pageParam");
-      return getCustomers({ limit, offset: pageParam, search });
+    queryKey: ["customers", limit, search],
+    queryFn: async ({ pageParam = 0 }) => {
+      return await getCustomers({ limit, offset: pageParam, search });
     },
-    initialPageParam: 1,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
-      console.log(lastPage, allPages, "lastPage");
-      const customers = lastPage.data.customers[0].data;
-      const total = lastPage.data.customers[0].total[0].total;
-      return customers.length < 10 ? undefined : customers.length;
+      // const customers = lastPage.data.customers[0].data;
+      // console.log(customers, "customers");
+      const total = lastPage.data.customers[0].total[0]?.total;
+      const currentOffset = allPages.length * 10;
+      return currentOffset >= total ? undefined : currentOffset;
     },
   });
 };
