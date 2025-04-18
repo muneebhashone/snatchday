@@ -184,7 +184,7 @@ const ProductDetails = ({
         queryClient.invalidateQueries({ queryKey: ["cart"] });
       },
       onError: (error) => {
-        toast.error("Failed to add to cart");
+        toast.error(error.response.data.message || "Failed to add to cart");
         console.error(error);
       },
     });
@@ -219,7 +219,7 @@ const ProductDetails = ({
         refetchWishlist();
       },
       onError: (error) => {
-        toast.error("Failed to add to wishlist");
+        toast.error(error.response.data.message || "Failed to add to wishlist");
         console.error(error);
       },
     });
@@ -471,11 +471,11 @@ const ProductDetails = ({
 }
                     </div>
                   </TooltipTrigger>
-                  {!user && (
+                
                     <TooltipContent className="bg-gray-700 text-white">
-                      <p>Please login first to add items to cart</p>
+                      <p>Click here  add to cart</p>
                     </TooltipContent>
-                  )}
+              
                 </Tooltip>
               </TooltipProvider>
               <button className="w-64 h-14 bg-white text-card-foreground shadow-xl flex items-center justify-center text-lg rounded-full hover:bg-gray-50">
