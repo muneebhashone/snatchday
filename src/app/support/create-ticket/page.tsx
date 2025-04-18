@@ -26,6 +26,7 @@ import { useState } from "react";
 import { useCreateTicket } from "@/hooks/api";
 import { toast } from "sonner";
 import { ArrowLeft, FileText, Paperclip, Send, FileType } from "lucide-react";
+import { useUserContext } from "@/context/userContext";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -35,8 +36,8 @@ const formSchema = z.object({
 });
 
 const CreateTicketPage = () => {
-  const user = localStorage.getItem("snatchday_user");
-  const userData = JSON.parse(user || "{}");
+  const userData = useUserContext();
+  console.log(userData);
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
   const router = useRouter();
@@ -46,7 +47,7 @@ const CreateTicketPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: userData?.user?.email,
+      email: userData?.user?.user?.email,
       subject: "",
       department: category || "",
       message: "",
@@ -134,7 +135,7 @@ const CreateTicketPage = () => {
                     control={form.control}
                     name="email"
                     disabled={true}
-                    defaultValue={userData?.user?.email}
+                    defaultValue={userData?.user?.user?.email}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-gray-700 font-medium">
