@@ -32,6 +32,8 @@
     "@radix-ui/react-tooltip": "^1.2.0",
     "@react-pdf/renderer": "^4.3.0",
     "@tanstack/react-query": "^5.66.10",
+    "@types/antd": "^0.12.32",
+    "antd": "^5.24.7",
     "axios": "^1.8.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

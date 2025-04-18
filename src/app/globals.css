@@ -1,4 +1,4 @@
-@import 'react-quill/dist/quill.snow.css';
+@import "react-quill/dist/quill.snow.css";
 
 @tailwind base;
 @tailwind components;
@@ -8,6 +8,20 @@ body {
   font-family: var(--font-hanken-grotesk), sans-serif;
 }
 
+/* Ant Design Select Styling */
+.ant-select-outlined .ant-select-selector {
+  box-shadow: none !important;
+  border-radius: 6px !important;
+  border-color: #e5e5e5 !important;
+  color: #73777c !important;
+}
+.ant-select-selection-placeholder {
+  color: #73777c !important;
+}
+.ant-select-arrow {
+  color: #73777c !important;
+}
+/* end of ant design select styling */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -327,7 +341,7 @@ body {
 
 /* yaha se*/
 @keyframes bubble-float-5 {
-  0%, 
+  0%,
   100% {
     transform: translate(0, 0) scale(1) rotate(0deg);
   }

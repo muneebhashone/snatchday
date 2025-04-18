@@ -17,6 +17,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -39,7 +40,6 @@ const formSchema = z.object({
   metaTitle: z.string().min(1, 'Meta title is required'),
   metaDescription: z.string().min(1, 'Meta description is required'),
   metaKeywords: z.array(z.string()).min(1, 'Meta keywords are required'),
-  
 });
 
 const WebSettingForm = () => {
@@ -55,7 +55,6 @@ const WebSettingForm = () => {
       metaTitle: '',
       metaDescription: '',
       metaKeywords: [] as string[],
-     
     },
   });
 
@@ -108,121 +107,147 @@ const WebSettingForm = () => {
   ];
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <div className="py-6 max-w-full mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Create Web Setting</h1>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => router.push('/admin/web-settings')}
+          >
+            Discard
+          </Button>
+          <Button type="submit" form="web-setting-form" disabled={isPending}>
+            {isPending ? "Saving..." : "Save Content"}
+          </Button>
+        </div>
+      </div>
 
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content</FormLabel>
-              <FormControl>
-                <div className="min-h-[200px] border rounded-md">
-                  {typeof window !== 'undefined' && (
-                    <ReactQuill
-                      theme="snow"
-                      value={quillContent}
-                      onChange={setQuillContent}
-                      modules={modules}
-                      formats={formats}
-                      className="h-[150px]"
-                    />
+      <Form {...form}>
+        <form 
+          id="web-setting-form" 
+          onSubmit={form.handleSubmit(onSubmit)} 
+          className="space-y-6"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Basic Information Section */}
+            <div className="bg-white rounded-lg border p-6 col-span-2">
+              <h2 className="text-lg font-semibold mb-6">Basic Information</h2>
+              
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="metaTitle"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Meta Title</FormLabel>
-              <FormControl>
-                <Input placeholder="Enter meta title" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="metaDescription"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Meta Description</FormLabel>
-              <FormControl>
-                <Textarea 
-                  placeholder="Enter meta description"
-                  className="resize-none" 
-                  {...field} 
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
 
-        <FormField
-          control={form.control}
-          name="metaKeywords"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Meta Keywords</FormLabel>
-              <FormControl>
-                <MultiSelect
-                  placeholder="Enter meta keywords"
-                  value={field.value}
-                  onChange={field.onChange}
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Content *</FormLabel>
+                      <FormControl>
+                        <div className="min-h-[300px] border rounded-md">
+                          {typeof window !== 'undefined' && (
+                            <ReactQuill
+                              theme="snow"
+                              value={quillContent}
+                              onChange={setQuillContent}
+                              modules={modules}
+                              formats={formats}
+                              className="h-[250px]"
+                            />
+                          )}
+                        </div>
+                      </FormControl>
+                      <FormDescription>
+                        Rich text editor for your content
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+              </div>
+            </div>
 
-        {/* <FormField
-          control={form.control}
-          name="order"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Order</FormLabel>
-              <FormControl>
-                <Input 
-                  type="number" 
-                  placeholder="Enter order number"
-                  {...field}
-                  onChange={(e) => field.onChange(Number(e.target.value))}
+            {/* SEO Information Section */}
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-6">SEO Information</h2>
+              
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="metaTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Title *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter meta title" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Title that appears in search engine results
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
-        <Button className='hover:bg-primary' type="submit" disabled={isPending}>
-          {isPending ? 'Creating...' : 'Create Content'}
-        </Button>
-      </form>
-    </Form>
+                <FormField
+                  control={form.control}
+                  name="metaDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Description *</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Enter meta description"
+                          className="resize-none h-24" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Short description for search engine results
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="metaKeywords"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Keywords *</FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          placeholder="Enter meta keywords"
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Keywords to help with search engine optimization
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };
 

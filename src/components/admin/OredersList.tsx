@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,38 +8,25 @@ import {
   Form,
   FormField,
   FormItem,
-  FormLabel,
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
 import {
-  Select,
+  Select as ShadcnSelect,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import {
-  CalendarIcon,
-  ChevronsUpDown,
-  Check,
-  List,
-  Loader,
-} from "lucide-react";
+import { CalendarIcon, ChevronsUpDown, Loader } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
 import { OrdersListTable } from "./OrdersListTable";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useCustomers } from "@/hooks/api";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../ui/command";
+import { Select, Spin } from "antd";
+import type { SelectProps } from "antd";
 
 const formSchema = z.object({
   status: z.string().optional(),
@@ -48,12 +35,29 @@ const formSchema = z.object({
   user: z.string().optional(),
 });
 
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+}
+
 export default function OrdersList() {
-  const [data, setData] = useState<any[]>([]);
-  const [value, setValue] = useState("");
-  const [open, setOpen] = useState(false);
+  // State
+  const [data, setData] = useState<User[]>([]);
+  const [value, setValue] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 500);
+  const [status, setStatus] = useState<string>("");
+  const [date, setDate] = useState<string[]>([]);
+  const [user, setUser] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [open, setOpen] = useState(false);
+
+  // Refs
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Hooks - Reduce debounce time for search to 300ms to reduce delay
+  const debouncedSearch = useDebounce(search, 300);
   const {
     data: customers,
     fetchNextPage,
@@ -63,33 +67,6 @@ export default function OrdersList() {
     limit: 10,
     search: debouncedSearch,
   });
-
-  useEffect(() => {
-    if (customers?.pages) {
-      const allCustomers = customers.pages.flatMap(
-        (page) => page.data.customers[0].data
-      );
-      setData(allCustomers);
-    }
-  }, [customers, debouncedSearch]);
-
-  const handleScrollInCommand = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    const scrolledToBottom =
-      Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) <
-      5;
-
-    if (scrolledToBottom && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  };
-
-  const divRef = useRef<HTMLDivElement | null>(null);
-
-  const [status, setStatus] = useState<string>("");
-  const [date, setDate] = useState<string[]>([]);
-  const [user, setUser] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -101,19 +78,141 @@ export default function OrdersList() {
     },
   });
 
-  const clearFileds = () => {
+  // Debounced form values
+  const debouncedStatus = useDebounce(form.watch("status"), 500);
+  const debouncedFromDate = useDebounce(form.watch("fromDate"), 500);
+  const debouncedUntilDate = useDebounce(form.watch("untilDate"), 500);
+  const debouncedUser = useDebounce(form.watch("user"), 500);
+
+  // Convert users data to Cascader options format
+  const getUserOptions = useCallback(() => {
+    if (!data || data.length === 0) return [];
+
+    console.log("Converting data to options:", data.length);
+    return data.map((user) => ({
+      value: user._id,
+      label: user.name || user.email || "Unknown User",
+    }));
+  }, [data]);
+
+  // Update data from API response - Modified to append new data instead of replacing
+  const handleCustomersUpdate = useCallback(() => {
+    if (!customers?.pages) return;
+
+    try {
+      const newCustomers = customers.pages.flatMap((page) => {
+        if (!page.data?.customers?.[0]?.data) {
+          console.warn("Unexpected data structure:", page);
+          return [];
+        }
+        return page.data.customers[0].data;
+      });
+
+      // Only set data if we have new customers and this is the first page
+      // For subsequent pages, the data is appended in the fetchNextPage handler
+      if (Array.isArray(newCustomers) && customers.pages.length === 1) {
+        console.log("Setting new data with", newCustomers.length, "customers");
+        setData(newCustomers);
+      }
+    } catch (error) {
+      console.error("Error processing customer data:", error);
+    }
+  }, [customers]);
+
+  // Handle appending new data when next page is fetched
+  useEffect(() => {
+    if (customers?.pages && customers.pages.length > 1) {
+      try {
+        // Get only the latest page
+        const latestPage = customers.pages[customers.pages.length - 1];
+        if (latestPage?.data?.customers?.[0]?.data) {
+          const newPageData = latestPage.data.customers[0].data;
+
+          // Append new data to existing data
+          setData((prevData) => {
+            // Filter out duplicates by _id
+            const existingIds = new Set(prevData.map((user) => user._id));
+            const uniqueNewData = newPageData.filter(
+              (user) => !existingIds.has(user._id)
+            );
+
+            console.log(
+              "Appending",
+              uniqueNewData.length,
+              "new users to existing",
+              prevData.length
+            );
+            return [...prevData, ...uniqueNewData];
+          });
+        }
+      } catch (error) {
+        console.error("Error appending new data:", error);
+      }
+    }
+  }, [customers?.pages?.length]);
+
+  // Improved search handler with timeout clearing to prevent excessive API calls
+  const handleCascaderSearch = (searchText: string) => {
+    console.log("Searching for:", searchText);
+
+    // Clear previous timeout to prevent multiple rapid searches
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    // Set a timeout to prevent excessive API calls while typing
+    searchTimeoutRef.current = setTimeout(() => {
+      setSearch(searchText);
+      // Reset data when search term changes
+      if (searchText !== search) {
+        setData([]);
+      }
+    }, 300);
+  };
+
+  // Enhanced popup scroll handler for better infinite scroll detection
+  const handlePopupScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    const scrolledToBottom =
+      Math.abs(target.scrollHeight - target.scrollTop - target.clientHeight) <
+      20;
+
+    if (scrolledToBottom && hasNextPage && !isFetchingNextPage) {
+      console.log("Scrolled to bottom, loading more data...");
+      fetchNextPage();
+    }
+  };
+
+  // Updated handleCascaderChange
+  const handleCascaderChange = useCallback(
+    (value) => {
+      console.log("Selected:", value);
+      if (value) {
+        setValue([value]);
+        form.setValue("user", value);
+      } else {
+        setValue([]);
+        form.setValue("user", undefined);
+      }
+    },
+    [form]
+  );
+
+  const handleClearFields = useCallback(() => {
     form.reset({
       status: "",
       fromDate: undefined,
       untilDate: undefined,
       user: undefined,
     });
+    setValue([]);
+    setSearch("");
     setStatus("");
     setDate([]);
     setPage(1);
-  };
+  }, [form]);
 
-  const onSubmit = (values: any) => {
+  const handleFormSubmit = useCallback((values: any) => {
     setStatus(values.status);
     if (values.fromDate && values.untilDate) {
       setDate([values.fromDate, values.untilDate]);
@@ -122,44 +221,74 @@ export default function OrdersList() {
     }
     setUser(values.user);
     setPage(1);
-  };
+  }, []);
 
-  const debouncedStatus = useDebounce(form.watch("status"), 500);
-  const debouncedFromDate = useDebounce(form.watch("fromDate"), 500);
-  const debouncedUntilDate = useDebounce(form.watch("untilDate"), 500);
-  const debouncedUser = useDebounce(form.watch("user"), 500);
-
+  // Effect to update data when customers or search changes
   useEffect(() => {
-    form.handleSubmit(onSubmit)();
-  }, [debouncedStatus, debouncedFromDate, debouncedUntilDate, debouncedUser]);
+    handleCustomersUpdate();
+  }, [customers?.pages?.[0], handleCustomersUpdate]);
 
-  // const loadMore = () => {
-  //   if (hasNextPage) {
-  //     fetchNextPage();
-  //   }
-  //   console.log(customers?.pages);
-  // };
+  // Effect to submit form when debounced values change
+  useEffect(() => {
+    form.handleSubmit(handleFormSubmit)();
+  }, [
+    debouncedStatus,
+    debouncedFromDate,
+    debouncedUntilDate,
+    debouncedUser,
+    form,
+    handleFormSubmit,
+  ]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Update the filter function to work with Select
+  const filterOption = (
+    input: string,
+    option?: { label: string; value: string }
+  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
+  // Custom dropdown render to handle pagination and loading states
+  const dropdownRender = (menu: React.ReactElement) => (
+    <div
+      ref={dropdownRef}
+      onScroll={handlePopupScroll}
+      style={{ maxHeight: "300px", overflow: "auto" }}
+    >
+      {menu}
+      {isFetchingNextPage && (
+        <div style={{ textAlign: "center", padding: "8px" }}>
+          <Spin size="small" />
+          <span style={{ marginLeft: "8px" }}>Loading more...</span>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="max-w-full mx-auto rounded-sm bg-white p-4">
       <h1 className="text-2xl font-bold mb-8">Orders</h1>
-      {/* <div ref={divRef} className="h-[500px] overflow-y-auto">
-        <div className="h-[1000px] bg-red-500">jhgajsgjg</div>
-      </div> */}
-      {/* <button onClick={loadMore}>load more</button> */}
+
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleFormSubmit)}
           className="flex flex-col items-center"
         >
           <div className="flex items-center justify-between w-full">
-            {/* status */}
+            {/* Status Field */}
             <FormField
               control={form.control}
               name="status"
               render={({ field }) => (
                 <FormItem className="w-[300px]">
-                  <Select
+                  <ShadcnSelect
                     onValueChange={field.onChange}
                     value={debouncedStatus}
                   >
@@ -176,7 +305,7 @@ export default function OrdersList() {
                       <SelectItem value="returned">Returned</SelectItem>
                       <SelectItem value="paid">Paid</SelectItem>
                     </SelectContent>
-                  </Select>
+                  </ShadcnSelect>
                   <FormMessage />
                 </FormItem>
               )}
@@ -198,7 +327,7 @@ export default function OrdersList() {
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          <CalendarIcon />
+                          <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value
                             ? new Date(field.value).toISOString().split("T")[0]
                             : "From Date"}
@@ -250,7 +379,7 @@ export default function OrdersList() {
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          <CalendarIcon />
+                          <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value
                             ? new Date(field.value).toISOString().split("T")[0]
                             : "Until Date"}
@@ -286,79 +415,36 @@ export default function OrdersList() {
               )}
             />
 
-            {/* user */}
+            {/* User Field - Updated Ant Design Cascader with correct props */}
             <FormField
               control={form.control}
               name="user"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={open}
-                          className="w-[200px] justify-between"
-                        >
-                          {value
-                            ? data?.find((user: any) => user._id === value)
-                                ?.name
-                            : "Select framework..."}
-                          <ChevronsUpDown className="opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[200px] p-0">
-                        <Command>
-                          <CommandInput
-                            placeholder="Search framework..."
-                            className="h-9"
-                            value={search}
-                            onValueChange={setSearch}
-                          />
-                          <CommandList
-                            onScroll={handleScrollInCommand}
-                            className="max-h-[200px] overflow-y-auto"
-                          >
-                            <CommandEmpty>
-                              {isFetchingNextPage
-                                ? "Loading..."
-                                : "No users found"}
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {data?.map((user: any) => (
-                                <CommandItem
-                                  key={user?._id}
-                                  value={user?._id}
-                                  onSelect={(currentValue) => {
-                                    setValue(
-                                      currentValue === value ? "" : currentValue
-                                    );
-                                    field.onChange(currentValue);
-                                    setOpen(false);
-                                  }}
-                                >
-                                  {user?.name}
-                                  <Check
-                                    className={cn(
-                                      "ml-auto",
-                                      value === user?._id
-                                        ? "opacity-100"
-                                        : "opacity-0"
-                                    )}
-                                  />
-                                </CommandItem>
-                              ))}
-                              {isFetchingNextPage && (
-                                <CommandItem className="flex justify-center items-center w-full">
-                                  <Loader className="animate-spin w-4 h-4 text-primary" />
-                                </CommandItem>
-                              )}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <div className="w-[200px]">
+                      <Select
+                        size="large"
+                        showSearch
+                        placeholder="Select User"
+                        optionFilterProp="label"
+                        onChange={handleCascaderChange}
+                        onSearch={handleCascaderSearch}
+                        filterOption={filterOption}
+                        value={field.value}
+                        options={getUserOptions()}
+                        notFoundContent={
+                          isFetchingNextPage ? (
+                            <Loader className="animate-spin text-primary" />
+                          ) : (
+                            "No users found"
+                          )
+                        }
+                        onPopupScroll={handlePopupScroll}
+                        style={{ width: "100%" }}
+                        allowClear
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -368,7 +454,7 @@ export default function OrdersList() {
             {/* Clear Button */}
             <div className="col-span-1">
               <Button
-                onClick={clearFileds}
+                onClick={handleClearFields}
                 type="button"
                 className="border border-primary text-primary bg-white hover:bg-primary hover:text-white"
               >
