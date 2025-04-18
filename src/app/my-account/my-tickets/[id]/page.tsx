@@ -112,9 +112,9 @@ const TicketDetailsPage = () => {
                   ${ticket?.data?.status === "OPEN" ? "bg-red-500" : 
                     ticket?.data?.status === "IN_PROGRESS" ? "bg-[#FF7324]" : 
                     "bg-green-500"}`}>
-                  {ticket?.data?.status === "OPEN" ? "Offen" :
-                    ticket?.data?.status === "IN_PROGRESS" ? "In Bearbeitung" :
-                    "Erledigt"}
+                  {ticket?.data?.status === "OPEN" ? "Pending" :
+                    ticket?.data?.status === "IN_PROGRESS" ? "In Progress" :
+                    "Completed"}
                 </div>
               </div>
             </div>
