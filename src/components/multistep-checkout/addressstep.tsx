@@ -56,27 +56,19 @@ const addressSchema = z.object({
 interface AddressStepProps {
   onNextStep: () => void;
   onPrevStep: () => void;
-  setAddresses: (addresses: Address[]) => void;
   selectedAddress: Address | null;
   checkoutResponse:any
   setOrderId: (orderId: string) => void;
   setSelectedAddress: (address: Address | null) => void;
-  orderSummary: {
-    subtotal: number;
-    tax: number;
-    total: number;
-  };
 }
 
 export function AddressStep({
   onNextStep,
   onPrevStep,
-  setAddresses,
   selectedAddress,
   checkoutResponse,
    setOrderId ,
   setSelectedAddress,
-  orderSummary,
 }: AddressStepProps) {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const { user } = useUserContext();

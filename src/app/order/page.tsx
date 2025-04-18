@@ -519,13 +519,10 @@ const MultiStepCheckout = () => {
               <AddressStep
                 onNextStep={nextStep}
                 onPrevStep={prevStep}
-                addresses={addresses}
                 checkoutResponse={checkoutResponse}
                 setOrderId={setOrderId}
-                setAddresses={setAddresses}
                 selectedAddress={selectedAddress}
                 setSelectedAddress={setSelectedAddress}
-                orderSummary={orderSummary}
               />
             )}
             {currentStep === 2 && (
