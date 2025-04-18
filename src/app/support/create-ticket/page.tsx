@@ -78,7 +78,7 @@ const CreateTicketPage = () => {
           toast.success("Ticket created successfully!");
           userData?.user
             ? router.push("/my-account/my-profile")
-            : router.push(`/my-account/my-tickets/${formData.get("email")}`);
+            : router.push(`/guest/my-tickets/${formData.get("email")}`);
         },
         onError: (error) => {
           console.error("Error creating ticket:", error);
