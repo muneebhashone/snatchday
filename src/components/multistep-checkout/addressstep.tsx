@@ -5,7 +5,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Building, PenLine, Trash2, User } from "lucide-react";
+import { Building, Loader2, PenLine, Trash2, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,12 +16,9 @@ import {
   useCreateAddress,
   useDeleteAddress,
   useGetAddresses,
-  useGetMyProfile,
-  useGetMyReturns,
   usePlaceOrder,
 } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
-import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 
 // Define types
@@ -83,15 +80,14 @@ export function AddressStep({
 }: AddressStepProps) {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const { user } = useUserContext();
-  const { cartData } = useCart();
   const router = useRouter();
-  const { data: profile } = useGetMyProfile();
 
   const {
     data: addressesData,
     isLoading: isLoadingAddresses,
     refetch: refetchAddresses,
   } = useGetAddresses();
+
   const { mutate: createAddress, isPending: isCreating } = useCreateAddress();
   const { mutate: deleteAddress, isPending: isDeleting } = useDeleteAddress();
   const { mutate: PlaceOrderMutation, isPending } = usePlaceOrder();
@@ -280,7 +276,13 @@ export function AddressStep({
   };
 
   return (
+      
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {isLoadingAddresses ? 
+         <div className="flex text-[#F37835]  col-span-3 justify-center items-center h-full">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div> :  
+        <>
       <div className="md:col-span-2">
         <Card className="bg-white shadow-md rounded-lg">
           <CardContent className="p-6">
@@ -576,6 +578,7 @@ export function AddressStep({
                     <Label htmlFor="vatId">VAT ID (Optional)</Label>
                     <Input id="vatId" {...registerAddress("vatId")} />
                   </div>
+                  {user?.user &&
                   <div className="md:col-span-2 flex items-center space-x-2">
                     <input
                       type="checkbox"
@@ -585,18 +588,19 @@ export function AddressStep({
                       onChange={(e) => {
                         setValue("isDefault", e.target.checked);
                       }}
-                      disabled={!isLoggedIn}
                     />
                     <Label htmlFor="isDefault">
-                      Set as default address {!isLoggedIn && "(Login required)"}
+                      Set as default address 
                     </Label>
                   </div>
+                }
                 </div>
+                {user?.user &&
                 <div className="flex justify-end space-x-2 mt-4">
                   <Button type="submit" disabled={isCreating}>
                     Save Address
                   </Button>
-                </div>
+                </div>}
               </form>
             )}
           </CardContent>
@@ -670,6 +674,8 @@ export function AddressStep({
           </CardContent>
         </Card>
       </div>
+      </>
+      }
     </div>
   );
 }

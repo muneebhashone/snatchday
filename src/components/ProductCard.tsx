@@ -187,7 +187,7 @@ const ProductCard = ({
                           }
                         />
                       </div>
-                    ) : user ? (
+                    ) :  (
                       <button
                         onClick={handleAddToCart}
                         disabled={isAddToCartPending}
@@ -195,18 +195,14 @@ const ProductCard = ({
                       >
                         {isAddToCartPending ? "adding..." : "Add to Cart"}
                       </button>
-                    ) : (
-                      <Button className="bg-transparent">
-                        <Login addToCart={true} smallAddtoCart={true} />
-                      </Button>
                     )}
                   </div>
                 </TooltipTrigger>
-                {!user && (
+                
                   <TooltipContent className="bg-gray-700 text-white">
-                    <p>Please login first to add items to cart</p>
+                    <p> Click add to cart </p>
                   </TooltipContent>
-                )}
+                
               </Tooltip>
             </TooltipProvider>
           </div>

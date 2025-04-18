@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import {  useRouter } from "next/navigation"
-import { Clock } from 'lucide-react'
+import { Clock, Loader2 } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -37,7 +37,7 @@ interface ConfirmationStepProps {
 
 export function ConfirmationStep({ selectedAddress, cart, orderSummary,orderId }: ConfirmationStepProps) {
   const router = useRouter()
-  const { data: order } = useGetOrderById(orderId as string)
+  const { data: order ,isLoading} = useGetOrderById(orderId as string)
   const {user}=useUserContext()
 
   console.log(order,"order data confirmation step")
@@ -58,7 +58,12 @@ export function ConfirmationStep({ selectedAddress, cart, orderSummary,orderId }
 
   return (
     <Card className="bg-white shadow-md rounded-lg">
-      <CardContent className="p-6">
+      <CardContent className="px-6 py-24">
+        {isLoading ? <div className="flex flex-col text-[#F37835] justify-center items-center h-full">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          <p>Confirming your order...</p>
+        </div> :
+        <>
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold mb-2">Thank You! 😊</h2>
           <p className="text-gray-600">Your order #{order?.data?.orderNumber || "N/A"} has been placed!</p>
@@ -132,8 +137,8 @@ export function ConfirmationStep({ selectedAddress, cart, orderSummary,orderId }
                 <Image
                   src={item?.product?.images[0] || "/placeholder.svg"}
                   alt={item?.product?.name}
-                  width={60}
-                  height={60}
+                  width={30}
+                  height={35}
                   className="rounded-md"
                 />
                 <div className="ml-4 flex-1">
@@ -223,6 +228,8 @@ export function ConfirmationStep({ selectedAddress, cart, orderSummary,orderId }
             Continue Shopping
           </Button>
         </div>
+        </>
+      }
       </CardContent>
     </Card>
   )
