@@ -40,7 +40,7 @@ import ClientLayout from "@/components/landing-page/ClientLayout"
 import { AddressStep } from "@/components/multistep-checkout/addressstep";
 import { CartStep } from "@/components/multistep-checkout/cart-step";
 import { ConfirmationStep } from "@/components/multistep-checkout/confirmation-step";
-import { PaymentStep } from "@/components/multistep-checkout/payment-step";
+// import { PaymentStep } from "@/components/multistep-checkout/payment-step";
 import { StepIndicator } from "@/components/multistep-checkout/step-indicator"
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react"

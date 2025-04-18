@@ -25,15 +25,15 @@ const ReturnOrdersTable = () => {
   });
 
   const debouncedFilters = {
-    status: useDebounce(filters.status, 3000), 
-    orderNumber: useDebounce(filters.orderNumber, 3000), 
-    articleId: useDebounce(filters.articleId, 3000), 
+    status: useDebounce(filters.status, 3000),
+    orderNumber: useDebounce(filters.orderNumber, 3000),
+    articleId: useDebounce(filters.articleId, 3000),
   };
 
   const { data: returns, isLoading } = useGetMyReturns({
     limit: pagination.limit,
     offset: pagination.offset,
-    ...debouncedFilters, 
+    ...debouncedFilters,
   });
 
   const handleFilterChange = (e) => {
@@ -72,7 +72,6 @@ const ReturnOrdersTable = () => {
         </div>
 
         <div className="flex gap-2">
-        
           <select
             name="status"
             value={filters.status}
@@ -88,15 +87,19 @@ const ReturnOrdersTable = () => {
         </div>
       </div>
 
-      <Table className="border">
+      <Table className="border border-primary rounded-md">
         <TableHeader className="rounded-t-3xl">
-          <TableRow className="rounded-t-3xl">
-            <TableHead>Article</TableHead>
-            <TableHead className="w-[100px]">Order No</TableHead>
-            <TableHead>Return Number</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Date Created</TableHead>
-            <TableHead>Actions</TableHead>
+          <TableRow className="rounded-t-3xl border-b border-primary">
+            <TableHead className="text-primary font-bold">Article</TableHead>
+            <TableHead className="text-primary font-bold">Order No</TableHead>
+            <TableHead className="text-primary font-bold">
+              Return Number
+            </TableHead>
+            <TableHead className="text-primary font-bold">Status</TableHead>
+            <TableHead className="text-primary font-bold">
+              Date Created
+            </TableHead>
+            <TableHead className="text-primary font-bold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -106,13 +109,16 @@ const ReturnOrdersTable = () => {
                 Loading...
               </TableCell>
             </TableRow>
-          ) : (
+          ) : returns?.data?.returns?.length > 0 ? (
             returns?.data?.returns?.map((returnItem, index) => (
               <TableRow key={index}>
-                <TableCell>{returnItem?.productsData?.map((product) => <ul>
-                  <li>{product?.product?.article}</li>
-                  
-                </ul>) || "N/A"}</TableCell>
+                <TableCell>
+                  {returnItem?.productsData?.map((product) => (
+                    <ul>
+                      <li>{product?.product?.article}</li>
+                    </ul>
+                  )) || "N/A"}
+                </TableCell>
                 <TableCell>{returnItem.orderNumber || "N/A"}</TableCell>
                 <TableCell>{returnItem.returnNumber || "N/A"}</TableCell>
                 <TableCell>
@@ -123,7 +129,9 @@ const ReturnOrdersTable = () => {
                         : "bg-green-700 text-white"
                     }`}
                   >
-                    {returnItem.status === "waiting" ? "waiting for product" : returnItem.status || "N/A"}
+                    {returnItem.status === "waiting"
+                      ? "waiting for product"
+                      : returnItem.status || "N/A"}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -145,6 +153,14 @@ const ReturnOrdersTable = () => {
                 </TableCell>
               </TableRow>
             ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={10} className="text-center">
+                <p className="text-center font-bold italic">
+                  *No returns found*
+                </p>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>

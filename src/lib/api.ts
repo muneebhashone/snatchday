@@ -18,6 +18,7 @@ import {
   CheckoutTypes,
   PlaceOrder,
   WebSetting,
+  MainProduct,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -66,15 +67,11 @@ export const authMutation = async (data: any, type: string) => {
 // };
 
 export const createProduct = async (formData: FormData) => {
-  const response = await axiosInstance.post<ProductFormData>(
-    "/product",
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  const response = await axiosInstance.post<MainProduct>("/product", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
@@ -170,8 +167,6 @@ export const manageTournament = async (data: TournamentFormData) => {
 export const getNewsletters = async (params?: {
   limit?: string;
   offset?: string;
-  sort_attr?: string;
-  sort?: string;
 }) => {
   const response = await axiosInstance.get<NewsletterTypes>("/newsletter", {
     params,
@@ -311,10 +306,16 @@ export const getCustomerTournaments = async (id, offset) => {
   return response.data;
 };
 
-export const getCustomerOrdersData = async (page, status, user, date) => {
-  const limit = 10;
+export const getCustomerOrdersData = async (
+  page,
+  status,
+  user,
+  date,
+  limit
+) => {
+  const limit1 = 10;
   const response = await axiosInstance.get("order/order/get/all", {
-    params: { limit, offset: page, status, user, date },
+    params: { limit: limit ? limit : limit1, offset: page, status, user, date },
   });
   return response.data;
 };
@@ -323,7 +324,7 @@ export const getCustomerOrdersData = async (page, status, user, date) => {
 
 // order api
 
-export const getOrders = async (pageParams, status, date) => {
+export const getOrders = async (pageParams, status, date, user) => {
   const limit = 10;
   const response = await axiosInstance.get("/order/order/get/all", {
     params: {
@@ -331,6 +332,7 @@ export const getOrders = async (pageParams, status, date) => {
       offset: pageParams,
       status,
       date,
+      user
     },
   });
   console.log(pageParams);
@@ -498,8 +500,24 @@ export const vouchers = async (data: CreateVoucherData) => {
   return response.data;
 };
 
-export const getVouchers = async () => {
-  const response = await axiosInstance.get<VoucherResponse>("/voucher");
+export const getVouchers = async (params: {
+  limit?: string;
+  offset?: string;
+  name?: string;
+  code?: string;
+  type?: string;
+  registered?: string;
+  from?: string;
+  until?: string;
+  noShipping?: string;
+  products?: string;
+  categories?: string;
+  sort_attr?: string;
+  sort?: string;
+}) => {
+  const response = await axiosInstance.get<VoucherResponse>("/voucher", {
+    params,
+  });
   return response.data;
 };
 
@@ -557,8 +575,13 @@ export const createFilter = async (formData: FilterFormData) => {
   return response.data;
 };
 
-export const getFilters = async () => {
-  const response = await axiosInstance.get<FilterFormData[]>("/filter");
+export const getFilters = async (params: {
+  limit?: string;
+  offset?: string;
+}) => {
+  const response = await axiosInstance.get<FilterFormData[]>("/filter", {
+    params,
+  });
   return response.data;
 };
 
@@ -705,7 +728,7 @@ export const getAddresses=async()=>{
   return response.data
 }
 
-export const createAddress=async(data:Address)=>{
+export const createAddress=async(data)=>{
   const response=await axiosInstance.post('/address',data)
   return response.data
 }
@@ -717,3 +740,56 @@ export const deleteAddress=async(id:string)=>{
 
 
 
+export interface TicketFormData {
+  email: string;
+  subject: string;
+  department: string;
+  message: string;
+  attachments?: File[];
+}
+
+export const createTicket = async (formData: FormData) => {
+  const response = await axiosInstance.post("/ticket", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export interface TicketParams {
+  limit?: number;
+  offset?: number;
+  status?: string;
+  sort_attr?: string;
+  sort?: string;
+}
+
+export const getTickets = async (params: TicketParams) => {
+  const limit = 10;
+  const response = await axiosInstance.get("/ticket", {
+    params: { limit, ...params },
+  });
+  return response.data;
+};
+
+export const getTicketById = async (id: string) => {
+  const response = await axiosInstance.get(`/ticket/${id}`);
+  return response.data;
+};
+
+export const replyTicket = async (id: string, formData: FormData) => {
+  const response = await axiosInstance.post(`/ticket/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+/// customer delete
+export const deleteCustomer = async (id: string) => {
+  const response = await axiosInstance.delete(`/auth/account/${id}`);
+  return response.data;
+};
+/// customer delete end

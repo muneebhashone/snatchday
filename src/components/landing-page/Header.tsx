@@ -36,7 +36,6 @@ import {
 import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
 import { Category, SubCategory } from "@/types";
-import { useCart } from "@/context/CartContext";
 
 const Header = () => {
   const { data: cartData } = useGetCart();
@@ -50,8 +49,8 @@ const Header = () => {
   const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
 
   const { data: categories, isLoading } = useGetCategories({
-      limit:'9999999',
-      above: true
+    limit: "9999999",
+    above: true,
   });
   const [categoryImage, setCategoryImage] = useState("");
 
@@ -96,7 +95,6 @@ const Header = () => {
   const handleCartClick = () => {
     router.push("/order");
   };
-
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
@@ -149,51 +147,58 @@ const Header = () => {
                               )
                               .map((category: Category) => (
                                 <div key={category._id} className="group">
-                                  <span  onMouseEnter={() => setCategoryImage(category.image)} className="text-gray-500">
-                                  <Link
-                                    href={`/product-listing?category=${category._id}`}
-                                    className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                  <span
+                                    onMouseEnter={() =>
+                                      setCategoryImage(category.image)
+                                    }
+                                    className="text-gray-500"
                                   >
-                                    {category.name}
-                                  </Link>
+                                    <Link
+                                      href={`/product-listing?category=${category._id}`}
+                                      className="inline-flex items-center gap-2 text-base font-medium text-foreground group-hover:text-primary transition-colors mb-3"
+                                    >
+                                      {category.name}
+                                    </Link>
                                   </span>
-                                  
+
                                   <ul className="space-y-2">
                                     {category.subCategories
                                       .filter((cat) => cat.above)
-                                      .map((subcategory: SubCategory, index) => (
-                                        <li
-                                          key={index}
-                                          onMouseEnter={() =>
-                                            setCategoryImage(subcategory.image)
-                                          }
-                                        >
-                                          <Link
-                                            href={`/product-listing?category=${subcategory._id}`}
-                                            className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                      .map(
+                                        (subcategory: SubCategory, index) => (
+                                          <li
+                                            key={index}
+                                            onMouseEnter={() =>
+                                              setCategoryImage(
+                                                subcategory.image
+                                              )
+                                            }
                                           >
-                                            {subcategory?.name || "N/A"}
-                                          </Link>
-                                        </li>
-                                      ))}
+                                            <Link
+                                              href={`/product-listing?category=${subcategory._id}`}
+                                              className="text-gray-500 hover:text-primary transition-colors block text-sm"
+                                            >
+                                              {subcategory?.name || "N/A"}
+                                            </Link>
+                                          </li>
+                                        )
+                                      )}
                                   </ul>
                                 </div>
                               ))}
                           </div>
                         </div>
-                        {console.log(categoryImage,"categoryImage")}
 
                         {/* Category Image */}
                         <div className="col-span-4">
                           {categoryImage && (
                             <div className="relative h-full w-full">
                               <Image
-                                src={categoryImage }
+                                src={categoryImage}
                                 alt="Category preview"
                                 fill
                                 className="object-contain w-10 h-10"
                                 unoptimized
-
                               />
                             </div>
                           )}
@@ -201,10 +206,11 @@ const Header = () => {
                       </div>
                     ) : (
                       <div className="flex justify-center items-center w-screen h-[20vh]">
-                        <h1 className="text-lg font-medium text-gray-600">Data Not Found</h1>
+                        <h1 className="text-lg font-medium text-gray-600">
+                          Data Not Found
+                        </h1>
                       </div>
                     )}
-
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
@@ -231,16 +237,18 @@ const Header = () => {
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
-                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
+                      className={`flex items-center text-lg font-medium hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                        pathname === items.link
                           ? "text-primary"
                           : "text-foreground"
-                        }`}
+                      }`}
                     >
                       {items.name}
                       <ChevronDown className="text-primary w-5 h-5" />
                       <div
-                        className={`w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
-                          }`}
+                        className={`w-2 h-2 bg-primary rounded-full ${
+                          pathname === items.link ? "opacity-100" : "opacity-0"
+                        }`}
                       ></div>
                     </button>
                   </DialogTrigger>
@@ -249,19 +257,22 @@ const Header = () => {
               ) : (
                 <Link
                   href={items.link}
-                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${pathname === items.link
+                  className={`relative flex items-center text-lg font-medium text-foreground hover:text-primary hover:underline hover:underline-offset-8 hover:decoration-2 ${
+                    pathname === items.link
                       ? "text-primary underline underline-offset-8 decoration-2"
                       : "text-foreground"
-                    }`}
+                  }`}
                 >
                   {items.name}
                   <ChevronDown
-                    className={`w-5 h-5 ${pathname === items.link ? "text-white" : "text-primary"
-                      }`}
+                    className={`w-5 h-5 ${
+                      pathname === items.link ? "text-white" : "text-primary"
+                    }`}
                   />
                   <div
-                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${pathname === items.link ? "opacity-100" : "opacity-0"
-                      }`}
+                    className={`absolute right-0 top-0 w-2 h-2 bg-primary rounded-full ${
+                      pathname === items.link ? "opacity-100" : "opacity-0"
+                    }`}
                   ></div>
                 </Link>
               )}

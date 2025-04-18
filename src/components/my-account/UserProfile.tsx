@@ -27,6 +27,7 @@ import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/userContext";
+import TicketTable from "./TicketTable";
 import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
 
 const profileSchema = z.object({
@@ -692,7 +693,8 @@ const UserProfile = () => {
                 {/* My Tickets Content */}
                 <TabsContent value="tickets" className="mt-6">
                   <div className="text-center text-gray-500">
-                    No tickets available
+                    <TicketTable />
+                   
                   </div>
                 </TabsContent>
               </Tabs>

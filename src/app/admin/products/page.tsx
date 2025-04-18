@@ -28,6 +28,8 @@ import { IError } from "../games/create/page";
 import { useEffect, useState } from "react";
 import { useSocket } from "@/context/SocketContext";
 import { Progress } from "@/components/ui/progress";
+import Link from "next/link";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 
 const formSchema = z.object({
   file: z
@@ -85,182 +87,66 @@ export default function ProductsPage() {
   };
   return (
     <AdminLayout>
-      {/* <Progress value={progress} className="w-[20%] h-[10px]" /> */}
-      <div className="w-full flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Products</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button className="bg-white border border-primary text-primary hover:text-white hover:bg-primary">
-              IT Scope Sync
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[40%]">
-            <DialogHeader>
-              <DialogTitle>IT Scope Sync</DialogTitle>
-            </DialogHeader>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                <FormField
-                  control={form.control}
-                  name="file"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <label
-                            htmlFor="jsonFile"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          ></label>
-                          <Input
-                            name="jsonFile"
-                            type="file"
-                            onChange={(e) =>
-                              field.onChange(e.target.files?.[0])
-                            }
-                            ref={field.ref}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* <div className="flex flex-wrap gap-5">
+      <AdminBreadcrumb title="Products" items={[]} />
+      <div className="w-full flex items-center justify-between px-5 bg-white">
+        <h1 className="text-2xl font-bold">Products</h1>
+        <div className="flex items-center justify-end w-full  gap-2 mt-4">
+          <Button className="bg-primary border border-primary text-white hover:text-white hover:bg-primary">
+            <Link href="/admin/products/create">Create Product</Link>
+          </Button>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-white border border-primary text-primary hover:text-white hover:bg-primary">
+                IT Scope Sync
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[40%]">
+              <DialogHeader>
+                <DialogTitle>IT Scope Sync</DialogTitle>
+              </DialogHeader>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
                   <FormField
                     control={form.control}
-                    name="updateAttributes"
+                    name="file"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              id="updateAttributes"
-                            />
                             <label
-                              htmlFor="updateAttributes"
+                              htmlFor="jsonFile"
                               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Update Attributes
-                            </label>
+                            ></label>
+                            <Input
+                              name="jsonFile"
+                              type="file"
+                              onChange={(e) =>
+                                field.onChange(e.target.files?.[0])
+                              }
+                              ref={field.ref}
+                            />
                           </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="updateDescription"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              id="updateDescription"
-                            />
-                            <label
-                              htmlFor="updateDescription"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Update Description
-                            </label>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+
+                  <Button disabled={isPending} type="submit">
+                    {isPending ? (
+                      <Loader className="animate-spin " size={18} />
+                    ) : (
+                      " Submit"
                     )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="updatePrice"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              id="updatePrice"
-                            />
-                            <label
-                              htmlFor="updatePrice"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Update Price
-                            </label>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="updateStock"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              id="updateStock"
-                            />
-                            <label
-                              htmlFor="updateStock"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Update Stock
-                            </label>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="updateTitles"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              id="updateTitles"
-                            />
-                            <label
-                              htmlFor="updateTitles"
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                              Update Titles
-                            </label>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div> */}
-                <Button disabled={isPending} type="submit">
-                  {isPending ? (
-                    <Loader className="animate-spin " size={18} />
-                  ) : (
-                    " Submit"
-                  )}
-                </Button>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+                  </Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
       <div className="bg-card rounded-lg shadow-sm">
         <Product />

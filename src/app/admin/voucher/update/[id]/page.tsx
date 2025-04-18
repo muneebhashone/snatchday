@@ -1,9 +1,10 @@
 "use client";
 
-import React from 'react';
-import { useParams } from 'next/navigation';
+import React from "react";
+import { useParams } from "next/navigation";
 import { EditVoucherForm } from "@/components/admin/EditVoucherForm";
-import AdminLayout from '@/components/admin/AdminLayout';
+import AdminLayout from "@/components/admin/AdminLayout";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 // import dynamic from 'next/dynamic';
 
 // const AdminLayout = dynamic(() => import('@/components/admin/AdminLayout'), { ssr: false });
@@ -14,9 +15,8 @@ export default function Page() {
 
   return (
     <AdminLayout>
-      <div className="p-6 space-y-6">
-        <h2 className="text-3xl font-bold tracking-tight">Edit Voucher</h2>
-        <p className='text-primary italic text-sm font-bold'><span className='text-green-500'>*</span> either product or the category can be selected <span className='text-green-500'>*</span></p>
+      <div className=" space-y-6">
+        <AdminBreadcrumb title="Update Voucher" />
         <EditVoucherForm voucherId={id} />
       </div>
     </AdminLayout>

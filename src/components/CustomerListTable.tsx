@@ -10,133 +10,169 @@ import {
 import { useCustomersPagination } from "@/hooks/api";
 import { Delete, Edit, Loader } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+
+interface CustomerResponse {
+  data: {
+    customers: {
+      data: Customer[];
+      total: { total: number }[];
+    }[];
+  };
+}
+
+interface Customer {
+  _id: string;
+  name: string;
+  email: string;
+  group: string;
+  approved: boolean;
+  spendings?: string;
+  createdAt: string;
+  wallet: {
+    snapPoints: number;
+  };
+}
+
+interface CustomeListTableProps {
+  search: string;
+  group: string;
+  date: string;
+  isActive: string;
+}
 
 export function CustomeListTable({
   search,
   group,
   date,
   isActive,
-}: {
-  search: string;
-  group: string;
-  date: string;
-  isActive: string;
-}) {
+}: CustomeListTableProps) {
   const [page, setPage] = useState(0);
   const skip = 10;
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(0);
+  }, [search, group, date, isActive]);
+
   const { data: customers, isLoading } = useCustomersPagination(
     page,
     search,
     group,
     date,
     isActive
-  );
-  return isLoading ? (
-    <div className="flex items-center justify-center">
-      <Loader size={25} className="animate-spin text-primary" />
-    </div>
-  ) : (
-    <Table className="border border-primary">
-      <TableHeader>
-        <TableRow className="border border-primary">
-          <TableHead className="text-primary font-bold w-[100px]">
-            Name
-          </TableHead>
-          <TableHead className="text-primary font-bold">E-mail</TableHead>
-          <TableHead className="text-primary font-bold">
-            Customer group
-          </TableHead>
-          <TableHead className="text-primary font-bold">Approve</TableHead>
-          <TableHead className="text-primary font-bold">IP</TableHead>
-          <TableHead className="text-primary font-bold">Created</TableHead>
-          <TableHead className="text-primary font-bold">Points</TableHead>
-          <TableHead className="text-primary font-bold text-right">
-            Actions
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {customers?.data?.customers[0].data?.map((customer) => (
-          <TableRow className="" key={customer.name}>
-            <TableCell className="font-bold">{customer.name}</TableCell>
-            <TableCell className="">{customer.email}</TableCell>
-            <TableCell>{customer.group}</TableCell>
-            <TableCell>{customer.approved ? "Approved" : "Not Approve"}</TableCell>
-            <TableCell className="">{customer.ip}</TableCell>
-            <TableCell className="">
-              {customer.createdAt.split("T")[0]}
-            </TableCell>
-            <TableCell className="">{customer.wallet.snapPoints}</TableCell>
-            <TableCell className="text-right flex gap-2 items-center justify-end">
-              <Link href={`/admin/customers/${customer._id}`}>
-                <Edit className="text-primary" />
-              </Link>
-              {/* <Link href={`#`}>
-                <Delete className="text-red-500" />
-              </Link> */}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter className="w-full">
-        <TableRow>
-          <TableCell colSpan={8} className="text-center">
-            <button
-              className={`border px-2 py-1 mr-2 ${
-                page === 0 ? "text-gray-300 cursor-not-allowed" : ""
-              }`}
-              disabled={page === 0}
-              onClick={() => {
-                setPage((prev) => Math.max(prev - skip, 0)); // Prevent going negative
-              }}
-            >
-              Prev
-            </button>
-            {Array.from(
-              {
-                length: Math.ceil(
-                  (customers?.data?.customers[0]?.total[0]?.total || 0) / skip
-                ),
-              },
-              (_, index) => {
-                return (
-                  <button
-                    key={index}
-                    className={`page-indicator m-1 mr-2 ${
-                      index === page / skip ? "bg-primary px-2 text-white" : ""
-                    }`}
-                    onClick={() => setPage(index * skip)}
-                  >
-                    {index + 1}
-                  </button>
-                );
-              }
+  ) as { data: CustomerResponse | undefined; isLoading: boolean };
+
+  const totalItems = customers?.data?.customers[0]?.total[0]?.total || 0;
+  const currentPage = Math.floor(page / skip) + 1;
+
+  const handlePageChange = (newPage: number) => {
+    setPage((newPage - 1) * skip);
+  };
+
+  return (
+    <div className="p-4 bg-white">
+      <div className="border rounded-md bg-white">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead className="text-gray-500">NAME</TableHead>
+              <TableHead className="text-gray-500">E-MAIL</TableHead>
+              <TableHead className="text-gray-500">CUSTOMER GROUP</TableHead>
+              <TableHead className="text-gray-500">APPROVE</TableHead>
+              <TableHead className="text-gray-500">SPENDINGS</TableHead>
+              <TableHead className="text-gray-500">CREATED</TableHead>
+              <TableHead className="text-gray-500">POINTS</TableHead>
+              <TableHead className="text-gray-500 text-right">ACTIONS</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow className="h-44">
+                <TableCell colSpan={8} className="text-center">
+                  <div className="flex items-center justify-center w-full">
+                    <Loader className="h-4 w-4 animate-spin text-primary" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : customers?.data?.customers[0].data?.length > 0 ? (
+              customers.data.customers[0].data.map((customer) => (
+                <TableRow key={customer.name} className="hover:bg-gray-50">
+                  <TableCell className="font-medium text-gray-900">
+                    {customer.name}
+                  </TableCell>
+                  <TableCell className="text-gray-500">{customer.email}</TableCell>
+                  <TableCell className="text-gray-500">{customer.group}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${
+                        customer.approved
+                          ? "bg-primary text-white"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {customer.approved ? "Approved" : "Not Approved"}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer?.spendings || "N/A"}
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer.createdAt.split("T")[0]}
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer?.wallet?.snapPoints || "0"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-2 justify-end">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link href={`/admin/customers/${customer._id}`}>
+                              <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit Customer</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center text-gray-500">
+                  No customers found
+                </TableCell>
+              </TableRow>
             )}
-            <button
-              className={`border px-2 py-1 ml-2 ${
-                page + skip >=
-                  (customers?.data?.customers[0]?.total[0]?.total || 0) &&
-                "text-gray-300"
-              }`}
-              disabled={
-                page + skip >=
-                (customers?.data?.customers[0]?.total[0]?.total || 0)
-              }
-              onClick={() => {
-                setPage((prev) =>
-                  Math.min(
-                    prev + skip,
-                    (customers?.data?.customers[0]?.total[0]?.total || 0) - page
-                  )
-                );
-              }}
-            >
-              Next
-            </button>
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="flex items-center justify-between py-4">
+        <p className="text-sm text-gray-500">
+          Displaying {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
+        </p>
+        <DynamicPagination
+          totalItems={totalItems}
+          itemsPerPage={skip}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </div>
   );
 }

@@ -91,6 +91,13 @@ import {
   getAddresses,
   createAddress,
   deleteAddress,
+  TicketFormData,
+  TicketParams,
+  getTickets,
+  getTicketById,
+  replyTicket,
+  createTicket,
+  deleteCustomer,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -210,7 +217,7 @@ export const useGetCategories = (params?: {
     queryKey: ["categories", params],
     queryFn: () =>
       getCategories({
-        ...params
+        ...params,
       }),
   });
 };
@@ -248,10 +255,10 @@ export const useCreateFilter = () => {
   });
 };
 
-export const useGetFilters = () => {
+export const useGetFilters = (params?: { limit?: string; offset?: string }) => {
   return useQuery({
-    queryKey: ["filters"],
-    queryFn: getFilters,
+    queryKey: ["filters", params],
+    queryFn: () => getFilters(params),
   });
 };
 
@@ -452,18 +459,42 @@ export const useNewsletterMail = () => {
 };
 
 //customers
-export const useCustomers = (filters) => {
+// export const useCustomers = (limit, offset, search) => {
+//   return useInfiniteQuery({
+//     queryKey: ["customers", limit, offset, search],
+//     queryFn: ({ pageParam=20 }) => {
+//       console.log(pageParam, "pageParam");
+//       return getCustomers({ limit, offset: pageParam, search });
+//     },
+//     initialPageParam: 1,
+//     getNextPageParam: (lastPage, allPages) => {
+//       console.log(lastPage, allPages, "lastPage");
+//       const customers = lastPage.data.customers[0].data;
+//       const total = lastPage.data.customers[0].total[0].total;
+//       return customers.length < 10 ? undefined : customers.length;
+//     },
+//   });
+// };
+
+export const useCustomers = ({
+  limit,
+  search,
+}: {
+  limit: number;
+  search: string;
+}) => {
   return useInfiniteQuery({
-    queryKey: ["customers", filters],
-    queryFn: ({ pageParam }) => {
-      // return getCustomers({ ...filters, offset: pageParam });
-      return getCustomers({ ...filters, offset: pageParam });
+    queryKey: ["customers", limit, search],
+    queryFn: async ({ pageParam = 0 }) => {
+      return await getCustomers({ limit, offset: pageParam, search });
     },
-    initialPageParam: 1,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
-      const customers = lastPage.data.customers[0].data;
-      const total = lastPage.data.customers[0].total[0].total;
-      return customers.length < 10 ? undefined : filters.offset;
+      // const customers = lastPage.data.customers[0].data;
+      // console.log(customers, "customers");
+      const total = lastPage.data.customers[0].total[0]?.total;
+      const currentOffset = allPages.length * 10;
+      return currentOffset >= total ? undefined : currentOffset;
     },
   });
 };
@@ -505,10 +536,10 @@ export const useGetCustomerTournaments = (id, offset) => {
   });
 };
 
-export const useGetCustomerOrdersData = (page, status, user, date) => {
+export const useGetCustomerOrdersData = (page, status, user, date, limit?) => {
   return useQuery({
-    queryKey: ["customerOrdersData"],
-    queryFn: () => getCustomerOrdersData(page, status, user, date),
+    queryKey: ["customerOrdersData", page],
+    queryFn: () => getCustomerOrdersData(page, status, user, date, limit),
   });
 };
 
@@ -516,10 +547,10 @@ export const useGetCustomerOrdersData = (page, status, user, date) => {
 
 // order api start
 
-export const useGetOrders = (page, status, date) => {
+export const useGetOrders = (page, status, date, user) => {
   return useQuery({
-    queryKey: ["customers", page, status, date],
-    queryFn: () => getOrders(page, status, date),
+    queryKey: ["customers", page, status, date, user],
+    queryFn: () => getOrders(page, status, date, user),
   });
 };
 
@@ -642,10 +673,24 @@ export const useCreateVoucher = () => {
   });
 };
 
-export const useGetVouchers = () => {
+export const useGetVouchers = (params: {
+  limit?: string;
+  offset?: string;
+  name?: string;
+  code?: string;
+  type?: string;
+  registered?: string;
+  from?: string;
+  until?: string;
+  noShipping?: string;
+  products?: string;
+  categories?: string;
+  sort_attr?: string;
+  sort?: string;
+}) => {
   return useQuery({
-    queryKey: ["vouchers"],
-    queryFn: getVouchers,
+    queryKey: ["vouchers", params],
+    queryFn: () => getVouchers(params),
   });
 };
 
@@ -824,3 +869,37 @@ export const useDeleteAddress=()=>{
 
 
 
+export const useCreateTicket = () => {
+  return useMutation({
+    mutationFn: (formData: FormData) => createTicket(formData),
+  });
+};
+
+export const useGetTickets = (params: TicketParams) => {
+  return useQuery({
+    queryKey: ["tickets", params],
+    queryFn: () => getTickets(params),
+  });
+};
+
+export const useGetTicketById = (id: string) => {
+  return useQuery({
+    queryKey: ["ticket", id],
+    queryFn: () => getTicketById(id),
+  });
+};
+
+export const useReplyTicket = () => {
+  return useMutation({
+    mutationFn: ({ id, formData }: { id: string; formData: FormData }) =>
+      replyTicket(id, formData),
+  });
+};
+
+// customer delete
+export const useDeleteCustomer = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteCustomer(id),
+  });
+};
+// customer delete end

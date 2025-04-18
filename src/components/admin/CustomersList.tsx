@@ -20,7 +20,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { CalendarIcon, Filter, List, Rotate3d } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "../ui/calendar";
@@ -31,7 +31,6 @@ const formSchema = z.object({
   customerGroup: z.string().optional(),
   approved: z.string().optional(),
   created: z.string().optional(),
-  // created: z.coerce.date().optional(),
 });
 
 export default function CustomersList() {
@@ -40,27 +39,39 @@ export default function CustomersList() {
   const [date, setDate] = useState("");
   const [isApprove, setApprove] = useState("");
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       Search: "",
-      customerGroup: "",
-      approved: undefined,
+      customerGroup: "all",
+      approved: "all",
       created: "",
     },
   });
 
+  // Watch form values with useEffect instead of using form.watch directly
+  React.useEffect(() => {
+    const subscription = form.watch((value) => {
+      const debouncedUpdate = setTimeout(() => {
+        setSearch(value.Search?.trim() || "");
+        setGroup(value.customerGroup === "all" ? "" : value.customerGroup || "");
+        setDate(value.created || "");
+        setApprove(value.approved === "all" ? "" : value.approved || "");
+      }, 1000);
 
-  const onSubmit = (values: any) => {
-    console.log(values);
-    setSearch(values.Search.trim());
-    setGroup(values.customerGroup);
-    setDate(values.created);
-    setApprove(values.approved);
-  };
+      return () => clearTimeout(debouncedUpdate);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   const ClearFields = () => {
-    form.reset();
+    form.reset({
+      Search: "",
+      customerGroup: "all",
+      approved: "all",
+      created: "",
+    });
     setSearch("");
     setGroup("");
     setDate("");
@@ -68,28 +79,20 @@ export default function CustomersList() {
   };
 
   return (
-    <div>
-      <h1 className="mb-4 font-bold text-2xl">Customers</h1>
-      <div className="max-w-full mx-auto rounded-sm border">
-        <div className="w-full pl-4 flex items-center gap-1">
-          {/* <OverviewIcon />  */}
-          <List size={18} />
-          Overview
-        </div>
+    <div className="p-4 bg-white">
+      <h1 className="text-2xl font-bold mb-4">Customers</h1>
+      <div className="space-y-4">
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-1 grid grid-cols-4 items-center justify-center gap-2 bg-gray-100 px-12 pt-4 pb-8"
-          >
+          <div className="grid grid-cols-4 gap-4">
             {/* customer name */}
             <FormField
               control={form.control}
               name="Search"
               render={({ field }) => (
-                <FormItem className="">
-                  <FormLabel>Search</FormLabel>
+                <FormItem>
+                  <FormLabel className="text-sm font-medium mb-2 block">Search</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Search customer here" />
+                    <Input {...field} placeholder="Search customer here" className="bg-white" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,20 +104,20 @@ export default function CustomersList() {
               control={form.control}
               name="customerGroup"
               render={({ field }) => (
-                <FormItem className="">
-                  <FormLabel>Customer Group</FormLabel>
+                <FormItem>
+                  <FormLabel className="text-sm font-medium mb-2 block">Customer Group</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue=""
+                    value={field.value || "all"}
+                    defaultValue="all"
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Title" />
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder="Select Group" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={undefined}>Select</SelectItem>
+                      <SelectItem value="all">All Groups</SelectItem>
                       <SelectItem value="BASIC">Basic</SelectItem>
                       <SelectItem value="VIP">VIP</SelectItem>
                     </SelectContent>
@@ -130,18 +133,19 @@ export default function CustomersList() {
               name="approved"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Approve</FormLabel>
+                  <FormLabel className="text-sm font-medium mb-2 block">Approve</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue=""
+                    value={field.value || "all"}
+                    defaultValue="all"
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white">
                         <SelectValue placeholder="Select Status" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
                       <SelectItem value="true">Approved</SelectItem>
                       <SelectItem value="false">Not Approve</SelectItem>
                     </SelectContent>
@@ -150,37 +154,35 @@ export default function CustomersList() {
                 </FormItem>
               )}
             />
+
             {/* Date */}
             <FormField
               control={form.control}
               name="created"
               render={({ field }) => (
-                <FormItem className="flex flex-col pt-3">
-                  <FormLabel>Created</FormLabel>
+                <FormItem>
+                  <FormLabel className="text-sm font-medium block">Created</FormLabel>
                   <FormControl>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant={"outline"}
                           className={cn(
-                            "w-[240px] justify-start text-left font-normal",
+                            "w-full justify-start text-left font-normal bg-white",
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          <CalendarIcon />
+                          <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value
-                            ? new Date(field.value).toLocaleDateString("en-CA") // Format: YYYY-MM-DD
+                            ? new Date(field.value).toLocaleDateString("en-CA")
                             : "Pick a date"}
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={
-                            field.value ? new Date(field.value) : undefined
-                          }
+                          selected={field.value ? new Date(field.value) : undefined}
                           onSelect={(date) => {
-                            console.log(date, 'date');
                             field.onChange(
                               date ? new Date(date).toLocaleDateString("en-CA") : undefined
                             );
@@ -194,30 +196,30 @@ export default function CustomersList() {
                 </FormItem>
               )}
             />
-            {/* Buttons */}
-            <div className="flex justify-start items-center pt-7 gap-4">
-              <Button
-                onClick={() => ClearFields()}
-                type="button"
-                className="ml-4 bg-[#007bff] hover:bg-[007bff]"
-              >
-                <Rotate3d />
-                Clear
-              </Button>
-              <Button type="submit" className="bg-primary hover:bg-primary">
-                <Filter />
-                Filter
-              </Button>
-            </div>
-          </form>
+          </div>
         </Form>
-        <div className="px-3 my-5">
-          <CustomeListTable
-            search={search}
-            group={group}
-            date={date}
-            isActive={isApprove}
-          />
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              onClick={ClearFields}
+              className="border border-primary text-primary hover:bg-primary/10"
+            >
+              Clear Filters
+            </Button>
+          </div>
+        </div>
+
+        <div className="border rounded-md bg-white">
+          <div className="px-3 my-5">
+            <CustomeListTable
+              search={search}
+              group={group}
+              date={date}
+              isActive={isApprove}
+            />
+          </div>
         </div>
       </div>
     </div>

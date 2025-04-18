@@ -5,15 +5,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
-import { useState } from "react"
-import { useCreateFilter, useGetCategories } from "@/hooks/api"
-import { toast } from "sonner"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Loader, Plus } from "lucide-react";
+import { useState } from "react";
+import { useCreateFilter, useGetCategories } from "@/hooks/api";
+import { toast } from "sonner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 import {
   Form,
   FormControl,
@@ -21,9 +21,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useQueryClient } from "@tanstack/react-query"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
 
 import {
   Select,
@@ -31,7 +31,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 interface Category {
   _id: string;
@@ -41,21 +41,25 @@ interface Category {
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  value: z.array(z.string().refine(val => !val.includes('-'), "Negative values are not allowed")).min(1, "At least one value is required"),
+  value: z
+    .array(
+      z
+        .string()
+        .refine((val) => !val.includes("-"), "Negative values are not allowed")
+    )
+    .min(1, "At least one value is required"),
   category: z.string().min(1, "Category is required"),
-})
+});
 
 export function CreateFilterDialog() {
-  const [open, setOpen] = useState(false)
-  const [values, setValues] = useState<string[]>([])
-  const [currentValue, setCurrentValue] = useState("")
-  const { mutate: createFilter } = useCreateFilter()
-  const { data: getCategories } = useGetCategories()
-  const categories = getCategories?.data.categories || []
-  const queryClient = useQueryClient()
+  const [open, setOpen] = useState(false);
+  const [values, setValues] = useState<string[]>([]);
+  const [currentValue, setCurrentValue] = useState("");
+  const { mutate: createFilter, isPending } = useCreateFilter();
+  const { data: getCategories } = useGetCategories();
+  const categories = getCategories?.data.categories || [];
+  const queryClient = useQueryClient();
 
-
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -63,43 +67,46 @@ export function CreateFilterDialog() {
       value: [],
       category: "",
     },
-  })
+  });
 
   const handleAddValue = () => {
     if (currentValue.trim()) {
-      const newValues = [...values, currentValue.trim()]
-      setValues(newValues)
-      form.setValue('value', newValues)
-      setCurrentValue("")
+      const newValues = [...values, currentValue.trim()];
+      setValues(newValues);
+      form.setValue("value", newValues);
+      setCurrentValue("");
     }
-  }
+  };
 
   const handleRemoveValue = (index: number) => {
-    const newValues = values.filter((_, i) => i !== index)
-    setValues(newValues)
-    form.setValue('value', newValues)
-  }
+    const newValues = values.filter((_, i) => i !== index);
+    setValues(newValues);
+    form.setValue("value", newValues);
+  };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data, "data")
-    createFilter({
-      name: data.name,
-      value: data.value,
-      category: data.category
-    }, {
-      onSuccess: () => {
-        toast.success("Filter created successfully")
-        setOpen(false)
-        queryClient.invalidateQueries({ queryKey: ['filters'] });
-        form.reset()
-        setValues([])
+    console.log(data, "data");
+    createFilter(
+      {
+        name: data.name,
+        value: data.value,
+        category: data.category,
       },
-      onError: (error) => {
-        toast.error("Failed to create filter")
-        console.error(error)
+      {
+        onSuccess: () => {
+          toast.success("Filter created successfully");
+          setOpen(false);
+          queryClient.invalidateQueries({ queryKey: ["filters"] });
+          form.reset();
+          setValues([]);
+        },
+        onError: (error) => {
+          toast.error("Failed to create filter");
+          console.error(error);
+        },
       }
-    })
-  }
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -144,9 +151,9 @@ export function CreateFilterDialog() {
                       value={currentValue}
                       onChange={(e) => setCurrentValue(e.target.value)}
                       onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          handleAddValue()
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddValue();
                         }
                       }}
                     />
@@ -186,7 +193,10 @@ export function CreateFilterDialog() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a category" />
@@ -206,16 +216,24 @@ export function CreateFilterDialog() {
             />
 
             <div className="flex justify-end gap-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Cancel
               </Button>
-              <Button type="submit">
-                Create Filter
+              <Button type="submit" disabled={isPending}>
+                {isPending ? (
+                  <Loader className="h-4 w-4 animate-spin" />
+                ) : (
+                  "Create Filter"
+                )}
               </Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
-} 
+  );
+}

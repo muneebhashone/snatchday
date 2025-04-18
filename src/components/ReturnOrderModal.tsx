@@ -153,6 +153,11 @@ const ReturnOrderModal = ({
                     placeholder="Number of items"
                     {...field}
                     min={1}
+                    onKeyDown={(e) => {
+                      if (e.key === "-") {
+                        e.preventDefault();
+                      }
+                    }}
                   />
                 )}
               />

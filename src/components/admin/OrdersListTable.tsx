@@ -8,113 +8,130 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useGetOrders } from "@/hooks/api";
-import { Delete, Edit, Loader } from "lucide-react";
+import { Delete, Edit, Eye, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+
+interface OrderResponse {
+  data: {
+    orders: Order[];
+    total: number;
+  };
+}
+
+interface Order {
+  _id: string;
+  orderNumber: string;
+  billingDetails: {
+    firstName: string;
+  };
+  status: string;
+  cartObject: {
+    total: number;
+  };
+  createdAt: string;
+  updatedAt?: string;
+}
 
 export function OrdersListTable({
   status,
   date,
+  user,
+  page,
+  onPageChange,
 }: {
   status: string;
   date: string;
+  user: string;
+  page: number;
+  onPageChange: (page: number) => void;
 }) {
-  const [page, setPage] = useState(0);
   const skip = 10;
-  const { data: customers, isLoading } = useGetOrders(page, status, date);
+  const { data: customers, isLoading } = useGetOrders((page - 1) * skip, status, date, user) as { data: OrderResponse | undefined; isLoading: boolean };
 
-  customers?.data.orders.map((order) => console.log(order.orderNumber));
-  console.log(customers?.data.total, "total");
+  const totalItems = customers?.data?.total || 0;
+  const currentPage = page;
+
+  const handlePageChange = (newPage: number) => {
+    onPageChange(newPage);
+  };
+
   return isLoading ? (
     <div className="flex items-center justify-center">
       <Loader size={25} className="animate-spin text-primary" />
     </div>
   ) : (
-    <Table className="border border-primary">
-      <TableHeader>
-        <TableRow className="border border-primary">
-          <TableHead className="text-primary font-bold w-[100px]">
-            Order No.
-          </TableHead>
-          <TableHead className="text-primary font-bold">Customer</TableHead>
-          <TableHead className="text-primary font-bold">Status</TableHead>
-          <TableHead className="text-primary font-bold">Sums</TableHead>
-          <TableHead className="text-primary font-bold">Created</TableHead>
-          <TableHead className="text-primary font-bold">Last Update</TableHead>
-          <TableHead className="text-primary font-bold text-right">
-            Actions
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {customers?.data?.orders?.map((order) => (
-          <TableRow className="" key={order.orderNumber}>
-            <TableCell className="font-bold">{order.orderNumber}</TableCell>
-            <TableCell className="">{order.billingDetails.firstName}</TableCell>
-            <TableCell>{order.status}</TableCell>
-            <TableCell>{formatCurrency(order.cartObject.total)}</TableCell>
-            <TableCell className="">{order.createdAt.split("T")[0]}</TableCell>
-            <TableCell className="">{order.updatedAt?.split("T")[0]}</TableCell>
-            <TableCell className="text-right flex gap-2 items-center justify-end">
-              <Link href={`/admin/orders/${order._id}`}>
-                <Edit className="text-primary" />
-              </Link>
-              {/* <Link href={`#`}>
-                <Delete className="text-red-500" />
-              </Link> */}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter className="w-full">
-        <TableRow>
-          <TableCell colSpan={8} className="text-center">
-            <button
-              className={`${
-                page === 0 ? "text-gray-300 cursor-not-allowed" : ""
-              }`}
-              disabled={page === 0}
-              onClick={() => {
-                setPage((prev) => Math.max(prev - skip, 0)); // Prevent going negative
-              }}
-            >
-              Prev
-            </button>
-            {Array.from(
-              {
-                length: Math.ceil((customers?.data?.total || 0) / skip),
-              },
-              (_, index) => {
-                return (
-                  <button
-                    key={index}
-                    className={`page-indicator m-1 ${
-                      index === page / skip ? "bg-primary px-2 text-white" : ""
-                    }`}
-                    onClick={() => setPage(index * skip)}
-                  >
-                    {index + 1}
-                  </button>
-                );
-              }
-            )}
-            <button
-              className={`${
-                page + skip >= (customers?.data?.total || 0) && "text-gray-300"
-              }`}
-              disabled={page + skip >= (customers?.data?.total || 0)}
-              onClick={() => {
-                setPage((prev) =>
-                  Math.min(prev + skip, customers?.data?.total - page)
-                );
-              }}
-            >
-              Next
-            </button>
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <div className="">
+      <div className="space-y-4">
+        <div className="border rounded-md">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead>ORDER NO.</TableHead>
+                <TableHead>CUSTOMER</TableHead>
+                <TableHead>STATUS</TableHead>
+                <TableHead>SUMS</TableHead>
+                <TableHead>CREATED</TableHead>
+                <TableHead>LAST UPDATE</TableHead>
+                <TableHead className="text-right">ACTIONS</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {customers?.data?.orders?.map((order) => (
+                <TableRow key={order.orderNumber}>
+                  <TableCell className="font-medium">{order.orderNumber}</TableCell>
+                  <TableCell>{order.billingDetails.firstName}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs capitalize ${
+                      order.status === "completed" 
+                        ? "bg-green-100 text-green-800"
+                        : order.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                    }`}>
+                      {order.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>{formatCurrency(order.cartObject.total)}</TableCell>
+                  <TableCell>{order.createdAt.split("T")[0]}</TableCell>
+                  <TableCell>{order.updatedAt?.split("T")[0]}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex gap-2 justify-end">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link href={`/admin/orders/${order._id}`}>
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>View Order</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className="flex items-center justify-between py-4">
+          <p className="text-sm text-gray-500">
+            Showing {(currentPage - 1) * skip + 1} to {Math.min(currentPage * skip, totalItems)} of {totalItems} entries
+          </p>
+          <DynamicPagination
+            totalItems={totalItems}
+            itemsPerPage={skip}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

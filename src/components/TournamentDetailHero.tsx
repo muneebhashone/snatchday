@@ -37,6 +37,7 @@ const TournamentDetailHero = ({
   const { data: product, isLoading: productLoading } = useGetProductById(
     tournamentData?.data?.article
   );
+
   const [selectedImage, setSelectedImage] = useState(0);
   const { user } = useUserContext();
   const { mutate: participateTournament, isPending } =
@@ -96,7 +97,7 @@ const TournamentDetailHero = ({
             },
             onError: (error: any) => {
               console.error("Participation failed:", error);
-              toast.error(error?.message);
+              toast.error(error?.response?.data?.message);
             },
           });
         }
@@ -125,7 +126,7 @@ const TournamentDetailHero = ({
           <>
             <div className="col-span-4 flex gap-2 flex-col">
               <button className="py-[6px] bg-primary rounded-full px-5 text-white font-semibold w-max">
-                Tournament ID: 1641
+                Tournament ID: {tournamentData?.data?._id}
               </button>
               <h1 className="text-[48px] text-[#1C1B1D] font-extrabold leading-[70px]">
                 {tournamentData?.data?.name}
@@ -165,7 +166,7 @@ const TournamentDetailHero = ({
                     <div className="mr-14 flex flex-col justify-center">
                       <h1 className="text-xl font-bold leading-7">Game</h1>
                       <h1 className="text-3xl text-primary font-bold leading-7">
-                       {tournamentData?.data?.game?.title}
+                        {tournamentData?.data?.game?.title}
                       </h1>
                       <p className="text-lg">
                         Duration: {tournamentData?.data?.length || "N/A"}{" "}
@@ -225,7 +226,7 @@ const TournamentDetailHero = ({
                     <div className=" flex flex-col border-r border-r-gray-300 px-5 ">
                       <p>Participants:</p>
                       <p className="text-[21px]">
-                        0 of{" "}
+                        {tournamentData?.data?.participants.length} of{" "}
                         <span className="text-primary">
                           {tournamentData?.data?.numberOfParticipants || "N/A"}
                         </span>
