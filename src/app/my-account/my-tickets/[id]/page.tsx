@@ -109,7 +109,7 @@ const TicketDetailsPage = () => {
   if (isLoading) {
     return (
       <ClientLayout>
-        <div className="container max-w-5xl mx-auto py-24">
+        <div className="container max-w-5xl mx-auto py-44">
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="animate-pulse">
               <div className="h-16 bg-gray-100"></div>
@@ -168,14 +168,14 @@ const TicketDetailsPage = () => {
               <ArrowLeft className="h-5 w-5" />
               <span className="sr-only">Back to tickets</span>
             </Button>
-            
+
             <h1 className="text-lg font-semibold text-center text-gray-800 flex-1">
               Support Ticket Details
             </h1>
-            
+
             {ticket?.data?.status && getStatusBadge(ticket.data.status)}
           </div>
-          
+
           <div className="p-6">
             {/* Ticket subject */}
             <div className="mb-6">
@@ -184,7 +184,7 @@ const TicketDetailsPage = () => {
                 {ticket?.data?.subject}
               </h2>
             </div>
-            
+
             {/* Ticket metadata */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-gray-50 rounded-lg p-4">
@@ -193,14 +193,16 @@ const TicketDetailsPage = () => {
                     <Folder className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">Category</p>
+                    <p className="text-sm text-gray-500 font-medium">
+                      Category
+                    </p>
                     <p className="text-gray-900 font-semibold">
                       {ticket?.data?.department || "General"}
                     </p>
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -216,14 +218,16 @@ const TicketDetailsPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex items-center gap-3">
                   <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 font-medium">Last Update</p>
+                    <p className="text-sm text-gray-500 font-medium">
+                      Last Update
+                    </p>
                     <p className="text-gray-900 font-semibold">
                       {ticket?.data?.messages.length > 0
                         ? formatDate(
@@ -237,7 +241,7 @@ const TicketDetailsPage = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Conversation header */}
             <div className="flex items-center mb-6">
               <h3 className="text-lg font-bold text-gray-900">Conversation</h3>
@@ -245,16 +249,14 @@ const TicketDetailsPage = () => {
                 {ticket?.data?.messages.length || 0} messages
               </div>
             </div>
-            
+
             {/* Messages */}
             <div className="space-y-6 mb-10">
               {ticket?.data?.messages.map((msg, index) => (
                 <div
                   key={index}
                   className={`rounded-xl overflow-hidden ${
-                    msg.sender === "user"
-                      ? "ml-4 md:ml-10"
-                      : "mr-4 md:mr-10"
+                    msg.sender === "user" ? "ml-4 md:ml-10" : "mr-4 md:mr-10"
                   }`}
                 >
                   <div
@@ -288,19 +290,20 @@ const TicketDetailsPage = () => {
                         </p>
                       </div>
                     </div>
-                    
+
                     {/* Message content */}
                     <div className="text-gray-700 whitespace-pre-wrap mb-3 pl-13">
                       {msg.message}
                     </div>
-                    
+
                     {/* Attachments if any */}
                     {msg.attachments && msg.attachments.length > 0 && (
                       <div className="mt-4 pt-4 border-t border-gray-200 pl-13">
                         <div className="flex items-center gap-2 mb-3">
                           <Paperclip className="h-4 w-4 text-gray-400" />
                           <span className="text-sm font-medium text-gray-700">
-                            {msg.attachments.length} Attachment{msg.attachments.length !== 1 ? 's' : ''}
+                            {msg.attachments.length} Attachment
+                            {msg.attachments.length !== 1 ? "s" : ""}
                           </span>
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -330,7 +333,9 @@ const TicketDetailsPage = () => {
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-3 bg-white text-gray-500 font-medium">Your Reply</span>
+                <span className="px-3 bg-white text-gray-500 font-medium">
+                  Your Reply
+                </span>
               </div>
             </div>
 
@@ -382,7 +387,7 @@ const TicketDetailsPage = () => {
                       multiple
                       onChange={handleFileChange}
                     />
-                    
+
                     {attachments.length > 0 && (
                       <div className="mt-4 p-4 bg-white rounded-lg border border-gray-100">
                         <p className="text-sm font-medium text-gray-700 mb-3">
@@ -447,4 +452,3 @@ const TicketDetailsPage = () => {
 };
 
 export default TicketDetailsPage;
-

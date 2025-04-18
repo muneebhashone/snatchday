@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React from "react";
 import {
   Table,
   TableBody,
@@ -10,18 +10,23 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useGetTickets } from '@/hooks/api';
-import { format } from 'date-fns';
+import { useGetTickets } from "@/hooks/api";
+import { format } from "date-fns";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Eye } from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Eye, Loader } from "lucide-react";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Message {
   _id: string;
@@ -56,25 +61,32 @@ const ITEMS_PER_PAGE = 10;
 const AdminTicketTable = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = React.useState(1);
-  const { data: tickets, isLoading } = useGetTickets({
-    limit: ITEMS_PER_PAGE,
-    offset: (currentPage - 1) * ITEMS_PER_PAGE,
+  const [filters, setFilters] = React.useState({
+    limit: ITEMS_PER_PAGE.toString(),
+    offset: "0",
   });
 
-  console.log(tickets);
+  const { data: tickets, isLoading } = useGetTickets({
+    limit: parseInt(filters.limit),
+    offset: parseInt(filters.offset),
+  });
 
-  const totalPages = Math.ceil((tickets?.data?.total || 0) / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(
+    (tickets?.data?.total || 0) / parseInt(filters.limit)
+  );
+  const totalItems = tickets?.data?.total || 0;
+  const itemsPerPage = parseInt(filters.limit);
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "OPEN":
-        return "bg-red-500";
+        return "bg-red-100 text-red-800";
       case "IN_PROGRESS":
-        return "bg-[#FF7324]";
+        return "bg-yellow-100 text-yellow-800";
       case "CLOSED":
-        return "bg-green-500";
+        return "bg-green-100 text-green-800";
       default:
-        return "bg-gray-500";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -99,183 +111,144 @@ const AdminTicketTable = () => {
     }
   };
 
-  // Generate page numbers to display
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5; // Maximum number of visible page numbers
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+      offset: "0",
+    }));
+    setCurrentPage(1);
+  };
 
-    if (totalPages <= maxVisiblePages) {
-      // If total pages are less than max visible, show all pages
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Always show first page
-      pages.push(1);
-
-      // Calculate start and end of visible page numbers
-      let start = Math.max(currentPage - 1, 2);
-      let end = Math.min(currentPage + 1, totalPages - 1);
-
-      // Adjust if we're near the start or end
-      if (currentPage <= 3) {
-        end = 4;
-      } else if (currentPage >= totalPages - 2) {
-        start = totalPages - 3;
-      }
-
-      // Add ellipsis after first page if needed
-      if (start > 2) {
-        pages.push('...');
-      }
-
-      // Add visible page numbers
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-
-      // Add ellipsis before last page if needed
-      if (end < totalPages - 1) {
-        pages.push('...');
-      }
-
-      // Always show last page
-      if (totalPages > 1) {
-        pages.push(totalPages);
-      }
-    }
-
-    return pages;
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    setFilters((prev) => ({
+      ...prev,
+      offset: ((page - 1) * parseInt(filters.limit)).toString(),
+    }));
   };
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">My Tickets</h2>
-        {/* <Button 
-          onClick={() => router.push('/support/create-ticket')}
-          className="bg-[#FF7324] hover:bg-[#FF7324]/90 text-white"
-        >
-          CREATE NEW TICKET
-        </Button> */}
-      </div>
-
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-gray-100">
-              <TableHead>Date Added</TableHead>
-              <TableHead>Subject</TableHead>
-              <TableHead>Ticket ID</TableHead>
-              <TableHead>Ticket Department</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last Activity</TableHead>
-              <TableHead className="text-right">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-10">
-                  Loading tickets...
-                </TableCell>
-              </TableRow>
-            ) : tickets?.data?.tickets?.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-10">
-                  No tickets found
-                </TableCell>
-              </TableRow>
-            ) : (
-              tickets?.data?.tickets?.map((ticket) => (
-                <TableRow key={ticket._id} className="hover:bg-gray-50">
-                  <TableCell>
-                    {ticket.messages[0] ? formatDate(ticket.messages[0].timestamp) : "N/A"}
-                  </TableCell>
-                  <TableCell>{ticket.subject}</TableCell>
-                  <TableCell>#{ticket.ticketNo}</TableCell>
-                  <TableCell>{ticket.department}</TableCell>
-                  <TableCell>{ticket.email}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-3 py-1 rounded-md text-white text-sm
-                      ${getStatusColor(ticket.status)}`}
-                    >
-                      {getStatusText(ticket.status)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    {ticket.messages[ticket.messages.length - 1] 
-                      ? formatDate(ticket.messages[ticket.messages.length - 1].timestamp)
-                      : "N/A"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      onClick={() => router.push(`/admin/tickets/${ticket._id}`)}
-                      size="icon"
-                      variant="ghost"
-                      className="hover:bg-gray-100"
-                    >
-                      <Eye className="h-5 w-5 text-blue-500" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
-        <div className="text-sm text-gray-500">
-          Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, tickets?.data?.total || 0)} of {tickets?.data?.total || 0} entries
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <h1 className="text-2xl font-bold mb-8">Tickets</h1>
+      <div className="space-y-4">
+        <div className="flex items-center justify-end">
+          <div className="flex items-center gap-4">
+            <Select
+              value={filters.limit}
+              onValueChange={(value) => handleFilterChange("limit", value)}
+            >
+              <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder={ITEMS_PER_PAGE.toString()} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7">7</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious 
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage > 1) setCurrentPage(prev => prev - 1);
-                }}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
+        <div className="border rounded-md">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead>DATE ADDED</TableHead>
+                <TableHead>SUBJECT</TableHead>
+                <TableHead>TICKET ID</TableHead>
+                <TableHead>DEPARTMENT</TableHead>
+                <TableHead>EMAIL</TableHead>
+                <TableHead>STATUS</TableHead>
+                <TableHead>LAST ACTIVITY</TableHead>
+                <TableHead>ACTION</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow className="h-44">
+                  <TableCell colSpan={8} className="text-center">
+                    <div className="flex items-center justify-center w-full">
+                      <Loader className="h-4 w-4 animate-spin text-primary" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : tickets?.data?.tickets?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center">
+                    No tickets found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                tickets?.data?.tickets?.map((ticket) => (
+                  <TableRow key={ticket._id} className="hover:bg-gray-50">
+                    <TableCell>
+                      {ticket.messages[0]
+                        ? formatDate(ticket.messages[0].timestamp)
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell>{ticket.subject}</TableCell>
+                    <TableCell>#{ticket.ticketNo}</TableCell>
+                    <TableCell>{ticket.department}</TableCell>
+                    <TableCell>{ticket.email}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${getStatusColor(
+                          ticket.status
+                        )}`}
+                      >
+                        {getStatusText(ticket.status)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      {ticket.messages[ticket.messages.length - 1]
+                        ? formatDate(
+                            ticket.messages[ticket.messages.length - 1]
+                              .timestamp
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              onClick={() =>
+                                router.push(`/admin/tickets/${ticket._id}`)
+                              }
+                              variant="ghost"
+                              size="icon"
+                            >
+                              <Eye className="h-4 w-4 text-blue-500" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>View Ticket</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-            {getPageNumbers().map((pageNum, idx) => (
-              <PaginationItem key={idx}>
-                {pageNum === '...' ? (
-                  <PaginationEllipsis />
-                ) : (
-                  <PaginationLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setCurrentPage(Number(pageNum));
-                    }}
-                    isActive={currentPage === pageNum}
-                  >
-                    {pageNum}
-                  </PaginationLink>
-                )}
-              </PaginationItem>
-            ))}
-
-            <PaginationItem>
-              <PaginationNext 
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
-                }}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <div className="flex items-center justify-between py-4">
+          <p className="text-sm text-gray-500">
+            Displaying {(currentPage - 1) * itemsPerPage + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
+            entries
+          </p>
+          <DynamicPagination
+            totalItems={totalItems}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
     </div>
   );

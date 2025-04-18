@@ -289,12 +289,12 @@ export const getCustomer = async (
 };
 
 export const getCustomerById = async (id) => {
-  const response = await axiosInstance.get(`/customer/${id}`);
+  const response = await axiosInstance.get(`/customers/${id}`);
   return response.data;
 };
 
 export const updateCustomer = async (id, params) => {
-  const response = await axiosInstance.put(`/customer/update/${id}`, params);
+  const response = await axiosInstance.put(`/customers/update/${id}`, params);
   return response.data;
 };
 

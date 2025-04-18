@@ -25,7 +25,14 @@ import {
 import { useState } from "react";
 import { useCreateTicket } from "@/hooks/api";
 import { toast } from "sonner";
-import { ArrowLeft, FileText, Paperclip, Send, FileType } from "lucide-react";
+import {
+  ArrowLeft,
+  FileText,
+  Paperclip,
+  Send,
+  FileType,
+  Loader,
+} from "lucide-react";
 import { useUserContext } from "@/context/userContext";
 
 const formSchema = z.object({
@@ -42,7 +49,7 @@ const CreateTicketPage = () => {
   const category = searchParams.get("category");
   const router = useRouter();
   const [attachments, setAttachments] = useState<File[]>([]);
-  const createTicketMutation = useCreateTicket();
+  const { mutate: createTicketMutation } = useCreateTicket();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,9 +73,18 @@ const CreateTicketPage = () => {
         formData.append("attachments", file);
       });
 
-      await createTicketMutation.mutateAsync(formData);
-      toast.success("Ticket created successfully!");
-      // router.push("/my-account/my-profile");
+      createTicketMutation(formData, {
+        onSuccess: (data) => {
+          toast.success("Ticket created successfully!");
+          userData?.user
+            ? router.push("/my-account/my-profile")
+            : router.push(`/my-account/my-tickets/${formData.get("email")}`);
+        },
+        onError: (error) => {
+          console.error("Error creating ticket:", error);
+          toast.error("Failed to create ticket. Please try again.");
+        },
+      });
     } catch (error) {
       console.error("Error creating ticket:", error);
       toast.error("Failed to create ticket. Please try again.");
@@ -134,8 +150,8 @@ const CreateTicketPage = () => {
                   <FormField
                     control={form.control}
                     name="email"
-                    disabled={true}
-                    defaultValue={userData?.user?.user?.email}
+                    disabled={userData?.user ? true : false}
+                    defaultValue={userData?.user?.email}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-gray-700 font-medium">
@@ -288,14 +304,11 @@ const CreateTicketPage = () => {
                 <div className="flex flex-wrap gap-4 pt-6">
                   <Button
                     type="submit"
-                    className="bg-primary hover:bg-primary/90 text-white px-6 py-2.5 h-auto rounded-lg flex items-center gap-2"
+                    className="bg-primary text-white px-6 py-2.5 h-auto rounded-lg flex items-center gap-2"
                     disabled={createTicketMutation.isPending}
                   >
                     {createTicketMutation.isPending ? (
-                      <>
-                        <span className="animate-spin h-4 w-4 border-2 border-white border-opacity-50 border-t-white rounded-full"></span>
-                        <span>Submitting...</span>
-                      </>
+                      <Loader className="h-4 w-4 animate-spin " />
                     ) : (
                       <>
                         <Send className="h-4 w-4" />

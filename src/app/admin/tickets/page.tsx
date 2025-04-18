@@ -1,13 +1,15 @@
-import AdminTicketTable from '@/components/admin/AdminTicketTable'
-import AdminLayout from '@/components/admin/AdminLayout'
-import React from 'react'
+import AdminTicketTable from "@/components/admin/AdminTicketTable";
+import AdminLayout from "@/components/admin/AdminLayout";
+import React from "react";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 
 const page = () => {
   return (
     <AdminLayout>
-        <AdminTicketTable />
+      <AdminBreadcrumb title="Tickets" />
+      <AdminTicketTable />
     </AdminLayout>
-  )
-}
+  );
+};
 
-export default page
+export default page;
