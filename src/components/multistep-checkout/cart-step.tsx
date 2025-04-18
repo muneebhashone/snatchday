@@ -228,7 +228,7 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
       }
     )
   }
-
+console.log(cart,"cart")
 
   return (
     <div className="">
@@ -290,9 +290,9 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
                               +
                             </Button>
                           </TableCell>
-                          <TableCell>{item?.product?.price.toFixed(2)}€</TableCell>
+                          <TableCell>{(item?.unitPrice)?.toFixed(2) || 0}€</TableCell>
                           <TableCell className="text-right font-semibold">
-                            {(item?.product?.price * item?.quantity).toFixed(2)}€
+                            {(item?.totalPrice)?.toFixed(2) || 0}€
                           </TableCell>
                           <TableCell>
                             <DeleteIcon
@@ -358,19 +358,21 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
                   {errors.discountPoints && <p className="text-red-500 ml-2">{errors.discountPoints.message}</p>}
                 </div>
 
+                
+
                 {/* Summary Section */}
                 <div className="mt-6 p-4 border-t">
                   <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
 
                   <div className="flex justify-between">
                     <span>Subtotal:</span>
-                    <span>{cart?.data?.subTotal.toFixed(2)}€</span>
+                    <span>{cart?.data?.subTotal.toFixed(2) || 0}€</span>
                   </div>
                   
                   {cart?.data?.appliedDiscount > 0 && (
                     <div className="flex justify-between text-green-600">
                       <span>Product Discount:</span>
-                      <span>-{cart?.data?.appliedDiscount.toFixed(2)}€</span>
+                      <span>-{cart?.data?.appliedDiscount.toFixed(2) || 0}€</span>
                     </div>
                   )}
                   
@@ -396,8 +398,8 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
                   )}
                   
                   <div className="flex justify-between mt-2">
-                    <span>19% VAT:</span>
-                    <span>{calculateVAT().toFixed(2)}€</span>
+                    <span>VAT:</span>
+                    <span>19%</span>
                   </div>
                   
                   <div className="flex justify-between font-semibold pt-2 border-t mt-2">

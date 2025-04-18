@@ -200,7 +200,7 @@ const ProductCard = ({
                 </TooltipTrigger>
                 
                   <TooltipContent className="bg-gray-700 text-white">
-                    <p> Click add to cart </p>
+                    <p> Click here  add to cart </p>
                   </TooltipContent>
                 
               </Tooltip>
