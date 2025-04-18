@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Trash, Search, X } from "lucide-react";
+import { Trash, Search, X, Loader } from "lucide-react";
 import { useDeleteCategory, useGetCategories } from "@/hooks/api";
 import { CreateCategoryDialog } from "./CreateCategoryDialog";
 import { EditCategoryDialog } from "./EditCategoryDialog";
@@ -22,6 +22,8 @@ import { useState, useEffect } from "react";
 import { TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Tooltip } from "../ui/tooltip";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface CategoryType {
   _id: string;
@@ -78,17 +80,35 @@ const Categories = () => {
   const { mutate: deleteCategory } = useDeleteCategory();
   const queryClient = useQueryClient();
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDelete = (id: string) => {
-    deleteCategory(id, {
-      onSuccess: () => {
-        toast.success("Category deleted successfully");
-        queryClient.invalidateQueries({ queryKey: ["categories"] });
-      },
-      onError: (error) => {
-        toast.error("Failed to delete category");
-        console.error(error);
-      },
-    });
+    setSelectedCategoryId(id);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedCategoryId) {
+      setIsDeleting(true);
+      deleteCategory(selectedCategoryId, {
+        onSuccess: () => {
+          toast.success("Category deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["categories"] });
+          setShowDeleteModal(false);
+          setSelectedCategoryId(null);
+          setIsDeleting(false);
+        },
+        onError: (error) => {
+          toast.error("Failed to delete category");
+          console.error(error);
+          setShowDeleteModal(false);
+          setSelectedCategoryId(null);
+          setIsDeleting(false);
+        },
+      });
+    }
   };
 
   const handlePageChange = (page: number) => {
@@ -99,66 +119,74 @@ const Categories = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Categories</h1>
-        <div className="flex gap-2">
-          <div className="relative w-64">
-            {searchTerm ? (
-              <X
-                className="absolute right-2 top-3 h-4 w-4 text-muted-foreground"
-                onClick={() => setSearchTerm("")}
+    <div className="p-4 bg-white">
+      <h1 className="text-2xl font-bold mb-4">Categories</h1>
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">
+              Search by Name
+            </label>
+            <div className="relative">
+              {searchTerm ? (
+                <X
+                  className="absolute right-2 top-3 h-4 w-4 text-muted-foreground cursor-pointer"
+                  onClick={() => setSearchTerm("")}
+                />
+              ) : (
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              )}
+              <Input
+                placeholder="Category name"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 bg-white w-[300px]"
               />
-            ) : (
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            )}
-            <Input
-              placeholder="Search by name "
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
+            </div>
           </div>
-          <CreateCategoryDialog />
+          <div className="flex justify-end items-center mt-5">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button className="bg-primary hover:bg-primary/90">
+                    <CreateCategoryDialog />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Create a new category</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
-      </div>
 
-      <div className="bg-white rounded-md shadow-sm">
-        {isLoading ? (
-          <div className="p-8 text-center">Loading categories...</div>
-        ) : isError ? (
-          <div className="p-8 text-center text-red-500">
-            Error loading categories
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table className="border border-primary">
-              <TableHeader>
-                <TableRow className="border-b border-primary">
-                  <TableHead className="text-primary font-bold">Name</TableHead>
-                  <TableHead className="text-primary font-bold">
-                    Display Name
-                  </TableHead>
-                  <TableHead className="text-primary font-bold">
-                    Description
-                  </TableHead>
-                  <TableHead className="text-primary font-bold">
-                    Status
-                  </TableHead>
-                  <TableHead className="text-primary font-bold">
-                    Created At
-                  </TableHead>
-                  <TableHead className="text-right text-primary font-bold">
-                    Actions
-                  </TableHead>
+        <div className="border rounded-md bg-white">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead className="text-gray-500">NAME</TableHead>
+                <TableHead className="text-gray-500">DISPLAY NAME</TableHead>
+                <TableHead className="text-gray-500">DESCRIPTION</TableHead>
+                <TableHead className="text-gray-500">STATUS</TableHead>
+                <TableHead className="text-gray-500">CREATED AT</TableHead>
+                <TableHead className="text-gray-500">ACTIONS</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow className="h-44">
+                  <TableCell colSpan={6} className="text-center">
+                    <div className="flex items-center justify-center w-full">
+                      <Loader className="h-4 w-4 animate-spin text-primary" />
+                    </div>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categories?.map((category: CategoryType) => (
+              ) : categories?.length > 0 ? (
+                categories.map((category: CategoryType) => (
                   <TableRow key={category._id} className="hover:bg-gray-50">
-                    <TableCell>{category.name}</TableCell>
-                    <TableCell>{category.displayName}</TableCell>
-                    <TableCell className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                    <TableCell className="text-gray-900">{category.name}</TableCell>
+                    <TableCell className="text-gray-900">{category.displayName}</TableCell>
+                    <TableCell className="text-gray-500 max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
                       {category.description}
                     </TableCell>
                     <TableCell>
@@ -172,68 +200,92 @@ const Categories = () => {
                         {category.isActive ? "Active" : "Inactive"}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-gray-500">
                       {new Date(category.createdAt).toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-right">
-                      <EditCategoryDialog categoryId={category._id} />
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            onClick={() => handleDelete(category._id)}
-                            variant="ghost"
-                            size="icon"
-                            className="text-red-500 hover:text-red-600 transition-colors"
-                          >
-                            <Trash className="w-4 h-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Delete Category</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {!categories?.length && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={7}
-                      className="text-center py-8 text-gray-500"
-                    >
-                      No categories found
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-              <TableFooter>
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center">
-                    {totalCount > 0 && (
-                      <div className="flex flex-col justify-between items-center gap-4 mt-4 p-4">
-                        <div className="text-sm text-gray-500">
-                          Showing {parseInt(filters.offset) + 1} to{" "}
-                          {Math.min(
-                            parseInt(filters.offset) + parseInt(filters.limit),
-                            totalCount
-                          )}{" "}
-                          of {totalCount} entries
-                        </div>
-                        <DynamicPagination
-                          totalItems={totalCount}
-                          itemsPerPage={parseInt(filters.limit)}
-                          currentPage={currentPage}
-                          onPageChange={handlePageChange}
-                        />
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <EditCategoryDialog categoryId={category._id} />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit category details</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDelete(category._id)}
+                                className="hover:bg-gray-100"
+                                disabled={isDeleting && selectedCategoryId === category._id}
+                              >
+                                {isDeleting && selectedCategoryId === category._id ? (
+                                  <Loader className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <Trash className="h-4 w-4" />
+                                )}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete category</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
-                    )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-gray-500">
+                    No categories found
                   </TableCell>
                 </TableRow>
-              </TableFooter>
-            </Table>
-          </div>
-        )}
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className="flex items-center justify-between py-4">
+          <p className="text-sm text-gray-500">
+            Displaying {parseInt(filters.offset) + 1} to{" "}
+            {Math.min(
+              parseInt(filters.offset) + parseInt(filters.limit),
+              totalCount
+            )}{" "}
+            of {totalCount} entries
+          </p>
+          <DynamicPagination
+            totalItems={totalCount}
+            itemsPerPage={parseInt(filters.limit)}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setSelectedCategoryId(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Delete Category?"
+        description="Are you sure you want to delete this category? This action cannot be undone."
+        confirmText="Delete Category"
+        cancelText="Keep Category"
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

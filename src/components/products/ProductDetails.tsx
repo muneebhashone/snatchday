@@ -459,7 +459,7 @@ const ProductDetails = ({
                             }
                           />
                         </div>
-                      ) : user ? (
+                      ) : 
                         <button
                           onClick={handleAddToCart}
                           disabled={isAddToCartPending}
@@ -468,11 +468,7 @@ const ProductDetails = ({
                           <ShoppingCartIcon size={28} className="mr-2" />
                           {isAddToCartPending ? "adding..." : "Add to Cart"}
                         </button>
-                      ) : (
-                        <Button className="bg-transparent">
-                          <Login addToCart={true} />
-                        </Button>
-                      )}
+}
                     </div>
                   </TooltipTrigger>
                   {!user && (

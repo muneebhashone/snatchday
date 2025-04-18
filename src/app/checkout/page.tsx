@@ -26,6 +26,7 @@ const checkoutSchema = z.object({
     country: z.string().nonempty("Country is required"),
     federalState: z.string().nonempty("Federal state is required"),
   }),
+
   shippingDetails: z.object({
     firstName: z.string().nonempty("First name is required"),
     lastName: z.string().nonempty("Last name is required"),
@@ -54,6 +55,7 @@ const CheckoutForm = () => {
   } = useForm({
     resolver: zodResolver(checkoutSchema),
   });
+  
   const { mutate: PlaceOrderMutation, isPending } = usePlaceOrder();
 
   const onSubmit = (data: CheckoutFormData) => {

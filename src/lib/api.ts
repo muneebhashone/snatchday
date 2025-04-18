@@ -4,6 +4,7 @@ import {
   UpdateReturnTypes,
 } from "@/types/admin";
 import axiosInstance from "./axios";
+
 import {
   ProductFormData,
   FilterFormData,
@@ -23,8 +24,14 @@ import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
 import { group } from "console";
 
+
 export const fetchItems = async () => {
   const response = await axiosInstance.get("/items");
+  return response.data;
+};
+
+export const VerifyEmail = async (email: string, emailVerificationToken: string) => {
+  const response = await axiosInstance.post("/auth/verifyEmail", { email, emailVerificationToken });
   return response.data;
 };
 
@@ -43,9 +50,14 @@ export const fetchItemById = async (id: string) => {
   return response.data;
 };
 
+export const requestEmailToken = async (email: string) => {
+  const response = await axiosInstance.post("/auth/requestEmailToken", { email });
+  return response.data;
+};
+
+
 export const authMutation = async (data: any, type: string) => {
   const response = await axiosInstance.post(`/auth/${type}`, data);
-  console.log(response.data, "response.data");
   return response.data;
 };
 
@@ -155,8 +167,6 @@ export const manageTournament = async (data: TournamentFormData) => {
 export const getNewsletters = async (params?: {
   limit?: string;
   offset?: string;
-  sort_attr?: string;
-  sort?: string;
 }) => {
   const response = await axiosInstance.get<NewsletterTypes>("/newsletter", {
     params,
@@ -296,10 +306,16 @@ export const getCustomerTournaments = async (id, offset) => {
   return response.data;
 };
 
-export const getCustomerOrdersData = async (page, status, user, date) => {
-  const limit = 10;
+export const getCustomerOrdersData = async (
+  page,
+  status,
+  user,
+  date,
+  limit
+) => {
+  const limit1 = 10;
   const response = await axiosInstance.get("order/order/get/all", {
-    params: { limit, offset: page, status, user, date },
+    params: { limit: limit ? limit : limit1, offset: page, status, user, date },
   });
   return response.data;
 };
@@ -308,7 +324,7 @@ export const getCustomerOrdersData = async (page, status, user, date) => {
 
 // order api
 
-export const getOrders = async (pageParams, status, date) => {
+export const getOrders = async (pageParams, status, date, user) => {
   const limit = 10;
   const response = await axiosInstance.get("/order/order/get/all", {
     params: {
@@ -316,6 +332,7 @@ export const getOrders = async (pageParams, status, date) => {
       offset: pageParams,
       status,
       date,
+      user
     },
   });
   console.log(pageParams);
@@ -483,8 +500,24 @@ export const vouchers = async (data: CreateVoucherData) => {
   return response.data;
 };
 
-export const getVouchers = async () => {
-  const response = await axiosInstance.get<VoucherResponse>("/voucher");
+export const getVouchers = async (params: {
+  limit?: string;
+  offset?: string;
+  name?: string;
+  code?: string;
+  type?: string;
+  registered?: string;
+  from?: string;
+  until?: string;
+  noShipping?: string;
+  products?: string;
+  categories?: string;
+  sort_attr?: string;
+  sort?: string;
+}) => {
+  const response = await axiosInstance.get<VoucherResponse>("/voucher", {
+    params,
+  });
   return response.data;
 };
 
@@ -688,6 +721,25 @@ export const ITScope = async (formData) => {
   return response.data;
 };
 // IT Scope apiend
+
+
+export const getAddresses=async()=>{
+  const response=await axiosInstance.get('/address')
+  return response.data
+}
+
+export const createAddress=async(data)=>{
+  const response=await axiosInstance.post('/address',data)
+  return response.data
+}
+
+export const deleteAddress=async(id:string)=>{
+  const response=await axiosInstance.delete(`/address/${id}`)
+  return response.data
+}
+
+
+
 export interface TicketFormData {
   email: string;
   subject: string;
@@ -734,3 +786,10 @@ export const replyTicket = async (id: string, formData: FormData) => {
   });
   return response.data;
 };
+
+/// customer delete
+export const deleteCustomer = async (id: string) => {
+  const response = await axiosInstance.delete(`/auth/account/${id}`);
+  return response.data;
+};
+/// customer delete end

@@ -4,7 +4,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
 import { Providers } from "./provider";
-import { AuthProvider } from "@/components/context/authContext";
+  import { AuthProvider } from "@/context/authContext";
 import { UserContextProvider } from "@/context/userContext";
 import { Toaster } from "sonner";
 import { CartProvider } from "@/context/CartContext";

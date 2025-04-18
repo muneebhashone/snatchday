@@ -17,6 +17,8 @@ import imageForOpinion2 from "../admin/../../app/images/duel2.png";
 import { Loader, LucideEye } from "lucide-react";
 import Link from "next/link";
 import { EditTournamentDialog } from "./EditTournamentDialog";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { formatCurrency } from "@/lib/utils";
 
 const CustomerTournaments = () => {
   const [page, setPage] = useState(0);
@@ -26,7 +28,11 @@ const CustomerTournaments = () => {
     paramsId,
     page
   );
-  console.log(customerTournaments?.data);
+
+  const handlePageChange = (newPage: number) => {
+    setPage((newPage - 1) * 5);
+  };
+
   return isLoading ? (
     <div className="flex items-center justify-center w-full mt-10">
       <Loader size={25} className="animate-spin text-primary" />
@@ -36,129 +42,98 @@ const CustomerTournaments = () => {
       *Not Any Tournament Record Of This Customer*
     </div>
   ) : (
-    <div>
-      <Table className="border border-primary">
-        <TableHeader>
-          <TableRow className="border border-primary">
-            <TableHead className="text-primary font-bold w-[100px]">
-              Opinion
-            </TableHead>
-            <TableHead className="text-primary font-bold w-[100px]">
-              Title
-            </TableHead>
-            <TableHead className="text-primary font-bold">
-              Your Result
-            </TableHead>
-            <TableHead className="text-primary font-bold ">Product</TableHead>
-            <TableHead className="text-primary font-bold">Price</TableHead>
-            <TableHead className="text-primary font-bold">Status</TableHead>
-            <TableHead className="text-primary font-bold">Edit</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {customerTournaments?.data?.tournaments?.map((tournament, i) => (
-            <TableRow className="" key={tournament?.title}>
-              <TableCell>
-                <Image
-                  src={i % 2 === 0 ? imageForOpinion : imageForOpinion2}
-                  alt="not found image"
-                  width={50}
-                  height={50}
-                />
-              </TableCell>
-              <TableCell className="font-bold">{tournament.title}</TableCell>
-              <TableCell className="">
-                <div className="flex flex-col justify-center ">
-                  <span>Round: {i + 1}</span>
-                  <span>Attemps: {i + 2}</span>
-                  <span>Time: {i + 3}</span>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-3 justify-start font-bold">
+    <div className="p-6">
+      <div className="border rounded-md">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>Opinion</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead>Your Result</TableHead>
+              <TableHead>Product</TableHead>
+              <TableHead>Price</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {customerTournaments?.data?.tournaments?.map((tournament, i) => (
+              <TableRow key={tournament?.title}>
+                <TableCell>
                   <Image
-                    className="ml-6"
-                    src={tournament.image}
-                    alt={tournament.title}
+                    src={i % 2 === 0 ? imageForOpinion : imageForOpinion2}
+                    alt="not found image"
                     width={50}
                     height={50}
-                    unoptimized
+                    className="rounded-md"
                   />
-                  {tournament?.name || "N/A"} {" "}
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex flex-col justify-center items-start">
-                  <span>{tournament?.article?.price || "N/A"}</span>
-                  <span>
-                    -
-                    {tournament?.priceReduction *
-                      tournament?.numberOfParticipants || "N/A"}
+                </TableCell>
+                <TableCell className="font-medium">{tournament.title}</TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm">Round: {i + 1}</span>
+                    <span className="text-sm">Attempts: {i + 2}</span>
+                    <span className="text-sm">Time: {i + 3}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src={tournament.image}
+                      alt={tournament.title}
+                      width={50}
+                      height={50}
+                      className="rounded-md"
+                      unoptimized
+                    />
+                    <span className="font-medium">{tournament?.name || "N/A"}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm">Original: {formatCurrency(tournament?.article?.price)}</span>
+                    <span className="text-sm text-red-500">
+                      Discount: -{formatCurrency(tournament?.priceReduction * tournament?.numberOfParticipants)}
+                    </span>
+                    <span className="text-sm text-primary font-medium">
+                      Final: {formatCurrency(
+                        tournament?.article?.price -
+                        tournament?.priceReduction * tournament?.numberOfParticipants
+                      )}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span className="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">
+                    Coming soon
                   </span>
-                  <span className="text-primary">
-                    {tournament?.article?.price -
-                      tournament?.priceReduction *
-                        tournament?.numberOfParticipants || "N/A"}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="">coming soon..</TableCell>
-              <TableCell className="">
-                <EditTournamentDialog
-                  tournament={{
-                    ...tournament,
-                    article: tournament?.article?.name,
-                  }}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-        <TableFooter className="w-full">
-          <TableRow>
-            <TableCell colSpan={8} className="text-center">
-              <button
-                onClick={() => {
-                  setPage((prev) => Math.max(prev - 5, 0)); // negative value nhi jaegi
-                }}
-              >
-                Prev
-              </button>
-              {Array.from(
-                {
-                  length: Math.ceil((customerTournaments?.data.total || 0) / 5),
-                },
-                (_, index) => {
-                  console.log(index);
-                  return (
-                    <button
-                      key={index}
-                      className={`page-indicator m-1 ${
-                        index === page / 5 ? "bg-primary px-2 text-white" : ""
-                      }`}
-                      onClick={() => setPage(index * 5)}
-                    >
-                      {index + 1}
-                    </button>
-                  );
-                }
-              )}
-              <button
-                onClick={() => {
-                  setPage((prev) =>
-                    Math.min(
-                      prev + 5,
-                      (customerTournaments?.data.total || 0) - page
-                    )
-                  ); // last page ke bad api hit nhi krega
-                }}
-              >
-                Next
-              </button>
-            </TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+                </TableCell>
+                <TableCell>
+                  <EditTournamentDialog
+                    tournament={{
+                      ...tournament,
+                      article: tournament?.article?.name,
+                    }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="flex items-center justify-between py-4">
+        <p className="text-sm text-gray-500">
+          Displaying {page + 1} to {Math.min(page + 5, customerTournaments?.data.total || 0)} of{" "}
+          {customerTournaments?.data.total || 0} entries
+        </p>
+        <DynamicPagination
+          totalItems={customerTournaments?.data.total || 0}
+          itemsPerPage={5}
+          currentPage={Math.floor(page / 5) + 1}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

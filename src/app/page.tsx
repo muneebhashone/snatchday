@@ -103,6 +103,7 @@ export default function Home() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
+          {/*  */}
           <FeaturedProducts />
         </motion.div>
         

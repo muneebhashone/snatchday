@@ -30,14 +30,16 @@ import {
   Gamepad,
   Heart,
   Ticket,
+  RefreshCw,
 } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnnouncementIcon, ReturnIcon } from "./icons/icon";
+import { cn } from "@/lib/utils";
 
 const navItems = [
 
@@ -109,7 +111,7 @@ const navItems = [
       {
         title: "Returns",
         url: "/admin/orders/returns",
-        icon: <ReturnIcon />,
+        icon: <RefreshCw className="h-4 w-4" />,
       },
     ],
   },
@@ -191,6 +193,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname =
     typeof window !== "undefined" ? window.location.pathname : "";
   const [openItems, setOpenItems] = useState<string[]>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleItem = (title: string) => {
     setOpenItems((prev) =>
@@ -201,79 +204,115 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar {...props} className="border-none shadow-2xl">
-      <SidebarHeader className=" bg-black text-primary">
-        {/* <VersionSwitcher /> */}
-        <div className="bg-black text-primaryrounded-lg">
-          {/* <Image src={logo} alt="logo" width={200} height={200} className="w-full h-full"/> */}
-          <p className="text-2xl font-bold">Snatch Day</p>
-          <p className="text-sm text-gray-500">Admin</p>
+    <Sidebar 
+      {...props} 
+      className={cn(
+        "border-r border-gray-200 shadow-lg transition-all duration-300 ease-in-out",
+        isExpanded ? "w-64" : "w-16",
+      )}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+    >
+      <SidebarHeader className="bg-white border-b border-gray-200">
+        <div className={cn("flex flex-col items-center", 
+          isExpanded ? "px-4 py-4" : "py-3"
+        )}>
+          {isExpanded ? (
+            <>
+              <p className="text-2xl font-bold text-gray-800">Snatch Day</p>
+              <p className="text-sm text-gray-500">Admin Panel</p>
+            </>
+          ) : (
+            <p className="text-xl font-bold text-gray-800">SD</p>
+          )}
         </div>
       </SidebarHeader>
-      <SidebarContent className="py-6 bg-black text-white">
+      <SidebarContent className="py-4 bg-white">
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {navItems.map((item) => (
-                <SidebarMenuItem className="" key={item.title}>
+                <SidebarMenuItem key={item.title}>
                   {item.subItems ? (
                     <Collapsible
-                      open={openItems.includes(item.title)}
-                      onOpenChange={() => toggleItem(item.title)}
+                      open={openItems.includes(item.title) && isExpanded}
+                      onOpenChange={() => isExpanded && toggleItem(item.title)}
                     >
                       <CollapsibleTrigger asChild>
                         <SidebarMenuButton
-                          className="w-full text-xl py-7 flex items-center justify-between hover:bg-primary hover:text-white rounded-md"
-                          tooltip={item.title}
+                          className={cn(
+                            "w-full py-2.5 flex items-center transition-colors duration-200",
+                            "hover:bg-gray-50 hover:text-primary rounded-md",
+                            isExpanded ? "justify-between px-4" : "justify-center",
+                            openItems.includes(item.title) ? "text-primary" : "text-gray-600"
+                          )}
+                          tooltip={!isExpanded ? item.title : undefined}
                         >
-                          <div className="flex items-center gap-3">
+                          <div className={cn("flex items-center", isExpanded ? "gap-3" : "")}>
                             {item.icon}
-                            <span>{item.title}</span>
+                            {isExpanded && <span className="text-sm font-medium">{item.title}</span>}
                           </div>
-                          <ChevronDown
-                            className={`h-4 w-4 transition-transform ${openItems.includes(item.title)
-                              ? "transform rotate-180"
-                              : ""
-                              }`}
-                          />
+                          {isExpanded && (
+                            <ChevronDown
+                              className={cn(
+                                "h-4 w-4 transition-transform duration-200",
+                                openItems.includes(item.title) ? "transform rotate-180" : ""
+                              )}
+                            />
+                          )}
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
-                      <CollapsibleContent className="pl-8 mt-2 space-y-2">
-                        {item.subItems.map((subItem) => (
-                          <SidebarMenuButton
-                            key={subItem.title}
-                            asChild
-                            isActive={pathname === subItem.url}
-                            tooltip={subItem.title}
-                            className="[&[data-active]]:bg-primary [&[data-active]]:text-white text-white rounded-md m-0"
-                          >
-                            <a
-                              href={subItem.url}
-                              className="flex items-center gap-3"
+                      {isExpanded && (
+                        <CollapsibleContent className="pl-4 mt-1 space-y-1">
+                          {item.subItems.map((subItem) => (
+                            <SidebarMenuButton
+                              key={subItem.title}
+                              asChild
+                              isActive={pathname === subItem.url}
+                              tooltip={!isExpanded ? subItem.title : undefined}
+                              className={cn(
+                                "w-full py-2 px-4 text-sm font-medium transition-colors duration-200",
+                                "hover:bg-gray-50 hover:text-primary rounded-md",
+                                pathname === subItem.url 
+                                  ? "bg-primary/10 text-primary" 
+                                  : "text-gray-600"
+                              )}
                             >
-                              {subItem.icon}
-                              <span>{subItem.title}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        ))}
-                      </CollapsibleContent>
+                              <a
+                                href={subItem.url}
+                                className="flex items-center gap-3"
+                              >
+                                {subItem.icon}
+                                <span>{subItem.title}</span>
+                              </a>
+                            </SidebarMenuButton>
+                          ))}
+                        </CollapsibleContent>
+                      )}
                     </Collapsible>
                   ) : (
                     <SidebarMenuButton
                       asChild
                       isActive={pathname === item.url}
-                      tooltip={item.title}
-                      className={`text-xl text-white py-7 ${pathname === item.url
-                        ? "data-[active]:bg-primary data-[active]:text-white"
-                        : "text-foreground bg-transparent"
-                        } hover:bg-primary hover:text-white rounded-md`}
+                      tooltip={!isExpanded ? item.title : undefined}
+                      className={cn(
+                        "w-full py-2.5 flex items-center transition-colors duration-200",
+                        "hover:bg-gray-50 hover:text-primary rounded-md",
+                        isExpanded ? "px-4" : "justify-center",
+                        pathname === item.url 
+                          ? "bg-primary/10 text-primary" 
+                          : "text-gray-600"
+                      )}
                     >
                       <a
                         href={item.url}
-                        className="flex items-center gap-3 text-white"
+                        className={cn(
+                          "flex items-center",
+                          isExpanded ? "gap-3" : "justify-center"
+                        )}
                       >
                         {item.icon}
-                        <span>{item.title}</span>
+                        {isExpanded && <span className="text-sm font-medium">{item.title}</span>}
                       </a>
                     </SidebarMenuButton>
                   )}

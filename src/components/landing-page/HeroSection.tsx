@@ -26,6 +26,15 @@ import CountdownDisplay from "../CountdownProps";
 import { calculateCountdown } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
+
+
+
+
+interface HeroSectionProps {
+  upComingTournament: any;
+}
+
+
 const HeroSection = () => {
   const [, setActiveIndex] = useState(0);
   const [key, setKey] = useState(0);
@@ -34,10 +43,11 @@ const HeroSection = () => {
   const { data: upComingTournament, isLoading: isUpComingTournamentLoading } =
     useUpComingTournament();
 
-  // Set isLoaded to true after component mounts
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  // console.log(upComingTournament,"upComingTournament")
 
   // Handle slide change
   const handleSlideChange = (swiper: SwiperType) => {
@@ -200,7 +210,7 @@ const HeroSection = () => {
     },
   };
 
-  return isUpComingTournamentLoading ? (
+  return  isUpComingTournamentLoading  ? (
     <div className="my-40  flex items-center justify-center">
       <Loader2 className="animate-spin size-18" />
     </div>

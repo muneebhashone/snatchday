@@ -18,6 +18,27 @@ const axiosInstance = axios.create({
 //   }
 // );
 
+// ... existing code ...
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // Check if window is defined (browser environment)
+    if (typeof window !== 'undefined') {
+      const user = localStorage.getItem("snatchday_user");
+      console.log(user,"user")
+      if (user) {
+        // Ensure the header is properly set
+        config.headers['X-User-Data'] = JSON.stringify(user);
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {

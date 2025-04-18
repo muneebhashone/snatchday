@@ -108,7 +108,7 @@ export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
           onSuccess?.();
         },
         onError: (error) => {
-          toast.error("Failed to create category");
+          toast.error(error?.response?.data?.message);
           console.error(error);
         },
       });

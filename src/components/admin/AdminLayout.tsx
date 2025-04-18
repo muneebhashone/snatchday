@@ -16,6 +16,7 @@ import { useLogout } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 import Image from "next/image";
 import { useSocket } from "@/context/SocketContext";
+import { useEffect } from "react";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -27,7 +28,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     logout(undefined, {
       onSuccess: () => {
         socket.emit("logout");
+        document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         localStorage.removeItem("snatchday_user");
+
         router.push("/admin/login");
       },
       onError: (error) => {
@@ -36,69 +39,69 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     });
   };
 
+  useEffect(() => {
+    const header = document.getElementById("admin-header");
+
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        header?.classList.add("shadow-lg");
+        header?.classList.add("bg-white");
+        header?.classList.add("rounded-b-xl");
+      } else {
+        header?.classList.remove("shadow-lg");
+        header?.classList.remove("bg-white");
+        header?.classList.remove("rounded-b-xl");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Initial check
+    handleScroll();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <SidebarProvider>
+    <SidebarProvider className="!bg-gray-100 gap-10">
       <AppSidebar />
-      <SidebarInset>
-        <header className="bg-white/15 shadow-md">
-          <div className="flex items-center justify-between px-8 py-4">
-            <div className="flex items-center gap-4">
+      {/* <SidebarInset className="!bg-gray-100"> */}
+      <div className="bg-gray-100 container w-[80%] mr-auto">
+        <header
+          className="bg-gray-100 sticky top-0 right-0 z-50 transition-shadow duration-300"
+          id="admin-header"
+        >
+          <div className="flex items-center justify-end px-8 py-4">
+            {/* <div className="flex items-center gap-4">
               <SidebarTrigger className="text-gray-500 hover:text-primary" />
-              {/* <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="pl-10 pr-4 py-2 w-80 bg-gray-50 text-gray-900 border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent placeholder-gray-400"
-                />
-              </div> */}
-            </div>
+            
+            </div> */}
 
-            <div className="flex items-center gap-6">
-              {/* <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative text-gray-500 hover:text-primary"
-                  >
-                    <BellDot className="h-6 w-6" />
-                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-medium text-white flex items-center justify-center">
-                      3
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-              </DropdownMenu> */}
-
-              <div className="flex items-center gap-3">
-                {/* <Image
-                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                  alt="Profile"
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-xl ring-2 ring-gray-100"
-                /> */}
-                <div className="text-sm">
-                  <p className="font-medium text-gray-900">
-                    {user?.user?.name}
-                  </p>
-                  <p className="text-gray-500">Admin</p>
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="text-sm">
+                <p className="font-medium text-gray-900">
+                  {user?.name || user?.user?.name}
+                </p>
+                <p className="text-gray-500">Admin</p>
               </div>
-
-              <Button
-                onClick={handleLogout}
-                variant="ghost"
-                className="text-gray-500 hover:text-primary gap-2"
-              >
-                {isPending ? "Logging out..." : "Logout"}
-                <LogOut className="h-4 w-4" />
-              </Button>
             </div>
+
+            <Button
+              onClick={handleLogout}
+              variant="ghost"
+              className="text-gray-500 hover:text-primary gap-2"
+            >
+              {isPending ? "Logging out..." : "Logout"}
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </header>
-        <div className="bg-white/20 min-h-screen p-8">{children}</div>
-      </SidebarInset>
+        <div className="bg-gray-100 min-h-screen">{children}</div>
+      </div>
+      {/* </SidebarInset> */}
     </SidebarProvider>
   );
 };

@@ -488,991 +488,636 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   const [discountRemove, setDiscountRemove] = useState(false);
   const [open, setOpen] = useState(false);
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Update Product</h1>
+    <div className="py-6 max-w-full mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Update Product</h1>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/admin/products")}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" form="product-form" disabled={isPending}>
+            {isPending ? "Updating..." : "Update Product"}
+          </Button>
+        </div>
+      </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* Basic Information Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Basic Information</h2>
+        <form
+          id="product-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Product Information Section */}
+            <div className="bg-white rounded-lg border p-6 col-span-2">
+              <h2 className="text-lg font-semibold mb-6">Product Information</h2>
 
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Product name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Product name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Product description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="company"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Company</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Company name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name="company"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Company</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Company name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="Product description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Keep existing image field */}
-            <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Images *</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageChange}
-                    />
-                  </FormControl>
-                  <div className="flex gap-4 my-2">
-                    {previewUrls.map((url, index) => (
-                      <div
-                        key={index}
-                        className="relative aspect-square w-20 h-20 rounded-lg overflow-hidden border"
-                      >
-                        <Image
-                          src={url}
-                          alt={`Preview ${index + 1}`}
-                          fill
-                          className="object-cover"
+                <FormField
+                  control={form.control}
+                  name="images"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Images *</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleImageChange}
                         />
-                        <button
-                          type="button"
-                          className="absolute top-0 right-0 bg-white rounded-full p-1 shadow"
-                          onClick={() => {
-                            if (url.startsWith("blob:")) {
-                              URL.revokeObjectURL(url);
-                            }
-                            setRemovedImages((prev) => [...prev, url]);
-                            setPreviewUrls((prev) =>
-                              prev.filter((_, i) => i !== index)
-                            );
-                          }}
-                        >
-                          <X size={16} />
-                        </button>
+                      </FormControl>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
+                        {previewUrls.map((url, index) => (
+                          <div
+                            key={index}
+                            className="relative group cursor-pointer rounded-md overflow-hidden border"
+                          >
+                            <div className="aspect-square w-full overflow-hidden bg-white">
+                              <Image
+                                src={url}
+                                alt={`Preview ${index + 1}`}
+                                width={200}
+                                height={200}
+                                className="object-contain w-full h-full"
+                              />
+                            </div>
+                            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <X 
+                                className="h-6 w-6 text-white" 
+                                onClick={() => {
+                                  if (url.startsWith("blob:")) {
+                                    URL.revokeObjectURL(url);
+                                  }
+                                  setRemovedImages((prev) => [...prev, url]);
+                                  setPreviewUrls((prev) =>
+                                    prev.filter((_, i) => i !== index)
+                                  );
+                                }}
+                              />
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="colors"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Colors *</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Colors (comma separated: Red, Blue, Green)"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Enter colors separated by commas
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="price"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Price *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        placeholder="0.00"
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                        {...field}
-                        onChange={(e) =>
-                          field.onChange(parseFloat(e.target.value))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="stock"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stock *</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="0"
-                        onKeyDown={(e) => {
-                          if (e.key === "-") {
-                            e.preventDefault();
-                          }
-                        }}
-                        {...field}
-                        onChange={(e) =>
-                          field.onChange(parseInt(e.target.value))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
 
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Product Type *</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select product type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="NEW">New</SelectItem>
-                      <SelectItem value="SALE">Sale</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+            {/* Pricing & Inventory Section */}
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-6">Pricing & Inventory</h2>
 
-          {/* Categories Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Categories</h2>
-            <FormField
-              control={form.control}
-              name="categoryIds"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Categories *</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price *</FormLabel>
                       <FormControl>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          className="w-full justify-between"
-                        >
-                          {field.value?.length > 0
-                            ? `${field.value.length} categories selected`
-                            : "Select categories"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="0.00"
+                          onKeyDown={(e) => {
+                            if (e.key === "-") {
+                              e.preventDefault();
+                            }
+                          }}
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseFloat(e.target.value))
+                          }
+                        />
                       </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <Command>
-                        <CommandInput placeholder="Search categories..." />
-                        <CommandEmpty>No categories found.</CommandEmpty>
-                        <CommandGroup className="max-h-48 overflow-auto">
-                          {categoriesData?.data?.categories?.map(
-                            (category: Category) => (
-                              <CommandItem
-                                key={category._id}
-                                value={category._id}
-                                onSelect={() => {
-                                  const currentValues = field.value || [];
-                                  if (currentValues.includes(category._id)) {
-                                    field.onChange(
-                                      currentValues.filter(
-                                        (id) => id !== category._id
-                                      )
-                                    );
-                                  } else {
-                                    field.onChange([
-                                      ...currentValues,
-                                      category._id,
-                                    ]);
-                                  }
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    field.value?.includes(category._id)
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                                {category.displayName || category.name}
-                              </CommandItem>
-                            )
-                          )}
-                        </CommandGroup>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  {field.value?.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {field.value.map((categoryId) => {
-                        const category = categoriesData?.data?.categories?.find(
-                          (c) => c._id === categoryId
-                        );
-                        return (
-                          <div
-                            key={categoryId}
-                            className="flex items-center gap-1 bg-primary text-white px-2 py-1 rounded-md"
-                          >
-                            <span className="text-sm">
-                              {category?.displayName || category?.name}
-                            </span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              className="h-auto p-0 px-1 hover:bg-transparent hover:opacity-70"
-                              onClick={() => {
-                                field.onChange(
-                                  field.value.filter((id) => id !== categoryId)
-                                );
-                              }}
-                            >
-                              ×
-                            </Button>
-                          </div>
-                        );
-                      })}
-                    </div>
+                      <FormMessage />
+                    </FormItem>
                   )}
-                  <FormDescription>
-                    Select multiple categories for this product
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {categories.length < 1 && emptyCategory && (
-              <p className="text-red-500 text-sm">
-                *Please select atleast one category*
-              </p>
-            )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="stock"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock *</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="0"
+                          onKeyDown={(e) => {
+                            if (e.key === "-") {
+                              e.preventDefault();
+                            }
+                          }}
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="sku"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>SKU</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Stock Keeping Unit" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="barcodeEAN"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Barcode EAN</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Barcode EAN" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Product Attributes/Filters Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Product Attributes</h2>
-            <FormField
-              control={form.control}
-              name="attributes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Product Filters</FormLabel>
-                  <FormDescription>
-                    Select product attributes and values
-                  </FormDescription>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Categories & Attributes Section */}
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-6">Categories & Attributes</h2>
 
-                  <div className="space-y-4">
-                    {/* Add filter button & dropdown */}
-                    <div className="flex flex-col space-y-4">
-                      <div className="flex justify-between items-center">
-                        <h3 className="text-sm font-medium">Attributes</h3>
-
-                        <Popover>
-                          <PopoverTrigger asChild>
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="categoryIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Categories *</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
                             <Button
                               variant="outline"
-                              size="sm"
-                              className="flex items-center gap-1"
-                              disabled={
-                                Object.keys(selectedFilter).length ===
-                                filtersData?.data?.filters?.length
-                              }
+                              role="combobox"
+                              className="w-full justify-between"
                             >
-                              <PlusCircle className="h-4 w-4" />
-                              Add Attribute
+                              {field.value?.length > 0
+                                ? `${field.value.length} categories selected`
+                                : "Select categories"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                             </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-64 p-0" align="end">
-                            <Command>
-                              <CommandInput placeholder="Search attributes..." />
-                              <CommandEmpty>No attributes found.</CommandEmpty>
-                              <CommandGroup className="max-h-48 overflow-auto">
-                                {filtersData?.data?.filters
-                                  ?.filter(
-                                    (filter) =>
-                                      !selectedFilter.hasOwnProperty(
-                                        filter.name
-                                      )
-                                  )
-                                  .map((filter) => (
-                                    <CommandItem
-                                      key={filter._id}
-                                      value={filter.name}
-                                      onSelect={() => {
-                                        setSelectedFilters((prev) => {
-                                          const newFilters = { ...prev };
-                                          newFilters[filter.name] = [];
-                                          return newFilters;
-                                        });
-                                      }}
-                                    >
-                                      {filter.name}
-                                    </CommandItem>
-                                  ))}
-                              </CommandGroup>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0">
+                          <Command>
+                            <CommandInput placeholder="Search categories..." />
+                            <CommandEmpty>No categories found.</CommandEmpty>
+                            <CommandGroup className="max-h-48 overflow-auto">
+                              {categoriesData?.data?.categories?.map(
+                                (category: Category) => (
+                                  <CommandItem
+                                    key={category._id}
+                                    value={category._id}
+                                    onSelect={() => {
+                                      const currentValues = field.value || [];
+                                      if (currentValues.includes(category._id)) {
+                                        field.onChange(
+                                          currentValues.filter(
+                                            (id) => id !== category._id
+                                          )
+                                        );
+                                      } else {
+                                        field.onChange([
+                                          ...currentValues,
+                                          category._id,
+                                        ]);
+                                      }
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        field.value?.includes(category._id)
+                                          ? "opacity-100"
+                                          : "opacity-0"
+                                      )}
+                                    />
+                                    {category.displayName || category.name}
+                                  </CommandItem>
+                                )
+                              )}
+                            </CommandGroup>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                      {/* Selected filters with their radio button selections */}
-                      {Object.keys(selectedFilter).length > 0 ? (
-                        <div className="space-y-4 border rounded-md p-3">
-                          {Object.entries(selectedFilter).map(
-                            ([filterName, values]) => {
-                              const filter = filtersData?.data?.filters?.find(
-                                (f) => f.name === filterName
-                              );
-                              if (!filter) return null;
+                <FormField
+                  control={form.control}
+                  name="attributes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Filters</FormLabel>
+                      <FormDescription>
+                        Select product attributes and values
+                      </FormDescription>
 
-                              return (
-                                <div
-                                  key={filterName}
-                                  className="space-y-2 pb-3 border-b last:border-b-0 last:pb-0"
+                      <div className="space-y-4">
+                        <div className="flex flex-col space-y-4">
+                          <div className="flex justify-between items-center">
+                            <h3 className="text-sm font-medium">Attributes</h3>
+
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="flex items-center gap-1"
+                                  disabled={
+                                    Object.keys(selectedFilter).length ===
+                                    filtersData?.data?.filters?.length
+                                  }
                                 >
-                                  <div className="flex justify-between items-center">
-                                    <h4 className="text-sm font-medium">
-                                      {filterName}
-                                    </h4>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-8 w-8 p-0"
-                                      onClick={() => {
-                                        setSelectedFilters((prev) => {
-                                          const newFilters = { ...prev };
-                                          delete newFilters[filterName];
-                                          return newFilters;
-                                        });
-                                      }}
-                                    >
-                                      <X className="h-4 w-4" />
-                                    </Button>
-                                  </div>
-
-                                  <div className="grid grid-cols-2 gap-2">
-                                    {filter.value.map((value: string) => {
-                                      const isSelected = values[0] === value;
-
-                                      return (
-                                        <div
-                                          key={value}
-                                          className="flex items-center space-x-2"
+                                  <PlusCircle className="h-4 w-4" />
+                                  Add Attribute
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-64 p-0" align="end">
+                                <Command>
+                                  <CommandInput placeholder="Search attributes..." />
+                                  <CommandEmpty>No attributes found.</CommandEmpty>
+                                  <CommandGroup className="max-h-48 overflow-auto">
+                                    {filtersData?.data?.filters
+                                      ?.filter(
+                                        (filter) =>
+                                          !selectedFilter.hasOwnProperty(
+                                            filter.name
+                                          )
+                                      )
+                                      .map((filter) => (
+                                        <CommandItem
+                                          key={filter._id}
+                                          value={filter.name}
+                                          onSelect={() => {
+                                            setSelectedFilters((prev) => {
+                                              const newFilters = { ...prev };
+                                              newFilters[filter.name] = [];
+                                              return newFilters;
+                                            });
+                                          }}
                                         >
-                                          <input
-                                            type="radio"
-                                            id={`${filterName}-${value}`}
-                                            name={`filter-${filterName}`}
-                                            className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                                            checked={isSelected}
-                                            onChange={() => {
-                                              setSelectedFilters((prev) => {
-                                                const newFilters = { ...prev };
-                                                newFilters[filterName] = [
-                                                  value,
-                                                ];
-                                                return newFilters;
-                                              });
-                                            }}
-                                          />
-                                          <label
-                                            htmlFor={`${filterName}-${value}`}
-                                            className="text-sm font-medium leading-none cursor-pointer"
-                                          >
-                                            {value}
-                                          </label>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              );
-                            }
+                                          {filter.name}
+                                        </CommandItem>
+                                      ))}
+                                  </CommandGroup>
+                                </Command>
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+
+                          {Object.keys(selectedFilter).length > 0 ? (
+                            <div className="space-y-4 border rounded-md p-3">
+                              {Object.entries(selectedFilter).map(
+                                ([filterName, values]) => {
+                                  const filter = filtersData?.data?.filters?.find(
+                                    (f) => f.name === filterName
+                                  );
+                                  if (!filter) return null;
+
+                                  return (
+                                    <div
+                                      key={filterName}
+                                      className="space-y-2 pb-3 border-b last:border-b-0 last:pb-0"
+                                    >
+                                      <div className="flex justify-between items-center">
+                                        <h4 className="text-sm font-medium">
+                                          {filterName}
+                                        </h4>
+                                        <Button
+                                          variant="ghost"
+                                          size="sm"
+                                          className="h-8 w-8 p-0"
+                                          onClick={() => {
+                                            setSelectedFilters((prev) => {
+                                              const newFilters = { ...prev };
+                                              delete newFilters[filterName];
+                                              return newFilters;
+                                            });
+                                          }}
+                                        >
+                                          <X className="h-4 w-4" />
+                                        </Button>
+                                      </div>
+
+                                      <div className="grid grid-cols-2 gap-2">
+                                        {filter.value.map((value: string) => {
+                                          const isSelected = values[0] === value;
+
+                                          return (
+                                            <div
+                                              key={value}
+                                              className="flex items-center space-x-2"
+                                            >
+                                              <input
+                                                type="radio"
+                                                id={`${filterName}-${value}`}
+                                                name={`filter-${filterName}`}
+                                                className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
+                                                checked={isSelected}
+                                                onChange={() => {
+                                                  setSelectedFilters((prev) => {
+                                                    const newFilters = { ...prev };
+                                                    newFilters[filterName] = [
+                                                      value,
+                                                    ];
+                                                    return newFilters;
+                                                  });
+                                                }}
+                                              />
+                                              <label
+                                                htmlFor={`${filterName}-${value}`}
+                                                className="text-sm font-medium leading-none cursor-pointer"
+                                              >
+                                                {value}
+                                              </label>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
+                          ) : (
+                            <div className="text-center p-4 border rounded-md text-muted-foreground text-sm">
+                              No attributes selected. Click &quot;Add
+                              Attribute&quot; to select product attributes.
+                            </div>
                           )}
                         </div>
-                      ) : (
-                        <div className="text-center p-4 border rounded-md text-muted-foreground text-sm">
-                          No attributes selected. Click &quot;Add
-                          Attribute&quot; to select product attributes.
+                      </div>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
+            {/* Product Options Section */}
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-6">Product Options</h2>
+
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Type *</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select product type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="NEW">New</SelectItem>
+                          <SelectItem value="SALE">Sale</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="colors"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Colors *</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Colors (comma separated: Red, Blue, Green)"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Enter colors separated by commas
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isFeatured"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Featured Product
+                        </FormLabel>
+                        <FormDescription>
+                          Display this product in featured sections
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="requireShipping"
+                  render={({ field }) => {
+                    setDisableLicenseKey(field.value);
+                    return (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Requires Shipping
+                          </FormLabel>
+                          <FormDescription>
+                            Does this product require shipping?
+                          </FormDescription>
                         </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Discounts Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Discounts</h2>
-            {fields.length > 0 ? (
-              <div className="bg-gray-100 p-4 rounded-lg">
-                {fields.map((field, index) => (
-                  <div key={field.id} className="mb-4">
-                    {/* Discount Type */}
-                    <div className="flex items-center justify-center gap-5">
-                      <FormField
-                        control={form.control}
-                        name={`discounts.${index}.customerGroup`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel>Discount Type</FormLabel>
-                            <FormControl>
-                              <Select
-                                onValueChange={field.onChange}
-                                value={field.value}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select discount type" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="BASIC">Basic</SelectItem>
-                                  <SelectItem value="VIP">VIP</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* Discount Price */}
-                      <FormField
-                        control={form.control}
-                        name={`discounts.${index}.price`}
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel>Discount</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Enter discount price"
-                                type="number"
-                                {...field}
-                                onChange={(e) =>
-                                  field.onChange(
-                                    e.target.value ? Number(e.target.value) : ""
-                                  )
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-center gap-5">
-                      {/* Start Date */}
-                      <FormField
-                        control={form.control}
-                        name={`discounts.${index}.away`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col mt-5 flex-1">
-                            <FormLabel>Start Date</FormLabel>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button
-                                    variant={"outline"}
-                                    className="w-full pl-3 text-left font-normal"
-                                  >
-                                    {field.value
-                                      ? format(new Date(field.value), "PPP")
-                                      : "Pick a date"}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                  </Button>
-                                </FormControl>
-                              </PopoverTrigger>
-                              <PopoverContent
-                                className="w-auto p-0"
-                                align="start"
-                              >
-                                <Calendar
-                                  mode="single"
-                                  selected={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : undefined
-                                  }
-                                  onSelect={(date) =>
-                                    field.onChange(date?.toISOString())
-                                  }
-                                  disabled={(date) => date < new Date()}
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* End Date */}
-                      <FormField
-                        control={form.control}
-                        name={`discounts.${index}.until`}
-                        render={({ field }) => (
-                          <FormItem className="flex flex-col mt-5 flex-1">
-                            <FormLabel>End Date</FormLabel>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button
-                                    variant={"outline"}
-                                    className="w-full pl-3 text-left font-normal"
-                                  >
-                                    {field.value
-                                      ? format(new Date(field.value), "PPP")
-                                      : "Pick a date"}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                  </Button>
-                                </FormControl>
-                              </PopoverTrigger>
-                              <PopoverContent
-                                className="w-auto p-0"
-                                align="start"
-                              >
-                                <Calendar
-                                  mode="single"
-                                  selected={
-                                    field.value
-                                      ? new Date(field.value)
-                                      : undefined
-                                  }
-                                  onSelect={(date) =>
-                                    field.onChange(date?.toISOString())
-                                  }
-                                  disabled={(date) => date < new Date()}
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    {/* Remove Discount Button */}
-                    <Button
-                      type="button"
-                      className="mt-2 bg-red-500 hover:bg-red-500 text-white"
-                      onClick={() => remove(index)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-
-                {/* Add Discount Button */}
-                <Button
-                  type="button"
-                  className="mt-4 bg-blue-500 text-white mr-2"
-                  onClick={() => {
-                    const currentDiscounts = form.getValues("discounts") || [];
-                    form.setValue(
-                      "discounts",
-                      [
-                        ...currentDiscounts,
-                        {
-                          customerGroup: "BASIC",
-                          price: 0,
-                          away: undefined,
-                          until: undefined,
-                        },
-                      ],
-                      {
-                        shouldValidate: true,
-                        shouldDirty: true,
-                      }
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
                     );
                   }}
-                >
-                  Add Another Discount
-                </Button>
-              </div>
-            ) : (
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <Button
-                  type="button"
-                  className="bg-blue-500 hover:bg-blue-500 text-white mr-2"
-                  onClick={() =>
-                    append({
-                      customerGroup: "BASIC",
-                      price: 0,
-                      away: undefined,
-                      until: undefined,
-                    })
-                  }
-                >
-                  Add Discount
-                </Button>
-              </div>
-            )}
-          </div>
+                />
 
-          {/* Product Options Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Product Options</h2>
-
-            <FormField
-              control={form.control}
-              name="isFeatured"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">
-                      Featured Product
-                    </FormLabel>
-                    <FormDescription>
-                      Display this product in featured sections
-                    </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="sku"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>SKU</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Stock Keeping Unit" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="barcodeEAN"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Barcode EAN</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Barcode EAN" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="noStockMessage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Out of Stock Message</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Message when product is out of stock"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Related Products Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Related Products</h2>
-            <FormField
-              control={form.control}
-              name="relatedProducts"
-              render={({ field }) => (
-                <FormItem className="min-w-full flex flex-col">
-                  <FormLabel>Related Products</FormLabel>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        role="combobox"
-                        aria-expanded={open}
-                        className="w-full justify-between"
-                      >
-                        {field.value.length > 0
-                          ? `${field.value.length} related products`
-                          : "Select related products..."}
-                        <ChevronsUpDown className="opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[200px] p-0">
-                      <Command>
-                        <CommandInput
-                          placeholder="Search related products..."
-                          className="h-9"
-                        />
-                        <CommandList>
-                          <CommandEmpty>
-                            No related products found.
-                          </CommandEmpty>
-                          <CommandGroup>
-                            {productsData?.data?.products?.map((product) => (
-                              <CommandItem
-                                key={product._id}
-                                value={product._id}
-                                onSelect={(currentValue) => {
-                                  console.log(currentValue);
-                                  form.setValue(
-                                    "relatedProducts",
-                                    field.value.includes(currentValue)
-                                      ? field.value.filter(
-                                          (id) => id !== currentValue
-                                        )
-                                      : [...field.value, currentValue]
-                                  );
-                                  setOpen(false);
-                                }}
-                              >
-                                {product.name}
-                                <Check
-                                  className={cn(
-                                    "ml-auto",
-                                    field.value.includes(product._id)
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                  <div className="flex flex-wrap gap-2">
-                    {field.value.map((productId) => {
-                      const product = productsData?.data?.products?.find(
-                        (p) => p._id === productId
-                      );
-                      return (
-                        <div
-                          className="bg-primary px-2 text-white rounded-md flex items-center gap-2 text-sm"
-                          key={productId}
-                        >
-                          <p>{product?.name}</p>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-auto p-0 hover:text-black hover:bg-transparent"
-                            onClick={() => {
-                              form.setValue(
-                                "relatedProducts",
-                                field.value.filter((id) => id !== productId)
-                              );
-                            }}
-                          >
-                            <X className="max-h-3 max-w-3 text-white hover:text-black " />
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* SEO Information Section */}
-          <div className="space-y-6 border p-4 rounded-md">
-            <h2 className="text-xl font-semibold">SEO Information</h2>
-
-            <FormField
-              control={form.control}
-              name="metaTitle"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meta Title *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="SEO meta title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="metaDescription"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meta Description</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="SEO meta description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="metaKeywords"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Meta Keywords</FormLabel>
-                  <FormControl>
-                    <Input placeholder="SEO meta keywords" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Content Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Content</h2>
-
-            <FormField
-              control={form.control}
-              name="article"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Article *</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Product article content"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          {/* Shipping Settings Section */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Shipping Settings</h2>
-
-            <FormField
-              control={form.control}
-              name="requireShipping"
-              render={({ field }) => {
-                setDisableLicenseKey(field.value);
-                return (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">
-                        Requires Shipping
-                      </FormLabel>
-                      <FormDescription>
-                        Does this product require shipping?
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                );
-              }}
-            />
-
-            {!disableLicenseKey && (
-              <FormField
-                control={form.control}
-                name="liscenseKey"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>License Key</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="License key for digital products"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                {!disableLicenseKey && (
+                  <FormField
+                    control={form.control}
+                    name="liscenseKey"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>License Key</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="License key for digital products"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 )}
-              />
-            )}
+              </div>
+            </div>
           </div>
 
-          {/* Form Submission */}
-          <div className="flex justify-end space-x-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push("/admin/products")}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Updating..." : "Update Product"}
-            </Button>
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+            {/* SEO Information Section */}
+            <div className="bg-white rounded-lg border p-6">
+              <h2 className="text-lg font-semibold mb-6">SEO Information</h2>
+
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="metaTitle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Title *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="SEO meta title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="metaDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="SEO meta description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="metaKeywords"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Meta Keywords</FormLabel>
+                      <FormControl>
+                        <Input placeholder="SEO meta keywords" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="article"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Article *</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Product article content"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
           </div>
         </form>
       </Form>
