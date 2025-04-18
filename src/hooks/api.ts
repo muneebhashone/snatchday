@@ -238,7 +238,7 @@ export const useCreateCategory = () => {
 
 export const useUpdateCategory = () => {
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CategoryFormData }) =>
+    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
       updateCategory(id, data),
   });
 };
@@ -481,7 +481,7 @@ export const useCustomers = ({
   search,
 }: {
   limit: number;
-  search: string;
+  search?: string;
 }) => {
   return useInfiniteQuery({
     queryKey: ["customers", limit, search],
