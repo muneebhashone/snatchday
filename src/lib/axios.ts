@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
     // Check if window is defined (browser environment)
     if (typeof window !== 'undefined') {
       const user = localStorage.getItem("snatchday_user");
-      console.log(user,"user")
+      // console.log(user,"user")
       if (user) {
         // Ensure the header is properly set
         config.headers['X-User-Data'] = JSON.stringify(user);

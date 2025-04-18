@@ -132,7 +132,9 @@ const SupportPage = () => {
                 categorytext={item.categorytext}
                 categorytitle={item.categorytitle}
                 onClick={() => {
-                  router.push(`/support/create-ticket`);
+                  router.push(
+                    `/support/create-ticket?category=${item.categorytitle}`
+                  );
                 }}
               />
             ))}

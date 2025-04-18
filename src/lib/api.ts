@@ -274,7 +274,7 @@ export const getCustomer = async (
   isActive?: string
 ) => {
   const limit = 10;
-  const response = await axiosInstance.get("/customer", {
+  const response = await axiosInstance.get("/customers", {
     params: {
       limit,
       offset: pageParams,
