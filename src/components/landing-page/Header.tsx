@@ -297,14 +297,14 @@ const Header = () => {
                 <h2 className="text-2xl font-bold text-foreground">
                   Search Products
                 </h2>
-                <Button
+                {/* <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsSearchOpen(false)}
                   className="hover:bg-gray-100 rounded-full w-12 h-12"
                 >
                   <X className="h-6 w-6" />
-                </Button>
+                </Button> */}
               </div>
               <div className="relative">
                 <Input

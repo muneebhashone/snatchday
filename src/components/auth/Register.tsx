@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { X, ArrowRight, ArrowLeft, Check } from "lucide-react"
+import { X, ArrowRight, ArrowLeft, Check, User2, Notebook, NotebookIcon } from "lucide-react"
 import { FacebookIcon } from "../icons/icon"
 import Link from "next/link"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -88,16 +88,34 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => {
       <div className="flex flex-col items-center">
         <div
           className={`flex items-center justify-center w-10 h-10 rounded-full 
-            
-               gradient-primary text-white
-               
+            ${currentStep >= 1 ? "gradient-primary" : "bg-gray-300"}
           `}
         >
-          {currentStep > 1 ? <Check className="h-5 w-5" /> : <span className="text-white">01</span>}
+          {currentStep > 1 ? <Check className="h-6 w-6 text-white" /> : <User2 className="h-6 w-6 text-white" />}
         </div>
-        <div className="mt-2 ">
-          <p className={`font-medium ${currentStep === 1 ? "text-[#FF6B3D]" : "text-gray-500"}`}>Account</p>
-          <p className={`text-xs  ${currentStep === 1 ? "text-[#FF6B3D]" : "text-gray-500"} `}>Account Details</p>
+        <div className="mt-2">
+          <p
+            className={`font-medium ${
+              currentStep === 1
+                ? "text-[#FF6B3D]"
+                : currentStep > 1
+                  ? "text-[#FF6B3D]"
+                  : "text-gray-500"
+            }`}
+          >
+            Account
+          </p>
+          <p
+            className={`text-xs font-medium ${
+              currentStep === 1
+                ? "text-[#FF6B3D]"
+                : currentStep > 1
+                  ? "text-[#FF6B3D]"
+                  : "text-gray-500"
+            }`}
+          >
+            Account Details
+          </p>
         </div>
       </div>
 
@@ -108,19 +126,31 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => {
       <div className="flex flex-col items-center">
         <div
           className={`flex items-center justify-center w-10 h-10 rounded-full 
-           
-              gradient-primary text-white
-             
+            ${currentStep >= 2 ? "gradient-primary" : "bg-gray-300"}
           `}
         >
-          {currentStep > 2 ? <Check className="h-5 w-5" /> : <span className="text-white">02</span>}
+          {currentStep > 2 ? <Check className="h-6 w-6 text-white" /> : <NotebookIcon className="h-6 w-6 text-white" />}
         </div>
         <div className="mt-2">
-          <p className={`font-medium ${currentStep === 2 ? "text-[#FF6B3D]" : "text-gray-500"}`}>Personal</p>
           <p
-            className={`text-xs  
-              ${currentStep === 2 ? "text-[#FF6B3D]" : "text-gray-500"}
-            `}
+            className={`font-medium ${
+              currentStep === 2
+                ? "text-[#FF6B3D]"
+                : currentStep > 2
+                  ? "text-[#FF6B3D]"
+                  : "text-gray-500"
+            }`}
+          >
+            Personal
+          </p>
+          <p
+            className={`text-xs font-medium ${
+              currentStep === 2
+                ? "text-[#FF6B3D]"
+                : currentStep > 2
+                  ? "text-[#FF6B3D]"
+                  : "text-gray-500"
+            }`}
           >
             Enter Information
           </p>
