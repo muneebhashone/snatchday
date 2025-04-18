@@ -91,8 +91,7 @@ const Login = ({
         socket.emit("logout");
         setUserData(null);
         setIsLoggedIn(false);
-        document.cookie =
-          "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    
         logout();
         toast.success("Logout successfully");
         router.push("/");
