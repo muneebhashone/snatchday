@@ -59,7 +59,7 @@ const ProductCard = ({
   const prooo = addToCartData?.data?.cart?.filter(
     (pro) => pro.product._id === _id
   );
-  console.log(prooo, "prooo1");
+
 
   const handleAddToCart = () => {
     addToCart(_id as string, {
@@ -70,7 +70,7 @@ const ProductCard = ({
         refetch();
       },
       onError: (error) => {
-        toast.error("Failed to add to cart");
+        toast.error(error.response.data.message || "Failed to add to cart");
         console.error(error);
       },
     });
@@ -200,7 +200,7 @@ const ProductCard = ({
                 </TooltipTrigger>
                 
                   <TooltipContent className="bg-gray-700 text-white">
-                    <p> Click add to cart </p>
+                    <p> Click here  add to cart </p>
                   </TooltipContent>
                 
               </Tooltip>

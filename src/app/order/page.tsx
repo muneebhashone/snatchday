@@ -37,7 +37,7 @@
 // // }
 
 import ClientLayout from "@/components/landing-page/ClientLayout"
-import { AddressStep } from "@/components/multistep-checkout/addressstep";
+import AddressStep from "@/components/multistep-checkout/addressstep";
 import { CartStep } from "@/components/multistep-checkout/cart-step";
 import { ConfirmationStep } from "@/components/multistep-checkout/confirmation-step";
 // import { PaymentStep } from "@/components/multistep-checkout/payment-step";
@@ -519,13 +519,10 @@ const MultiStepCheckout = () => {
               <AddressStep
                 onNextStep={nextStep}
                 onPrevStep={prevStep}
-                addresses={addresses}
                 checkoutResponse={checkoutResponse}
                 setOrderId={setOrderId}
-                setAddresses={setAddresses}
                 selectedAddress={selectedAddress}
                 setSelectedAddress={setSelectedAddress}
-                orderSummary={orderSummary}
               />
             )}
             {currentStep === 2 && (
