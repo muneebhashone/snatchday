@@ -468,7 +468,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           onSuccess: () => {
             toast.success("Product updated successfully");
             queryClient.invalidateQueries({ queryKey: ["products"] });
-            // router.push("/admin/products");
+            router.push("/admin/products");
           },
           onError: (error) => {
             toast.error(

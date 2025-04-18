@@ -71,8 +71,7 @@ export default function OrdersList() {
       );
       setData(allCustomers);
     }
-    console.log(data, "data");
-  }, [customers]);
+  }, [customers, debouncedSearch]);
 
   const handleScrollInCommand = (e: React.UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -305,7 +304,7 @@ export default function OrdersList() {
                           {value
                             ? data?.find((user: any) => user._id === value)
                                 ?.name
-                            : "Select user..."}
+                            : "Select framework..."}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
                       </PopoverTrigger>

@@ -262,7 +262,7 @@ export const NewsletterMail = async (data: {
 
 // customers
 export const getCustomers = async (params) => {
-  const response = await axiosInstance.get("/customer", { params });
+  const response = await axiosInstance.get("/customers", { params });
   return response.data;
 };
 
@@ -552,10 +552,15 @@ export const getCategoryById = async (id: string) => {
   return response.data;
 };
 
-export const updateCategory = async (id: string, data: CategoryFormData) => {
+export const updateCategory = async (id: string, data: FormData) => {
   const response = await axiosInstance.patch<CategoryFormData>(
     `/category/${id}`,
-    data
+    data,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
   );
   return response.data;
 };

@@ -62,7 +62,7 @@ interface Category {
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   description: z.string().optional(),
-  image: z.any(),
+  image: z.instanceof(File).optional(),
   parentCategory: z.string().optional(),
   shop: z.boolean(),
   above: z.boolean(),
@@ -106,10 +106,12 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
         shop: getSingleCategory?.data?.shop,
         above: getSingleCategory?.data?.above,
       });
+      setPreviewUrl(getSingleCategory?.data?.image);
     }
   }, [getSingleCategory, form]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e);
     const file = e.target.files?.[0];
     if (file) {
       // Clear previous preview
@@ -127,12 +129,14 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values.image);
     try {
       const formData = new FormData();
 
       // Append all form fields to FormData
       Object.entries(values).forEach(([key, value]) => {
         if (key === "image") {
+          // formData.append(key, value instanceof File && value);
           const file = value as File;
           if (file) {
             formData.append("image", file);
@@ -157,6 +161,7 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
         { id: categoryId, data: dataTosend },
         {
           onSuccess: () => {
+            console.log("success", dataTosend);
             toast.success("Category updated successfully");
             setOpen(false);
             queryClient.invalidateQueries({ queryKey: ["categories"] });
