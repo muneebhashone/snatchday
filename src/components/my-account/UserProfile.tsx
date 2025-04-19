@@ -29,6 +29,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useUserContext } from "@/context/userContext";
 import TicketTable from "./TicketTable";
 import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
+import ChangePasswordModal from "../updatePasswordModal";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -47,7 +48,7 @@ const profileSchema = z.object({
 
 const UserProfile = () => {
   const { data: myAccountGame } = useMyAccountGames();
-  console.log(myAccountGame);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
   const { user, setUserData } = useUserContext();
   const {
     register,
@@ -684,8 +685,9 @@ const UserProfile = () => {
                         {" "}
                         {isPending ? "Saving..." : "SAVE"}
                       </Button>
-                      <Button variant="outline">CHANGE PASSWORD</Button>
-                      <Button variant="destructive">DELETE ACCOUNT</Button>
+                      <Button variant="outline" onClick={() => setIsPasswordModalOpen(true)}>
+            CHANGE PASSWORD
+          </Button>                      <Button variant="destructive">DELETE ACCOUNT</Button>
                     </div>
                   </form>
                 </TabsContent>
@@ -699,6 +701,9 @@ const UserProfile = () => {
                 </TabsContent>
               </Tabs>
             </div>
+            <ChangePasswordModal isOpen={isPasswordModalOpen} setIsOpen={setIsPasswordModalOpen} />
+          
+      
           </div>
         </>
       )}

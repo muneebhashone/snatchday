@@ -4,6 +4,7 @@ import {
   authMutation,
   getMyprofile,
   logout,
+  updatePassword,
   subscribeNewsletter,
   createProduct,
   getCategories,
@@ -139,6 +140,8 @@ export const useLogout = () => {
 
 
 
+
+
 // Create a new item
 export const useAuthApi = () => {
   return useMutation({
@@ -204,6 +207,13 @@ export const useRequestEmailToken = () => {
 export const useCreateProduct = () => {
   return useMutation<ProductFormData, unknown, FormData>({
     mutationFn: (formData: FormData) => createProduct(formData),
+  });
+};
+
+export const useUpdatePassword = () => {
+  return useMutation({
+    mutationFn: (data: {currentPassword: string; newPassword: string }) =>
+      updatePassword(data),
   });
 };
 
