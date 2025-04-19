@@ -61,6 +61,12 @@ export const authMutation = async (data: any, type: string) => {
   return response.data;
 };
 
+export const updatePassword = async (data) => {
+  const response = await axiosInstance.put(`/auth/updatePassword`, data);
+  return response.data;
+};
+
+
 // export const products = async () => {
 //   const response = await axiosInstance.post<ProductFormData>('/product/product');
 //   return response.data;
@@ -742,6 +748,8 @@ export const deleteAddress=async(id:string)=>{
   const response=await axiosInstance.delete(`/address/${id}`)
   return response.data
 }
+
+
 
 
 

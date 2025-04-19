@@ -130,10 +130,10 @@ const ComparisonPage = () => {
                         >
                           <div className="w-24 h-24 mx-auto flex items-center justify-center">
                             <Image
-                              src={product.images[0]}
+                              src={product?.images[0]}
                               alt={`Product ${product.id}`}
-                              width={96}
-                              height={96}
+                              width={50}
+                              height={56}
                               className="object-contain"
                             />
                           </div>
