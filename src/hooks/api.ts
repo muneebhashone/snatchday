@@ -104,6 +104,11 @@ import {
   updateFaq,
   deleteFaq,
   FaqParams,
+  createTutorial,
+  getTutorial,
+  updateTutorial,
+  TutorialParams,
+  deleteTutorial
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -119,6 +124,7 @@ import {
   PlaceOrder,
   ProductFormData,
   ResetPasswordTypes,
+  TutorialFormData,
   WebSetting,
 } from "@/types";
 import { useUserContext } from "@/context/userContext";
@@ -945,3 +951,31 @@ export const useDeleteFaq = () => {
     mutationFn: (id: string) => deleteFaq(id),
   });
 };
+
+// tutorial api start
+export const useCreateTutorial=()=>{
+  return useMutation({
+    mutationFn: (data:TutorialFormData) => createTutorial(data),
+  })
+}
+
+export const useGetTutorial = (params?: TutorialParams) => {
+  return useQuery({
+    queryKey: ["tutorial", params],
+    queryFn: () => getTutorial(params),
+  });
+};
+
+export const useUpdateTutorial=()=>{
+  return useMutation({
+    mutationFn: ({id,data}:{id:string,data:TutorialFormData}) => updateTutorial(id,data),
+  })
+}
+
+export const useDeleteTutorial=()=>{
+  return useMutation({
+    mutationFn: (id:string) => deleteTutorial(id),
+  })
+}
+
+

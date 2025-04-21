@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateFaq, useGetFaq, useUpdateFaq } from "@/hooks/api";
 import { Button } from "@/components/ui/button";
@@ -18,14 +18,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Plus, Trash } from "lucide-react";
 
-
-const faqFormSchema = z.object({
+const qaItemSchema = z.object({
   question: z.string().min(1, "Question is required"),
   answer: z.string().min(1, "Answer is required"),
-  category: z.string().min(1, "Category is required"),
-  order: z.coerce.number().min(1, "Order is required"),
+});
 
+const faqFormSchema = z.object({
+  qa: z.array(qaItemSchema).min(1, "At least one Q&A pair is required"),
+  category: z.string().min(1, "Category is required"),
+  order: z.coerce.number().min(1, "Order is required").optional(),
 });
 
 type FaqFormData = z.infer<typeof faqFormSchema>;
@@ -50,12 +53,16 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
   const form = useForm<FaqFormData>({
     resolver: zodResolver(faqFormSchema),
     defaultValues: {
-      question: "",
-      answer: "",
+      qa: [{ question: "", answer: "" }],
       category: "",
       order: 1,
-     
     }
+  });
+
+  // Setup field array for Q&A pairs
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "qa"
   });
 
   // Find the FAQ we're editing if faqId is provided
@@ -64,9 +71,9 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
       const existingFaq = faqResponse.data.find(faq => faq._id === faqId);
       
       if (existingFaq) {
+        // Transform to match our form structure if needed
         const formData = {
-          question: existingFaq.question || "",
-          answer: existingFaq.answer || "",
+          qa: existingFaq.qa || [{ question: "", answer: "" }],
           category: existingFaq.category || "",
           order: existingFaq.order || 1
         };
@@ -78,19 +85,18 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
   }, [faqId, faqResponse, form]);
 
   const onSubmit = (values: FaqFormData) => {
-    // Ensure all values are defined
-    const validFormData = {
-      question: values.question || "",
-      answer: values.answer || "",
-      category: values.category || "",
-      order: values.order || 1
+    // Create the properly formatted data for API
+    const faqData = {
+      qa: values.qa,
+      category: values.category,
+      order: values.order
     };
     
     if (faqId) {
       // Update existing FAQ
       updateFaq({
         id: faqId,
-        data: validFormData
+        data: faqData
       }, {
         onSuccess: () => {
           toast.success("FAQ updated successfully");
@@ -102,7 +108,7 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
       });
     } else {
       // Create new FAQ
-      createFaq(validFormData, {
+      createFaq(faqData, {
         onSuccess: () => {
           toast.success("FAQ created successfully");
           router.push("/admin/faq");
@@ -126,41 +132,71 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="question"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Question</FormLabel>
-                <FormControl>
-                  <Input 
-                    {...field} 
-                    placeholder="Enter the question" 
-                    className="focus-visible:ring-primary"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Q&A Pairs</h3>
+            {fields.map((field, index) => (
+              <div key={field.id} className="p-4 border rounded-lg space-y-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium">Q&A Pair #{index + 1}</h4>
+                  {fields.length > 1 && (
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => remove(index)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                
+                <FormField
+                  control={form.control}
+                  name={`qa.${index}.question`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Question</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="Enter the question" 
+                          className="focus-visible:ring-primary"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <FormField
-            control={form.control}
-            name="answer"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Answer</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="Provide the answer"
-                    className="min-h-[120px] focus-visible:ring-primary"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                <FormField
+                  control={form.control}
+                  name={`qa.${index}.answer`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Answer</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Provide the answer"
+                          className="min-h-[120px] focus-visible:ring-primary"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ))}
+            
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => append({ question: "", answer: "" })}
+              className="w-full"
+            >
+              <Plus className="h-4 w-4 mr-2" /> Add Another Q&A Pair
+            </Button>
+          </div>
 
           <FormField
             control={form.control}
@@ -180,7 +216,7 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
             )}
           />
 
-          <FormField
+          {/* <FormField
             control={form.control}
             name="order"
             render={({ field }) => (
@@ -198,9 +234,7 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
-
-      
+          /> */}
 
           <div className="flex justify-end gap-4">
             <Button

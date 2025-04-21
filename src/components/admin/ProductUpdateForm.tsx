@@ -82,6 +82,7 @@ const formSchema = z
     metaDescription: z.string().optional(),
     metaKeywords: z.string().optional(),
     article: z.string().min(1, "Article cannot be empty"),
+    currentOffer: z.boolean(),
     sku: z.string().optional(),
     barcodeEAN: z.string().optional(),
     noStockMessage: z.string().optional(),
@@ -212,6 +213,7 @@ interface Product {
   metaDescription: string;
   metaKeywords: string;
   article: string;
+  currentOffer: boolean;
   sku: string;
   barcodeEAN: string;
   noStockMessage: string;
@@ -237,6 +239,7 @@ interface ProductFormValues {
   metaKeywords: string;
   article: string;
   sku: string;
+  currentOffer: boolean;
   barcodeEAN: string;
   noStockMessage: string;
   relatedProducts: string[];
@@ -298,6 +301,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       metaKeywords: "",
       article: "",
       sku: "",
+      currentOffer: false,
       barcodeEAN: "",
       noStockMessage: "",
       relatedProducts: [],
@@ -330,6 +334,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
         metaKeywords: product.metaKeywords,
         article: product.article,
         sku: product.sku,
+        currentOffer: product.currentOffer,
         barcodeEAN: product.barcodeEAN,
         noStockMessage: product.noStockMessage,
         relatedProducts: product.relatedProducts.map((product) => product._id),
@@ -456,6 +461,8 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           }
         } else if (value !== undefined && value !== null) {
           formData.append(key, value.toString());
+        } else if (key === "currentOffer") {
+          formData.append("currentOffers", value ? "true" : "false");
         }
       }
 
@@ -1000,6 +1007,30 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="currentOffer"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Current Offers
+                        </FormLabel>
+                        <FormDescription>
+                          Display this product in current offers sections
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />  
+
 
                 <FormField
                   control={form.control}

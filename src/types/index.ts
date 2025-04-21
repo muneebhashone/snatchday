@@ -16,4 +16,11 @@ export interface Category {
       // ... other category fields
     }>;
   };
+}
+
+export interface TutorialFormData {
+  title: string;
+  videoUrl: string;
+  thumbnailUrl?: string;
+  order: number;
 } 
