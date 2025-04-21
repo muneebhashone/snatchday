@@ -39,6 +39,7 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
   
   // Update hooks
   const { mutate: updateFaq, isPending: isUpdating } = useUpdateFaq();
+  console.log(faqId,"faqId")
   
   // Fetch existing FAQ data if we're updating
   const { data: faqResponse, isLoading: isFetching } = useGetFaq({
