@@ -98,6 +98,11 @@ import {
   replyTicket,
   createTicket,
   deleteCustomer,
+  createFaq,
+  getFaq,
+  updateFaq,
+  deleteFaq,
+  FaqParams,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -108,6 +113,7 @@ import {
 import {
   CategoryFormData,
   CheckoutTypes,
+  FaqFormData,
   FilterFormData,
   PlaceOrder,
   ProductFormData,
@@ -903,3 +909,29 @@ export const useDeleteCustomer = () => {
   });
 };
 // customer delete end
+
+export const useCreateFaq = () => {
+  return useMutation({
+    mutationFn: (data: FaqFormData) => createFaq(data),
+  });
+};
+
+export const useGetFaq = (params: FaqParams) => {
+  return useQuery({
+    queryKey: ["faq", params],
+    queryFn: () => getFaq(params),
+  });
+};
+
+export const useUpdateFaq = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: FaqFormData }) =>
+      updateFaq(id, data),
+  });
+};
+
+export const useDeleteFaq = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteFaq(id),
+  });
+};

@@ -392,3 +392,11 @@ export interface MainProduct {
   barcodeEAN: string;
   data?: any;
 }
+
+export interface FaqFormData {
+  question: string;
+  answer: string;
+  category: string;
+  order: number;
+
+}

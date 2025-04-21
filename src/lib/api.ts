@@ -19,6 +19,7 @@ import {
   PlaceOrder,
   WebSetting,
   MainProduct,
+  FaqFormData
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -793,3 +794,36 @@ export const deleteCustomer = async (id: string) => {
   return response.data;
 };
 /// customer delete end
+
+export const createFaq = async(data:FaqFormData)=>{
+  const response=await axiosInstance.post('/web-settings/faq',data)
+  return response.data
+}
+
+export interface FaqParams {
+ 
+  category?: string;
+  status?: string;
+}
+
+export const getFaq = async(params:FaqParams)=>{
+  const response=await axiosInstance.get('/web-settings/faq',{params})
+  return response.data
+}
+
+export const updateFaq=async(id:string,data:FaqFormData)=>{
+  const response=await axiosInstance.put(`/web-settings/faq/${id}`,data)
+  return response.data
+}
+
+export const deleteFaq=async(id:string)=>{
+  const response=await axiosInstance.delete(`/web-settings/faq/${id}`)
+  return response.data
+}
+
+
+
+
+
+
+

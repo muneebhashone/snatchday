@@ -187,6 +187,22 @@ const navItems = [
     url: "/admin/tickets",
     icon: <Ticket className="h-4 w-4" />,
   },
+  {
+    title: "FAQ",
+   
+    icon: <Ticket className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All FAQ",
+        url: "/admin/faq",
+      },
+      {
+        title: "Create FAQ",
+        url: "/admin/faq/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
