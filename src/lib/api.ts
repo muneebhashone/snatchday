@@ -805,4 +805,9 @@ export const deleteCustomer = async (id: string) => {
   const response = await axiosInstance.delete(`/auth/account/${id}`);
   return response.data;
 };
+
+export const deleteUser = async (id: string) => {
+  const response = await axiosInstance.delete(`/auth/account/`);
+  return response.data;
+};
 /// customer delete end

@@ -100,6 +100,7 @@ import {
   createTicket,
   deleteCustomer,
   getWishList,
+  deleteUser,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -915,3 +916,12 @@ export const useDeleteCustomer = () => {
   });
 };
 // customer delete end
+
+
+export const  useDeleteUser = () => {
+  return useMutation({
+    mutationFn: deleteUser,
+  });
+};
+
+
