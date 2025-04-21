@@ -99,6 +99,7 @@ import {
   replyTicket,
   createTicket,
   deleteCustomer,
+  getWishList,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -770,14 +771,15 @@ export const useGetGamesPaths = () => {
 };
 
 // games api end
-export const useWishList = () => {
+export const useGetWishList = () => {
   return useQuery({
     queryKey: ["wishlist"],
-    queryFn: wishList,
+    queryFn: getWishList,
   });
 };
 
 export const useAddToWishList = () => {
+  
   return useMutation({
     mutationFn: (id: string) => addToWishList(id),
   });

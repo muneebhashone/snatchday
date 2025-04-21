@@ -663,7 +663,7 @@ export const getGamesPaths = async () => {
   return response.data;
 };
 // games api end
-export const wishList = async () => {
+export const getWishList = async () => {
   const response = await axiosInstance.get("/wishlist");
   return response.data;
 };

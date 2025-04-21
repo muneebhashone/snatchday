@@ -9,7 +9,7 @@ import {
   useAddToWishList,
   useGetCart,
   useUpdateCart,
-  useWishList,
+  useGetWishList,
 } from "@/hooks/api";
 import { QueryClient } from "@tanstack/react-query";
 import {
@@ -29,7 +29,7 @@ import { toast } from "sonner";
 const Page = () => {
   const { data: addToCartData, refetch: cartRefetch } = useGetCart();
   const { mutateAsync: updateCart } = useUpdateCart();
-  const { data: wishlist, refetch } = useWishList();
+  const { data: wishlist, refetch } = useGetWishList();
   const { mutate: addToWishList } = useAddToWishList();
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
   const { user } = useUserContext();
@@ -53,7 +53,7 @@ const Page = () => {
     });
   };
   const wishlistData = wishlist?.data.products;
-  console.log(wishlistData);
+  console.log(wishlistData,"wishlistData");
 
   const handleAddToCart = (_id) => {
     addToCart(_id as string, {
@@ -64,7 +64,7 @@ const Page = () => {
         refetch();
       },
       onError: (error) => {
-        toast.error("Failed to add to cart");
+        toast.error(error.response.data.message || "Failed to add to cart");
         console.error(error);
       },
     });
@@ -112,7 +112,7 @@ const Page = () => {
             <div className="p-4 hidden md:block">Price</div>
             <div className="p-4 hidden md:block">Actions</div>
           </div>
-          {wishlistData &&
+          {wishlistData?.length > 0 ? (
             wishlistData.map((whishlistItem, i) => (
               <div
                 key={i}
@@ -122,8 +122,8 @@ const Page = () => {
                   <Image
                     src={whishlistItem.images[0]}
                     alt={whishlistItem.name}
-                    width={120}
-                    height={120}
+                    width={50}
+                    height={50}
                     className="object-contain"
                   />
                 </div>
@@ -178,7 +178,8 @@ const Page = () => {
                             }
                           />
                         </div>
-                      ) : user ? (
+                      ) : 
+                      <>
                         <button
                           onClick={() => handleAddToCart(whishlistItem._id)}
                           disabled={isAddToCartPending}
@@ -186,11 +187,10 @@ const Page = () => {
                         >
                           {isAddToCartPending ? "adding..." : "Add to Cart"}
                         </button>
-                      ) : (
-                        <Button className="bg-transparent">
-                          <Login addToCart={true} smallAddtoCart={true} />
-                        </Button>
-                      )}
+                         
+                        
+                        </>
+                      }
                     </div>
                   </div>
                   <Button
@@ -203,7 +203,12 @@ const Page = () => {
                   </Button>
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="p-4 text-center">
+              <p className="text-muted-foreground">No items in wishlist</p>
+            </div>
+          )}
         </div>
       </div>
     </ClientLayout>

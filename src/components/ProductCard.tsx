@@ -18,7 +18,7 @@ import {
 } from "./ui/tooltip";
 import { Button } from "./ui/button";
 import Login from "./auth/Login";
-import { useAddToCart, useGetCart, useUpdateCart, useAddToWishList } from "@/hooks/api";
+import { useAddToCart, useGetCart, useUpdateCart, useAddToWishList, useGetWishList } from "@/hooks/api";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import { QueryClient } from "@tanstack/react-query";
@@ -39,19 +39,27 @@ const ProductCard = ({
   const { data: addToCartData, refetch } = useGetCart();
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
   const { mutateAsync: updateCart } = useUpdateCart();
-  const { setCartCount } = useCart();
+  const { refetch: refetchWishlist } = useGetWishList();
   const { mutate: addToWishList } = useAddToWishList();
   const queryClient = new QueryClient();
   const { user } = useUserContext();
+  const { data: wishlist } = useGetWishList();
+
+
+
+  const isWishListed = (productId: string) => {
+    return wishlist?.data?.products?.some((item) => item._id === productId);
+  };
+
 
   const handleWishList = (id: string) => {
     addToWishList(id, {
       onSuccess: () => {
-        toast.success("product added to wishlist");
+        toast.success(isWishListed(id) ? "Product removed from wishlist" : "Product added to wishlist");
+        refetchWishlist()
       },
       onError: (error) => {
-        toast.error("Failed to add to wishlist");
-        console.error(error);
+        toast.error(error.response.data.message || "Failed to add to wishlist");
       },
     });
   };
@@ -65,7 +73,6 @@ const ProductCard = ({
     addToCart(_id as string, {
       onSuccess: () => {
         toast.success("product added to cart");
-        setCartCount((prevCount) => prevCount + 1);
         queryClient.invalidateQueries({ queryKey: ["cart"] });
         refetch();
       },
@@ -121,9 +128,26 @@ const ProductCard = ({
           <p className="text-xl text-card-foreground font-light line-clamp-1 overflow-hidden text-ellipsis">
             {name}
           </p>
-          <button onClick={() => handleWishList(_id)} className="rounded-full bg-[#F5F5F5] p-4 hover:bg-gray-100 transition-colors">
-            <Heart className="w-6 h-6 text-gray-400 hover:text-orange-500" />
-          </button>
+          <TooltipProvider>
+            <Tooltip delayDuration={100}>
+              <TooltipTrigger asChild>
+                <button onClick={() => handleWishList(_id)} className={`rounded-full ${isWishListed(_id) ? "bg-[#FF6B3D]" : "bg-[#F5F5F5]"} p-4 hover:bg-gray-100 transition-colors`}>
+                  {isWishListed(_id) ? (
+                    <Heart className="w-6 h-6 text-white" />
+                  ) : (
+                    <Heart className="w-6 h-6 text-gray-400 hover:text-orange-500" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-gray-700 text-white">
+                {isWishListed(_id) ? (
+                  <p>Remove from wishlist</p>
+                ) : (
+                  <p>Add to wishlist</p>
+                )}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Rating */}
