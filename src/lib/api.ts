@@ -771,9 +771,8 @@ export interface TicketParams {
 }
 
 export const getTickets = async (params: TicketParams) => {
-  const limit = 10;
   const response = await axiosInstance.get("/ticket", {
-    params: { limit, ...params },
+    params: { ...params },
   });
   return response.data;
 };

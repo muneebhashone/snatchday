@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import * as React from "react";
 import { VersionSwitcher } from "@/components/version-switcher";
 import {
@@ -37,7 +37,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AnnouncementIcon, ReturnIcon } from "./icons/icon";
 import { cn } from "@/lib/utils";
 

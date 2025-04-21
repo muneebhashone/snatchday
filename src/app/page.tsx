@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { motion, useScroll } from "framer-motion";
 import BestOffers from "@/components/landing-page/BestOffers";

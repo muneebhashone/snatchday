@@ -28,7 +28,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     logout(undefined, {
       onSuccess: () => {
         socket.emit("logout");
-        document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        document.cookie =
+          "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         localStorage.removeItem("snatchday_user");
 
         router.push("/admin/login");
