@@ -21,13 +21,11 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { Loader } from "lucide-react";
 import { YouTubePlayer } from "@/components/admin/YouTubePlayer";
 
-// Matched with the backend API requirements
 const tutorialFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   videoUrl: z.string().url("Please enter a valid YouTube URL"),
   thumbnailUrl: z.string().optional(),
-  order: z.coerce.number().int().positive(),
-
+  order: z.coerce.number().int().positive()
 });
 
 type TutorialFormValues = z.infer<typeof tutorialFormSchema>;
@@ -39,10 +37,7 @@ const EditTutorialPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [previewUrl, setPreviewUrl] = useState("");
 
-  // Fetch the existing tutorial data
   const { data: tutorialResponse } = useGetTutorial();
-
-  // Update tutorial hook
   const { mutate: updateTutorial, isPending } = useUpdateTutorial();
 
   const form = useForm<TutorialFormValues>({
@@ -51,22 +46,18 @@ const EditTutorialPage = () => {
       title: "",
       videoUrl: "",
       thumbnailUrl: "",
-      order: 1,
-    
+      order: 1
     },
   });
 
-  // Watch the video URL field to update the preview
   const videoUrl = form.watch("videoUrl");
   
-  // Update preview when video URL changes
   useEffect(() => {
     if (videoUrl && videoUrl.trim() !== "") {
       setPreviewUrl(videoUrl);
     }
   }, [videoUrl]);
 
-  // Populate form when data is loaded
   useEffect(() => {
     if (tutorialResponse?.data && tutorialId) {
       const tutorial = tutorialResponse.data.find(
@@ -78,8 +69,7 @@ const EditTutorialPage = () => {
           title: tutorial.title || "",
           videoUrl: tutorial.videoUrl || "",
           thumbnailUrl: tutorial.thumbnailUrl || "",
-          order: tutorial.order || 1,
-        
+          order: tutorial.order || 1
         };
         
         form.reset(formData);
@@ -122,99 +112,98 @@ const EditTutorialPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container mx-auto py-8">
-        <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-sm">
-          <h1 className="text-2xl font-bold mb-6">Edit Tutorial</h1>
-          
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Enter tutorial title" 
-                        {...field} 
-                        className="focus-visible:ring-primary"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="videoUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>YouTube Video URL</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="https://www.youtube.com/watch?v=..." 
-                        {...field} 
-                        className="focus-visible:ring-primary"
-                        onChange={(e) => {
-                          field.onChange(e);
-                          setPreviewUrl(e.target.value);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Video Preview */}
-              {previewUrl && (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Video Preview</p>
-                  <YouTubePlayer youtubeUrl={previewUrl} className="max-w-md" />
-                </div>
-              )}
-
-              <FormField
-                control={form.control}
-                name="order"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Display Order</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        placeholder="1" 
-                        {...field} 
-                        className="focus-visible:ring-primary w-32"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="mr-2"
-                  onClick={() => router.push("/admin/tutorial")}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader className="mr-2 h-4 w-4 animate-spin" />}
-                  Update Tutorial
-                </Button>
-              </div>
-            </form>
-          </Form>
+      <div className="py-6 max-w-full mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Edit Tutorial</h1>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.push("/admin/tutorial")}>
+              Discard
+            </Button>
+            <Button type="submit" form="tutorial-form" disabled={isPending}>
+              {isPending ? "Saving..." : "Save Tutorial"}
+            </Button>
+          </div>
         </div>
+
+        <Form {...form}>
+          <form id="tutorial-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Tutorial Information Section */}
+              <div className="bg-white rounded-lg border p-6 col-span-2">
+                <h2 className="text-lg font-semibold mb-6">Tutorial Information</h2>
+
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Tutorial title" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="videoUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>YouTube Video URL *</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="https://www.youtube.com/watch?v=..." 
+                            {...field}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              setPreviewUrl(e.target.value);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="order"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Display Order *</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="1"
+                            {...field}
+                            className="w-32"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Preview Section */}
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg border p-6">
+                  <h2 className="text-lg font-semibold mb-6">Preview</h2>
+                  {previewUrl && (
+                    <YouTubePlayer youtubeUrl={previewUrl} />
+                  )}
+                </div>
+              </div>
+            </div>
+          </form>
+        </Form>
       </div>
     </AdminLayout>
   );
 };
 
-export default EditTutorialPage; 
+export default EditTutorialPage;

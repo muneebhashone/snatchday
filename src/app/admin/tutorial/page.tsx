@@ -36,6 +36,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { YouTubePlayer } from '@/components/admin/YouTubePlayer'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const TutorialPage = () => {
   const [selectedTutorial, setSelectedTutorial] = useState<any>(null);
@@ -49,8 +55,14 @@ const TutorialPage = () => {
   const { mutate: deleteTutorial } = useDeleteTutorial()
 
   const handleDelete = (id: string) => {
-    setIsDeleting(true)
-    deleteTutorial(id, {
+    setSelectedTutorialId(id);
+  }
+
+  const confirmDelete = () => {
+    if (!selectedTutorialId) return;
+    
+    setIsDeleting(true);
+    deleteTutorial(selectedTutorialId, {
       onSuccess: () => {
         toast.success('Tutorial deleted successfully')
         refetch()
@@ -67,7 +79,7 @@ const TutorialPage = () => {
 
   return (
     <AdminLayout>
-      <div className="container mx-auto py-8">
+      <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Tutorials</h1>
           <Link href="/admin/tutorial/create">
@@ -78,10 +90,12 @@ const TutorialPage = () => {
           </Link>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="border rounded-md">
           {isLoading ? (
-            <div className="flex justify-center items-center p-10">
-              <Loader className="h-8 w-8 animate-spin text-primary" />
+            <div className="h-44">
+              <div className="flex items-center justify-center w-full h-full">
+                <Loader className="h-4 w-4 animate-spin text-primary" />
+              </div>
             </div>
           ) : !tutorialsResponse?.data || tutorialsResponse.data.length === 0 ? (
             <div className="text-center py-10 text-muted-foreground">
@@ -90,18 +104,18 @@ const TutorialPage = () => {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Order</TableHead>
-                  <TableHead>Preview</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Updated At</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                <TableRow className="bg-gray-50">
+                  <TableHead className="font-semibold">TITLE</TableHead>
+                  <TableHead className="font-semibold">ORDER</TableHead>
+                  <TableHead className="font-semibold">PREVIEW</TableHead>
+                  <TableHead className="font-semibold">CREATED AT</TableHead>
+                  <TableHead className="font-semibold">UPDATED AT</TableHead>
+                  <TableHead className="text-right font-semibold">ACTIONS</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {tutorialsResponse.data.map((tutorial) => (
-                  <TableRow key={tutorial._id}>
+                  <TableRow key={tutorial._id} className="hover:bg-gray-50">
                     <TableCell className="font-medium">{tutorial.title}</TableCell>
                     <TableCell>{tutorial.order || '-'}</TableCell>
                     <TableCell>
@@ -126,45 +140,60 @@ const TutorialPage = () => {
                     </TableCell>
                     <TableCell>{new Date(tutorial.createdAt).toLocaleDateString() || '-'}</TableCell>
                     <TableCell>{new Date(tutorial.updatedAt).toLocaleDateString() || '-'}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell>
                       <div className="flex justify-end gap-2">
-                        <Link href={`/admin/tutorial/edit/${tutorial._id}`}>
-                          <Button size="sm" variant="outline">
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button 
-                              size="sm" 
-                              variant="destructive"
-                              onClick={() => setSelectedTutorialId(tutorial._id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete the tutorial.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => tutorial._id && handleDelete(tutorial._id)}
-                                disabled={isDeleting}
-                              >
-                                {isDeleting && selectedTutorialId === tutorial._id ? (
-                                  <Loader className="h-4 w-4 mr-2 animate-spin" />
-                                ) : null}
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" asChild>
+                                <Link href={`/admin/tutorial/edit/${tutorial._id}`}>
+                                  <Pencil className="h-4 w-4" />
+                                </Link>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit Tutorial</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDelete(tutorial._id)}
+                                    disabled={isDeleting && selectedTutorialId === tutorial._id}
+                                  >
+                                    {isDeleting && selectedTutorialId === tutorial._id ? (
+                                      <Loader className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <Trash2 className="h-4 w-4" />
+                                    )}
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      This action cannot be undone. This will permanently delete the tutorial.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel onClick={() => setSelectedTutorialId(null)}>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Delete Tutorial</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </div>
                     </TableCell>
                   </TableRow>
