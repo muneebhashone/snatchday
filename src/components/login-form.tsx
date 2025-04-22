@@ -57,32 +57,58 @@ export function LoginForm({
 
   const { mutate: login, isPending } = useAuthApi();
 
+  const handleLogin = async (data: LoginFormValues) => {
+    try {
+      setIsRedirecting(true);
+      const res = await fetch('/api/v2/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+    });
+  
+    const response = await res.json();
+    if (res.ok) {
+      toast.success("Login successfully");
+      router.push("/admin/overview");
+      setUserData(response?.data);
+    } else {
+      toast.error(response.message || "Login failed");
+    }
+    } catch (error) {
+      toast.error("Login failed");
+    }
+    finally {
+      setIsRedirecting(false);
+    }
+  };
+
   const onSubmit = async (data: LoginFormValues) => {
-    setIsRedirecting(true);
-    login(
-      {
-        data: {
-          email: data.email,
-          password: data.password,
-        },
-        type: "login",
-      },
-      {
-        onSuccess: ({ data }) => {
-          socket.emit("join", data?.user?._id);
-          setUserData(data);
-          toast.success("Login successfully");
-          router.push("/admin");
-        },
-        onError: (error) => {
-          console.error("Login failed:", error);
-          toast.error("Login failed");
-        },
-        onSettled: () => {
-          setIsRedirecting(false);
-        },
-      }
-    );
+  
+     handleLogin(data);
+    // login(
+    //   {
+    //     data: {
+    //       email: data.email,
+    //       password: data.password,
+    //     },
+    //     type: "login",
+    //   },
+    //   {
+    //     onSuccess: ({ data }) => {
+    //       socket.emit("join", data?.user?._id);
+    //       setUserData(data);
+    //       toast.success("Login successfully");
+    //       router.push("/admin");
+    //     },
+    //     onError: (error) => {
+    //       console.error("Login failed:", error);
+    //       toast.error("Login failed");
+    //     },
+    //     onSettled: () => {
+    //       setIsRedirecting(false);
+    //     },
+    //   }
+    // );
   };
 
   return (
@@ -144,9 +170,9 @@ export function LoginForm({
                     <Button
                       type="submit"
                       className="w-full hover:bg-orange-500"
-                      disabled={isPending}
+                      disabled={isRedirecting}
                     >
-                      {isPending ? "Logging in..." : "Login"}
+                      {isRedirecting ? "Logging in..." : "Login"}
                     </Button>
                   </form>
                 </Form>
