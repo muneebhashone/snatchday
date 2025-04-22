@@ -19,20 +19,25 @@ import {
   PlaceOrder,
   WebSetting,
   MainProduct,
-  FaqFormData
+  FaqFormData,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
 import { group } from "console";
-
 
 export const fetchItems = async () => {
   const response = await axiosInstance.get("/items");
   return response.data;
 };
 
-export const VerifyEmail = async (email: string, emailVerificationToken: string) => {
-  const response = await axiosInstance.post("/auth/verifyEmail", { email, emailVerificationToken });
+export const VerifyEmail = async (
+  email: string,
+  emailVerificationToken: string
+) => {
+  const response = await axiosInstance.post("/auth/verifyEmail", {
+    email,
+    emailVerificationToken,
+  });
   return response.data;
 };
 
@@ -52,10 +57,11 @@ export const fetchItemById = async (id: string) => {
 };
 
 export const requestEmailToken = async (email: string) => {
-  const response = await axiosInstance.post("/auth/requestEmailToken", { email });
+  const response = await axiosInstance.post("/auth/requestEmailToken", {
+    email,
+  });
   return response.data;
 };
-
 
 export const authMutation = async (data: any, type: string) => {
   const response = await axiosInstance.post(`/auth/${type}`, data);
@@ -66,7 +72,6 @@ export const updatePassword = async (data) => {
   const response = await axiosInstance.put(`/auth/updatePassword`, data);
   return response.data;
 };
-
 
 // export const products = async () => {
 //   const response = await axiosInstance.post<ProductFormData>('/product/product');
@@ -163,7 +168,6 @@ export const cancelTournament = async (id: string) => {
 };
 
 export const manageTournament = async (data: TournamentFormData) => {
-  console.log(data, "data");
   const response = await axiosInstance.patch<ResponseTournament>(
     "/tournament/manage",
     data
@@ -228,7 +232,6 @@ export const subscribeNewsletter = async (email: string) => {
 
 export const getProductById = async (id: string) => {
   const response = await axiosInstance.get<ProductFormData>(`/product/${id}`);
-  // console.log(response.data, "response.data", id);
   return response.data;
 };
 
@@ -246,7 +249,6 @@ export const getCompareProducts = async () => {
 //Recommend Product
 export const RecommendProduct = async (data: IRecommendProduct) => {
   const response = await axiosInstance.post("/product/recommend", data);
-  console.log(response, "response from api recommend product");
   return response.data;
 };
 
@@ -262,7 +264,6 @@ export const NewsletterMail = async (data: {
   message: any;
   type: any;
 }) => {
-  // console.log(data, "data for newsletter mail");
   const response = await axiosInstance.post("newsletter/mail", data);
   return response.data;
 };
@@ -291,7 +292,6 @@ export const getCustomer = async (
       isApproved: isActive,
     },
   });
-  console.log(pageParams);
   return response.data;
 };
 
@@ -339,10 +339,9 @@ export const getOrders = async (pageParams, status, date, user) => {
       offset: pageParams,
       status,
       date,
-      user
+      user,
     },
   });
-  console.log(pageParams);
   return response.data;
 };
 
@@ -439,7 +438,6 @@ export const checkout = async (data: CheckoutTypes) => {
 };
 
 export const placeOrderApi = async (data: PlaceOrder) => {
-  console.log(data, "data from api");
   const response = await axiosInstance.post(`/order/order`, data);
   return response.data;
 };
@@ -565,7 +563,7 @@ export const updateCategory = async (id: string, data: FormData) => {
     data,
     {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     }
   );
@@ -619,7 +617,6 @@ export const updateReturnHistory = async (
   id: string,
   data: UpdateReturnTypes
 ) => {
-  console.log(data, id, "data from api");
   const response = await axiosInstance.put(`/return/${id}`, data);
   return response.data;
 };
@@ -734,25 +731,20 @@ export const ITScope = async (formData) => {
 };
 // IT Scope apiend
 
+export const getAddresses = async () => {
+  const response = await axiosInstance.get("/address");
+  return response.data;
+};
 
-export const getAddresses=async()=>{
-  const response=await axiosInstance.get('/address')
-  return response.data
-}
+export const createAddress = async (data) => {
+  const response = await axiosInstance.post("/address", data);
+  return response.data;
+};
 
-export const createAddress=async(data)=>{
-  const response=await axiosInstance.post('/address',data)
-  return response.data
-}
-
-export const deleteAddress=async(id:string)=>{
-  const response=await axiosInstance.delete(`/address/${id}`)
-  return response.data
-}
-
-
-
-
+export const deleteAddress = async (id: string) => {
+  const response = await axiosInstance.delete(`/address/${id}`);
+  return response.data;
+};
 
 export interface TicketFormData {
   email: string;
@@ -807,35 +799,60 @@ export const deleteCustomer = async (id: string) => {
 };
 /// customer delete end
 
-export const createFaq = async(data:FaqFormData)=>{
-  const response=await axiosInstance.post('/web-settings/faq',data)
-  return response.data
-}
+export const createFaq = async (data: FaqFormData) => {
+  const response = await axiosInstance.post("/web-settings/faq", data);
+  return response.data;
+};
 
 export interface FaqParams {
- 
   category?: string;
   status?: string;
 }
 
-export const getFaq = async(params:FaqParams)=>{
-  const response=await axiosInstance.get('/web-settings/faq',{params})
-  return response.data
-}
+export const getFaq = async (params: FaqParams) => {
+  const response = await axiosInstance.get("/web-settings/faq", { params });
+  return response.data;
+};
 
-export const updateFaq=async(id:string,data:FaqFormData)=>{
-  const response=await axiosInstance.put(`/web-settings/faq/${id}`,data)
-  return response.data
-}
+export const updateFaq = async (id: string, data: FaqFormData) => {
+  const response = await axiosInstance.put(`/web-settings/faq/${id}`, data);
+  return response.data;
+};
 
-export const deleteFaq=async(id:string)=>{
-  const response=await axiosInstance.delete(`/web-settings/faq/${id}`)
-  return response.data
-}
+export const deleteFaq = async (id: string) => {
+  const response = await axiosInstance.delete(`/web-settings/faq/${id}`);
+  return response.data;
+};
+//reviews api
 
+export const createReview = async (data) => {
+  const response = await axiosInstance.post("/review", data);
+  return response.data;
+};
 
+export const getReviews = async (params?: {
+  limit?: number;
+  offset?: number;
+  sort_attr?: string;
+  sort?: string;
+}) => {
+  const response = await axiosInstance.get("/review", { params });
+  return response.data;
+};
 
+export const getReviewById = async (id: string) => {
+  const response = await axiosInstance.get(`/review/${id}`);
+  return response.data;
+};
 
+export const updateReview = async (id: string, data: any) => {
+  const response = await axiosInstance.patch(`/review/${id}`, data);
+  return response.data;
+};
 
+export const deleteReview = async (id: string) => {
+  const response = await axiosInstance.delete(`/review/${id}`);
+  return response.data;
+};
 
-
+// reviews api end

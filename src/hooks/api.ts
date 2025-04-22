@@ -104,6 +104,11 @@ import {
   updateFaq,
   deleteFaq,
   FaqParams,
+  createReview,
+  getReviews,
+  getReviewById,
+  updateReview,
+  deleteReview,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -144,10 +149,6 @@ export const useLogout = () => {
   });
 };
 
-
-
-
-
 // Create a new item
 export const useAuthApi = () => {
   return useMutation({
@@ -182,16 +183,19 @@ export const useRegister = () => {
 
 export const useVerifyEmail = () => {
   return useMutation({
-    mutationFn: ({ email, emailVerificationToken }: { email: string; emailVerificationToken: string }) =>
-      VerifyEmail(email, emailVerificationToken),
+    mutationFn: ({
+      email,
+      emailVerificationToken,
+    }: {
+      email: string;
+      emailVerificationToken: string;
+    }) => VerifyEmail(email, emailVerificationToken),
   });
 };
 
-
 export const useRequestEmailToken = () => {
   return useMutation({
-    mutationFn: ({ email }: { email: string }) =>
-      requestEmailToken(email),
+    mutationFn: ({ email }: { email: string }) => requestEmailToken(email),
   });
 };
 
@@ -218,7 +222,7 @@ export const useCreateProduct = () => {
 
 export const useUpdatePassword = () => {
   return useMutation({
-    mutationFn: (data: {currentPassword: string; newPassword: string }) =>
+    mutationFn: (data: { currentPassword: string; newPassword: string }) =>
       updatePassword(data),
   });
 };
@@ -315,6 +319,20 @@ interface NewsletterFilters {
   price?: string;
 }
 
+export const useGetInfiniteProducts = (filters?: ProductFilters) => {
+  return useInfiniteQuery({
+    queryKey: ["products", filters],
+    queryFn: ({ pageParam = 0 }) =>
+      getProducts({ ...filters, offset: pageParam.toString() }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      console.log(lastPage, "lastPage");
+      const total = lastPage.data.total;
+      const currentOffset = allPages.length * 10;
+      return currentOffset >= total ? undefined : currentOffset;
+    },
+  });
+};
 export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
     queryKey: ["products", filters],
@@ -570,7 +588,7 @@ export const useGetOrders = (page, status, date, user) => {
   });
 };
 
-export const useGetOrderById = (id:string) => {
+export const useGetOrderById = (id: string) => {
   return useQuery({
     queryKey: ["order"],
     queryFn: () => getOrderById(id),
@@ -865,25 +883,23 @@ export const UseITScope = () => {
 };
 // IT Scope hook end
 
-export const useGetAddresses=()=>{
+export const useGetAddresses = () => {
   return useQuery({
-    queryKey:['addresses'],
-    queryFn:getAddresses
-  })
-}
-export const useCreateAddress=()=>{ 
+    queryKey: ["addresses"],
+    queryFn: getAddresses,
+  });
+};
+export const useCreateAddress = () => {
   return useMutation({
-    mutationFn:createAddress
-  })
-}
+    mutationFn: createAddress,
+  });
+};
 
-export const useDeleteAddress=()=>{
+export const useDeleteAddress = () => {
   return useMutation({
-    mutationFn: (id:string) => deleteAddress(id)
-  })
-}
-
-
+    mutationFn: (id: string) => deleteAddress(id),
+  });
+};
 
 export const useCreateTicket = () => {
   return useMutation({
@@ -945,3 +961,43 @@ export const useDeleteFaq = () => {
     mutationFn: (id: string) => deleteFaq(id),
   });
 };
+//reviews api
+export const useCreateReview = () => {
+  return useMutation({
+    mutationFn: createReview,
+  });
+};
+export const useGetReviews = (params?: {
+  limit?: number;
+  offset?: number;
+  sort_attr?: string;
+  sort?: string;
+}) => {
+  return useQuery({
+    queryKey: ["reviews", params],
+    queryFn: () => getReviews(params),
+  });
+};
+
+export const useGetReviewById = (id?: string) => {
+  return useQuery({
+    queryKey: ["review", id],
+    queryFn: () => getReviewById(id as string),
+    enabled: !!id,
+  });
+};
+
+export const useUpdateReview = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      updateReview(id, data),
+  });
+};
+
+export const useDeleteReview = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteReview(id),
+  });
+};
+
+//reviews api end

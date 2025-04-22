@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import React from "react";
+import { formatCurrency } from "@/lib/utils";
 
 const Page = () => {
   const params = useParams();
@@ -143,7 +144,7 @@ const Page = () => {
                         {item.quantity}
                       </TableCell>
                       <TableCell className="text-right">
-                        ${item.totalPrice}
+                        {formatCurrency(item.totalPrice)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -154,7 +155,7 @@ const Page = () => {
                       Subtotal:
                     </TableCell>
                     <TableCell className="text-right">
-                      ${order?.data.cartObject.subTotal}
+                      {formatCurrency(order?.data.cartObject.subTotal)}
                     </TableCell>
                   </TableRow>
                   <TableRow className="hover:bg-transparent">
@@ -162,7 +163,9 @@ const Page = () => {
                       Discount:
                     </TableCell>
                     <TableCell className="text-right">
-                      ${order?.data.cartObject.voucherDiscount || "00.00"}
+                      $
+                      {formatCurrency(order?.data.cartObject.voucherDiscount) ||
+                        "00.00"}
                     </TableCell>
                   </TableRow>
                   <TableRow className="hover:bg-transparent">
@@ -170,7 +173,7 @@ const Page = () => {
                       Tax:
                     </TableCell>
                     <TableCell className="text-right">
-                      ${order?.data.cartObject.vat}
+                      {formatCurrency(order?.data.cartObject.vat)}
                     </TableCell>
                   </TableRow>
                   <TableRow className="hover:bg-transparent">
@@ -178,7 +181,7 @@ const Page = () => {
                       Total:
                     </TableCell>
                     <TableCell className="text-right font-bold">
-                      ${order?.data.cartObject.total}
+                      {formatCurrency(order?.data.cartObject.total)}
                     </TableCell>
                   </TableRow>
                 </TableBody>

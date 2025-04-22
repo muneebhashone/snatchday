@@ -189,7 +189,7 @@ const AdminTicketTable = () => {
                         : "N/A"}
                     </TableCell>
                     <TableCell>{ticket.subject}</TableCell>
-                    <TableCell>#{ticket.ticketNo}</TableCell>
+                    <TableCell>{ticket.ticketNo}</TableCell>
                     <TableCell>{ticket.department}</TableCell>
                     <TableCell>{ticket.email}</TableCell>
                     <TableCell>

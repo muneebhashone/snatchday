@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useCreateTicket, useGetTicketById, useReplyTicket } from "@/hooks/api";
+import { useGetTicketById, useReplyTicket } from "@/hooks/api";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import ClientLayout from "@/components/landing-page/ClientLayout";
@@ -34,9 +34,6 @@ import {
   AlertCircle,
   Clock3,
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
   message: z.string().min(1, {

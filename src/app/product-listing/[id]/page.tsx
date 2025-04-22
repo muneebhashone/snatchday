@@ -42,6 +42,7 @@ const ProductContent = () => {
   const params = useParams();
   const id = params.id;
   const { data: productData, isLoading } = useGetProductById(id as string);
+  console.log(productData)
   const { data: tournaments, isLoading: isUpComingTournamentLoading } =
     useUpComingTournament();
 
@@ -80,18 +81,6 @@ const ProductContent = () => {
       return nextTournament._id !== id;
     }
   );
-
-  // <div className="relative">
-  {
-    /* <div className="text-lg font-semibold absolute top-[60vh] right-0 mr-2">
-      <div className="-rotate-90 flex flex-row items-center p-3 gap-2 rounded-t-3xl gradient-primary">
-        <div className="rotate-90">
-          <TournamentCup />
-        </div>
-        <h1 className="text-white">Visit Tournament</h1>
-      </div>
-    </div> */
-  }
   return (
     <ClientLayout>
       <div className="py-24 max-w-[1920px] mx-auto relative">
