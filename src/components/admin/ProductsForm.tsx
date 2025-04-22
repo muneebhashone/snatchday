@@ -43,6 +43,7 @@ import {
   imageInputProps,
 } from "@/lib/imageValidation";
 import Select2 from "react-select";
+import { CurrenOffers } from "@/lib/api";
 
 interface Category {
   _id: string;
@@ -79,6 +80,7 @@ const formSchema = z
     categoryIds: z.any(),
     type: z.enum(["NEW", "SALE"]),
     isFeatured: z.boolean(),
+    currentOffers: z.boolean(),
     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
     metaDescription: z.string().min(1, "Meta description cannot be empty"),
     metaKeywords: z.string().min(1, "Meta keywords cannot be empty"),
@@ -177,6 +179,7 @@ export default function ProductsForm() {
       metaKeywords: "",
       article: "",
       sku: "",
+      currentOffers: false,
       barcodeEAN: "",
       noStockMessage: "",
       relatedProducts: [],
@@ -270,6 +273,10 @@ export default function ProductsForm() {
         } else if (key === "relatedProducts") {
           const productIds = Array.isArray(value) ? value : [];
           formData.append("relatedProducts", JSON.stringify(productIds));
+        }else if (key === "currentOffers") {
+          formData.append("currentOffers", value ? "true" : "false");
+          console.log(value, "value");
+
         } else if (key === "discounts") {
           try {
             if (Array.isArray(value)) {
@@ -478,6 +485,28 @@ export default function ProductsForm() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="currentOffers"
+            render={({ field }) => (
+              <FormItem className="flex items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel>Current Offer</FormLabel>
+                  <FormDescription>
+                    Display this product in current offers section
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+         
           <FormField
             control={form.control}
             name="isFeatured"

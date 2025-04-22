@@ -33,6 +33,7 @@ import {
   RefreshCw,
   FileQuestionIcon,
   Star,
+  Book,
 } from "lucide-react";
 import {
   Collapsible,
@@ -207,6 +208,22 @@ const navItems = [
     title: "Reviews",
     url: "/admin/reviews",
     icon: <Star className="h-4 w-4" />,
+  },
+  {
+    title: "Tutorial",
+    icon: <Book className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Tutorial",
+        url: "/admin/tutorial",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Tutorial",
+        url: "/admin/tutorial/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
   },
 ];
 

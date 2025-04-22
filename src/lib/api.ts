@@ -20,6 +20,7 @@ import {
   WebSetting,
   MainProduct,
   FaqFormData,
+  TutorialFormData
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -824,6 +825,32 @@ export const deleteFaq = async (id: string) => {
   return response.data;
 };
 //reviews api
+export const createTutorial=async(data:TutorialFormData)=>{
+  const response=await axiosInstance.post('/web-settings/tutorial',data)
+  return response.data
+}
+
+export interface TutorialParams {
+  category?: string;
+  status?: string;
+}
+
+export const getTutorial=async(params?:TutorialParams)=>{
+  const response=await axiosInstance.get('/web-settings/tutorial', {params})
+  return response.data
+}
+
+export const updateTutorial=async(id:string,data:TutorialFormData)=>{
+  const response=await axiosInstance.put(`/web-settings/tutorial/${id}`,data)
+  return response.data
+}
+
+export const deleteTutorial=async(id:string)=>{
+  const response=await axiosInstance.delete(`/web-settings/tutorial/${id}`)
+  return response.data
+}
+
+
 
 export const createReview = async (data) => {
   const response = await axiosInstance.post("/review", data);
