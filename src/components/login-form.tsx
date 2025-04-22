@@ -30,6 +30,7 @@ import { useState } from "react";
 import Image from "next/image";
 import logo from "@/app/images/logo.png";
 import { useSocket } from "@/context/SocketContext";
+import { signIn } from "next-auth/react";
 // Form validation schema
 const loginFormSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -59,30 +60,42 @@ export function LoginForm({
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsRedirecting(true);
-    login(
-      {
-        data: {
-          email: data.email,
-          password: data.password,
-        },
-        type: "login",
-      },
-      {
-        onSuccess: ({ data }) => {
-          socket.emit("join", data?.user?._id);
-          setUserData(data);
-          toast.success("Login successfully");
-          router.push("/admin");
-        },
-        onError: (error) => {
-          console.error("Login failed:", error);
-          toast.error("Login failed");
-        },
-        onSettled: () => {
-          setIsRedirecting(false);
-        },
+    // login(
+    //   {
+    //     data: {
+    //       email: data.email,
+    //       password: data.password,
+    //     },
+    //     type: "login",
+    //   },
+    //   {
+    //     onSuccess: ({ data }) => {
+    //       socket.emit("join", data?.user?._id);
+    //       setUserData(data);
+    //       toast.success("Login successfully");
+    //       router.push("/admin");
+    //     },
+    //     onError: (error) => {
+    //       console.error("Login failed:", error);
+    //       toast.error("Login failed");
+    //     },
+    //     onSettled: () => {
+    //       setIsRedirecting(false);
+    //     },
+    //   }
+    // );
+    signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    }).then((res) => {
+      console.log(res, "res");
+      if(res?.ok) {
+        router.push("/admin/overview");
       }
-    );
+    }).catch((err) => {
+      console.log(err, "err");
+    });
   };
 
   return (

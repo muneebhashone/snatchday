@@ -17,7 +17,7 @@ import { useUserContext } from "@/context/userContext";
 import Image from "next/image";
 import { useSocket } from "@/context/SocketContext";
 import { useEffect } from "react";
-
+import { signOut } from "next-auth/react";
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const { mutate: logout, isPending } = useLogout();
@@ -26,12 +26,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
   const handleLogout = () => {
     logout(undefined, {
-      onSuccess: () => {
+      onSuccess: async () => {
         socket.emit("logout");
         document.cookie = "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         localStorage.removeItem("snatchday_user");
+        console.log("logging out");
+        await signOut();
 
-        router.push("/admin/login");
+        // router.push("/admin/login");
       },
       onError: (error) => {
         console.error("Logout failed:", error);
