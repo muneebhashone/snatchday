@@ -862,6 +862,7 @@ export const getReviews = async (params?: {
   offset?: number;
   sort_attr?: string;
   sort?: string;
+  product?: string;
 }) => {
   const response = await axiosInstance.get("/review", { params });
   return response.data;
@@ -883,3 +884,11 @@ export const deleteReview = async (id: string) => {
 };
 
 // reviews api end
+
+// top up api
+export const TopUp = async (data) => {
+  const response = await axiosInstance.post("/topup", data);
+  return response.data;
+};
+
+// top up api end

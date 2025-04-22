@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 import * as React from "react";
 import { VersionSwitcher } from "@/components/version-switcher";
 import {
@@ -41,7 +41,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useState } from "react";
-import { AnnouncementIcon, ReturnIcon } from "./icons/icon";
+import { AnnouncementIcon, SupportIcon } from "./icons/icon";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -160,68 +160,34 @@ const navItems = [
     url: "/admin/announcements",
     icon: <AnnouncementIcon />,
   },
-
   {
-    title: "Web Settings",
-
-    icon: <Settings className="h-4 w-4" />,
+    title: "Support",
+    icon: <SupportIcon />,
     subItems: [
       {
-        title: "All Web Settings",
+        title: "Web Settings",
         url: "/admin/web-settings",
-        icon: <List className="h-4 w-4" />,
+        icon: <Settings className="h-4 w-4" />,
       },
       {
-        title: "Create Web Setting",
-        url: "/admin/web-settings/create",
-        icon: <Plus className="h-4 w-4" />,
+        title: "Tickets",
+        url: "/admin/tickets",
+        icon: <Ticket className="h-4 w-4" />,
       },
-      // {
-      //   title: "Edit Web Setting",
-      //   url: "/admin/web-settings/edit",
-      //   icon: <List className="h-4 w-4" />,
-      // },
-    ],
-  },
-  {
-    title: "Tickets",
-    url: "/admin/tickets",
-    icon: <Ticket className="h-4 w-4" />,
-  },
-  {
-    title: "FAQ",
-
-    icon: <FileQuestionIcon className="h-4 w-4" />,
-    subItems: [
       {
-        title: "All FAQ",
+        title: "FAQ",
         url: "/admin/faq",
+        icon: <FileQuestionIcon className="h-4 w-4" />,
       },
       {
-        title: "Create FAQ",
-        url: "/admin/faq/create",
-        icon: <Plus className="h-4 w-4" />,
+        title: "Reviews",
+        url: "/admin/reviews",
+        icon: <Star className="h-4 w-4" />,
       },
-    ],
-  },
-  {
-    title: "Reviews",
-    url: "/admin/reviews",
-    icon: <Star className="h-4 w-4" />,
-  },
-  {
-    title: "Tutorial",
-    icon: <Book className="h-4 w-4" />,
-    subItems: [
       {
-        title: "All Tutorial",
+        title: "Tutorials",
         url: "/admin/tutorial",
-        icon: <List className="h-4 w-4" />,
-      },
-      {
-        title: "Create Tutorial",
-        url: "/admin/tutorial/create",
-        icon: <Plus className="h-4 w-4" />,
+        icon: <Book className="h-4 w-4" />,
       },
     ],
   },

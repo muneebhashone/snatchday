@@ -2,7 +2,6 @@
 import React, { useState, Suspense } from "react";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import ProductDetails from "@/components/products/ProductDetails";
-import graphiccard from "@/app/images/graphiccard.png";
 import NextTournamentCard from "@/components/NextTournamentCard";
 import FeaturedProductsCard from "@/components/FeaturedProductsCard";
 import TrainingCenter from "@/components/landing-page/TrainingCenter";

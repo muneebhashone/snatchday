@@ -113,7 +113,8 @@ import {
   getTutorial,
   updateTutorial,
   TutorialParams,
-  deleteTutorial
+  deleteTutorial,
+  TopUp,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -978,10 +979,30 @@ export const useGetReviews = (params?: {
   offset?: number;
   sort_attr?: string;
   sort?: string;
+  productId?: string;
 }) => {
   return useQuery({
     queryKey: ["reviews", params],
     queryFn: () => getReviews(params),
+  });
+};
+export const useGetInfiniteReviews = (params?: {
+  limit?: number;
+  offset?: number;
+  sort_attr?: string;
+  sort?: string;
+  product?: string;
+}) => {
+  return useInfiniteQuery({
+    queryKey: ["reviews", params],
+    queryFn: ({ pageParam = 0 }) =>
+      getReviews({ ...params, offset: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const total = lastPage.data.total;
+      const currentOffset = allPages.length * 10;
+      return currentOffset >= total ? undefined : currentOffset;
+    },
   });
 };
 
@@ -1009,11 +1030,11 @@ export const useDeleteReview = () => {
 //reviews api end
 
 // tutorial api start
-export const useCreateTutorial=()=>{
+export const useCreateTutorial = () => {
   return useMutation({
-    mutationFn: (data:TutorialFormData) => createTutorial(data),
-  })
-}
+    mutationFn: (data: TutorialFormData) => createTutorial(data),
+  });
+};
 
 export const useGetTutorial = (params?: TutorialParams) => {
   return useQuery({
@@ -1022,16 +1043,23 @@ export const useGetTutorial = (params?: TutorialParams) => {
   });
 };
 
-export const useUpdateTutorial=()=>{
+export const useUpdateTutorial = () => {
   return useMutation({
-    mutationFn: ({id,data}:{id:string,data:TutorialFormData}) => updateTutorial(id,data),
-  })
-}
+    mutationFn: ({ id, data }: { id: string; data: TutorialFormData }) =>
+      updateTutorial(id, data),
+  });
+};
 
-export const useDeleteTutorial=()=>{
+export const useDeleteTutorial = () => {
   return useMutation({
-    mutationFn: (id:string) => deleteTutorial(id),
-  })
-}
+    mutationFn: (id: string) => deleteTutorial(id),
+  });
+};
 
-
+// top up api
+export const useTopUp = () => {
+  return useMutation({
+    mutationFn: TopUp,
+  });
+};
+// top up api end

@@ -1592,25 +1592,39 @@ export const ShareIcon = () => {
 export const AnnouncementIcon = () => {
   return (
     <svg
-      width="30"
-      height="30"
-      viewBox="0 0 24 24"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 64 64"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
     >
-      <path d="M3 10V14H6L12 18V6L6 10H3Z" fill="currentColor" />
-      <path
-        d="M16 9C17.66 9 19 10.34 19 12C19 13.66 17.66 15 16 15"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M19 6C21.76 6 24 8.24 24 11C24 13.76 21.76 16 19 16"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="M6 28c0-6.627 5.373-12 12-12h8l14-10v44L26 40h-8c-6.627 0-12-5.373-12-12z" />
+      <path d="M26 40v6a6 6 0 1 1-12 0v-6" />
+      <path d="M50 14l10-10" />
+      <path d="M52 24h12" />
+      <path d="M50 34l10 10" />
+    </svg>
+  );
+};
+export const SupportIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 64 64"
+      width="20"
+      height="20"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M12 32C12 18.75 23.75 7 37 7C50.25 7 62 18.75 62 32V44C62 46.21 60.21 48 58 48H54C52.9 48 52 47.1 52 46V34C52 32.9 52.9 32 54 32H58C58 21.42 48.58 12 37 12C25.42 12 16 21.42 16 32H20C21.1 32 22 32.9 22 34V46C22 47.1 21.1 48 20 48H16C13.79 48 12 46.21 12 44V32Z" />
+
+      <rect x="14" y="34" width="6" height="14" rx="2" />
+      <rect x="44" y="34" width="6" height="14" rx="2" />
     </svg>
   );
 };

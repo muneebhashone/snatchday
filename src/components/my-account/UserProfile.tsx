@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Loader2, User, X } from "lucide-react";
+import { Loader, Loader2, User, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,7 @@ import {
   useGetMyProfile,
   useMyAccountGames,
   useUpdateProfile,
+  useTopUp,
 } from "@/hooks/api";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -47,8 +48,11 @@ const profileSchema = z.object({
 });
 
 const UserProfile = () => {
+  const [amount, setAmount] = useState<string | undefined>();
+  const [amountError, setAmountError] = useState<boolean>(false);
+  const { mutateAsync: topUp, isPending: isTopUpPending } = useTopUp();
   const { data: myAccountGame } = useMyAccountGames();
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false)
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const { user, setUserData } = useUserContext();
   const {
     register,
@@ -122,6 +126,50 @@ const UserProfile = () => {
     }
   }, [myProfile, reset]);
 
+  const handleTopUp = () => {
+    if (!amount || parseFloat(amount) < 1) {
+      toast.error("Amount must be greater than 0");
+      return;
+    }
+
+    topUp(
+      { amount },
+      {
+        onSuccess: (data) => {
+          toast.success("Top up successful");
+          setAmount("");
+          setAmountError(false);
+          data?.data?.checkoutUrl &&
+            (window.location.href = data?.data?.checkoutUrl);
+        },
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Something went wrong");
+          setAmountError(true);
+        },
+      }
+    );
+  };
+
+  // const handleTopUp = () => {
+  //   // if (!amount) {
+  //   //   toast.error("Amount is required");
+  //   //   setAmount("0.00");
+  //   //   return;
+  //   // }
+  //   topUp(
+  //     { amount },
+  //     {
+  //       onSuccess: (data: any) => {
+  //         toast.success("Top up successful");
+  //         setAmount(undefined);
+  //       },
+  //       onError: (error: any) => {
+  //         toast.error(error.response.data.message || "Something went wrong");
+  //         setAmount("0.00");
+  //       },
+  //     }
+  //   );
+  // };
   return (
     <>
       {isLoading ? (
@@ -192,7 +240,9 @@ const UserProfile = () => {
                 <div className="flex-1 space-y-6">
                   <div className="flex items-center gap-2">
                     <span className="text-xl font-semibold capitalize ">
-                      {myProfile?.data?.user?.role === "admin" ? myProfile?.data?.user?.name : myProfile?.data?.user?.username || "N/A"}
+                      {myProfile?.data?.user?.role === "admin"
+                        ? myProfile?.data?.user?.name
+                        : myProfile?.data?.user?.username || "N/A"}
                     </span>
                   </div>
 
@@ -384,7 +434,11 @@ const UserProfile = () => {
                       <h3 className="text-xl font-semibold text-foreground mb-4">
                         Recharge Credit
                       </h3>
-                      <div className="flex items-end gap-4">
+                      <div
+                        className={`flex gap-4 ${
+                          amountError ? "items-center" : "items-end"
+                        }`}
+                      >
                         <div className="flex-1">
                           <Label
                             htmlFor="recharge-amount"
@@ -392,18 +446,38 @@ const UserProfile = () => {
                           >
                             Amount *
                           </Label>
-                          <Select>
+                          <Select
+                            onValueChange={setAmount}
+                            defaultValue={amount}
+                            value={amount}
+                          >
                             <SelectTrigger>
-                              <SelectValue placeholder="5.00" />
+                              <SelectValue placeholder="0.00 €" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="5">5.00 €</SelectItem>
-                              <SelectItem value="10">10.00 €</SelectItem>
-                              <SelectItem value="20">20.00 €</SelectItem>
+                              <SelectItem value="5.00">5.00 €</SelectItem>
+                              <SelectItem value="10.00">10.00 €</SelectItem>
+                              <SelectItem value="20.00">20.00 €</SelectItem>
+                              <SelectItem value="30.00">30.00 €</SelectItem>
+                              <SelectItem value="40.00">40.00 €</SelectItem>
+                              <SelectItem value="50.00">50.00 €</SelectItem>
                             </SelectContent>
+                            <div>
+                              {amountError && (
+                                <p className="text-red-500 text-sm">
+                                  Amount must be greater than 0
+                                </p>
+                              )}
+                            </div>
                           </Select>
                         </div>
-                        <Button className="bg-primary">CHECKOUT</Button>
+                        <Button onClick={handleTopUp} className="bg-primary">
+                          {isTopUpPending ? (
+                            <Loader className="animate-spin" />
+                          ) : (
+                            "CHECKOUT"
+                          )}
+                        </Button>
                       </div>
                     </div>
 
@@ -685,9 +759,13 @@ const UserProfile = () => {
                         {" "}
                         {isPending ? "Saving..." : "SAVE"}
                       </Button>
-                      <Button variant="outline" onClick={() => setIsPasswordModalOpen(true)}>
-            CHANGE PASSWORD
-          </Button>                      <Button variant="destructive">DELETE ACCOUNT</Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsPasswordModalOpen(true)}
+                      >
+                        CHANGE PASSWORD
+                      </Button>{" "}
+                      <Button variant="destructive">DELETE ACCOUNT</Button>
                     </div>
                   </form>
                 </TabsContent>
@@ -696,14 +774,14 @@ const UserProfile = () => {
                 <TabsContent value="tickets" className="mt-6">
                   <div className="text-center text-gray-500">
                     <TicketTable />
-                   
                   </div>
                 </TabsContent>
               </Tabs>
             </div>
-            <ChangePasswordModal isOpen={isPasswordModalOpen} setIsOpen={setIsPasswordModalOpen} />
-          
-      
+            <ChangePasswordModal
+              isOpen={isPasswordModalOpen}
+              setIsOpen={setIsPasswordModalOpen}
+            />
           </div>
         </>
       )}

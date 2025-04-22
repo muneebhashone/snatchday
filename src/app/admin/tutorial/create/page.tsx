@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { YouTubePlayer } from "@/components/admin/YouTubePlayer";
 import AdminLayout from "@/components/admin/AdminLayout";
-
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 const tutorialFormSchema = z.object({
   title: z.string().min(1, "Title is required"),
   videoUrl: z.string().url("Please enter a valid YouTube URL"),
@@ -66,6 +66,10 @@ const CreateTutorialPage = () => {
 
   return (
     <AdminLayout>
+      <AdminBreadcrumb
+        items={[{ title: "Tutorials", href: "/admin/tutorial" }]}
+        title="Create New Tutorial"
+      />
       <div className="py-6 max-w-full mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Create New Tutorial</h1>

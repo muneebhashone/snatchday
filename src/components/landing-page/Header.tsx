@@ -434,7 +434,7 @@ const Header = () => {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
-                      {myprofile?.data?.wallet?.snapPoints / 100}€
+                      {myprofile?.data?.wallet?.snapPoints / 10}€
                     </span>
                   </div>
                 </div>
@@ -449,7 +449,7 @@ const Header = () => {
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
-                      {myprofile?.data?.wallet?.discountPoints / 100}€
+                      {myprofile?.data?.wallet?.discountPoints / 10}€
                     </span>
                   </div>
                 </div>
