@@ -396,9 +396,6 @@ const PersonalStep = () => {
     formState: { errors },
   } = useFormContext<PersonalStepData>();
 
-  const handleMonthChange = (date: Date) => {
-    console.log(date, "date");
-  };
 
   return (
     <div>
@@ -515,54 +512,36 @@ const PersonalStep = () => {
             name="personalInfo.dob"
             control={control}
             render={({ field }) => (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`h-20 w-full rounded-full text-lg pl-10 text-left justify-start ${
-                      field.value ? "text-foreground" : "text-[#A5A5A5]"
-                    }`}
-                  >
-                    {field.value
-                      ? format(field.value, "PPP")
-                      : "Select Date of Birth"}
-                    <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-auto p-0 min-w-[360px]"
-                  align="start"
-                >
-                  <Calendar
-  mode="single"
-  selected={field.value}
-  onSelect={field.onChange}
-  captionLayout="dropdown"
-  fromYear={1920}
-  toYear={new Date().getFullYear() - 18}
-  initialFocus
-  styles={{
-    caption_dropdowns: {
-      display: 'flex',
-      gap: '8px',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: '8px',
-    },
-    dropdown: {
-      padding: '6px 10px',
-      borderRadius: '6px',
-      border: '1px solid #ccc',
-      fontSize: '14px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-      outline: 'none',
-    },
-  }}
-/>
-
-                </PopoverContent>
-              </Popover>
+              <div className="flex flex-col w-full">
+                <Input
+                  type="date"
+                  {...field}
+                  className="h-20 rounded-full text-lg border  border-[#A5A5A5] text-[#A5A5A5] pl-10"
+                  value={
+                    field.value
+                      ? new Date(field.value).toISOString().split("T")[0]
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const date = e.target.value
+                      ? new Date(e.target.value)
+                      : null;
+                    field.onChange(date);
+                  }}
+                  max={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 18)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  } // max date = today - 18 years
+                />
+                {errors.personalInfo?.dob && (
+                  <span className="text-red-500 text-sm mt-1">
+                    {errors.personalInfo.dob.message}
+                  </span>
+                )}
+              </div>
             )}
           />
           {errors.personalInfo?.dob && (
@@ -640,6 +619,13 @@ const PersonalStep = () => {
                 <SelectContent>
                   <SelectItem value="USA">United States</SelectItem>
                   <SelectItem value="JP">Japan</SelectItem>
+                  <SelectItem value="DE">Germany</SelectItem>
+                  <SelectItem value="FR">France</SelectItem>
+                  <SelectItem value="IT">Italy</SelectItem>
+                  <SelectItem value="ES">Spain</SelectItem>
+                  <SelectItem value="GB">United Kingdom</SelectItem>
+                  <SelectItem value="CA">Canada</SelectItem>
+                  
                 </SelectContent>
               </Select>
             )}
@@ -735,7 +721,6 @@ const PersonalStep = () => {
 //     </div>
 //   );
 // }
-
 
 const Register = ({ onBack }: RegisterProps) => {
   const [isOpen, setIsOpen] = useState(true);
