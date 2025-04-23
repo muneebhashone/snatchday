@@ -104,11 +104,17 @@ import {
   updateFaq,
   deleteFaq,
   FaqParams,
+  createReview,
+  getReviews,
+  getReviewById,
+  updateReview,
+  deleteReview,
   createTutorial,
   getTutorial,
   updateTutorial,
   TutorialParams,
-  deleteTutorial
+  deleteTutorial,
+  TopUp,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -150,10 +156,6 @@ export const useLogout = () => {
   });
 };
 
-
-
-
-
 // Create a new item
 export const useAuthApi = () => {
   return useMutation({
@@ -188,16 +190,19 @@ export const useRegister = () => {
 
 export const useVerifyEmail = () => {
   return useMutation({
-    mutationFn: ({ email, emailVerificationToken }: { email: string; emailVerificationToken: string }) =>
-      VerifyEmail(email, emailVerificationToken),
+    mutationFn: ({
+      email,
+      emailVerificationToken,
+    }: {
+      email: string;
+      emailVerificationToken: string;
+    }) => VerifyEmail(email, emailVerificationToken),
   });
 };
 
-
 export const useRequestEmailToken = () => {
   return useMutation({
-    mutationFn: ({ email }: { email: string }) =>
-      requestEmailToken(email),
+    mutationFn: ({ email }: { email: string }) => requestEmailToken(email),
   });
 };
 
@@ -224,7 +229,7 @@ export const useCreateProduct = () => {
 
 export const useUpdatePassword = () => {
   return useMutation({
-    mutationFn: (data: {currentPassword: string; newPassword: string }) =>
+    mutationFn: (data: { currentPassword: string; newPassword: string }) =>
       updatePassword(data),
   });
 };
@@ -321,6 +326,20 @@ interface NewsletterFilters {
   price?: string;
 }
 
+export const useGetInfiniteProducts = (filters?: ProductFilters) => {
+  return useInfiniteQuery({
+    queryKey: ["products", filters],
+    queryFn: ({ pageParam = 0 }) =>
+      getProducts({ ...filters, offset: pageParam.toString() }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      console.log(lastPage, "lastPage");
+      const total = lastPage.data.total;
+      const currentOffset = allPages.length * 10;
+      return currentOffset >= total ? undefined : currentOffset;
+    },
+  });
+};
 export const useGetProducts = (filters?: ProductFilters) => {
   return useQuery({
     queryKey: ["products", filters],
@@ -576,7 +595,7 @@ export const useGetOrders = (page, status, date, user) => {
   });
 };
 
-export const useGetOrderById = (id:string) => {
+export const useGetOrderById = (id: string) => {
   return useQuery({
     queryKey: ["order"],
     queryFn: () => getOrderById(id),
@@ -871,25 +890,23 @@ export const UseITScope = () => {
 };
 // IT Scope hook end
 
-export const useGetAddresses=()=>{
+export const useGetAddresses = () => {
   return useQuery({
-    queryKey:['addresses'],
-    queryFn:getAddresses
-  })
-}
-export const useCreateAddress=()=>{ 
+    queryKey: ["addresses"],
+    queryFn: getAddresses,
+  });
+};
+export const useCreateAddress = () => {
   return useMutation({
-    mutationFn:createAddress
-  })
-}
+    mutationFn: createAddress,
+  });
+};
 
-export const useDeleteAddress=()=>{
+export const useDeleteAddress = () => {
   return useMutation({
-    mutationFn: (id:string) => deleteAddress(id)
-  })
-}
-
-
+    mutationFn: (id: string) => deleteAddress(id),
+  });
+};
 
 export const useCreateTicket = () => {
   return useMutation({
@@ -951,13 +968,73 @@ export const useDeleteFaq = () => {
     mutationFn: (id: string) => deleteFaq(id),
   });
 };
+//reviews api
+export const useCreateReview = () => {
+  return useMutation({
+    mutationFn: createReview,
+  });
+};
+export const useGetReviews = (params?: {
+  limit?: number;
+  offset?: number;
+  sort_attr?: string;
+  sort?: string;
+  productId?: string;
+}) => {
+  return useQuery({
+    queryKey: ["reviews", params],
+    queryFn: () => getReviews(params),
+  });
+};
+export const useGetInfiniteReviews = (params?: {
+  limit?: number;
+  offset?: number;
+  sort_attr?: string;
+  sort?: string;
+  product?: string;
+}) => {
+  return useInfiniteQuery({
+    queryKey: ["reviews", params],
+    queryFn: ({ pageParam = 0 }) =>
+      getReviews({ ...params, offset: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      const total = lastPage.data.total;
+      const currentOffset = allPages.length * 10;
+      return currentOffset >= total ? undefined : currentOffset;
+    },
+  });
+};
+
+export const useGetReviewById = (id?: string) => {
+  return useQuery({
+    queryKey: ["review", id],
+    queryFn: () => getReviewById(id as string),
+    enabled: !!id,
+  });
+};
+
+export const useUpdateReview = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      updateReview(id, data),
+  });
+};
+
+export const useDeleteReview = () => {
+  return useMutation({
+    mutationFn: (id: string) => deleteReview(id),
+  });
+};
+
+//reviews api end
 
 // tutorial api start
-export const useCreateTutorial=()=>{
+export const useCreateTutorial = () => {
   return useMutation({
-    mutationFn: (data:TutorialFormData) => createTutorial(data),
-  })
-}
+    mutationFn: (data: TutorialFormData) => createTutorial(data),
+  });
+};
 
 export const useGetTutorial = (params?: TutorialParams) => {
   return useQuery({
@@ -966,16 +1043,23 @@ export const useGetTutorial = (params?: TutorialParams) => {
   });
 };
 
-export const useUpdateTutorial=()=>{
+export const useUpdateTutorial = () => {
   return useMutation({
-    mutationFn: ({id,data}:{id:string,data:TutorialFormData}) => updateTutorial(id,data),
-  })
-}
+    mutationFn: ({ id, data }: { id: string; data: TutorialFormData }) =>
+      updateTutorial(id, data),
+  });
+};
 
-export const useDeleteTutorial=()=>{
+export const useDeleteTutorial = () => {
   return useMutation({
-    mutationFn: (id:string) => deleteTutorial(id),
-  })
-}
+    mutationFn: (id: string) => deleteTutorial(id),
+  });
+};
 
-
+// top up api
+export const useTopUp = () => {
+  return useMutation({
+    mutationFn: TopUp,
+  });
+};
+// top up api end

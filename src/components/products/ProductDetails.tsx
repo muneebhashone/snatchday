@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import {
   Heart,
@@ -29,6 +29,8 @@ import {
   useCompareProducts,
   useGetCart,
   useGetCompareProducts,
+  useGetInfiniteReviews,
+  useGetReviews,
   useUpdateCart,
   useWishList,
 } from "@/hooks/api";
@@ -106,6 +108,14 @@ const ProductDetails = ({
   isLoading,
   noStockMessage,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
+  const { id } = useParams();
+  const {
+    data: getReviews,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetInfiniteReviews({ product: id as string, limit: 10 });
+  console.log(getReviews, "getReviews");
   const { data: addToCartData, refetch } = useGetCart();
   const { mutateAsync: updateCart } = useUpdateCart();
   const [isOpen, setIsOpen] = useState(false);
@@ -122,6 +132,13 @@ const ProductDetails = ({
   const { data, refetch: refetchWishlist } = useWishList();
   const { mutate: addToWishList } = useAddToWishList();
   const { user } = useUserContext();
+  const [reviewsData, setReviewsData] = useState<any>([]);
+  console.log(reviewsData, "reviewsData");
+  useEffect(() => {
+    if (getReviews) {
+      setReviewsData(getReviews.pages.flatMap((page) => page.data.reviews));
+    }
+  }, [getReviews]);
   // const handleIncrement = () => {
   //   setQuantity((prev) => prev + 1);
   // };
@@ -131,6 +148,21 @@ const ProductDetails = ({
   //     setQuantity((prev) => prev - 1);
   //   }
   // };
+
+  const refDiv = useRef<HTMLDivElement>(null);
+  const handleScroll = () => {
+    if (refDiv.current) {
+      console.log(refDiv.current.scrollHeight, "refDiv");
+      console.log(refDiv.current.scrollTop, "refDiv");
+      console.log(refDiv.current.clientHeight, "refDiv");
+      if (
+        refDiv.current.scrollTop + refDiv.current.clientHeight >=
+        refDiv.current.scrollHeight
+      ) {
+        fetchNextPage();
+      }
+    }
+  };
 
   if (isLoading) {
     return (
@@ -237,7 +269,7 @@ const ProductDetails = ({
                 alt="Product"
                 width={500}
                 height={500}
-                className="w-full h-auto object-contain"
+                className="w-full h-[500px] object-contain"
               />
             </div>
             <Separator className="my-5" />
@@ -289,8 +321,23 @@ const ProductDetails = ({
 
             {/* Rating */}
             <div className="flex items-center gap-1">
-              <div className="flex text-primary text-2xl">{"★".repeat(4)}</div>
-              <span className="text-sm text-gray-500">({4})</span>
+              <div className="flex text-primary text-2xl">
+                {Array.from({ length: 5 }, (_, index) => (
+                  <span
+                    key={index}
+                    className={
+                      index < reviewsData[0]?.product?.rating?.average
+                        ? "text-primary"
+                        : "text-gray-300"
+                    }
+                  >
+                    {"★"}
+                  </span>
+                ))}
+              </div>
+              <span className="text-sm text-gray-500">
+                ({reviewsData[0]?.product?.rating?.count || 0})
+              </span>
             </div>
 
             {/* Price */}
@@ -459,7 +506,7 @@ const ProductDetails = ({
                             }
                           />
                         </div>
-                      ) : 
+                      ) : (
                         <button
                           onClick={handleAddToCart}
                           disabled={isAddToCartPending}
@@ -468,14 +515,13 @@ const ProductDetails = ({
                           <ShoppingCartIcon size={28} className="mr-2" />
                           {isAddToCartPending ? "adding..." : "Add to Cart"}
                         </button>
-}
+                      )}
                     </div>
                   </TooltipTrigger>
-                
-                    <TooltipContent className="bg-gray-700 text-white">
-                      <p>Click here  add to cart</p>
-                    </TooltipContent>
-              
+
+                  <TooltipContent className="bg-gray-700 text-white">
+                    <p>Click here add to cart</p>
+                  </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
               <button className="w-64 h-14 bg-white text-card-foreground shadow-xl flex items-center justify-center text-lg rounded-full hover:bg-gray-50">
@@ -635,12 +681,12 @@ const ProductDetails = ({
             >
               Characteristics
             </TabsTrigger>
-            {/* <TabsTrigger
-              value="description3"
+            <TabsTrigger
+              value="reviews"
               className="font-medium px-6 py-2 data-[state=active]:bg-[#FF6B3D] data-[state=active]:text-white data-[state=active]:shadow-none"
             >
-              Description
-            </TabsTrigger>  */}
+              Reviews
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="description1" className="py-8 px-16 border mt-0">
@@ -684,6 +730,82 @@ const ProductDetails = ({
             </div>
           </TabsContent>
 
+          <TabsContent value="reviews" className="py-8">
+            <div
+              ref={refDiv}
+              onScroll={handleScroll}
+              className="flex flex-col gap-4 h-80 overflow-y-auto custom-scroll-new px-5"
+            >
+              <table className="w-full border-collapse">
+                <thead className="bg-gray-50 sticky top-0 z-10">
+                  <tr className="text-left border-b border-gray-200">
+                    <th className="py-3 px-4 font-semibold text-sm text-gray-600">
+                      No.
+                    </th>
+                    <th className="py-3 px-4 font-semibold text-sm text-gray-600">
+                      User
+                    </th>
+                    <th className="py-3 px-4 font-semibold text-sm text-gray-600">
+                      Rating
+                    </th>
+                    <th className="py-3 px-4 font-semibold text-sm text-gray-600">
+                      Comment
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reviewsData.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="py-8 text-center text-gray-500"
+                      >
+                        No reviews available yet
+                      </td>
+                    </tr>
+                  ) : (
+                    reviewsData.map((data, i) => (
+                      <tr
+                        key={i}
+                        className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="py-4 px-4 text-gray-700">{i + 1}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{data.userName}</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex text-primary text-lg">
+                            {Array.from({ length: 5 }, (_, index) => (
+                              <span
+                                key={index}
+                                className={
+                                  index < data.rating
+                                    ? "text-primary"
+                                    : "text-gray-300"
+                                }
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-gray-700">
+                          <p className="line-clamp-2">{data.comment}</p>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+              {isFetchingNextPage && (
+                <div className="py-4 flex justify-center">
+                  <Loader className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              )}
+            </div>
+          </TabsContent>
           {/* <TabsContent value="description3" className="py-8">
             <div className="grid grid-cols-2 gap-x-32">
               <div className="text-sm text-gray-600">

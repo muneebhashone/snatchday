@@ -214,11 +214,9 @@ const MainProduct = () => {
         if (validItems.length > 0) {
           formData.append(key, JSON.stringify(validItems));
         }
-      }
-      else if (key === "currentOffer") {
+      } else if (key === "currentOffer") {
         formData.append("currentOffer", value ? "true" : "false");
-      } 
-      else if (key === "attributes") {
+      } else if (key === "attributes") {
         // Convert attributes for API
         const attributesObject = Object.entries(selectedFilters).reduce(
           (acc: Record<string, string>, [key, value]) => {
@@ -614,6 +612,12 @@ const MainProduct = () => {
                   filtersArray={filtersArray}
                   selectedFilters={selectedFilters}
                   setSelectedFilters={setSelectedFilters}
+                />
+                <ProductDiscountField
+                  control={form.control}
+                  discountFields={discountFields}
+                  append={appendDiscount}
+                  remove={removeDiscount}
                 />
               </div>
             </div>
