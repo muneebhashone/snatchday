@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,13 +20,16 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useWithdrawl } from "@/hooks/api";
+import { useGetPoints, useWithdrawl } from "@/hooks/api";
 import { toast } from "sonner";
+import { ArrowRight, Loader } from "lucide-react";
 
 const formSchema = z
   .object({
     amount: z.number().min(1, "Amount is required"),
-    withdrawalMethod: z.enum(["transfer", "paypal"]).optional(),
+    withdrawalMethod: z.enum(["transfer", "paypal"], {
+      required_error: "Please select a withdrawal method",
+    }),
     // Transfer method fields
     bankDetails: z.object({
       bic: z.string().optional(),
@@ -35,6 +38,7 @@ const formSchema = z
       // PayPal method fields
       paypalEmail: z.string().optional(),
     }),
+    fee: z.number().optional(),
   })
   .refine(
     (data) => {
@@ -55,31 +59,9 @@ const formSchema = z
       path: ["withdrawalMethod"],
     }
   );
-//   .refine(
-//     (data) => {
-//       if (data.withdrawalMethod === "transfer") {
-//         return !!data.iban && !!data.accountName && !!data.bic;
-//       }
-//       return true;
-//     },
-//     {
-//       message: "Required fields are missing for the selected withdrawal method",
-//       path: ["iban", "accountName", "bic"],
-//     }
-//   ).refine(
-//     (data) => {
-//       if (data.withdrawalMethod === "paypal") {
-//         return !!data.paypalEmail;
-//       }
-//       return true;
-//     },
-//     {
-//       message: "Required fields are missing for the selected withdrawal method",
-//       path: ["paypalEmail"],
-//     }
-//   );
-
 const Withdrawl = () => {
+  const { data: getPoints } = useGetPoints();
+  const [Totalamount, setAmount] = useState(0);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -93,16 +75,28 @@ const Withdrawl = () => {
       },
     },
   });
+  console.log(getPoints);
 
   const withdrawalMethod = form.watch("withdrawalMethod");
+  const amount = form.watch("amount") || 0;
+
+  // Calculate fees
+  const paypalFee = withdrawalMethod === "paypal" ? 0.35 : 0;
+  const totalFee = getPoints?.data.platformFee + paypalFee;
+  const finalAmount = amount + totalFee;
 
   const { mutate: withdrawl, isPending } = useWithdrawl();
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const data = { ...values, withdrawalMethod: undefined };
-    if (withdrawalMethod === "transfer") {
+    if (!values.withdrawalMethod) {
+      toast.error("Please select a withdrawal method");
+      return;
+    }
+
+    const data = { ...values };
+    if (values.withdrawalMethod === "transfer") {
       data.bankDetails.paypalEmail = undefined;
     }
-    if (withdrawalMethod === "paypal") {
+    if (values.withdrawalMethod === "paypal") {
       data.bankDetails.bic = undefined;
       data.bankDetails.iban = undefined;
       data.bankDetails.accountName = undefined;
@@ -120,7 +114,6 @@ const Withdrawl = () => {
             paypalEmail: "",
           },
         });
-        form.setValue("withdrawalMethod", undefined);
       },
       onError: (error: any) => {
         toast.error(error.response.data.message || "Something went wrong");
@@ -136,29 +129,40 @@ const Withdrawl = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className="grid grid-cols-2 gap-5"
         >
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    placeholder="€0.00"
-                    {...field}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    onKeyDown={(e) => {
-                      if (e.key === "-") {
-                        e.preventDefault();
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div>
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Amount</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="€0.00"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                        setAmount(Number(field.value));
+                      }}
+                      onFocus={(e) => {
+                        e.target.select();
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <p className="text-sm text-muted-foreground flex justify-start items-center gap-2">
+              <div>Min: €{getPoints?.data.minWithdrawalAmount}</div>
+              <ArrowRight className="w-4 h-4" />
+              <div>Max: €{getPoints?.data.maxWithdrawalAmount}</div>
+            </p>
+          </div>
 
           <FormField
             control={form.control}
@@ -182,6 +186,15 @@ const Withdrawl = () => {
                   </SelectContent>
                 </Select>
                 <FormMessage />
+                <FormDescription>
+                  A transaction fee of €1.00 applies to all withdrawals.
+                  {withdrawalMethod === "paypal" && (
+                    <span className="text-primary">
+                      {" "}
+                      An additional PayPal fee of €0.35 will also be deducted.
+                    </span>
+                  )}
+                </FormDescription>
               </FormItem>
             )}
           />
@@ -252,8 +265,35 @@ const Withdrawl = () => {
           )}
 
           <div className="col-span-2 flex justify-end">
-            <Button type="submit">Submit Withdrawal</Button>
+            <Button
+              type="submit"
+              disabled={isPending || !withdrawalMethod || amount <= 0}
+            >
+              {isPending ? (
+                <Loader className="h-4 w-4 text-white animate-spin" />
+              ) : (
+                "Submit Withdrawal"
+              )}
+            </Button>
           </div>
+
+          {withdrawalMethod && amount > 0 && (
+            <div className="col-span-2">
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium">Summary:</span> Amount: €
+                {amount.toFixed(2)} +{" "}
+                {withdrawalMethod === "paypal"
+                  ? `Fees: €${totalFee.toFixed(
+                      2
+                    )} (€1.00 transaction + €0.35 PayPal)`
+                  : `Fee: €${getPoints?.data.platformFee.toFixed(2)}`}{" "}
+                ={" "}
+                <span className="font-bold">
+                  Final amount: €{finalAmount.toFixed(2)}
+                </span>
+              </p>
+            </div>
+          )}
         </form>
       </Form>
     </div>

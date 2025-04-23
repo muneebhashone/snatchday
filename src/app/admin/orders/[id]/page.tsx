@@ -87,7 +87,7 @@ const Page = () => {
                   <div className="flex flex-col items-end gap-2">
                     <Badge
                       variant="outline"
-                      className={getStatusColor(order?.data.status)}
+                      className={`capitalize ${getStatusColor(order?.data.status)}`}
                     >
                       {order?.data.status}
                     </Badge>

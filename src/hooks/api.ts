@@ -118,6 +118,7 @@ import {
   deleteTutorial,
   TopUp,
   Withdrawl,
+  PaymentHistory,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -812,7 +813,6 @@ export const useGetWishList = () => {
 };
 
 export const useAddToWishList = () => {
-  
   return useMutation({
     mutationFn: (id: string) => addToWishList(id),
   });
@@ -947,13 +947,11 @@ export const useDeleteCustomer = () => {
 };
 // customer delete end
 
-
-export const  useDeleteUser = () => {
+export const useDeleteUser = () => {
   return useMutation({
     mutationFn: deleteUser,
   });
 };
-
 
 export const useCreateFaq = () => {
   return useMutation({
@@ -1083,3 +1081,18 @@ export const useWithdrawl = () => {
   });
 };
 // withdrawl api end
+
+// payment history api
+export const usePaymentHistory = (params?: {
+  status?: string;
+  occurance?: string;
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+  offset?: number;
+}) => {
+  return useQuery({
+    queryKey: ["paymentHistory", params],
+    queryFn: () => PaymentHistory(params),
+  });
+};

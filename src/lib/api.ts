@@ -20,7 +20,7 @@ import {
   WebSetting,
   MainProduct,
   FaqFormData,
-  TutorialFormData
+  TutorialFormData,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -799,7 +799,7 @@ export const deleteCustomer = async (id: string) => {
   return response.data;
 };
 
-export const deleteUser = async (id: string) => {
+export const deleteUser = async () => {
   const response = await axiosInstance.delete(`/auth/account/`);
   return response.data;
 };
@@ -830,32 +830,35 @@ export const deleteFaq = async (id: string) => {
   return response.data;
 };
 //reviews api
-export const createTutorial=async(data:TutorialFormData)=>{
-  const response=await axiosInstance.post('/web-settings/tutorial',data)
-  return response.data
-}
+export const createTutorial = async (data: TutorialFormData) => {
+  const response = await axiosInstance.post("/web-settings/tutorial", data);
+  return response.data;
+};
 
 export interface TutorialParams {
   category?: string;
   status?: string;
 }
 
-export const getTutorial=async(params?:TutorialParams)=>{
-  const response=await axiosInstance.get('/web-settings/tutorial', {params})
-  return response.data
-}
+export const getTutorial = async (params?: TutorialParams) => {
+  const response = await axiosInstance.get("/web-settings/tutorial", {
+    params,
+  });
+  return response.data;
+};
 
-export const updateTutorial=async(id:string,data:TutorialFormData)=>{
-  const response=await axiosInstance.put(`/web-settings/tutorial/${id}`,data)
-  return response.data
-}
+export const updateTutorial = async (id: string, data: TutorialFormData) => {
+  const response = await axiosInstance.put(
+    `/web-settings/tutorial/${id}`,
+    data
+  );
+  return response.data;
+};
 
-export const deleteTutorial=async(id:string)=>{
-  const response=await axiosInstance.delete(`/web-settings/tutorial/${id}`)
-  return response.data
-}
-
-
+export const deleteTutorial = async (id: string) => {
+  const response = await axiosInstance.delete(`/web-settings/tutorial/${id}`);
+  return response.data;
+};
 
 export const createReview = async (data) => {
   const response = await axiosInstance.post("/review", data);
@@ -898,7 +901,6 @@ export const TopUp = async (data) => {
 
 // top up api end
 
-
 // withdrawl api
 export const Withdrawl = async (data) => {
   const response = await axiosInstance.post("/withdrawal", data);
@@ -906,11 +908,16 @@ export const Withdrawl = async (data) => {
 };
 // withdrawl api end
 
-
 // payment history api
-export const PaymentHistory = async () => {
-  const response = await axiosInstance.get("/payment-history");
+export const PaymentHistory = async (params?: {
+  status?: string;
+  occurance?: string;
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+  offset?: number;
+}) => {
+  const response = await axiosInstance.get("/payments", { params });
   return response.data;
 };
 // payment history api end
-
