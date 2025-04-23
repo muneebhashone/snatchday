@@ -208,12 +208,12 @@ const TicketTable = () => {
         </Table>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4">
+      <div className="flex flex-col sm:flex-row  justify-between items-center gap-4 mt-4">
         <div className="text-sm text-gray-500">
           Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, tickets?.data?.total || 0)} of {tickets?.data?.total || 0} entries
         </div>
-
-        <Pagination>
+        <div>
+        <Pagination >
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious 
@@ -257,6 +257,7 @@ const TicketTable = () => {
             </PaginationItem>
           </PaginationContent>
         </Pagination>
+        </div>
       </div>
     </div>
   );

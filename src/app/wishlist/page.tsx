@@ -179,9 +179,7 @@ const Page = () => {
                           }
                           <MinusCircle
                             className="text-red-600 cursor-pointer"
-                            aria-disabled={addToCartData?.data?.cart?.find(
-                              (pro) => pro.product._id === whishlistItem._id
-                            ).quantity === 1}
+                           
                             onClick={() =>
                               updateQuantity(
                                 whishlistItem._id,

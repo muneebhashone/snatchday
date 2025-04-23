@@ -57,7 +57,7 @@ const Login = ({
   const [isOtpOpen, setIsOtpOpen] = useState(false);
 
   const { user, setUserData, logout } = useUserContext();
-  const { data: myProfile, isPending: isMyProfilePending } = useGetMyProfile();
+  const { data: myProfile, isLoading: isMyProfilePending } = useGetMyProfile();
   const { mutate: Userlogout } = useLogout();
   const { mutate: requestEmailToken, isPending: isResending } =
     useRequestEmailToken();
@@ -196,16 +196,16 @@ const Login = ({
   }
 
 
-  if (myProfile?.data?.user?.username) {
+  if (user?.user) {
     return (
+      <>
+      {isMyProfilePending ? (
+        <Loader2 className="animate-spin" />
+      ) : (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
           <p className="text-lg font-medium text-card-foreground">
-            {isMyProfilePending ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              myProfile?.data?.user?.username || myProfile?.data?.user?.name
-            )}
+          {myProfile?.data?.user?.username || myProfile?.data?.user?.name}
           </p>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-36 mt-6">
@@ -229,6 +229,8 @@ const Login = ({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      )}
+      </>
     );
   }
   const handleResendVerification = (e: any) => {

@@ -59,6 +59,8 @@ const WebSettingEditForm = () => {
      },
   });
 
+  console.log(form?.formState?.errors,"errors")
+
 
 
 // Fetch the content data
