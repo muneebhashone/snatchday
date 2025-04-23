@@ -23,19 +23,26 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 const Page = () => {
   const { data: addToCartData, refetch: cartRefetch } = useGetCart();
   const { mutateAsync: updateCart } = useUpdateCart();
-  const { data: wishlist, refetch } = useGetWishList();
+  const { data: wishlist, refetch:wishlistRefetch } = useGetWishList();
   const { mutate: addToWishList } = useAddToWishList();
+
+  const [addtocartId,setAddtocartId] = useState<string>("")
+  const [removeWishlistId,setRemoveWishlistId] = useState<string>("")
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
   const { user } = useUserContext();
   const { setCartCount } = useCart();
   const queryClient = new QueryClient();
+
+
+
   const handleWishList = (id: string) => {
+    setRemoveWishlistId(id)
     addToWishList(id, {
       onSuccess: (res) => {
         console.log(res.data.message);
@@ -44,7 +51,8 @@ const Page = () => {
             res.data.message ? res.data.message : " product added to wishlist"
           }`
         );
-        refetch();
+        wishlistRefetch();
+        setRemoveWishlistId("")
       },
       onError: (error) => {
         toast.error("Failed to add to wishlist");
@@ -56,12 +64,15 @@ const Page = () => {
   console.log(wishlistData,"wishlistData");
 
   const handleAddToCart = (_id) => {
+    setAddtocartId(_id)
+
     addToCart(_id as string, {
       onSuccess: () => {
         toast.success("product added to cart");
-        setCartCount((prevCount) => prevCount + 1);
         queryClient.invalidateQueries({ queryKey: ["cart"] });
-        refetch();
+        setAddtocartId("")
+        cartRefetch()
+       
       },
       onError: (error) => {
         toast.error(error.response.data.message || "Failed to add to cart");
@@ -168,6 +179,9 @@ const Page = () => {
                           }
                           <MinusCircle
                             className="text-red-600 cursor-pointer"
+                            aria-disabled={addToCartData?.data?.cart?.find(
+                              (pro) => pro.product._id === whishlistItem._id
+                            ).quantity === 1}
                             onClick={() =>
                               updateQuantity(
                                 whishlistItem._id,
@@ -182,13 +196,12 @@ const Page = () => {
                       <>
                         <button
                           onClick={() => handleAddToCart(whishlistItem._id)}
-                          disabled={isAddToCartPending}
+                          disabled={addtocartId === whishlistItem._id && isAddToCartPending}
                           className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
                         >
-                          {isAddToCartPending ? "adding..." : "Add to Cart"}
+                          {addtocartId === whishlistItem._id && isAddToCartPending ? "Adding..." : "Add to Cart"}
                         </button>
-                         
-                        
+
                         </>
                       }
                     </div>
@@ -197,9 +210,10 @@ const Page = () => {
                     onClick={() => handleWishList(whishlistItem._id as string)}
                     variant="outline"
                     className="border-[#F47B42] text-[#F47B42] hover:bg-[#F47B42] hover:text-white w-max rounded-full h-7 px-6"
+                    disabled={removeWishlistId === whishlistItem._id}
                   >
                     <LucideHeartCrack />
-                    Remove
+                    {removeWishlistId === whishlistItem._id ? "Removing..." : "Remove"}
                   </Button>
                 </div>
               </div>

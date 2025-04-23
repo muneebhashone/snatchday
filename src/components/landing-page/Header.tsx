@@ -428,13 +428,17 @@ const Header = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Snap Points</span>
                     <span className="text-primary font-bold">
-                      {myprofile?.data?.wallet?.snapPoints}
+                      {myprofile?.data?.wallet?.snapPoints
+                        ? myprofile?.data?.wallet?.snapPoints
+                        : 0}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
-                      {myprofile?.data?.wallet?.snapPoints / 10}€
+                      {myprofile?.data?.wallet?.snapPoints
+                        ? myprofile?.data?.wallet?.snapPoints / 10
+                        : 0}€
                     </span>
                   </div>
                 </div>
@@ -443,13 +447,17 @@ const Header = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Discount Points</span>
                     <span className="text-primary font-bold">
-                      {myprofile?.data?.wallet?.discountPoints}
+                      {myprofile?.data?.wallet?.discountPoints
+                        ? myprofile?.data?.wallet?.discountPoints
+                        : 0}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
-                      {myprofile?.data?.wallet?.discountPoints / 10}€
+                      {myprofile?.data?.wallet?.discountPoints
+                        ? myprofile?.data?.wallet?.discountPoints / 10
+                        : 0}€
                     </span>
                   </div>
                 </div>

@@ -93,14 +93,11 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
     );
   };
 
-  // Calculate VAT based on adjusted subtotal
-  const calculateVAT = () => {
-    return (calculateAdjustedSubtotal() * (cart?.data?.vat || 0)) / 100;
-  };
+ 
 
   // Calculate final total
   const calculateTotal = () => {
-    return calculateAdjustedSubtotal() + calculateVAT();
+    return calculateAdjustedSubtotal();
   };
 
   // Handle cart quantity update
@@ -228,7 +225,6 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
       }
     )
   }
-console.log(cart,"cart")
 
   return (
     <div className="">
@@ -270,7 +266,7 @@ console.log(cart,"cart")
                               height={30}
                             />
                           </TableCell>
-                          <TableCell>{item?.product?.name}</TableCell>
+                          <TableCell className="max-w-[150px] truncate">{item?.product?.name}</TableCell>
                           <TableCell className="text-center">
                             <Button
                               onClick={() => handleUpdateCart(item?.product?._id, item.quantity - 1)}
