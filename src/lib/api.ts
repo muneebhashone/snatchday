@@ -662,7 +662,7 @@ export const getGamesPaths = async () => {
   return response.data;
 };
 // games api end
-export const wishList = async () => {
+export const getWishList = async () => {
   const response = await axiosInstance.get("/wishlist");
   return response.data;
 };
@@ -796,6 +796,11 @@ export const replyTicket = async (id: string, formData: FormData) => {
 /// customer delete
 export const deleteCustomer = async (id: string) => {
   const response = await axiosInstance.delete(`/auth/account/${id}`);
+  return response.data;
+};
+
+export const deleteUser = async (id: string) => {
+  const response = await axiosInstance.delete(`/auth/account/`);
   return response.data;
 };
 /// customer delete end

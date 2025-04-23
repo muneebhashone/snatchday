@@ -16,6 +16,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import VipMembershipModal from "./VipMembershipModal";
 import CollectPointsModal from "./CollectPointsModal";
 import {
+  useDeleteCustomer,
+  useDeleteUser,
   useGetMyProfile,
   useMyAccountGames,
   useUpdateProfile,
@@ -32,6 +34,8 @@ import TicketTable from "./TicketTable";
 import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
 import ChangePasswordModal from "../updatePasswordModal";
 import Withdrawl from "../Withdrawl";
+import { ConfirmationModal } from "../ui/confirmation-modal";
+import { useRouter } from "next/navigation";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -54,6 +58,8 @@ const UserProfile = () => {
   const { mutateAsync: topUp, isPending: isTopUpPending } = useTopUp();
   const { data: myAccountGame } = useMyAccountGames();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const router = useRouter();
   const { user, setUserData } = useUserContext();
   const {
     register,
@@ -71,6 +77,9 @@ const UserProfile = () => {
 
   const { mutateAsync: updateProfile, isPending } = useUpdateProfile();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
+  const { mutateAsync: deleteUserMutation, isPending: isDeleting } =
+    useDeleteUser();
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -126,6 +135,20 @@ const UserProfile = () => {
       });
     }
   }, [myProfile, reset]);
+
+  const handleConfirmDelete = () => {
+    deleteUserMutation(undefined, {
+      onSuccess: () => {
+        setShowDeleteModal(false);
+        setUserData(null);
+        toast.success("Account deactivated successfully");
+        router.push("/");
+      },
+      onError: (error: any) => {
+        toast.error(error.response.data.message || "Something went wrong");
+      },
+    });
+  };
 
   const handleTopUp = () => {
     if (!amount || parseFloat(amount) < 1) {
@@ -742,11 +765,20 @@ const UserProfile = () => {
                       </Button>
                       <Button
                         variant="outline"
+                        type="button"
                         onClick={() => setIsPasswordModalOpen(true)}
                       >
                         CHANGE PASSWORD
-                      </Button>{" "}
-                      <Button variant="destructive">DELETE ACCOUNT</Button>
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        type="button"
+                        disabled={isDeleting}
+                        onClick={() => setShowDeleteModal(true)}
+                      >
+                        {" "}
+                        DEACTIVATE ACCOUNT
+                      </Button>
                     </div>
                   </form>
                 </TabsContent>
@@ -762,6 +794,19 @@ const UserProfile = () => {
             <ChangePasswordModal
               isOpen={isPasswordModalOpen}
               setIsOpen={setIsPasswordModalOpen}
+            />
+
+            <ConfirmationModal
+              isOpen={showDeleteModal}
+              onClose={() => {
+                setShowDeleteModal(false);
+              }}
+              onConfirm={handleConfirmDelete}
+              title="Deactivate my account?"
+              description="Are you sure you want to deactivate your account? This action cannot be undone."
+              confirmText="Deactivate account"
+              cancelText="Keep account"
+              isLoading={isDeleting}
             />
           </div>
         </>

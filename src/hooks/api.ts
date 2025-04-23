@@ -99,6 +99,8 @@ import {
   replyTicket,
   createTicket,
   deleteCustomer,
+  getWishList,
+  deleteUser,
   createFaq,
   getFaq,
   updateFaq,
@@ -802,14 +804,15 @@ export const useGetGamesPaths = () => {
 };
 
 // games api end
-export const useWishList = () => {
+export const useGetWishList = () => {
   return useQuery({
     queryKey: ["wishlist"],
-    queryFn: wishList,
+    queryFn: getWishList,
   });
 };
 
 export const useAddToWishList = () => {
+  
   return useMutation({
     mutationFn: (id: string) => addToWishList(id),
   });
@@ -943,6 +946,14 @@ export const useDeleteCustomer = () => {
   });
 };
 // customer delete end
+
+
+export const  useDeleteUser = () => {
+  return useMutation({
+    mutationFn: deleteUser,
+  });
+};
+
 
 export const useCreateFaq = () => {
   return useMutation({

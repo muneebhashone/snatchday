@@ -9,7 +9,7 @@ import {
   useAddToWishList,
   useGetCart,
   useUpdateCart,
-  useWishList,
+  useGetWishList,
 } from "@/hooks/api";
 import { QueryClient } from "@tanstack/react-query";
 import {
@@ -23,19 +23,26 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 
 const Page = () => {
   const { data: addToCartData, refetch: cartRefetch } = useGetCart();
   const { mutateAsync: updateCart } = useUpdateCart();
-  const { data: wishlist, refetch } = useWishList();
+  const { data: wishlist, refetch:wishlistRefetch } = useGetWishList();
   const { mutate: addToWishList } = useAddToWishList();
+
+  const [addtocartId,setAddtocartId] = useState<string>("")
+  const [removeWishlistId,setRemoveWishlistId] = useState<string>("")
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
   const { user } = useUserContext();
   const { setCartCount } = useCart();
   const queryClient = new QueryClient();
+
+
+
   const handleWishList = (id: string) => {
+    setRemoveWishlistId(id)
     addToWishList(id, {
       onSuccess: (res) => {
         console.log(res.data.message);
@@ -44,7 +51,8 @@ const Page = () => {
             res.data.message ? res.data.message : " product added to wishlist"
           }`
         );
-        refetch();
+        wishlistRefetch();
+        setRemoveWishlistId("")
       },
       onError: (error) => {
         toast.error("Failed to add to wishlist");
@@ -53,18 +61,21 @@ const Page = () => {
     });
   };
   const wishlistData = wishlist?.data.products;
-  console.log(wishlistData);
+  console.log(wishlistData,"wishlistData");
 
   const handleAddToCart = (_id) => {
+    setAddtocartId(_id)
+
     addToCart(_id as string, {
       onSuccess: () => {
         toast.success("product added to cart");
-        setCartCount((prevCount) => prevCount + 1);
         queryClient.invalidateQueries({ queryKey: ["cart"] });
-        refetch();
+        setAddtocartId("")
+        cartRefetch()
+       
       },
       onError: (error) => {
-        toast.error("Failed to add to cart");
+        toast.error(error.response.data.message || "Failed to add to cart");
         console.error(error);
       },
     });
@@ -112,7 +123,7 @@ const Page = () => {
             <div className="p-4 hidden md:block">Price</div>
             <div className="p-4 hidden md:block">Actions</div>
           </div>
-          {wishlistData &&
+          {wishlistData?.length > 0 ? (
             wishlistData.map((whishlistItem, i) => (
               <div
                 key={i}
@@ -122,8 +133,8 @@ const Page = () => {
                   <Image
                     src={whishlistItem.images[0]}
                     alt={whishlistItem.name}
-                    width={120}
-                    height={120}
+                    width={50}
+                    height={50}
                     className="object-contain"
                   />
                 </div>
@@ -168,6 +179,9 @@ const Page = () => {
                           }
                           <MinusCircle
                             className="text-red-600 cursor-pointer"
+                            aria-disabled={addToCartData?.data?.cart?.find(
+                              (pro) => pro.product._id === whishlistItem._id
+                            ).quantity === 1}
                             onClick={() =>
                               updateQuantity(
                                 whishlistItem._id,
@@ -178,32 +192,37 @@ const Page = () => {
                             }
                           />
                         </div>
-                      ) : user ? (
+                      ) : 
+                      <>
                         <button
                           onClick={() => handleAddToCart(whishlistItem._id)}
-                          disabled={isAddToCartPending}
+                          disabled={addtocartId === whishlistItem._id && isAddToCartPending}
                           className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
                         >
-                          {isAddToCartPending ? "adding..." : "Add to Cart"}
+                          {addtocartId === whishlistItem._id && isAddToCartPending ? "Adding..." : "Add to Cart"}
                         </button>
-                      ) : (
-                        <Button className="bg-transparent">
-                          <Login addToCart={true} smallAddtoCart={true} />
-                        </Button>
-                      )}
+
+                        </>
+                      }
                     </div>
                   </div>
                   <Button
                     onClick={() => handleWishList(whishlistItem._id as string)}
                     variant="outline"
                     className="border-[#F47B42] text-[#F47B42] hover:bg-[#F47B42] hover:text-white w-max rounded-full h-7 px-6"
+                    disabled={removeWishlistId === whishlistItem._id}
                   >
                     <LucideHeartCrack />
-                    Remove
+                    {removeWishlistId === whishlistItem._id ? "Removing..." : "Remove"}
                   </Button>
                 </div>
               </div>
-            ))}
+            ))
+          ) : (
+            <div className="p-4 text-center">
+              <p className="text-muted-foreground">No items in wishlist</p>
+            </div>
+          )}
         </div>
       </div>
     </ClientLayout>
