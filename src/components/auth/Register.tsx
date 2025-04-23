@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { X, ArrowRight, ArrowLeft, Check, User2, Notebook, NotebookIcon } from "lucide-react"
+import { X, ArrowRight, ArrowLeft, Check, User2, NotebookIcon, CalendarIcon } from "lucide-react"
 import { FacebookIcon } from "../icons/icon"
 import Link from "next/link"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -17,6 +17,15 @@ import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from "next/navigation"
 import OtpModal from "@/otpmodal"
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns"
+import type { CaptionProps } from "react-day-picker"
+
+// Extended CaptionProps interface with onMonthChange
+interface ExtendedCaptionProps extends CaptionProps {
+  onMonthChange: (date: Date) => void
+}
 
 interface RegisterProps {
   onBack: () => void
@@ -62,6 +71,25 @@ const personalStepSchema = z.object({
       .string()
       .min(2, "First name must be at least 2 characters")
       .max(50, "First name cannot exceed 50 characters"),
+    dob: z
+      .date({
+        required_error: "Date of birth is required",
+      })
+      .refine(
+        (date) => {
+          const today = new Date()
+          const birthDate = new Date(date)
+          let age = today.getFullYear() - birthDate.getFullYear()
+          const monthDiff = today.getMonth() - birthDate.getMonth()
+
+          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--
+          }
+
+          return age >= 18
+        },
+        { message: "You must be at least 18 years old to register" },
+      ),
     street: z.string().min(5, "Street must be at least 5 characters").max(100, "Street cannot exceed 100 characters"),
     zip: z.string().min(3, "ZIP code must be at least 3 characters").max(10, "ZIP code cannot exceed 10 characters"),
     location: z
@@ -96,22 +124,14 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => {
         <div className="mt-2">
           <p
             className={`font-medium ${
-              currentStep === 1
-                ? "text-[#FF6B3D]"
-                : currentStep > 1
-                  ? "text-[#FF6B3D]"
-                  : "text-gray-500"
+              currentStep === 1 ? "text-[#FF6B3D]" : currentStep > 1 ? "text-[#FF6B3D]" : "text-gray-500"
             }`}
           >
             Account
           </p>
           <p
             className={`text-xs font-medium ${
-              currentStep === 1
-                ? "text-[#FF6B3D]"
-                : currentStep > 1
-                  ? "text-[#FF6B3D]"
-                  : "text-gray-500"
+              currentStep === 1 ? "text-[#FF6B3D]" : currentStep > 1 ? "text-[#FF6B3D]" : "text-gray-500"
             }`}
           >
             Account Details
@@ -134,22 +154,14 @@ const StepIndicator = ({ currentStep }: { currentStep: number }) => {
         <div className="mt-2">
           <p
             className={`font-medium ${
-              currentStep === 2
-                ? "text-[#FF6B3D]"
-                : currentStep > 2
-                  ? "text-[#FF6B3D]"
-                  : "text-gray-500"
+              currentStep === 2 ? "text-[#FF6B3D]" : currentStep > 2 ? "text-[#FF6B3D]" : "text-gray-500"
             }`}
           >
             Personal
           </p>
           <p
             className={`text-xs font-medium ${
-              currentStep === 2
-                ? "text-[#FF6B3D]"
-                : currentStep > 2
-                  ? "text-[#FF6B3D]"
-                  : "text-gray-500"
+              currentStep === 2 ? "text-[#FF6B3D]" : currentStep > 2 ? "text-[#FF6B3D]" : "text-gray-500"
             }`}
           >
             Enter Information
@@ -301,7 +313,7 @@ const PersonalStep = () => {
         <p className="text-gray-600">Enter Your Personal Details</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4 items-center">
         <div>
           <Controller
             name="personalInfo.salutation"
@@ -394,6 +406,89 @@ const PersonalStep = () => {
         </div>
         <div>
           <Controller
+            name="personalInfo.dob"
+            control={control}
+            render={({ field }) => (
+              <div className="flex flex-col w-full">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`h-20 rounded-full text-lg pl-10 w-full text-left justify-start ${
+                        field.value ? "text-foreground" : "text-[#A5A5A5]"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? format(field.value, "PPP") : "Date of Birth"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <div className="p-3 border-b">
+                      <div className="flex justify-center space-x-2">
+                        <select
+                          value={field.value ? field.value.getMonth() : new Date().getMonth()}
+                          onChange={(e) => {
+                            const newMonth = Number.parseInt(e.target.value)
+                            const newDate = field.value ? new Date(field.value) : new Date()
+                            newDate.setMonth(newMonth)
+                            field.onChange(newDate)
+                          }}
+                          className="px-2 py-1 rounded-md border border-input bg-background text-sm"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {Array.from({ length: 12 }, (_, i) => (
+                            <option key={i} value={i}>
+                              {new Date(0, i).toLocaleString("default", { month: "long" })}
+                            </option>
+                          ))}
+                        </select>
+
+                        <select
+                          value={field.value ? field.value.getFullYear() : 1990}
+                          onChange={(e) => {
+                            const newYear = Number.parseInt(e.target.value)
+                            const newDate = field.value ? new Date(field.value) : new Date()
+                            newDate.setFullYear(newYear)
+                            field.onChange(newDate)
+                          }}
+                          className="px-2 py-1 rounded-md border border-input bg-background text-sm"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {Array.from({ length: new Date().getFullYear() - 1920 - 18 + 1 }, (_, i) => {
+                            const year = 1920 + i
+                            return (
+                              <option key={year} value={year}>
+                                {year}
+                              </option>
+                            )
+                          })}
+                        </select>
+                      </div>
+                    </div>
+
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      defaultMonth={field.value || new Date(1990, 0)}
+                      disabled={(date) => {
+                        // Disable dates less than 18 years ago
+                        const eighteenYearsAgo = new Date()
+                        eighteenYearsAgo.setFullYear(eighteenYearsAgo.getFullYear() - 18)
+                        return date > eighteenYearsAgo
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {errors.personalInfo?.dob && (
+                  <span className="text-red-500 text-sm mt-1">{errors.personalInfo.dob.message}</span>
+                )}
+              </div>
+            )}
+          />
+        </div>
+        <div>
+          <Controller
             name="personalInfo.street"
             control={control}
             render={({ field }) => (
@@ -453,6 +548,12 @@ const PersonalStep = () => {
                 <SelectContent>
                   <SelectItem value="USA">United States</SelectItem>
                   <SelectItem value="JP">Japan</SelectItem>
+                  <SelectItem value="DE">Germany</SelectItem>
+                  <SelectItem value="FR">France</SelectItem>
+                  <SelectItem value="IT">Italy</SelectItem>
+                  <SelectItem value="ES">Spain</SelectItem>
+                  <SelectItem value="GB">United Kingdom</SelectItem>
+                  <SelectItem value="CA">Canada</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -482,6 +583,68 @@ const PersonalStep = () => {
     </div>
   )
 }
+
+// function CustomCaption(props: CaptionProps) {
+//   const month = props.displayMonth.getMonth();
+//   const year = props.displayMonth.getFullYear();
+
+//   return (
+//     <div
+//       style={{
+//         display: "flex",
+//         justifyContent: "center",
+//         gap: "8px",
+//         marginBottom: "8px",
+//       }}
+//     >
+//       <select
+//         value={month}
+//         onChange={(e) => {
+//           const newMonth = Number(e.target.value);
+//           const updatedDate = new Date(year, newMonth, 1); // ✅ new date instead of mutating
+//           props.onMonthChange(updatedDate);
+//         }}
+//         style={{
+//           padding: "6px 8px",
+//           borderRadius: "6px",
+//           border: "1px solid #ccc",
+//         }}
+//       >
+//         {Array.from({ length: 12 }, (_, i) => (
+//           <option key={i} value={i}>
+//             {new Date(0, i).toLocaleString("default", { month: "long" })}
+//           </option>
+//         ))}
+//       </select>
+
+//       <select
+//         value={year}
+//         onChange={(e) => {
+//           const newYear = Number(e.target.value);
+//           const updatedDate = new Date(newYear, month, 1); // ✅ new date instead of mutating
+//           props.onMonthChange(updatedDate);
+//         }}
+//         style={{
+//           padding: "6px 8px",
+//           borderRadius: "6px",
+//           border: "1px solid #ccc",
+//         }}
+//       >
+//         {Array.from(
+//           { length: new Date().getFullYear() - 1920 - 18 + 1 },
+//           (_, i) => {
+//             const y = 1920 + i;
+//             return (
+//               <option key={y} value={y}>
+//                 {y}
+//               </option>
+//             );
+//           }
+//         )}
+//       </select>
+//     </div>
+//   );
+// }
 
 const Register = ({ onBack }: RegisterProps) => {
   const [isOpen, setIsOpen] = useState(true)
@@ -514,6 +677,7 @@ const Register = ({ onBack }: RegisterProps) => {
         username: "",
         firstName: "",
         lastName: "",
+        dob: undefined,
         street: "",
         zip: "",
         location: "",
@@ -559,14 +723,13 @@ const Register = ({ onBack }: RegisterProps) => {
       ...personalData,
     }
 
-    console.log(formData, "formdata")
-
     const { confirmPassword, terms, newsletter, personalInfo, ...rest } = formData
 
     const registrationData = {
       ...rest,
       ...personalInfo,
     }
+    console.log(registrationData, "registrationData")
 
     register(
       { data: registrationData, type: "register" },
@@ -610,8 +773,8 @@ const Register = ({ onBack }: RegisterProps) => {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-[1170px] p-0" hideCloseButton={true}>
-          <DialogHeader className="text-left relative px-24 pt-10">
+        <DialogContent className="max-w-[1280px] p-0" hideCloseButton={true}>
+          <DialogHeader className="text-left relative px-24 ">
             <button
               onClick={handleClose}
               className="absolute -right-5 -top-5 z-30 h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100 flex items-center justify-center"
@@ -623,7 +786,7 @@ const Register = ({ onBack }: RegisterProps) => {
             </div>
           </DialogHeader>
 
-          <div className="mt-5 px-24 pb-16">
+          <div className="mt-5 px-24 pb-6">
             {/* Step Indicator */}
             <StepIndicator currentStep={currentStep} />
 
@@ -669,7 +832,7 @@ const Register = ({ onBack }: RegisterProps) => {
 
             {currentStep === 1 && (
               <>
-                <Separator className="mt-16 mb-6" />
+                <Separator className="mt-8 mb-4" />
 
                 {/* Social Register */}
                 <div className="flex items-center justify-between">

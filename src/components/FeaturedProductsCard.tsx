@@ -17,6 +17,8 @@ interface FeaturedProductCardProps {
   isNew?: boolean;
   discounts?: [{ price: string }];
   discount?: string;
+  description?: string;
+  type?: string;
 }
 
 const FeaturedProductsCard = ({
@@ -25,15 +27,16 @@ const FeaturedProductsCard = ({
   name,
   discounts,
   price,
-  reviews,
+  rating,
   images,
   image,
-  isSale,
+  type,
+  description,
   isNew,
   discount,
 }: FeaturedProductCardProps) => {
   return (
-    <div className="flex flex-col justify-between bg-white rounded-2xl p-4 border border-gray-200 hover:border-primary relative group hover:shadow-lg transition-all duration-300 w-[337px] h-[439px]">
+    <div className="flex flex-col justify-between bg-white rounded-2xl p-4 border border-gray-200 hover:border-primary relative group hover:shadow-lg transition-all duration-300 w-[300px] h-[400px]">
       {/* VAT Badge */}
       <div className="absolute right-0 top-0 bg-gray-100 rounded-tr-2xl px-2 py-1">
         <p className="text-xs text-gray-500">19%</p>
@@ -68,13 +71,27 @@ const FeaturedProductsCard = ({
       {/* Product Info */}
       <div className="space-y-1 md:space-y-2">
         {/* Title */}
-        <p className="text-card-foreground text-md md:text-[20px]">{name}</p>
+        <p className="text-card-foreground text-md md:text-[20px] w-full truncate">{name}</p>
+        <p className="text-card-foreground text-md md:text-[14px] w-full truncate">
+          {description}
+        </p>
 
         {/* Rating */}
         <div className="flex items-center justify-between gap-3">
           <div className="flex text-primary items-center gap-1 text-[22px]">
-            {"★".repeat(3)}{" "}
-            <span className="text-sm text-gray-500">({reviews})</span>{" "}
+            {Array.from({ length: 5 }, (_, index) => (
+              <span
+                key={index}
+                className={
+                  index < rating?.average ? "text-primary" : "text-gray-300"
+                }
+              >
+                {"★"}
+              </span>
+            ))}
+            <span className="text-sm text-gray-500">
+              ({rating?.count || 0})
+            </span>{" "}
           </div>
           {/* <span className="text-xs text-gray-500">({reviews})</span> */}
           <div className="flex items-center justify-between">
@@ -98,19 +115,20 @@ const FeaturedProductsCard = ({
         {/* Save Amount */}
       </div>
       <div className="flex justify-between items-center border-t border-gray-200 pt-5 ">
-        {discount && (
+        {discounts && (
           <div className="text-green-900">
-            Save - <span className="text-foreground">{discount}</span>
+            Save -{" "}
+            <span className="text-foreground">{discounts[0]?.price}</span>
           </div>
         )}
         {/* Badges */}
         <div className="">
-          {isSale && (
+          {type === "SALE" && (
             <span className="bg-orange-500 text-white text-[13px] font-medium px-4 py-[2px] rounded-full">
               SALE
             </span>
           )}
-          {isNew && (
+          {type === "NEW" && (
             <span className="bg-purple-600 text-white text-[13px] font-medium px-4 py-[2px] rounded-full">
               NEW
             </span>

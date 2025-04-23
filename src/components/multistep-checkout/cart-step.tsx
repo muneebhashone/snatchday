@@ -93,14 +93,11 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
     );
   };
 
-  // Calculate VAT based on adjusted subtotal
-  const calculateVAT = () => {
-    return (calculateAdjustedSubtotal() * (cart?.data?.vat || 0)) / 100;
-  };
+ 
 
   // Calculate final total
   const calculateTotal = () => {
-    return calculateAdjustedSubtotal() + calculateVAT();
+    return calculateAdjustedSubtotal();
   };
 
   // Handle cart quantity update
@@ -228,19 +225,18 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
       }
     )
   }
-console.log(cart,"cart")
 
   return (
     <div className="">
       {isLoading ? (
-        <div className="flex justify-center items-center h-[200px]">
+        <div className="flex w-[100%] justify-center items-center h-[200px]">
           <Loader2 className="w-8 h-8 animate-spin text-[#F37835]" />
         </div>
       ) : (
-        <div className="max-w-8xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <div className="max-w-[1480px] mx-auto bg-white shadow-lg rounded-lg p-6">
           <div className="flex items-center gap-4 mb-4">
-            <Image src={Logo} alt="Snatch Day Logo" width={70} height={40} priority />
-            <h2 className="text-2xl font-bold">Shopping Cart</h2>
+            <Image src={Logo} alt="Snatch Day Logo" width={150} height={100} priority />
+            <h2 className="text-3xl font-bold">Shopping Cart</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
             <div className="md:col-span-4">
@@ -248,7 +244,7 @@ console.log(cart,"cart")
                 <p className="text-center my-5 text-gray-500">Your cart is empty</p>
               ) : (
                 <div className="overflow-x-auto">
-                  <Table>
+                  <Table className="w-full text-lg">
                     <TableHeader>
                       <TableRow>
                         <TableHead>Picture</TableHead>
@@ -270,7 +266,7 @@ console.log(cart,"cart")
                               height={30}
                             />
                           </TableCell>
-                          <TableCell>{item?.product?.name}</TableCell>
+                          <TableCell className="max-w-[150px] truncate">{item?.product?.name}</TableCell>
                           <TableCell className="text-center">
                             <Button
                               onClick={() => handleUpdateCart(item?.product?._id, item.quantity - 1)}
@@ -310,18 +306,19 @@ console.log(cart,"cart")
               {/* Voucher Code Input Form */}
               <form onSubmit={handleVoucherSubmit(handleApplyVoucher)} className="mt-4">
                 <div className="mt-2">
-                  <label className="block"> Voucher Code:</label>
+                  <label className="block text-lg"> Voucher Code:</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       {...registerVoucher("voucherCode")}
                       placeholder="Enter Voucher Code"
-                      className="mt-2 p-2 border border-gray-300 rounded-md focus:outline-none w-full my-2 focus:ring-2 focus:ring-[#F37835]"
+                      className="mt-2 px-2 h-[55px] border border-gray-300 rounded-md focus:outline-none w-full my-2 focus:ring-2 focus:ring-[#F37835]"
                     />
                     <Button
                       disabled={isApplyVoucherPending || !watchVoucher("voucherCode")}
                       type="submit"
-                      className="mt-2"
+                    
+                      className="mt-2 h-[55px]"
                     >
                       {isApplyVoucherPending ? "Applying..." : "Apply Voucher"}
                     </Button>
@@ -334,26 +331,26 @@ console.log(cart,"cart")
               <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
                 {/* Snap Points Input */}
                 <div className="mt-2">
-                  <label className="block my-2">Use Snap Points:</label>
+                  <label className="block my-2 text-lg">Use Snap Points:</label>
                   <input
                     type="number"
                     {...register("snapPoints")}
                     placeholder="Points"
                     disabled={!user}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F37835]"
+                    className="w-full h-[55px] p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F37835]"
                   />
                   {errors.snapPoints && <p className="text-red-500 ml-2">{errors.snapPoints.message}</p>}
                 </div>
 
                 {/* Discount Points Input */}
-                <div className="mt-2">
+                <div className="mt-6">
                   <label className="block my-2">Use Discount Points:</label>
                   <input
                     type="number"
                     {...register("discountPoints")}
                     placeholder="Points"
                     disabled={!user}
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F37835]"
+                    className="w-full h-[55px]  p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F37835]"
                   />
                   {errors.discountPoints && <p className="text-red-500 ml-2">{errors.discountPoints.message}</p>}
                 </div>
@@ -362,47 +359,47 @@ console.log(cart,"cart")
 
                 {/* Summary Section */}
                 <div className="mt-6 p-4 border-t">
-                  <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+                  <h3 className="text-lg font-semibold  mb-4">Order Summary</h3>
 
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-lg">
                     <span>Subtotal:</span>
                     <span>{cart?.data?.subTotal.toFixed(2) || 0}€</span>
                   </div>
                   
                   {cart?.data?.appliedDiscount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-lg text-green-600">
                       <span>Product Discount:</span>
                       <span>-{cart?.data?.appliedDiscount.toFixed(2) || 0}€</span>
                     </div>
                   )}
                   
                   {watchVoucher("voucherCode") && applyvocherResponse?.data?.voucherDiscount > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-lg text-green-600">
                       <span>Voucher Discount:</span>
                       <span>-{applyvocherResponse?.data?.voucherDiscount.toFixed(2)}€</span>
                     </div>
                   )}
                   
                   {watch("snapPoints") && Number(watch("snapPoints")) > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-lg text-green-600">
                       <span>Snap Points:</span>
                       <span>-{(Number(watch("snapPoints")) / 10).toFixed(2)}€</span>
                     </div>
                   )}
                   
                   {watch("discountPoints") && Number(watch("discountPoints")) > 0 && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-lg text-green-600">
                       <span>Discount Points:</span>
                       <span>-{(Number(watch("discountPoints")) / 10).toFixed(2)}€</span>
                     </div>
                   )}
                   
-                  <div className="flex justify-between mt-2">
+                  <div className="flex text-lg justify-between mt-2">
                     <span>VAT:</span>
                     <span>19%</span>
                   </div>
                   
-                  <div className="flex justify-between font-semibold pt-2 border-t mt-2">
+                  <div className="flex text-lg justify-between font-semibold pt-2 border-t mt-2">
                     <span>Total</span>
                     <span>{calculateTotal().toFixed(2)}€</span>
                   </div>
@@ -413,7 +410,7 @@ console.log(cart,"cart")
                     disabled={
                       isCheckoutPending || !cart || !cart.data || !cart.data.cart || cart.data.cart.length === 0
                     }
-                    className="bg-[#F37835] text-white px-5 py-2 rounded-md hover:bg-[#FF9900]"
+                    className="bg-[#F37835] text-lg text-white px-5 py-2 rounded-md hover:bg-[#FF9900]"
                   >
                     {isCheckoutPending ? "Processing..." : "Proceed to Checkout"}
                   </Button>

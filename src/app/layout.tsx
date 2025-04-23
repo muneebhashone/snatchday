@@ -38,7 +38,7 @@ export default function RootLayout({
       >
         <UserContextProvider>
           <SocketProvider>
-            <AuthProvider>
+            {/* <AuthProvider> */}
               <CartProvider>
                 <CheckoutProvider>
                   <Providers>
@@ -47,7 +47,7 @@ export default function RootLayout({
                   </Providers>
                 </CheckoutProvider>
               </CartProvider>
-            </AuthProvider>
+            {/* </AuthProvider> */}
           </SocketProvider>
         </UserContextProvider>
       </body>

@@ -15,6 +15,7 @@ export interface ProductFormData {
   metaDescription?: string;
   metaKeywords?: string;
   article: string;
+  currentOffer?: boolean;
   sku?: string;
   barcodeEAN?: string;
   noStockMessage?: string;
@@ -391,4 +392,22 @@ export interface MainProduct {
   sku: string;
   barcodeEAN: string;
   data?: any;
+}
+
+export interface FaqFormData {
+  qa: Array<{
+    question: string;
+    answer: string;
+  }>;
+  category: string;
+  order?: number;
+}
+
+export interface TutorialFormData {
+  title: string;
+  description: string;
+  videoUrl: string;
+  thumbnailUrl: string;
+  category: string;
+  order?: number;
 }

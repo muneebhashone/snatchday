@@ -57,18 +57,17 @@ const Login = ({
   const [isOtpOpen, setIsOtpOpen] = useState(false);
 
   const { user, setUserData, logout } = useUserContext();
-  const router = useRouter();
-  const { mutate: login, isPending } = useAuthApi();
   const { data: myProfile, isPending: isMyProfilePending } = useGetMyProfile();
   const { mutate: Userlogout } = useLogout();
-  const { mutate: requestEmailToken, isPending: isResending } = useRequestEmailToken();
+  const { mutate: requestEmailToken, isPending: isResending } =
+    useRequestEmailToken();
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-    getValues, 
+    getValues,
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -88,13 +87,14 @@ const Login = ({
   const handleLogout = () => {
     Userlogout(undefined, {
       onSuccess: () => {
+        toast.success("Logout successfully");
         socket.emit("logout");
         setUserData(null);
         setIsLoggedIn(false);
-    
+        setIsLoginOpen(false);
         logout();
-        toast.success("Logout successfully");
-        router.push("/");
+       
+        window.location.href = "/";
       },
       onError: (error) => {
         console.error("Logout failed:", error);
@@ -103,11 +103,11 @@ const Login = ({
     });
   };
 
-  useEffect(() => {
-    if (user) {
-      setIsLoggedIn(true);
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     setIsLoggedIn(true);
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     if (isLoginOpen) {
@@ -115,54 +115,88 @@ const Login = ({
       setIsEmailVerified(true);
     }
   }, [isLoginOpen]);
-  
+
   if (isOtpOpen) {
-    return <OtpModal open={isOtpOpen} onClose={() => setIsOtpOpen(false)}      email={getValues("email")}
-    />
+    return (
+      <OtpModal
+        open={isOtpOpen}
+        onClose={() => setIsOtpOpen(false)}
+        email={getValues("email")}
+      />
+    );
   }
 
-  const onSubmit = (data: z.infer<typeof loginSchema>) => {
-    login(
-      {
-        data: {
-          email: data.email,
-          password: data.password,
-        },
-        type: "login",
-      },
-      {
-        onSuccess: ({ data }) => {
-          socket.emit("join", data?.user?._id);
-          setIsLoggedIn(true);
-          setUserData(data);
-          setIsLoginOpen(false);
-          setIsEmailVerified(true);
-            setShowResendButton(false);
-          toast.success("Login successful");
-        },
-        onError: (error) => {
-          
-          toast.error(error?.response?.data?.message || "Login failed", {
-            style: {
-              background: "#ff4d4f",
-              color: "#fff",
-            },
-          });
-          if (error?.response?.data?.message === "User not approved yet") {
-            setIsEmailVerified(false);
-            setShowResendButton(true);
-          }
-          console.error("Login failed:", error);
-        },
+  const handleLogin = async (data) => {
+    try {
+      setIsLoggedIn(true);
+      const res = await fetch("/api/v2/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      });
+
+      const response = await res.json();
+      if (res.ok) {
+        socket.emit("join", response?.data?.user?._id);
+        setUserData(response?.data);
+        setIsLoginOpen(false);
+        setIsEmailVerified(true);
+        setShowResendButton(false);
+        toast.success("Login successful");
+      } else {
+        toast.error(response.message || "Login failed");
       }
-    );
+    } catch (error) {
+      toast.error("Login failed");
+    } finally {
+      setIsLoggedIn(false);
+    }
+  };
+
+  const onSubmit = (data: z.infer<typeof loginSchema>) => {
+    handleLogin(data);
+    // login(
+    //   {
+    //     data: {
+    //       email: data.email,
+    //       password: data.password,
+    //     },
+    //     type: "login",
+    //   },
+    //   {
+    //     onSuccess: ({ data }) => {
+    //       socket.emit("join", data?.user?._id);
+    //       setIsLoggedIn(true);
+    //       setUserData(data);
+    //       setIsLoginOpen(false);
+    //       setIsEmailVerified(true);
+    //         setShowResendButton(false);
+    //       toast.success("Login successful");
+    //     },
+    //     onError: (error) => {
+
+    //       toast.error(error?.response?.data?.message || "Login failed", {
+    //         style: {
+    //           background: "#ff4d4f",
+    //           color: "#fff",
+    //         },
+    //       });
+    //       if (error?.response?.data?.message === "User not approved yet") {
+    //         setIsEmailVerified(false);
+    //         setShowResendButton(true);
+    //       }
+    //       console.error("Login failed:", error);
+    //     },
+    //   }
+    // );
   };
 
   if (isRegisterOpen) {
     return <Register onBack={handleBackToLogin} />;
   }
 
-  if (isLoggedIn) {
+
+  if (myProfile?.data?.user?.username) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
@@ -197,22 +231,24 @@ const Login = ({
       </DropdownMenu>
     );
   }
-  const handleResendVerification = (e:any) => {
-    e.preventDefault()
+  const handleResendVerification = (e: any) => {
+    e.preventDefault();
     const email = getValues("email");
-    requestEmailToken({ email }, {
-      onSuccess: () => {
-        toast.success("Verification email sent successfully");
-        setIsOtpOpen(true)
-      },
-      onError: (error) => {
-        toast.error(error?.response?.data?.message || "Failed to resend email");
+    requestEmailToken(
+      { email },
+      {
+        onSuccess: () => {
+          toast.success("Verification email sent successfully");
+          setIsOtpOpen(true);
+        },
+        onError: (error) => {
+          toast.error(
+            error?.response?.data?.message || "Failed to resend email"
+          );
+        },
       }
-    });
+    );
   };
-
-
-  
 
   return (
     <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
@@ -285,18 +321,17 @@ const Login = ({
                 type="button"
                 onClick={handleResendVerification}
                 disabled={isResending}
-
                 className="w-full min-h-[60px] text-lg font-semibold bg-orange-500 text-white rounded-full mt-4"
               >
-                  {isResending ? "Resending..." : "Resend Verification Code"}
+                {isResending ? "Resending..." : "Resend Verification Code"}
               </Button>
             )}
             <Button
               type="submit"
               className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10"
-              disabled={isPending}
+              disabled={isLoggedIn}
             >
-              {isPending ? "Logging in..." : "Login to your account"}
+              {isLoggedIn ? "Logging in..." : "Login to your account"}
             </Button>
           </form>
 

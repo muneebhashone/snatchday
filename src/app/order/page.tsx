@@ -510,7 +510,7 @@ const MultiStepCheckout = () => {
   
     return (
       <ClientLayout>
-        <div className="container mx-auto max-w-6xl py-60 px-4">
+        <div className="mx-auto max-w-[1480px] py-60 px-4">
           <StepIndicator currentStep={currentStep} />
     
           <div className="mt-8">

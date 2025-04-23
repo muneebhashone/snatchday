@@ -31,7 +31,7 @@ import {
   useGetCart,
   useGetCategories,
   useGetMyProfile,
-  useWishList,
+  useGetWishList,
 } from "@/hooks/api";
 import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
@@ -39,7 +39,7 @@ import { Category, SubCategory } from "@/types";
 
 const Header = () => {
   const { data: cartData } = useGetCart();
-  const { data: wishlist } = useWishList();
+  const { data: wishlist } = useGetWishList();
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -366,9 +366,9 @@ const Header = () => {
             className="relative hover:text-primary bg-transparent p-0 text-[#888888]"
           >
             <div className="absolute -top-4 -right-3 bg-primary text-white px-[7px] py-[2px] text-xs rounded-full">
-              {wishlist?.data.products?.length
+              {wishlist?.data  
                 ? wishlist?.data.products?.length
-                : "0"}
+                : 0}
             </div>
             <Heart className="h-6 w-6 " />
           </Link>
@@ -428,13 +428,17 @@ const Header = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Snap Points</span>
                     <span className="text-primary font-bold">
-                      {myprofile?.data?.wallet?.snapPoints}
+                      {myprofile?.data?.wallet?.snapPoints
+                        ? myprofile?.data?.wallet?.snapPoints
+                        : 0}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
-                      {myprofile?.data?.wallet?.snapPoints / 100}€
+                      {myprofile?.data?.wallet?.snapPoints
+                        ? myprofile?.data?.wallet?.snapPoints / 10
+                        : 0}€
                     </span>
                   </div>
                 </div>
@@ -443,13 +447,17 @@ const Header = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Discount Points</span>
                     <span className="text-primary font-bold">
-                      {myprofile?.data?.wallet?.discountPoints}
+                      {myprofile?.data?.wallet?.discountPoints
+                        ? myprofile?.data?.wallet?.discountPoints
+                        : 0}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
-                      {myprofile?.data?.wallet?.discountPoints / 100}€
+                      {myprofile?.data?.wallet?.discountPoints
+                        ? myprofile?.data?.wallet?.discountPoints / 10
+                        : 0}€
                     </span>
                   </div>
                 </div>

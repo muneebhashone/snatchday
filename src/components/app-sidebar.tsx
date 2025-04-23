@@ -31,18 +31,20 @@ import {
   Heart,
   Ticket,
   RefreshCw,
+  FileQuestionIcon,
+  Star,
+  Book,
 } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useState, useEffect } from "react";
-import { AnnouncementIcon, ReturnIcon } from "./icons/icon";
+import { useState } from "react";
+import { AnnouncementIcon, SupportIcon } from "./icons/icon";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-
   {
     title: "Overview",
     url: "/admin/overview",
@@ -158,34 +160,36 @@ const navItems = [
     url: "/admin/announcements",
     icon: <AnnouncementIcon />,
   },
-
-
   {
-    title: "Web Settings",
-
-    icon: <Settings className="h-4 w-4" />,
+    title: "Support",
+    icon: <SupportIcon />,
     subItems: [
       {
-        title: "All Web Settings",
+        title: "Web Settings",
         url: "/admin/web-settings",
-        icon: <List className="h-4 w-4" />,
+        icon: <Settings className="h-4 w-4" />,
       },
       {
-        title: "Create Web Setting",
-        url: "/admin/web-settings/create",
-        icon: <Plus className="h-4 w-4" />,
+        title: "Tickets",
+        url: "/admin/tickets",
+        icon: <Ticket className="h-4 w-4" />,
       },
-      // {
-      //   title: "Edit Web Setting",
-      //   url: "/admin/web-settings/edit",
-      //   icon: <List className="h-4 w-4" />,
-      // },
+      {
+        title: "FAQ",
+        url: "/admin/faq",
+        icon: <FileQuestionIcon className="h-4 w-4" />,
+      },
+      {
+        title: "Reviews",
+        url: "/admin/reviews",
+        icon: <Star className="h-4 w-4" />,
+      },
+      {
+        title: "Tutorials",
+        url: "/admin/tutorial",
+        icon: <Book className="h-4 w-4" />,
+      },
     ],
-  },
-  {
-    title: "Tickets",
-    url: "/admin/tickets",
-    icon: <Ticket className="h-4 w-4" />,
   },
 ];
 
@@ -204,19 +208,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar 
-      {...props} 
+    <Sidebar
+      {...props}
       className={cn(
         "border-r border-gray-200 shadow-lg transition-all duration-300 ease-in-out",
-        isExpanded ? "w-64" : "w-16",
+        isExpanded ? "w-64" : "w-16"
       )}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
       <SidebarHeader className="bg-white border-b border-gray-200">
-        <div className={cn("flex flex-col items-center", 
-          isExpanded ? "px-4 py-4" : "py-3"
-        )}>
+        <div
+          className={cn(
+            "flex flex-col items-center",
+            isExpanded ? "px-4 py-4" : "py-3"
+          )}
+        >
           {isExpanded ? (
             <>
               <p className="text-2xl font-bold text-gray-800">Snatch Day</p>
@@ -243,20 +250,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           className={cn(
                             "w-full py-2.5 flex items-center transition-colors duration-200",
                             "hover:bg-gray-50 hover:text-primary rounded-md",
-                            isExpanded ? "justify-between px-4" : "justify-center",
-                            openItems.includes(item.title) ? "text-primary" : "text-gray-600"
+                            isExpanded
+                              ? "justify-between px-4"
+                              : "justify-center",
+                            openItems.includes(item.title)
+                              ? "text-primary"
+                              : "text-gray-600"
                           )}
                           tooltip={!isExpanded ? item.title : undefined}
                         >
-                          <div className={cn("flex items-center", isExpanded ? "gap-3" : "")}>
+                          <div
+                            className={cn(
+                              "flex items-center",
+                              isExpanded ? "gap-3" : ""
+                            )}
+                          >
                             {item.icon}
-                            {isExpanded && <span className="text-sm font-medium">{item.title}</span>}
+                            {isExpanded && (
+                              <span className="text-sm font-medium">
+                                {item.title}
+                              </span>
+                            )}
                           </div>
                           {isExpanded && (
                             <ChevronDown
                               className={cn(
                                 "h-4 w-4 transition-transform duration-200",
-                                openItems.includes(item.title) ? "transform rotate-180" : ""
+                                openItems.includes(item.title)
+                                  ? "transform rotate-180"
+                                  : ""
                               )}
                             />
                           )}
@@ -273,8 +295,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                               className={cn(
                                 "w-full py-2 px-4 text-sm font-medium transition-colors duration-200",
                                 "hover:bg-gray-50 hover:text-primary rounded-md",
-                                pathname === subItem.url 
-                                  ? "bg-primary/10 text-primary" 
+                                pathname === subItem.url
+                                  ? "bg-primary/10 text-primary"
                                   : "text-gray-600"
                               )}
                             >
@@ -299,8 +321,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         "w-full py-2.5 flex items-center transition-colors duration-200",
                         "hover:bg-gray-50 hover:text-primary rounded-md",
                         isExpanded ? "px-4" : "justify-center",
-                        pathname === item.url 
-                          ? "bg-primary/10 text-primary" 
+                        pathname === item.url
+                          ? "bg-primary/10 text-primary"
                           : "text-gray-600"
                       )}
                     >
@@ -312,7 +334,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         )}
                       >
                         {item.icon}
-                        {isExpanded && <span className="text-sm font-medium">{item.title}</span>}
+                        {isExpanded && (
+                          <span className="text-sm font-medium">
+                            {item.title}
+                          </span>
+                        )}
                       </a>
                     </SidebarMenuButton>
                   )}

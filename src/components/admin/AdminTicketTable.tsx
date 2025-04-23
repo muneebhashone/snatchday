@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -60,8 +60,8 @@ const ITEMS_PER_PAGE = 10;
 
 const AdminTicketTable = () => {
   const router = useRouter();
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [filters, setFilters] = React.useState({
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState({
     limit: ITEMS_PER_PAGE.toString(),
     offset: "0",
   });
@@ -189,7 +189,7 @@ const AdminTicketTable = () => {
                         : "N/A"}
                     </TableCell>
                     <TableCell>{ticket.subject}</TableCell>
-                    <TableCell>#{ticket.ticketNo}</TableCell>
+                    <TableCell>{ticket.ticketNo}</TableCell>
                     <TableCell>{ticket.department}</TableCell>
                     <TableCell>{ticket.email}</TableCell>
                     <TableCell>

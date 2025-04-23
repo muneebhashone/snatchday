@@ -14,7 +14,7 @@ import ProductCard from "../ProductCard";
 const ProductSection = () => {
   const { data: currentOffers, isLoading } = useCurrentOffers();
   const products = currentOffers?.data.products;
-
+ 
   return (
     <section className="py-10">
       <div className="container max-w-[1920px] mx-auto px-5 md:px-20">
