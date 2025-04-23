@@ -122,32 +122,32 @@ const FaqPage = () => {
                   className="text-white bg-primary font-bold border px-2"
                 >
                   <Link href={`/faq/${section._id}`} className="w-full text-left">
-                    {section.category}
+                  {section.category}
                   </Link>
                 </AccordionTrigger>
                 <AccordionContent>
                   {section.qa && section.qa.length > 0 ? (
                     section.qa.map((faq: any) => (
-                      <Accordion
+                    <Accordion
                         key={faq._id}
-                        type="single"
-                        collapsible
+                      type="single"
+                      collapsible
                         value={openAccordion}
                         onValueChange={setOpenAccordion}
-                        className="w-full border-none"
-                      >
-                        <AccordionItem
-                          className="border-none"
+                      className="w-full border-none"
+                    >
+                      <AccordionItem
+                        className="border-none"
                           value={`faq-${section._id}-${faq._id}`}
-                        >
+                      >
                           <AccordionTrigger className="font-bold px-2 border-x border-b">
-                            {faq.question}
-                          </AccordionTrigger>
-                          <AccordionContent className="px-2 border-x border-b pt-2">
+                          {faq.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="px-2 border-x border-b pt-2">
                             {faq.answer}
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                     ))
                   ) : (
                     <div className="p-4 border-x border-b">
