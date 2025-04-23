@@ -115,6 +115,11 @@ import {
   TutorialParams,
   deleteTutorial,
   TopUp,
+  createPoints,
+  getWithdrawalRequest,
+  updateWithdrawalRequest,
+  getWithdrawalRequestById,
+  updateWithdrawalReject,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -128,12 +133,14 @@ import {
   FaqFormData,
   FilterFormData,
   PlaceOrder,
+  points,
   ProductFormData,
   ResetPasswordTypes,
   TutorialFormData,
   WebSetting,
 } from "@/types";
 import { useUserContext } from "@/context/userContext";
+import { get } from "http";
 
 // Fetch all items
 export const useGetMyProfile = () => {
@@ -1063,3 +1070,44 @@ export const useTopUp = () => {
   });
 };
 // top up api end
+
+export const usePoints =() => {
+  return useQuery({
+    queryKey: ["points"],
+    queryFn: getPoints,
+  });
+}
+
+export const useCreatePoints = () => {
+  return useMutation({
+    mutationFn: createPoints,
+  });
+}
+
+export const useGetWithdrawalRequest = (params?: { status?: string }) => {
+  return useQuery({
+    queryKey: ["withdrawalRequests", params],
+    queryFn: () => getWithdrawalRequest(params),
+  });
+};
+
+export const useUpdateWithdrawalRequest = () => {
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) => 
+      updateWithdrawalRequest(id, { status }),
+  });
+};
+
+export const useGetWithdrawalRequestById = (id: string) => {
+  return useQuery({
+    queryKey: ["withdrawalRequest", id],
+    queryFn: () => getWithdrawalRequestById(id),
+    enabled: !!id
+  });
+};
+export const useUpdateWithdrawalReject = () => {
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) => 
+      updateWithdrawalReject(id, { status }),
+  });
+};

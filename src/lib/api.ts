@@ -20,7 +20,8 @@ import {
   WebSetting,
   MainProduct,
   FaqFormData,
-  TutorialFormData
+  TutorialFormData,
+  points
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -428,10 +429,10 @@ export const updateCart = async (id: string, quantity: number) => {
   return response.data;
 };
 
-export const getPoints = async () => {
-  const response = await axiosInstance.get("/web-settings/points");
-  return response.data;
-};
+// export const getPoints = async () => {
+//   const response = await axiosInstance.get("/web-settings/points");
+//   return response.data;
+// };
 
 export const checkout = async (data: CheckoutTypes) => {
   const response = await axiosInstance.post("/order/checkout", data);
@@ -892,3 +893,55 @@ export const TopUp = async (data) => {
 };
 
 // top up api end
+
+//points api start
+
+export const getPoints = async () => {
+  const response = await axiosInstance.get("/web-settings/points");
+  return response.data;
+  };
+
+  export const createPoints =async (data:points) => {
+    const response = await axiosInstance.post("/web-settings/points", data);
+    return response.data;
+  };
+//points api end
+interface params{
+  status?:string
+}
+
+export const getWithdrawalRequest = async (params?:params) => {
+  const response = await axiosInstance.get("/withdrawal/admin/requests",{params});
+  return response.data;
+};
+
+// Add the new function to update withdrawal requests
+export const updateWithdrawalRequest = async (id: string, data: { status: string }) => {
+  try {
+    const response = await axiosInstance.put(`/withdrawal/admin/approve/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating withdrawal request:", error);
+    throw error;
+  }
+};
+
+export const getWithdrawalRequestById = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/withdrawal/admin/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching withdrawal request:", error);
+    throw error;
+  }
+};
+
+export const updateWithdrawalReject = async (id: string, data: { status: string }) => {
+  try {
+    const response = await axiosInstance.put(`/withdrawal/admin/reject/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating withdrawal request:", error);
+    throw error;
+  }
+};

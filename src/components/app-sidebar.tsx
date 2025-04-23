@@ -34,6 +34,7 @@ import {
   FileQuestionIcon,
   Star,
   Book,
+  DollarSign,
 } from "lucide-react";
 import {
   Collapsible,
@@ -188,6 +189,22 @@ const navItems = [
         title: "Tutorials",
         url: "/admin/tutorial",
         icon: <Book className="h-4 w-4" />,
+      },
+    ],
+  },
+  {
+    title: "Points",
+    url: "/admin/points",
+    icon: <Plus className="h-4 w-4" />,
+  },
+  {
+    title: "Payouts",
+    icon: <DollarSign className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "Withdrawal Requests",
+        url: "/admin/withdrawal",
+        icon: <List className="h-4 w-4" />,
       },
     ],
   },
