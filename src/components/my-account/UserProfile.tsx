@@ -31,6 +31,7 @@ import { useUserContext } from "@/context/userContext";
 import TicketTable from "./TicketTable";
 import { createImageSchema, imageInputProps } from "@/lib/imageValidation";
 import ChangePasswordModal from "../updatePasswordModal";
+import Withdrawl from "../Withdrawl";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -149,27 +150,6 @@ const UserProfile = () => {
       }
     );
   };
-
-  // const handleTopUp = () => {
-  //   // if (!amount) {
-  //   //   toast.error("Amount is required");
-  //   //   setAmount("0.00");
-  //   //   return;
-  //   // }
-  //   topUp(
-  //     { amount },
-  //     {
-  //       onSuccess: (data: any) => {
-  //         toast.success("Top up successful");
-  //         setAmount(undefined);
-  //       },
-  //       onError: (error: any) => {
-  //         toast.error(error.response.data.message || "Something went wrong");
-  //         setAmount("0.00");
-  //       },
-  //     }
-  //   );
-  // };
   return (
     <>
       {isLoading ? (
@@ -326,7 +306,7 @@ const UserProfile = () => {
                           Last online:
                         </span>
                         <span className="text-gray-900">
-                          {formatDate(myProfile?.data?.user?.user?.lastLogin) ||
+                          {formatDate(Date.now()) ||
                             "N/A"}
                         </span>
                       </div>
@@ -452,15 +432,15 @@ const UserProfile = () => {
                             value={amount}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="0.00 €" />
+                              <SelectValue placeholder="€0.00" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="5.00">5.00 €</SelectItem>
-                              <SelectItem value="10.00">10.00 €</SelectItem>
-                              <SelectItem value="20.00">20.00 €</SelectItem>
-                              <SelectItem value="30.00">30.00 €</SelectItem>
-                              <SelectItem value="40.00">40.00 €</SelectItem>
-                              <SelectItem value="50.00">50.00 €</SelectItem>
+                              <SelectItem value="5.00">€5.00</SelectItem>
+                              <SelectItem value="10.00">€10.00</SelectItem>
+                              <SelectItem value="20.00">€20.00</SelectItem>
+                              <SelectItem value="30.00">€30.00</SelectItem>
+                              <SelectItem value="40.00">€40.00</SelectItem>
+                              <SelectItem value="50.00">€50.00</SelectItem>
                             </SelectContent>
                             <div>
                               {amountError && (
@@ -482,7 +462,8 @@ const UserProfile = () => {
                     </div>
 
                     {/* Payout Credit Section */}
-                    <div>
+                    <Withdrawl />
+                    {/* <div>
                       <h3 className="text-xl font-semibold text-foreground mb-4">
                         Payout credit
                       </h3>
@@ -545,7 +526,7 @@ const UserProfile = () => {
                           <Button>OK</Button>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </TabsContent>
 

@@ -892,3 +892,20 @@ export const TopUp = async (data) => {
 };
 
 // top up api end
+
+
+// withdrawl api
+export const Withdrawl = async (data) => {
+  const response = await axiosInstance.post("/withdrawal", data);
+  return response.data;
+};
+// withdrawl api end
+
+
+// payment history api
+export const PaymentHistory = async () => {
+  const response = await axiosInstance.get("/payment-history");
+  return response.data;
+};
+// payment history api end
+

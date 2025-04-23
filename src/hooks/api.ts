@@ -115,6 +115,7 @@ import {
   TutorialParams,
   deleteTutorial,
   TopUp,
+  Withdrawl,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1063,3 +1064,11 @@ export const useTopUp = () => {
   });
 };
 // top up api end
+
+// withdrawl api
+export const useWithdrawl = () => {
+  return useMutation({
+    mutationFn: Withdrawl,
+  });
+};
+// withdrawl api end
