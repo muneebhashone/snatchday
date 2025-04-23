@@ -164,7 +164,7 @@ const FeaturedProducts = () => {
               <h1>Products not available</h1>
             </div>
           ) : (
-            <div ref={carouselRef} className="w-full">
+            <div ref={carouselRef} className="w-full ">
               <Carousel
                 opts={{
                   align: "center",
@@ -173,7 +173,7 @@ const FeaturedProducts = () => {
                   slidesToScroll: 1,
                 }}
                 setApi={setApi}
-                className="w-full relative"
+                className="max-w-[97%] mx-auto relative"
               >
                 <CarouselContent className="mx-auto">
                   {filterProducts?.data.products.map((product, index) => (
@@ -187,7 +187,7 @@ const FeaturedProducts = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="w-20 h-20 bg-primary text-white hover:bg-primary -left-4 md:-left-6 border border-primary" />
+                <CarouselPrevious className="w-20 h-20 bg-primary text-white hover:bg-primary -left-4 md:-left-8 border border-primary" />
                 <CarouselNext className="w-20 h-20 bg-primary text-white hover:bg-primary -right-4 md:-right-6 border border-primary" />
               </Carousel>
             </div>

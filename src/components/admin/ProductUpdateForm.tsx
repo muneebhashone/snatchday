@@ -111,9 +111,11 @@ const formSchema = z
       data.discounts.forEach((discount, index) => {
         const startDate = new Date(discount.away);
         const endDate = new Date(discount.until);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to start of day
 
-        // Check if the start date is in the past
-        if (startDate < new Date()) {
+        // Check if the start date is in the past (before today)
+        if (startDate < today) {
           ctx.addIssue({
             path: [`discounts.${index}.away`],
             code: z.ZodIssueCode.custom,
@@ -217,7 +219,7 @@ interface Product {
   sku: string;
   barcodeEAN: string;
   noStockMessage: string;
-  relatedProducts: string[];
+  relatedProducts: { _id: string }[];
   requireShipping: boolean;
   liscenseKey: string;
 }
@@ -245,7 +247,12 @@ interface ProductFormValues {
   relatedProducts: string[];
   requireShipping: boolean;
   liscenseKey: string;
-  discounts: any[];
+  discounts: {
+    customerGroup: "BASIC" | "VIP";
+    price: number;
+    away?: Date;
+    until?: Date;
+  }[];
 }
 
 export default function ProductUpdateForm({ product }: { product: Product }) {
@@ -282,7 +289,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
   );
   console.log(product?.categoryIds);
   const form = useForm<ProductFormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema) as any,
     defaultValues: {
       name: "",
       description: "",
@@ -521,7 +528,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Product Information Section */}
             <div className="bg-white rounded-lg border p-6 col-span-2">
-              <h2 className="text-lg font-semibold mb-6">Product Information</h2>
+              <h2 className="text-lg font-semibold mb-6">
+                Product Information
+              </h2>
 
               <div className="space-y-6">
                 <FormField
@@ -559,7 +568,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Product description" {...field} />
+                        <Textarea
+                          placeholder="Product description"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -596,8 +608,8 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                               />
                             </div>
                             <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <X 
-                                className="h-6 w-6 text-white" 
+                              <X
+                                className="h-6 w-6 text-white"
                                 onClick={() => {
                                   if (url.startsWith("blob:")) {
                                     URL.revokeObjectURL(url);
@@ -621,7 +633,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
 
             {/* Pricing & Inventory Section */}
             <div className="bg-white rounded-lg border p-6">
-              <h2 className="text-lg font-semibold mb-6">Pricing & Inventory</h2>
+              <h2 className="text-lg font-semibold mb-6">
+                Pricing & Inventory
+              </h2>
 
               <div className="space-y-6">
                 <FormField
@@ -711,7 +725,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Categories & Attributes Section */}
             <div className="bg-white rounded-lg border p-6">
-              <h2 className="text-lg font-semibold mb-6">Categories & Attributes</h2>
+              <h2 className="text-lg font-semibold mb-6">
+                Categories & Attributes
+              </h2>
 
               <div className="space-y-6">
                 <FormField
@@ -747,7 +763,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                                     value={category._id}
                                     onSelect={() => {
                                       const currentValues = field.value || [];
-                                      if (currentValues.includes(category._id)) {
+                                      if (
+                                        currentValues.includes(category._id)
+                                      ) {
                                         field.onChange(
                                           currentValues.filter(
                                             (id) => id !== category._id
@@ -815,7 +833,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                               <PopoverContent className="w-64 p-0" align="end">
                                 <Command>
                                   <CommandInput placeholder="Search attributes..." />
-                                  <CommandEmpty>No attributes found.</CommandEmpty>
+                                  <CommandEmpty>
+                                    No attributes found.
+                                  </CommandEmpty>
                                   <CommandGroup className="max-h-48 overflow-auto">
                                     {filtersData?.data?.filters
                                       ?.filter(
@@ -849,9 +869,10 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                             <div className="space-y-4 border rounded-md p-3">
                               {Object.entries(selectedFilter).map(
                                 ([filterName, values]) => {
-                                  const filter = filtersData?.data?.filters?.find(
-                                    (f) => f.name === filterName
-                                  );
+                                  const filter =
+                                    filtersData?.data?.filters?.find(
+                                      (f) => f.name === filterName
+                                    );
                                   if (!filter) return null;
 
                                   return (
@@ -881,7 +902,8 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
 
                                       <div className="grid grid-cols-2 gap-2">
                                         {filter.value.map((value: string) => {
-                                          const isSelected = values[0] === value;
+                                          const isSelected =
+                                            values[0] === value;
 
                                           return (
                                             <div
@@ -896,7 +918,9 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                                                 checked={isSelected}
                                                 onChange={() => {
                                                   setSelectedFilters((prev) => {
-                                                    const newFilters = { ...prev };
+                                                    const newFilters = {
+                                                      ...prev,
+                                                    };
                                                     newFilters[filterName] = [
                                                       value,
                                                     ];
@@ -932,6 +956,219 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                     </FormItem>
                   )}
                 />
+
+                <div className="bg-white rounded-lg border p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-lg font-semibold">Discounts</h2>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() =>
+                        append({
+                          customerGroup: "BASIC",
+                          price: 0,
+                          away: undefined,
+                          until: undefined,
+                        })
+                      }
+                      className="flex items-center gap-1"
+                    >
+                      <PlusCircle className="h-4 w-4" />
+                      Add Discount
+                    </Button>
+                  </div>
+
+                  {fields.length > 0 ? (
+                    <div className="space-y-4">
+                      {fields.map((field, index) => (
+                        <div
+                          key={field.id}
+                          className="grid grid-cols-1 md:grid-cols-2 gap-4 border p-4 rounded-md relative"
+                        >
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            className="absolute top-2 right-2 h-8 w-8 p-0"
+                            onClick={() => remove(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+
+                          <FormField
+                            control={form.control}
+                            name={`discounts.${index}.customerGroup`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Customer Group</FormLabel>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select group" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="BASIC">Basic</SelectItem>
+                                    <SelectItem value="VIP">VIP</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`discounts.${index}.price`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Price</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    onKeyDown={(e) => {
+                                      if (e.key === "-") {
+                                        e.preventDefault();
+                                      }
+                                    }}
+                                    {...field}
+                                    onChange={(e) =>
+                                      field.onChange(parseFloat(e.target.value))
+                                    }
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`discounts.${index}.away`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>Start Date</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                          "pl-3 text-left font-normal",
+                                          !field.value &&
+                                            "text-muted-foreground"
+                                        )}
+                                      >
+                                        {field.value ? (
+                                          format(new Date(field.value), "PPP")
+                                        ) : (
+                                          <span>Pick a date</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent
+                                    className="w-auto p-0"
+                                    align="start"
+                                  >
+                                    <Calendar
+                                      mode="single"
+                                      selected={
+                                        field.value
+                                          ? new Date(field.value)
+                                          : undefined
+                                      }
+                                      onSelect={field.onChange}
+                                      disabled={(date) => {
+                                        const today = new Date();
+                                        today.setHours(0, 0, 0, 0);
+                                        const endDate = new Date(
+                                          form.getValues(`discounts.${index}.until`)
+                                        );
+                                        endDate.setHours(0, 0, 0, 0);
+                                        return date < today || (endDate.getTime() && date >= endDate);
+                                      }}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`discounts.${index}.until`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-col">
+                                <FormLabel>End Date</FormLabel>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <FormControl>
+                                      <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                          "pl-3 text-left font-normal",
+                                          !field.value &&
+                                            "text-muted-foreground"
+                                        )}
+                                      >
+                                        {field.value ? (
+                                          format(new Date(field.value), "PPP")
+                                        ) : (
+                                          <span>Pick a date</span>
+                                        )}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                      </Button>
+                                    </FormControl>
+                                  </PopoverTrigger>
+                                  <PopoverContent
+                                    className="w-auto p-0"
+                                    align="start"
+                                  >
+                                    <Calendar
+                                      mode="single"
+                                      selected={
+                                        field.value
+                                          ? new Date(field.value)
+                                          : undefined
+                                      }
+                                      onSelect={field.onChange}
+                                      disabled={(date) => {
+                                        const today = new Date();
+                                        today.setHours(0, 0, 0, 0);
+                                        const startDate = new Date(
+                                          form.getValues(
+                                            `discounts.${index}.away`
+                                          )
+                                        );
+                                        startDate.setHours(0, 0, 0, 0);
+                                        return date <= startDate;
+                                      }}
+                                      initialFocus
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center p-4 border rounded-md text-muted-foreground text-sm">
+                      No discounts added. Click "Add Discount" to create special
+                      pricing for customer groups.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -1029,8 +1266,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                       </FormControl>
                     </FormItem>
                   )}
-                />  
-
+                />
 
                 <FormField
                   control={form.control}
@@ -1155,3 +1391,4 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     </div>
   );
 }
+

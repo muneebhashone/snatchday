@@ -15,8 +15,6 @@ import TournamentWinner from "@/components/landing-page/TournamentWinner";
 export default function Home() {
   const { scrollYProgress } = useScroll();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
-  
-
 
   // Hide scroll indicator after user has scrolled a bit
   useEffect(() => {
@@ -27,9 +25,9 @@ export default function Home() {
         setShowScrollIndicator(true);
       }
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -40,10 +38,10 @@ export default function Home() {
           className="fixed top-0 left-0 right-0 h-1 bg-primary z-50"
           style={{ scaleX: scrollYProgress }}
         />
-        
+
         {/* Scroll indicator */}
         {showScrollIndicator && (
-          <motion.div 
+          <motion.div
             className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -51,24 +49,32 @@ export default function Home() {
           >
             <div className="flex flex-col items-center">
               <p className="text-sm text-gray-600 mb-2">Scroll to explore</p>
-              <motion.div 
+              <motion.div
                 className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center"
                 initial={{ opacity: 0.5 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
               >
-                <motion.div 
+                <motion.div
                   className="w-1 h-2 bg-primary rounded-full mt-2"
                   animate={{ y: [0, 12, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                 />
               </motion.div>
             </div>
           </motion.div>
         )}
-        
+
         <HeroSection />
-        
+
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -77,7 +83,7 @@ export default function Home() {
         >
           <RegisterSection />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -86,7 +92,7 @@ export default function Home() {
         >
           <ProductSection />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -95,7 +101,7 @@ export default function Home() {
         >
           <BestOffers />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -105,7 +111,7 @@ export default function Home() {
           {/*  */}
           <FeaturedProducts />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, x: 50 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -114,7 +120,7 @@ export default function Home() {
         >
           <TournamentWinner />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 30 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
@@ -123,7 +129,7 @@ export default function Home() {
         >
           <DuelArena />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -132,7 +138,7 @@ export default function Home() {
         >
           <Testimonials />
         </motion.div>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}

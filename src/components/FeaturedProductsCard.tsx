@@ -71,8 +71,8 @@ const FeaturedProductsCard = ({
       {/* Product Info */}
       <div className="space-y-1 md:space-y-2">
         {/* Title */}
-        <p className="text-card-foreground text-md md:text-[20px]">{name}</p>
-        <p className="text-card-foreground text-md md:text-[14px]">
+        <p className="text-card-foreground text-md md:text-[20px] w-full truncate">{name}</p>
+        <p className="text-card-foreground text-md md:text-[14px] w-full truncate">
           {description}
         </p>
 
