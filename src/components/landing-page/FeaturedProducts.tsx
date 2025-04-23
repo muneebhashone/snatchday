@@ -1,23 +1,34 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FeaturedProductsCard from "../FeaturedProductsCard";
 import Link from "next/link";
 import { FeaturedStarIcon } from "../icons/icon";
 import { useGetCategories, useGetProducts } from "@/hooks/api";
 import { Loader } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { useCallback } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 const FeaturedProducts = () => {
   const [activeTab, setActiveTab] = useState("");
   const [categoryId, getCategoryId] = useState(``);
-  const [parentCategories, setparentCategories] = useState([]);
+  const [parentCategories, setparentCategories] = useState<Array<any>>([]);
   const { data } = useGetCategories();
   const { data: filterProducts, isLoading } = useGetProducts({
     category: categoryId,
   });
+  const [api, setApi] = useState<any>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const filtered = data?.data.categories.filter(
-      (cat) => cat.parentCategory === null
+      (cat: any) => cat.parentCategory === null
     );
     setparentCategories(filtered);
     console.log(filtered, "filtered");
@@ -27,14 +38,52 @@ const FeaturedProducts = () => {
     }
   }, [data]);
 
-  // console.log(data?.data.categories);
+  // Auto-play functionality
+  useEffect(() => {
+    if (!api) return;
+
+    let autoplayInterval: NodeJS.Timeout;
+
+    const startAutoplay = () => {
+      autoplayInterval = setInterval(() => {
+        if (api.canScrollNext()) {
+          api.scrollNext();
+        } else {
+          api.scrollTo(0);
+        }
+      }, 2000);
+    };
+
+    const stopAutoplay = () => {
+      clearInterval(autoplayInterval);
+    };
+
+    startAutoplay();
+
+    // Handle pointer events from the carousel API
+    api.on("pointerDown", stopAutoplay);
+    api.on("pointerUp", startAutoplay);
+
+    // Get the carousel container element for hover events
+    const carouselElement = carouselRef.current;
+    if (carouselElement) {
+      carouselElement.addEventListener("mouseenter", stopAutoplay);
+      carouselElement.addEventListener("mouseleave", startAutoplay);
+    }
+
+    return () => {
+      clearInterval(autoplayInterval);
+      if (carouselElement) {
+        carouselElement.removeEventListener("mouseenter", stopAutoplay);
+        carouselElement.removeEventListener("mouseleave", startAutoplay);
+      }
+    };
+  }, [api]);
 
   const handleCategory = (categoryName: string, categoryId: string) => {
     setActiveTab(categoryName);
     getCategoryId(categoryId);
   };
-
-  // console.log(filterProducts?.data.products, "filterProducts");
 
   return (
     <section className="py-8 md:py-12 lg:py-16 bg-white">
@@ -104,24 +153,45 @@ const FeaturedProducts = () => {
           </div>
         </div>
 
-        {/* Product Grid */}
+        {/* Product Carousel */}
         <div className="px-0 md:px-6">
-          <div className="max-w-[1920px] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 md:gap-5 gap-8">
-            {isLoading ? (
-              <div className="col-span-5 flex items-center justify-center">
-                <Loader className="animate-spin" size={30} />
-              </div>
-            ) : !filterProducts?.data.products.length ? (
-              <div className="flex items-center justify-center col-span-5">
-                <h1>Products not available</h1>{" "}
-              </div>
-            ) : (
-              filterProducts?.data.products.map((product, index) => {
-                console.log(product);
-                return <FeaturedProductsCard key={index} {...product} />;
-              })
-            )}
-          </div>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-10">
+              <Loader className="animate-spin" size={30} />
+            </div>
+          ) : !filterProducts?.data.products.length ? (
+            <div className="flex items-center justify-center py-10">
+              <h1>Products not available</h1>
+            </div>
+          ) : (
+            <div ref={carouselRef} className="w-full ">
+              <Carousel
+                opts={{
+                  align: "center",
+                  loop: true,
+                  skipSnaps: false,
+                  slidesToScroll: 1,
+                }}
+                setApi={setApi}
+                className="max-w-[97%] mx-auto relative"
+              >
+                <CarouselContent className="mx-auto">
+                  {filterProducts?.data.products.map((product, index) => (
+                    <CarouselItem
+                      key={index}
+                      className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                    >
+                      <div className="p-2">
+                        <FeaturedProductsCard key={index} {...product} />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="w-20 h-20 bg-primary text-white hover:bg-primary -left-4 md:-left-8 border border-primary" />
+                <CarouselNext className="w-20 h-20 bg-primary text-white hover:bg-primary -right-4 md:-right-6 border border-primary" />
+              </Carousel>
+            </div>
+          )}
         </div>
 
         {/* Mobile View All Link */}

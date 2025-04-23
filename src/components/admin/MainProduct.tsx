@@ -62,6 +62,7 @@ const productFormSchema = z.object({
   type: z.enum(["NEW", "SALE"]).optional(),
   discounts: z.array(discountSchema).optional(),
   attributes: z.record(z.string(), z.array(z.string())).optional(),
+  currentOffer: z.boolean().optional(), // Added current offers field
 
   isFeatured: z.boolean().default(false),
   metaTitle: z.string().min(1, "Meta title is required"),
@@ -120,6 +121,7 @@ const MainProduct = () => {
       type: "NEW",
       discounts: [],
       attributes: {},
+      currentOffer: false, // Added default value for current offers
       isFeatured: false,
       metaTitle: "",
       metaDescription: "",
@@ -212,6 +214,8 @@ const MainProduct = () => {
         if (validItems.length > 0) {
           formData.append(key, JSON.stringify(validItems));
         }
+      } else if (key === "currentOffer") {
+        formData.append("currentOffer", value ? "true" : "false");
       } else if (key === "attributes") {
         // Convert attributes for API
         const attributesObject = Object.entries(selectedFilters).reduce(
@@ -609,6 +613,12 @@ const MainProduct = () => {
                   selectedFilters={selectedFilters}
                   setSelectedFilters={setSelectedFilters}
                 />
+                <ProductDiscountField
+                  control={form.control}
+                  discountFields={discountFields}
+                  append={appendDiscount}
+                  remove={removeDiscount}
+                />
               </div>
             </div>
 
@@ -673,6 +683,29 @@ const MainProduct = () => {
                         </FormLabel>
                         <FormDescription>
                           Display this product in featured sections
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currentOffer"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">
+                          Current Offers
+                        </FormLabel>
+                        <FormDescription>
+                          Show this product in current offers section
                         </FormDescription>
                       </div>
                       <FormControl>

@@ -1,7 +1,7 @@
 "use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import SecondaryHeroSection from "@/components/SecondaryHeroSection";
-import React from "react";
+import React, { useState } from "react";
 import supportbg from "@/app/images/supportbg.png";
 import supportimage from "@/app/images/supportrightimage.png";
 import CreateTicket from "@/components/CreateTicket";
@@ -14,9 +14,24 @@ import ticket6 from "@/app/images/ticket6.svg";
 import { Button } from "@/components/ui/button";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
 import { useRouter } from "next/navigation";
+import { useGetFaq, useGetTutorial } from "@/hooks/api";
+import Link from "next/link";
+import { YouTubePlayer } from "@/components/admin/YouTubePlayer";
 
 const SupportPage = () => {
   const router = useRouter();
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const { data: faq } = useGetFaq({
+    category: selectedCategory,
+    status: "ACTIVE",
+  });
+  console.log(faq, "faqData");
+
+  const {data: Tutorial} = useGetTutorial({
+    category: selectedCategory,
+    status: "ACTIVE",
+  });
+  console.log(Tutorial, "Tutorial");
   const ticketdata = [
     {
       id: 1,
@@ -56,20 +71,7 @@ const SupportPage = () => {
     },
   ];
 
-  const faqdata = [
-    { id: 1, title: "About Snatch Day" },
-    { id: 2, title: "Register" },
-    { id: 3, title: "My Account" },
-    { id: 4, title: "Point System" },
-    { id: 5, title: "Bargain OR Discount Tournaments" },
-    { id: 6, title: "Duerllarena" },
-    { id: 7, title: "VIP Membership & VIP Shop" },
-    { id: 8, title: "Games & Rules" },
-    { id: 9, title: "Payment & Shipping" },
-    { id: 10, title: "Complaints & Returns" },
-    { id: 11, title: "Technical Requierments" },
-    { id: 12, title: "My Account" },
-  ];
+ 
 
   const videodata = [
     {
@@ -148,16 +150,16 @@ const SupportPage = () => {
             </span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-            {faqdata.map((item) => (
+            {faq?.data?.map((item) => (
               <Button
                 onClick={() => {
-                  router.push(`/faq/${item.id}`);
+                  router.push(`/faq/${item._id}`);
                 }}
-                key={item.id}
+                key={item._id}
                 className="w-full font-extrabold shadow-lg rounded-2xl transition-all duration-300 ease-in-out px-8 py-6 text-center text-2xl min-h-[167px] flex items-center justify-center
                 bg-white text-[#1C1B1D] hover:bg-primary hover:text-white hover:rounded-full"
               >
-                {item.title}
+                {item.category}
               </Button>
             ))}
           </div>
@@ -165,7 +167,7 @@ const SupportPage = () => {
             <h3 className="text-xl md:text-2xl font-extrabold text-center md:text-left">
               OTHER QUESTIONS
             </h3>
-            <Button className="gradient-primary text-white rounded-full text-xl font-bold px-6 min-h-16 hover:rounded-full w-[255px] shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
+            <Button onClick={() => router.push("/support/create-ticket")} className="gradient-primary text-white rounded-full text-xl font-bold px-6 min-h-16 hover:rounded-full w-[255px] shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
               Ask a question
             </Button>
           </div>
@@ -179,28 +181,33 @@ const SupportPage = () => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-7">
-            {videodata.map((item) => (
+            {Tutorial?.data?.map((item) => (
               <div
-                key={item.id}
-                className="bg-white shadow-xl py-16 px-16 text-center rounded-lg hover:border-2 hover:border-primary"
+                key={item._id}
+                className="bg-white shadow-xl py-8 px-6 text-center rounded-lg hover:border-2 hover:border-primary"
               >
-                <iframe
-                  className="rounded-lg"
-                  width="100%"
-                  height="300"
-                  src={item.src}
-                  title="Explanatory Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-                <h2 className="text-3xl font-extrabold py-9">{item.title}</h2>
-                <Button className="bg-white text-lg text-foreground rounded-full px-6 h-20 w-72 hover:rounded-full hover:border border-foreground drop-shadow-2xl">
-                  Play Video
-                </Button>
+                <div className="mb-4 rounded-lg overflow-hidden">
+                  <YouTubePlayer youtubeUrl={item.videoUrl} />
+                </div>
+                <h2 className="text-2xl font-extrabold py-4">{item.title}</h2>
+                <Link href={item.videoUrl}>
+                  <Button className="bg-white text-lg text-foreground rounded-full px-6 h-16 w-full md:w-72 hover:rounded-full hover:border border-foreground drop-shadow-2xl">
+                    Watch Video
+                  </Button>
+                </Link>
               </div>
             ))}
           </div>
+          
+          {/* If no tutorials are available, show placeholder content */}
+          {(!Tutorial?.data || Tutorial.data.length === 0) && (
+            <div className="text-center py-10">
+              <p className="text-gray-500 mb-4">No tutorial videos available at the moment.</p>
+              <Button onClick={() => router.push("/support/create-ticket")} className="gradient-primary text-white rounded-full text-xl font-bold px-6 min-h-16 hover:rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.15)]">
+                Contact Support
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </ClientLayout>
