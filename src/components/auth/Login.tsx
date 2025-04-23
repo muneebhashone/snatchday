@@ -57,9 +57,7 @@ const Login = ({
   const [isOtpOpen, setIsOtpOpen] = useState(false);
 
   const { user, setUserData, logout } = useUserContext();
-  const router = useRouter();
-  const { mutate: login, isPending } = useAuthApi();
-  const { data: myProfile, isPending: isMyProfilePending,refetch } = useGetMyProfile();
+  const { data: myProfile, isPending: isMyProfilePending } = useGetMyProfile();
   const { mutate: Userlogout } = useLogout();
   const { mutate: requestEmailToken, isPending: isResending } =
     useRequestEmailToken();
@@ -89,14 +87,14 @@ const Login = ({
   const handleLogout = () => {
     Userlogout(undefined, {
       onSuccess: () => {
+        toast.success("Logout successfully");
         socket.emit("logout");
         setUserData(null);
         setIsLoggedIn(false);
         setIsLoginOpen(false);
-        refetch()
         logout();
-        toast.success("Logout successfully");
-        router.push("/");
+       
+        window.location.href = "/";
       },
       onError: (error) => {
         console.error("Logout failed:", error);
