@@ -1,4 +1,4 @@
-git"use client";
+"use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import React from "react";
 import { useGetDuelGames } from "@/hooks/api";
