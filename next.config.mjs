@@ -1,11 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  rewrites: async () => [
-    {
-      source: "/api/v2/:path*",
-      destination: "https://test-node-vercel-production.up.railway.app/:path*",
-    },
-  ],
+  async rewrites() {
+    return [
+      {
+        source: "/api/v2/:path*",
+        destination: "https://test-node-vercel-production.up.railway.app/:path*",
+        has: [{
+          type: 'header',
+          key: 'x-forwarded-for'
+        }]
+      },
+    ];
+  },
   images: {
     domains: [
       "res.cloudinary.com",

@@ -125,6 +125,7 @@ import {
   updateWithdrawalRequest,
   getWithdrawalRequestById,
   updateWithdrawalReject,
+  checkEmail,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1155,3 +1156,9 @@ export const useUpdateWithdrawalReject = () => {
       updateWithdrawalReject(id, { status }),
   });
 };
+export const useCheckEmail = () => {
+  return useMutation({
+    mutationFn: ({email}:{email:string}) => checkEmail(email),
+  });
+};
+

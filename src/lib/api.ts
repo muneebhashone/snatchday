@@ -981,3 +981,10 @@ export const updateWithdrawalReject = async (id: string, data: { status: string 
     throw error;
   }
 };
+export const checkEmail = async (email) => {
+  const response = await axiosInstance.post(`/auth/checkUserExists`, { email });
+  return response.data;
+};
+
+
+

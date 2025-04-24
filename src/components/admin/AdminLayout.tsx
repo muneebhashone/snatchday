@@ -16,28 +16,51 @@ import { useLogout } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 import Image from "next/image";
 import { useSocket } from "@/context/SocketContext";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { mutate: logout, isPending } = useLogout();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  // const { mutate: logout, isPending } = useLogout();
   const { user } = useUserContext();
   const { socket } = useSocket();
 
-  const handleLogout = () => {
-    logout(undefined, {
-      onSuccess: () => {
-        socket.emit("logout");
-        document.cookie =
-          "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        localStorage.removeItem("snatchday_user");
+  // const handleLogout = () => {
+  //   logout(undefined, {
+  //     onSuccess: () => {
+  //       socket.emit("logout");
+  //       document.cookie =
+  //         "user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  //       localStorage.removeItem("snatchday_user");
 
-        router.push("/admin/login");
-      },
-      onError: (error) => {
-        console.error("Logout failed:", error);
-      },
-    });
+  //       router.push("/admin/login");
+  //     },
+  //     onError: (error) => {
+  //       console.error("Logout failed:", error);
+  //     },
+  //   });
+  // };
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      const res = await fetch("/api/v2/auth/logout", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.ok) {
+        toast.success("Logout successful");
+        // setUserData(null);
+        localStorage.removeItem("snatchday_user");
+        window.location.href = "/login";
+      } else {
+        toast.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   useEffect(() => {
@@ -95,7 +118,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               variant="ghost"
               className="text-gray-500 hover:text-primary gap-2"
             >
-              {isPending ? "Logging out..." : "Logout"}
+              {isLoggingOut ? "Logging out..." : "Logout"}
               <LogOut className="h-4 w-4" />
             </Button>
           </div>

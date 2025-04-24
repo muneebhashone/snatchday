@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { User, Heart, ShoppingCart, ChevronDown, Loader2 } from "lucide-react";
 import logo from "@/app/images/logo.png";
@@ -28,21 +28,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  ProductFilters,
   useGetCart,
   useGetCategories,
   useGetMyProfile,
+  useGetProducts,
   useGetWishList,
 } from "@/hooks/api";
 import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
 import { Category, SubCategory } from "@/types";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const Header = () => {
   const { data: cartData } = useGetCart();
   const { data: wishlist } = useGetWishList();
+  
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 1000);
+  const [searchResults, setSearchResults] = useState([]);
+
+  const [filter, setFilter] = useState<ProductFilters>({});
+
+  const {data: products, isLoading: productLoading} = useGetProducts(filter);
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -94,6 +106,41 @@ const Header = () => {
 
   const handleCartClick = () => {
     router.push("/order");
+  };
+
+  // Update filter when debounced search changes
+  useEffect(() => {
+    if (debouncedSearch) {
+      setFilter({
+        ...filter,
+        name: debouncedSearch,
+      });
+    }
+  }, [debouncedSearch]);
+
+  // Update search results when products data changes
+  useEffect(() => {
+    if (products?.data?.products) {
+      setSearchResults(products.data.products);
+    }
+  }, [products]);
+
+  // Handle search when button is clicked
+  const handleSearch = () => {
+    if (search) {
+      setFilter({
+        ...filter,
+        name: search,
+      });
+    }
+  };
+
+  // Navigate to product page when a search result is clicked
+  const handleProductClick = (productId: string) => {
+    if (productId) {
+      setIsSearchOpen(false);
+      router.push(`/product-listing/${productId}`);
+    }
   };
 
   return (
@@ -297,18 +344,12 @@ const Header = () => {
                 <h2 className="text-2xl font-bold text-foreground">
                   Search Products
                 </h2>
-                {/* <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsSearchOpen(false)}
-                  className="hover:bg-gray-100 rounded-full w-12 h-12"
-                >
-                  <X className="h-6 w-6" />
-                </Button> */}
               </div>
               <div className="relative">
                 <Input
                   type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search Duellarena, Turniere and more..."
                   className="w-full h-[60px] rounded-2xl pr-[140px] pl-14 border-2 border-gray-200 focus:border-primary text-lg placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
                 />
@@ -316,11 +357,56 @@ const Header = () => {
                 <Button
                   variant="default"
                   size="lg"
+                  onClick={handleSearch}
                   className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl bg-primary text-white px-6 h-[48px] transition-colors hover:bg-primary"
                 >
                   Search
                 </Button>
               </div>
+              
+              {/* Display search results */}
+              {debouncedSearch && (
+                <div className="mt-6 max-h-[400px] overflow-y-auto">
+                  <h3 className="text-sm font-medium text-gray-500 mb-3">
+                    Search Results
+                  </h3>
+                  <div className="space-y-3">
+                    {productLoading ? (
+                      <div className="flex justify-center py-4">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      </div>
+                    ) : products?.data?.products && products.data.products.length > 0 ? (
+                      products.data.products.map((product) => (
+                        <div 
+                          key={product._id}
+                          onClick={() => product._id && handleProductClick(product._id)}
+                          className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                        >
+                          {product.images && product.images[0] && (
+                            <div className="relative h-16 w-16 rounded-md overflow-hidden">
+                              <Image 
+                                src={product.images[0]} 
+                                alt={product.name || "Product"} 
+                                fill 
+                                className="object-cover"
+                                unoptimized
+                              />
+                            </div>
+                          )}
+                          <div className="flex-1">
+                            <h4 className="font-medium text-foreground line-clamp-1">{product.name || "Unnamed Product"}</h4>
+                            <p className="text-sm text-gray-500 line-clamp-1">{product.description || "No description"}</p>
+                            <p className="text-primary font-bold">{product.price || "0.00"}€</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-center py-4 text-gray-500">No products found</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              
               <div className="mt-6">
                 <h3 className="text-sm font-medium text-gray-500 mb-3">
                   Popular Searches
