@@ -20,6 +20,56 @@ const specifications = {
     "Snatch Day GmbH reserves the right to cancel the tournament/duel in whole or in part or to change the game rules/participation fees. In the event of cancellation, the points used will be credited. Snatch Day GmbH is not liable for the technical requirements being met or for timely participation in the tournament or duel.",
   ],
 };
+const gameInstructions = [
+  "Each game has its own specific rules, which can be found in the announcement. To participate in tournaments or duels, registration on our website is required. Each user can only register once. For more information on the registration process, please see Section 6 of our Terms and Conditions.",
+
+  "There is no entitlement to conclude a user agreement with us. We reserve the right to reject registration requests without stating reasons, and the provided user data will be deleted immediately. If a player wishes to participate in paid tournaments or duels, they must first top up their account. Various payment methods are available. Topping up the account is free of charge.",
+
+  "To participate in a tournament, the entry fee specified in the announcement or the required Snap Points must be paid. The entry fee will be debited from the player's virtual stake account after registration, which must have sufficient funds to cover the entry fee. Snap Points are automatically converted into discount points, which cannot be cashed out.",
+
+  "The entry fee entitles players to participate, but is not directly related to the chance of winning (i.e., purchasing the product). With each additional participant, the price of the respective product decreases until a final price of €1 is reached. The number of participants is limited in each tournament to increase the chance of success. The winner(s) receives the right to purchase the corresponding product at the final offer price, but is not obligated to purchase.",
+
+  "Please note that the offer price is only valid for 24 hours, after which the claim expires. You can participate in a maximum of 3 tournaments within a month. Misuse of our website is strictly prohibited. If manipulation or attempted manipulation is detected, we reserve the right to exclude participants without giving reasons. We may also subsequently cancel a tournament or duel if manipulation or violations of Section 9 of our Terms and Conditions are detected.",
+
+  "In such a case, there is no entitlement to a prize. If misuse is proven, the participant is liable to Snatch Day for lost participation fees and the costs incurred for the verification. All other claims, in particular claims for damages, remain unaffected. Persons under the age of 18 or who otherwise have limited legal capacity are not permitted to register on our website. Snatch Day employees and staff, as well as their dependents, are not permitted to participate in tournaments and duels and cannot earn any winnings for themselves or third parties.",
+
+  "Snatch Day GmbH reserves the right to cancel the tournament/duel in whole or in part, or to change the game rules/participation fees. In the event of cancellation, the points used will be credited. Snatch Day GmbH assumes no liability for the technical requirements or timely participation in the tournament or duel.",
+];
+
+const technicalData = [
+  "Each game has its own specific rules, which can be found in the announcement. To participate in tournaments or duels, registration on our website is required. Each user can only register once. For more information on the registration process, please see Section 6 of our Terms and Conditions.",
+
+  "There is no entitlement to conclude a user agreement with us. We reserve the right to reject registration requests without stating reasons, and the provided user data will be deleted immediately. If a player wishes to participate in paid tournaments or duels, they must first top up their account. Various payment methods are available. Topping up the account is free of charge.",
+
+  "To participate in a tournament, the entry fee specified in the announcement or the required Snap Points must be paid. The entry fee will be debited from the player's virtual stake account after registration, which must have sufficient funds to cover the entry fee. Snap Points are automatically converted into discount points, which cannot be cashed out.",
+
+  "The entry fee entitles players to participate, but is not directly related to the chance of winning (i.e., purchasing the product). With each additional participant, the price of the respective product decreases until a final price of €1 is reached. The number of participants is limited in each tournament to increase the chance of success. The winner(s) receives the right to purchase the corresponding product at the final offer price, but is not obligated to purchase.",
+
+  "Please note that the offer price is only valid for 24 hours, after which the claim expires. You can participate in a maximum of 3 tournaments within a month. Misuse of our website is strictly prohibited. If manipulation or attempted manipulation is detected, we reserve the right to exclude participants without giving reasons. We may also subsequently cancel a tournament or duel if manipulation or violations of Section 9 of our Terms and Conditions are detected.",
+
+  "In such a case, there is no entitlement to a prize. If misuse is proven, the participant is liable to Snatch Day for lost participation fees and the costs incurred for the verification. All other claims, in particular claims for damages, remain unaffected. Persons under the age of 18 or who otherwise have limited legal capacity are not permitted to register on our website. Snatch Day employees and staff, as well as their dependents, are not permitted to participate in tournaments and duels and cannot earn any winnings for themselves or third parties.",
+
+  "Snatch Day GmbH reserves the right to cancel the tournament/duel in whole or in part, or to change the game rules/participation fees. In the event of cancellation, the points used will be credited. Snatch Day GmbH assumes no liability for the technical requirements or timely participation in the tournament or duel.",
+
+  "Proin auctor felis nec arcu cursus eget dapibus mauris faucibus. Nullam auctor, ipsum sed tincidunt varius, lectus risus fermentum libero, in imperdiet nulla sapien sed urna. Sed non sagittis nibh. Integer aliquet diam nec lectus dignissim sagittis. Suspendisse sagittis suscipit laoreet. Suspendisse eu tempus leo. Phasellus neque velit, fringilla a venenatis sed, varius ut lectus. Cras in posere nisi. Phasellus ligula tortor, porta et dapibus vel, blandit sit amet magna.",
+];
+const ProductDescription = [
+  "Each game has its own specific rules, which can be found in the announcement. To participate in tournaments or duels, registration on our website is required. Each user can only register once. For more information on the registration process, please see Section 6 of our Terms and Conditions.",
+
+  "There is no entitlement to conclude a user agreement with us. We reserve the right to reject registration requests without stating reasons, and the provided user data will be deleted immediately. If a player wishes to participate in paid tournaments or duels, they must first top up their account. Various payment methods are available. Topping up the account is free of charge.",
+
+  "To participate in a tournament, the entry fee specified in the announcement or the required Snap Points must be paid. The entry fee will be debited from the player's virtual stake account after registration, which must have sufficient funds to cover the entry fee. Snap Points are automatically converted into discount points, which cannot be cashed out.",
+
+  "The entry fee entitles players to participate, but is not directly related to the chance of winning (i.e., purchasing the product). With each additional participant, the price of the respective product decreases until a final price of €1 is reached. The number of participants is limited in each tournament to increase the chance of success. The winner(s) receives the right to purchase the corresponding product at the final offer price, but is not obligated to purchase.",
+
+  "Please note that the offer price is only valid for 24 hours, after which the claim expires. You can participate in a maximum of 3 tournaments within a month. Misuse of our website is strictly prohibited. If manipulation or attempted manipulation is detected, we reserve the right to exclude participants without giving reasons. We may also subsequently cancel a tournament or duel if manipulation or violations of Section 9 of our Terms and Conditions are detected.",
+
+  "In such a case, there is no entitlement to a prize. If misuse is proven, the participant is liable to Snatch Day for lost participation fees and the costs incurred for the verification. All other claims, in particular claims for damages, remain unaffected. Persons under the age of 18 or who otherwise have limited legal capacity are not permitted to register on our website. Snatch Day employees and staff, as well as their dependents, are not permitted to participate in tournaments and duels and cannot earn any winnings for themselves or third parties.",
+
+  "Snatch Day GmbH reserves the right to cancel the tournament/duel in whole or in part, or to change the game rules/participation fees. In the event of cancellation, the points used will be credited. Snatch Day GmbH assumes no liability for the technical requirements or timely participation in the tournament or duel.",
+
+  "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6`) IPS 1920 x 1080 (Full HD) - Wi-Fi 5 - Pure Silver - kbd: German",
+];
 
 const ProductDetailTheorySec = () => {
   return (
@@ -50,12 +100,6 @@ const ProductDetailTheorySec = () => {
           >
             product description
           </TabsTrigger>
-          <TabsTrigger
-            value="description5"
-            className="text-[16px] shadow-[-1px_-1px_5px_#e9f0ff] text-[#444444] capitalize font-medium px-6 py-2 rounded-none rounded-t-sm  data-[state=active]:bg-[#FF6B3D] data-[state=active]:text-white data-[state=active]:shadow-none"
-          >
-            Participant History
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent
@@ -74,14 +118,20 @@ const ProductDetailTheorySec = () => {
         <TabsContent value="description2" className="py-8 mt-0">
           <div className="grid grid-cols-1 gap-x-32">
             <div className="text-sm text-gray-600">
-              Third description tab content
+              <div className="grid grid-cols-1 px-10 space-y-4">
+                {gameInstructions.map((instruction, index) => (
+                  <p className="space-y-4 text-lg" key={index}>
+                    {instruction}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="description3" className="py-8 mt-0">
           <div className="grid grid-cols-1 px-10 space-y-4">
-            {specifications.para.map((spec, index) => (
+            {technicalData.map((spec, index) => (
               <p key={index} className="space-y-4 text-lg">
                 {spec}
               </p>
@@ -90,18 +140,11 @@ const ProductDetailTheorySec = () => {
         </TabsContent>
         <TabsContent value="description4" className="py-8 mt-0">
           <div className="grid grid-cols-1 px-10 space-y-4">
-            {specifications.para.map((spec, index) => (
+            {ProductDescription.map((spec, index) => (
               <p key={index} className="space-y-4 text-lg">
                 {spec}
               </p>
             ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="description5" className="py-8 mt-0">
-          <div className="grid grid-cols-1 gap-x-32">
-            <div className="text-sm text-gray-600">
-              Third description tab content
-            </div>
           </div>
         </TabsContent>
       </Tabs>

@@ -411,3 +411,50 @@ export interface TutorialFormData {
   category: string;
   order?: number;
 }
+
+
+export interface points {
+  facebookLike: number,
+  facebookShare: number,
+  referral: number,
+  facebookAppId: string,
+  maxSnapPoints: number,
+  maxDiscountPoints: number,
+  maxWithdrawalAmount: number,
+  minWithdrawalAmount: number
+  platformFee: number,
+  snapPointsRatio: number
+}
+
+export interface BankDetails {
+  paypalEmail?: string;
+  iban?: string;
+  accountHolder?: string;
+}
+
+export interface WithdrawalUser {
+  _id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  balance?: number;
+}
+
+export interface WithdrawalRequest {
+  _id: string;
+  amount: number;
+  bankDetails?: BankDetails;
+  createdAt: string;
+  platformFee: number;
+  requestDate: string;
+  status: "PENDING" | "COMPLETED" | "REJECTED";
+  updatedAt: string;
+  user?: WithdrawalUser;
+  commission?: number;
+  methodFee?: number;
+}
+
+export interface WithdrawalRequestResponse {
+  success: boolean;
+  data: WithdrawalRequest | WithdrawalRequest[];
+}

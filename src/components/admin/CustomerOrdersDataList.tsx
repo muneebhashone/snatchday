@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Loader, LucideEye, ReceiptEuroIcon } from "lucide-react";
+import { Loader, LucideEye, ReceiptEuroIcon, ShoppingCart } from "lucide-react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
@@ -52,8 +52,12 @@ const CustomerOrdersDataList = ({
       <Loader size={25} className="animate-spin text-primary mb-5" />
     </div>
   ) : !orders?.data.orders.length ? (
-    <div className="text-center w-full text-red-500 font-bold">
-      *No Order Data Of This Customer*
+    <div className="flex items-center justify-center min-h-[200px] text-gray-500">
+      <div className="text-center">
+        <ShoppingCart size={40} className="mx-auto mb-4 text-gray-400" />
+        <p className="text-lg font-medium">No orders found</p>
+        <p className="text-sm mt-2">This customer has no order records yet</p>
+      </div>
     </div>
   ) : (
     <div className="p-6">

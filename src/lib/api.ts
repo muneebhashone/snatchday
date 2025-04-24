@@ -20,7 +20,8 @@ import {
   WebSetting,
   MainProduct,
   FaqFormData,
-  TutorialFormData
+  TutorialFormData,
+  points
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -428,10 +429,10 @@ export const updateCart = async (id: string, quantity: number) => {
   return response.data;
 };
 
-export const getPoints = async () => {
-  const response = await axiosInstance.get("/web-settings/points");
-  return response.data;
-};
+// export const getPoints = async () => {
+//   const response = await axiosInstance.get("/web-settings/points");
+//   return response.data;
+// };
 
 export const checkout = async (data: CheckoutTypes) => {
   const response = await axiosInstance.post("/order/checkout", data);
@@ -799,7 +800,7 @@ export const deleteCustomer = async (id: string) => {
   return response.data;
 };
 
-export const deleteUser = async (id: string) => {
+export const deleteUser = async () => {
   const response = await axiosInstance.delete(`/auth/account/`);
   return response.data;
 };
@@ -830,32 +831,35 @@ export const deleteFaq = async (id: string) => {
   return response.data;
 };
 //reviews api
-export const createTutorial=async(data:TutorialFormData)=>{
-  const response=await axiosInstance.post('/web-settings/tutorial',data)
-  return response.data
-}
+export const createTutorial = async (data: TutorialFormData) => {
+  const response = await axiosInstance.post("/web-settings/tutorial", data);
+  return response.data;
+};
 
 export interface TutorialParams {
   category?: string;
   status?: string;
 }
 
-export const getTutorial=async(params?:TutorialParams)=>{
-  const response=await axiosInstance.get('/web-settings/tutorial', {params})
-  return response.data
-}
+export const getTutorial = async (params?: TutorialParams) => {
+  const response = await axiosInstance.get("/web-settings/tutorial", {
+    params,
+  });
+  return response.data;
+};
 
-export const updateTutorial=async(id:string,data:TutorialFormData)=>{
-  const response=await axiosInstance.put(`/web-settings/tutorial/${id}`,data)
-  return response.data
-}
+export const updateTutorial = async (id: string, data: TutorialFormData) => {
+  const response = await axiosInstance.put(
+    `/web-settings/tutorial/${id}`,
+    data
+  );
+  return response.data;
+};
 
-export const deleteTutorial=async(id:string)=>{
-  const response=await axiosInstance.delete(`/web-settings/tutorial/${id}`)
-  return response.data
-}
-
-
+export const deleteTutorial = async (id: string) => {
+  const response = await axiosInstance.delete(`/web-settings/tutorial/${id}`);
+  return response.data;
+};
 
 export const createReview = async (data) => {
   const response = await axiosInstance.post("/review", data);
@@ -897,3 +901,83 @@ export const TopUp = async (data) => {
 };
 
 // top up api end
+
+// withdrawl api
+export const Withdrawl = async (data) => {
+  const response = await axiosInstance.post("/withdrawal", data);
+  return response.data;
+};
+// withdrawl api end
+
+// payment history api
+export const PaymentHistory = async (params?: {
+  status?: string;
+  occurance?: string;
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+  offset?: number;
+  userId?: string;
+}) => {
+  const response = await axiosInstance.get("/payments", { params });
+  return response.data;
+};
+// payment history api end
+
+// duel arena api
+export const GetDuelGames = async () => {
+  const response = await axiosInstance.get("/duel/games");
+  return response.data;
+};
+// duel arena api end
+//points api start
+
+export const getPoints = async () => {
+  const response = await axiosInstance.get("/web-settings/points");
+  return response.data;
+  };
+
+  export const createPoints =async (data:points) => {
+    const response = await axiosInstance.post("/web-settings/points", data);
+    return response.data;
+  };
+//points api end
+interface params{
+  status?:string
+}
+
+export const getWithdrawalRequest = async (params?:params) => {
+  const response = await axiosInstance.get("/withdrawal/admin/requests",{params});
+  return response.data;
+};
+
+// Add the new function to update withdrawal requests
+export const updateWithdrawalRequest = async (id: string, data: { status: string }) => {
+  try {
+    const response = await axiosInstance.put(`/withdrawal/admin/approve/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating withdrawal request:", error);
+    throw error;
+  }
+};
+
+export const getWithdrawalRequestById = async (id: string) => {
+  try {
+    const response = await axiosInstance.get(`/withdrawal/admin/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching withdrawal request:", error);
+    throw error;
+  }
+};
+
+export const updateWithdrawalReject = async (id: string, data: { status: string }) => {
+  try {
+    const response = await axiosInstance.put(`/withdrawal/admin/reject/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating withdrawal request:", error);
+    throw error;
+  }
+};
