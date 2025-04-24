@@ -29,10 +29,11 @@ import {
   useCompareProducts,
   useGetCart,
   useGetCompareProducts,
-  useGetWishList,
   useGetInfiniteReviews,
   useGetReviews,
+  useGetWishList,
   useUpdateCart,
+  useWishList,
 } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -126,7 +127,6 @@ const ProductDetails = ({
   const { data: compareProducts } = useGetCompareProducts();
   const { mutate: productIdForCompare, isPending } = useCompareProducts();
   const [selectedImage, setSelectedImage] = useState(0);
-  const { data: wishlist } = useGetWishList();
   const [quantity, setQuantity] = useState(1);
 
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
@@ -206,13 +206,8 @@ const ProductDetails = ({
         },
       });
     }
+    console.log(compareProducts.data.products, "compareProducts");
   };
-
-
-
-  const isWishListed = (productId: string) => {
-    return wishlist?.data?.products?.some((item) => item._id === productId);
-  };  
 
   const handleAddToCart = () => {
     addToCart(params.id as string, {
@@ -311,34 +306,10 @@ const ProductDetails = ({
                   New
                 </p>
               )}
-
-
-            <TooltipProvider>
-            <Tooltip delayDuration={100}>
-              <TooltipTrigger asChild>
-                <Button onClick={() => handleWishList(params.id as string)} className={`rounded-full ${isWishListed(params.id as string) ? "bg-[#FF6B3D]" : "bg-[#F5F5F5]"} p-4 hover:bg-gray-100 transition-colors`}>
-                  {isWishListed(params.id as string) ? (
-                    <Heart className="w-6 h-6 text-white" />
-                  ) : (
-                    <Heart className="w-6 h-6 text-gray-400 hover:text-orange-500" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="bg-gray-700 text-white">
-                {isWishListed(params.id as string) ? (
-                  <p>Remove from wishlist</p>
-                ) : (
-                  <p>Add to wishlist</p>
-                )}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
               <Button
                 onClick={() => handleWishList(params.id as string)}
                 className="w-12 h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full"
               >
-                 
                 <Heart className="w-6 h-6 text-[#A5A5A5] " />
               </Button>
             </div>
