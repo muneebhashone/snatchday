@@ -3,7 +3,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
 import { Input } from "@/components/ui/input";
-import { useDebounce } from '@/hooks/useDebounce';
 
 const libraries: ('places')[] = ['places'];
 
@@ -11,6 +10,8 @@ type AddressComponents = {
   street: string;
   streetNumber: string;
   zip: string;
+  city: string;
+  state: string;
 };
 
 type GoogleAddressInputProps = {
@@ -28,138 +29,65 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState(value);
-  const debouncedInputValue = useDebounce(inputValue, 300); // 300ms debounce
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [pacContainerFixed, setPacContainerFixed] = useState(false);
-  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
-  const [isSelecting, setIsSelecting] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [addressSelected, setAddressSelected] = useState(false);
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     libraries,
   });
 
-  // Update local state when prop value changes
-  useEffect(() => {
-    if (!isSelecting) {
-      setInputValue(value);
-    }
-  }, [value, isSelecting]);
-
-  // Update the parent component when the debounced value changes
-  useEffect(() => {
-    if (!isSelecting && debouncedInputValue !== value) {
-      onChange(debouncedInputValue);
-    }
-  }, [debouncedInputValue, onChange, value, isSelecting]);
-
-  // Set up a global event handler to prevent modal closing
-  useEffect(() => {
-    const preventModalClose = (e: MouseEvent | TouchEvent) => {
-      const pacContainer = document.querySelector('.pac-container');
-      if (pacContainer && pacContainer.contains(e.target as Node)) {
-        e.stopPropagation();
-        e.preventDefault();
-        return false;
-      }
-    };
-
-    // Apply various event handlers to capture all possible events
-    const eventTypes = ['click', 'mousedown', 'pointerdown', 'touchstart', 'touchend'];
+  // Position the dropdown correctly inside the modal
+  const updateDropdownPosition = () => {
+    if (!containerRef.current) return;
     
-    eventTypes.forEach(eventType => {
-      document.addEventListener(eventType, preventModalClose as EventListener, true);
+    const modalContainer = document.getElementById('register-modal-content');
+    const pacContainer = document.querySelector('.pac-container') as HTMLElement;
+    
+    if (!pacContainer) return;
+    
+    // Get dimensions
+    const inputRect = containerRef.current.getBoundingClientRect();
+    const modalRect = modalContainer?.getBoundingClientRect() || { top: 0, left: 0, bottom: window.innerHeight };
+    
+    // Set dropdown position
+    pacContainer.style.position = 'fixed';
+    pacContainer.style.zIndex = '99999';
+    pacContainer.style.width = `${inputRect.width}px`;
+    pacContainer.style.left = `${inputRect.left}px`;
+    pacContainer.style.top = `${inputRect.bottom}px`;
+    
+    // Ensure dropdown doesn't go outside modal
+    const dropdownBottom = inputRect.bottom + pacContainer.offsetHeight;
+    if (dropdownBottom > modalRect.bottom) {
+      // Position above if there's not enough space below
+      pacContainer.style.top = `${inputRect.top - pacContainer.offsetHeight}px`;
+    }
+    
+    // Add custom class and ensure it's above everything
+    pacContainer.classList.add('google-places-dropdown');
+  };
+
+  useEffect(() => {
+    // Create a MutationObserver to detect when dropdown is added to DOM
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.addedNodes.length) {
+          if (document.querySelector('.pac-container')) {
+            setIsDropdownOpen(true);
+            updateDropdownPosition();
+          }
+        }
+      });
     });
     
-    return () => {
-      eventTypes.forEach(eventType => {
-        document.removeEventListener(eventType, preventModalClose as EventListener, true);
-      });
-    };
-  }, []);
-
-  // Prevent form submission on Enter key
-  useEffect(() => {
-    const preventSubmit = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && document.activeElement === inputRef.current) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-
-    document.addEventListener('keydown', preventSubmit, true);
+    observer.observe(document.body, { childList: true, subtree: true });
     
     return () => {
-      document.removeEventListener('keydown', preventSubmit, true);
+      observer.disconnect();
     };
   }, []);
-
-  // Process place selection and extract address components
-  const processPlaceSelection = (place: google.maps.places.PlaceResult | null) => {
-    if (!place) return;
-    
-    // Set selecting flag to prevent input updates during selection
-    setIsSelecting(true);
-    
-    // Cache the selected place
-    setSelectedPlace(place);
-    
-    try {
-      // Use name as fallback if formatted_address is missing
-      const address = place.formatted_address || place.name || '';
-      setInputValue(address);
-
-      // Initialize with default values
-      let addressComponents: AddressComponents = {
-        street: '',
-        streetNumber: '',
-        zip: ''
-      };
-
-      // Only parse address components if they exist
-      if (place.address_components && place.address_components.length > 0) {
-        const components = place.address_components;
-        
-        for (const comp of components) {
-          const types = comp.types;
-          if (types.includes('street_number')) addressComponents.streetNumber = comp.long_name;
-          else if (types.includes('route')) addressComponents.street = comp.long_name;
-          else if (types.includes('postal_code')) addressComponents.zip = comp.short_name;
-        }
-
-        // Combine street number and street name if both exist
-        if (addressComponents.streetNumber && addressComponents.street) {
-          addressComponents.street = `${addressComponents.streetNumber} ${addressComponents.street}`;
-        }
-
-        // Log the extracted components for debugging
-        console.log('Address Components:', addressComponents);
-
-        // Ensure we have valid street and zip data
-        const result = {
-          street: addressComponents.street || '',
-          streetNumber: addressComponents.streetNumber || '',
-          zip: addressComponents.zip || ''
-        };
-
-        // Call onChange with the address components
-        onChange(address, result);
-        // Reset selecting flag after a delay
-        setTimeout(() => {
-          setIsSelecting(false);
-        }, 150);
-      } else {
-        // If no address components, just update the address text
-        onChange(address);
-        setTimeout(() => {
-          setIsSelecting(false);
-        }, 150);
-      }
-    } catch (error) {
-      console.error('Error processing place selection:', error);
-      setIsSelecting(false);
-    }
-  };
 
   useEffect(() => {
     if (isLoaded && inputRef.current && !autocompleteRef.current) {
@@ -169,131 +97,147 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
         fields: ['address_components', 'formatted_address', 'geometry', 'name'],
       });
 
-      // Handle place_changed event
+      // Handle place selection - critical for address component extraction
       autocompleteRef.current.addListener('place_changed', () => {
-        // Get the place and process it
         const place = autocompleteRef.current?.getPlace();
-        console.log('place', place);
-        processPlaceSelection(place || null);
-      });
-
-      // Handle the autocomplete dropdown positioning
-      const fixGoogleAutocompleteStyles = () => {
-        const pacContainer = document.querySelector('.pac-container');
-        if (pacContainer && containerRef.current) {
-          // Position the dropdown correctly
-          const rect = containerRef.current.getBoundingClientRect();
+        
+        if (!place || !place.address_components) {
+          console.error("No valid place selected or missing address components");
+          return;
+        }
+        
+        setAddressSelected(true);
+        setIsDropdownOpen(false);
+        
+        // Extract address components for German/Austrian format
+        let street = '';
+        let streetNumber = '';
+        let zip = '';
+        let city = '';
+        let state = '';
+        
+        place.address_components.forEach(component => {
+          const types = component.types;
           
-          // Set the container to position fixed
-          (pacContainer as HTMLElement).style.position = 'fixed';
-          (pacContainer as HTMLElement).style.zIndex = '100000';
-          (pacContainer as HTMLElement).style.top = `${rect.bottom + window.scrollY}px`;
-          (pacContainer as HTMLElement).style.left = `${rect.left}px`;
-          (pacContainer as HTMLElement).style.width = `${rect.width}px`;
-          
-          // Add event capturing to pac-container
-          pacContainer.addEventListener('click', (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-          }, true);
-
-          // Add specific handlers for each pac-item
-          const pacItems = document.querySelectorAll('.pac-item');
-          pacItems.forEach(item => {
-            item.addEventListener('click', (e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              
-              // Simulate pressing Enter to select the place
-              if (inputRef.current) {
-                const enterEvent = new KeyboardEvent('keydown', {
-                  key: 'Enter',
-                  code: 'Enter',
-                  keyCode: 13,
-                  which: 13,
-                  bubbles: true
-                });
-                inputRef.current.dispatchEvent(enterEvent);
-              }
-              
-              // As a fallback, manually get the place after a delay
-              setTimeout(() => {
-                if (autocompleteRef.current) {
-                  const place = autocompleteRef.current.getPlace();
-                  if (place && place.address_components) {
-                    processPlaceSelection(place);
-                  }
-                }
-              }, 100);
-            }, true);
+          // German addresses have different component structure
+          if (types.includes('route')) {
+            street = component.long_name;
+          } 
+          else if (types.includes('street_number')) {
+            streetNumber = component.long_name;
+          }
+          else if (types.includes('postal_code')) {
+            zip = component.long_name;
+          }
+          else if (types.includes('locality')) {
+            city = component.long_name;
+          }
+          else if (types.includes('administrative_area_level_1')) {
+            state = component.short_name;
+          }
+        });
+        
+        // Construct proper address display
+        const formattedAddress = place.formatted_address || '';
+        
+        // Ensure street is properly formatted (German format is typically "Street Number")
+        const formattedStreet = street ? (streetNumber ? `${street} ${streetNumber}` : street) : '';
+        
+        // Log everything for debugging
+        console.log("Place selected:", {
+          formattedAddress,
+          addressComponents: place.address_components,
+          street,
+          streetNumber,
+          formattedStreet,
+          zip,
+          city,
+          state
+        });
+        
+        // Update UI and parent component
+        setInputValue(formattedAddress);
+        
+        // Only pass back components if we have meaningful data
+        if (formattedStreet || zip) {
+          onChange(formattedAddress, {
+            street: formattedStreet,
+            streetNumber,
+            zip,
+            city,
+            state
           });
-          
-          setPacContainerFixed(true);
+        } else {
+          onChange(formattedAddress);
         }
-      };
-
-      // Observe for pac-container being added to DOM
-      const observer = new MutationObserver(() => {
-        if (document.querySelector('.pac-container') && !pacContainerFixed) {
-          fixGoogleAutocompleteStyles();
-        }
+        
+        // Ensure dropdown is hidden
+        setTimeout(() => {
+          const pacContainer = document.querySelector('.pac-container');
+          if (pacContainer) {
+            (pacContainer as HTMLElement).style.display = 'none';
+          }
+        }, 100);
       });
       
-      observer.observe(document.body, { childList: true, subtree: true });
-
-      // Reposition pac-container when window is resized
-      const handleResize = () => {
-        if (document.querySelector('.pac-container')) {
-          fixGoogleAutocompleteStyles();
+      // When input is focused, update the dropdown position
+      if (inputRef.current) {
+        inputRef.current.addEventListener('focus', () => {
+          setTimeout(updateDropdownPosition, 100);
+        });
+      }
+      
+      // Prevent modal from closing when clicking on dropdown
+      const preventModalClose = (e: MouseEvent | TouchEvent) => {
+        const pacContainer = document.querySelector('.pac-container');
+        if (pacContainer?.contains(e.target as Node) || containerRef.current?.contains(e.target as Node)) {
+          e.stopPropagation();
         }
       };
       
-      window.addEventListener('resize', handleResize);
-
+      // Use capture to intercept events before they reach modal close handlers
+      document.addEventListener('mousedown', preventModalClose, true);
+      document.addEventListener('click', preventModalClose, true);
+      document.addEventListener('touchstart', preventModalClose, true);
+      
+      // Handle window resize and scroll
+      window.addEventListener('resize', updateDropdownPosition);
+      window.addEventListener('scroll', updateDropdownPosition, true);
+      
+      // Set up cleanup
       return () => {
         if (autocompleteRef.current) {
           window.google.maps.event.clearInstanceListeners(autocompleteRef.current);
         }
-        observer.disconnect();
-        window.removeEventListener('resize', handleResize);
-
-        // Remove event listeners from pac container
-        const pacContainer = document.querySelector('.pac-container');
-        if (pacContainer) {
-          pacContainer.remove();
+        document.removeEventListener('mousedown', preventModalClose, true);
+        document.removeEventListener('click', preventModalClose, true);
+        document.removeEventListener('touchstart', preventModalClose, true);
+        window.removeEventListener('resize', updateDropdownPosition);
+        window.removeEventListener('scroll', updateDropdownPosition, true);
+        
+        if (inputRef.current) {
+          // @ts-ignore - removeEventListener with anonymous function
+          inputRef.current.removeEventListener('focus', updateDropdownPosition);
         }
       };
     }
-  }, [isLoaded, onChange, pacContainerFixed]);
+  }, [isLoaded, onChange]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    console.log('newValue', newValue);
     setInputValue(newValue);
-    // The onChange handler will be called via the debounced input effect
-  };
-
-  const handleInputFocus = () => {
-    // Reposition pac-container when input is focused
-    setTimeout(() => {
-      const pacContainer = document.querySelector('.pac-container');
-      if (pacContainer && containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        (pacContainer as HTMLElement).style.top = `${rect.bottom + window.scrollY}px`;
-        (pacContainer as HTMLElement).style.left = `${rect.left}px`;
-        (pacContainer as HTMLElement).style.width = `${rect.width}px`;
-      }
-    }, 100);
-  };
-
-  // Important: Stop any click events from bubbling up from this component
-  const stopPropagation = (e: React.MouseEvent | React.TouchEvent) => {
-    e.stopPropagation();
+    
+    // Only reset address selection if user is typing something new
+    if (addressSelected && newValue !== value) {
+      setAddressSelected(false);
+    }
+    
+    onChange(newValue);
   };
 
   if (!isLoaded) {
     return (
-      <input
+      <Input
         disabled
         placeholder="Loading..."
         className="h-20 rounded-full w-full text-lg text-[#A5A5A5] pl-10"
@@ -302,44 +246,37 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
   }
 
   return (
-    <div 
-      className="relative w-full" 
-      ref={containerRef}
-      onClick={stopPropagation}
-      onMouseDown={stopPropagation}
-      onTouchStart={stopPropagation}
-    >
-      <input
+    <div className="relative w-full" ref={containerRef}>
+      <Input
         ref={inputRef}
         value={inputValue}
         placeholder="Enter your address"
         onChange={handleInputChange}
-        onFocus={handleInputFocus}
-        className="h-20 rounded-full w-full text-lg text-[#A5A5A5] pl-10"
+        className={`h-20 rounded-full w-full text-lg text-[#A5A5A5] pl-10 ${addressSelected ? 'bg-green-50' : ''}`}
         autoComplete="off"
-        // Prevent form submission on Enter
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-          }
+        onFocus={() => {
+          setIsDropdownOpen(true);
+          setTimeout(updateDropdownPosition, 100);
         }}
       />
+      
       <style jsx global>{`
         .pac-container {
-          z-index: 100000 !important; 
+          z-index: 99999 !important;
           border-radius: 12px !important;
           margin-top: 8px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+          box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15) !important;
           border: 1px solid #e2e8f0;
           font-family: 'Inter', sans-serif;
           font-size: 14px;
           background-color: #fff;
-          width: auto !important;
-          position: fixed !important;
+          max-height: 300px;
+          overflow-y: auto;
         }
-
-        .pac-container * {
-          pointer-events: auto !important;
+        
+        .google-places-dropdown {
+          position: fixed !important;
+          transform: translateY(0) !important;
         }
 
         .pac-item {

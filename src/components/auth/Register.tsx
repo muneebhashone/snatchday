@@ -159,11 +159,6 @@ const Register = ({ onBack }: RegisterProps) => {
     mode: "onChange",
   });
 
-
-
-  
-
-
   const handleClose = () => {
     setIsOpen(false);
     onBack();
@@ -253,38 +248,41 @@ const Register = ({ onBack }: RegisterProps) => {
     // Show loading state
     toast.loading("Registering your account...");
 
-    // Ensure all required fields are present
+    // Format data in the structure expected by the API
     const registrationData = {
-      email,
-      name,
-      password,
-      // Include only the properties the API needs
-      salutation: personalInfo.salutation,
-      title: personalInfo.title || "",
-      username: personalInfo.username,
-      firstName: personalInfo.firstName,
-      lastName: personalInfo.lastName,
-      dob: personalInfo.dob
-        ? typeof personalInfo.dob === "string"
-          ? personalInfo.dob
-          : personalInfo.dob.toISOString()
-        : undefined,
-      street: personalInfo.street,
-      zip: personalInfo.zip,
-      location: personalInfo.location,
-      country: "Germany", // Static value as requested
+      data: {
+        email,
+        name,
+        password,
+        // Include only the properties the API needs
+        salutation: personalInfo.salutation,
+        title: personalInfo.title || "",
+        username: personalInfo.username,
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
+        dob: personalInfo.dob
+          ? typeof personalInfo.dob === "string"
+            ? personalInfo.dob
+            : personalInfo.dob.toISOString()
+          : undefined,
+        street: personalInfo.street,
+        zip: personalInfo.zip,
+        location: personalInfo.location,
+        country: "Germany", // Static value as requested
+      },
+      type: "register"
     };
 
+    // Log all data for debugging
     console.log("Final registration data:", registrationData);
-
-    // Make the API call with the properly formatted data
+    console.log("Account data:", accountData);
+    console.log("Personal info data:", personalInfo);
+    
+    // Call the registration API with the proper format
     register(
+      registrationData,
       {
-        data: registrationData,
-        type: "register",
-      },
-      {
-        onSuccess: ({ data }) => {
+        onSuccess: (data) => {
           // After successful registration, update the user profile with the additional personal info
           toast.dismiss();
           setEmail(data?.email);

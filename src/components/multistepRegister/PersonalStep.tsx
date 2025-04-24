@@ -36,11 +36,20 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
     control,
     setValue,
     formState: { errors },
+    getValues,
+    watch
   } = formMethods;
 
-
   const [locationSelected, setLocationSelected] = useState(false);
-
+  
+  // Log form values when they change for debugging
+  useEffect(() => {
+    const subscription = watch((value) => {
+      console.log("Form values updated:", value);
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   // Get maximum date (18 years ago)
   const getMaxDate = () => {
@@ -99,17 +108,16 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
                 onChange={(value, addressComponents) => {
                   // Always update the location field
                   field.onChange(value);
+                  setLocationSelected(!!addressComponents);
                   
                   // Log the address components for debugging
-                  console.log("Address Components received:", addressComponents);
+                  console.log("Address Components received in PersonalStep:", addressComponents);
                   
-                  // Only attempt to update street and zip if addressComponents exists
+                  // Only attempt to update fields if addressComponents exists
                   if (addressComponents) {
-                    console.log("Setting street to:", addressComponents.street);
-                    console.log("Setting zip to:", addressComponents.zip);
-                    
                     // Update street if available
                     if (addressComponents.street) {
+                      console.log("Setting street to:", addressComponents.street);
                       setValue("personalInfo.street", addressComponents.street, { 
                         shouldValidate: true,
                         shouldDirty: true
@@ -118,15 +126,20 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
                     
                     // Update zip if available
                     if (addressComponents.zip) {
+                      console.log("Setting zip to:", addressComponents.zip);
                       setValue("personalInfo.zip", addressComponents.zip, {
                         shouldValidate: true,
                         shouldDirty: true
                       });
                     }
                     
-                   
-                  } else {
-                    // Reset locationSelected if addressComponents is undefined or null
+                    // Log all form data after update
+                    setTimeout(() => {
+                      const currentValues = getValues();
+                      console.log("Current form data after address selection:", currentValues);
+                      console.log("Street value:", currentValues.personalInfo.street);
+                      console.log("Zip value:", currentValues.personalInfo.zip);
+                    }, 100);
                   }
                 }}
               />
@@ -136,6 +149,11 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
             <span className="text-red-500 text-sm">
               {errors.personalInfo.location.message}
             </span>
+          )}
+          {locationSelected && (
+            <div className="text-green-500 text-sm mt-1">
+              Address selected successfully
+            </div>
           )}
         </div>
         <div>
