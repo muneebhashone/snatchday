@@ -14,7 +14,7 @@ import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import imageForOpinion from "../admin/../../app/images/duel.png";
 import imageForOpinion2 from "../admin/../../app/images/duel2.png";
-import { Loader, LucideEye } from "lucide-react";
+import { Loader, LucideEye, Trophy } from "lucide-react";
 import Link from "next/link";
 import { EditTournamentDialog } from "./EditTournamentDialog";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
@@ -38,8 +38,12 @@ const CustomerTournaments = () => {
       <Loader size={25} className="animate-spin text-primary" />
     </div>
   ) : !customerTournaments?.data.tournaments.length ? (
-    <div className="text-center text-red-500 font-bold">
-      *Not Any Tournament Record Of This Customer*
+    <div className="flex items-center justify-center min-h-[200px] text-gray-500">
+      <div className="text-center">
+        <Trophy size={40} className="mx-auto mb-4 text-gray-400" />
+        <p className="text-lg font-medium">No tournaments found</p>
+        <p className="text-sm mt-2">This customer has no tournament records yet</p>
+      </div>
     </div>
   ) : (
     <div className="p-6">

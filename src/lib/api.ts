@@ -916,8 +916,16 @@ export const PaymentHistory = async (params?: {
   endDate?: string;
   limit?: number;
   offset?: number;
+  userId?: string;
 }) => {
   const response = await axiosInstance.get("/payments", { params });
   return response.data;
 };
 // payment history api end
+
+// duel arena api
+export const GetDuelGames = async () => {
+  const response = await axiosInstance.get("/duel/games");
+  return response.data;
+};
+// duel arena api end

@@ -24,6 +24,7 @@ import {
   Network,
   History,
   Loader,
+  Undo2,
 } from "lucide-react";
 import CustomerTournaments from "./CustomerTournaments";
 import CustomerIPAdresses from "./CustomerIPAdresses";
@@ -34,29 +35,47 @@ import {
   useGetCustomerById,
   useGetCustomerOrdersData,
   useDeleteCustomer,
+  usePaymentHistory,
 } from "@/hooks/api";
 import { useState } from "react";
 import userImage from "@/app/images/avatarimage.svg";
 import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { formatCurrency } from "@/lib/utils";
 
 export function CustomerdEdit() {
   const params = useParams();
   const paramsId = params.id;
   const { data: customer } = useGetCustomerById(paramsId);
   const customerData = customer?.data.customer;
-  console.log(customerData);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [page, setPage] = useState(0);
+  const [paymentPage, setPaymentPage] = useState(0);
   const user = paramsId;
   const date = "";
   const status = "";
-  const { data: orders, isLoading, refetch } = useGetCustomerOrdersData(
-    page,
-    status,
-    user,
-    date
-  );
-  console.log(orders);
+  const { data: paymentHistory, isLoading: isPaymentLoading } =
+    usePaymentHistory({
+      limit: 10,
+      offset: paymentPage * 10,
+      userId: paramsId as string,
+    });
+  console.log(paymentHistory);
+  const payments = paymentHistory?.data.payments;
+  const totalPayments = paymentHistory?.data.total;
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const {
+    data: orders,
+    isLoading,
+    refetch,
+  } = useGetCustomerOrdersData(page, status, user, date);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
@@ -291,7 +310,7 @@ export function CustomerdEdit() {
                     value="returns"
                     className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3"
                   >
-                    <RefreshCw size={16} className="mr-2" /> Returns
+                    <Undo2 size={16} className="mr-2" /> Returns
                   </TabsTrigger>
                   <TabsTrigger
                     value="duels"
@@ -300,16 +319,16 @@ export function CustomerdEdit() {
                     <Swords size={16} className="mr-2" /> Duels
                   </TabsTrigger>
                   <TabsTrigger
-                    value="points"
-                    className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3"
-                  >
-                    <History size={16} className="mr-2" /> Points History
-                  </TabsTrigger>
-                  <TabsTrigger
                     value="tournaments"
                     className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3"
                   >
-                    <Swords size={16} className="mr-2" /> Tournaments
+                    <Trophy size={16} className="mr-2" /> Tournaments
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="payment"
+                    className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3"
+                  >
+                    <History size={16} className="mr-2" /> Payment History
                   </TabsTrigger>
                   <TabsTrigger
                     value="ip"
@@ -385,31 +404,109 @@ export function CustomerdEdit() {
                   </Card>
                 </TabsContent>
 
-                <TabsContent value="points">
+                <TabsContent value="payment">
                   <Card>
                     <CardContent className="p-6">
                       <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-2">
                           <History size={20} className="text-primary" />
                           <h3 className="font-semibold text-lg">
-                            Points History
+                            Payment History
                           </h3>
                         </div>
-                      </div>
-                      <div className="flex items-center justify-center min-h-[200px] text-gray-500">
-                        <div className="text-center">
-                          <History
-                            size={40}
-                            className="mx-auto mb-4 text-gray-400"
-                          />
-                          <p className="text-lg font-medium">
-                            Points History Coming Soon
-                          </p>
-                          <p className="text-sm mt-2">
-                            This feature is currently under development
-                          </p>
+                        <div className="text-sm text-gray-500">
+                          Total Payments:{" "}
+                          <span className="font-semibold text-primary">
+                            {totalPayments || 0}
+                          </span>
                         </div>
                       </div>
+                      {isPaymentLoading ? (
+                        <div className="flex items-center justify-center min-h-[200px]">
+                          <Loader
+                            size={25}
+                            className="animate-spin text-primary"
+                          />
+                        </div>
+                      ) : payments && payments.length > 0 ? (
+                        <div className="border rounded-lg">
+                          <Table>
+                            <TableHeader>
+                              <TableRow className="bg-gray-50">
+                                <TableHead>Order No.</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Type</TableHead>
+                                <TableHead className="text-right">
+                                  Amount
+                                </TableHead>
+                                <TableHead className="text-center">
+                                  Status
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {payments.map((payment) => (
+                                <TableRow key={payment.orderNumber}>
+                                  <TableCell>{payment.orderNumber}</TableCell>
+                                  <TableCell>
+                                    {formatDate(payment.date)}
+                                  </TableCell>
+                                  <TableCell className="capitalize">
+                                    {payment.occurance}
+                                  </TableCell>
+                                  <TableCell className="text-right">
+                                    {formatCurrency(payment.amount)}
+                                  </TableCell>
+                                  <TableCell>
+                                    <div
+                                      className={`text-center capitalize rounded-md py-1 px-2 text-xs ${
+                                        payment.status === "completed"
+                                          ? "bg-green-100 text-green-800"
+                                          : payment.status === "pending"
+                                          ? "bg-yellow-100 text-yellow-800"
+                                          : "bg-red-100 text-red-800"
+                                      }`}
+                                    >
+                                      {payment.status}
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                          <div className="flex items-center justify-between p-4 border-t">
+                            <p className="text-sm text-gray-500">
+                              Showing{" "}
+                              {Math.min(
+                                payments.length,
+                                (paymentPage + 1) * 10
+                              )}{" "}
+                              of {totalPayments} payments
+                            </p>
+                            <DynamicPagination
+                              totalItems={totalPayments || 0}
+                              itemsPerPage={10}
+                              currentPage={paymentPage + 1}
+                              onPageChange={(page) => setPaymentPage(page - 1)}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center min-h-[200px] text-gray-500">
+                          <div className="text-center">
+                            <History
+                              size={40}
+                              className="mx-auto mb-4 text-gray-400"
+                            />
+                            <p className="text-lg font-medium">
+                              No payment history found
+                            </p>
+                            <p className="text-sm mt-2">
+                              This customer has no payment records yet
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </TabsContent>

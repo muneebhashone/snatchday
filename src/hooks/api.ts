@@ -119,6 +119,7 @@ import {
   TopUp,
   Withdrawl,
   PaymentHistory,
+  GetDuelGames,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1090,9 +1091,20 @@ export const usePaymentHistory = (params?: {
   endDate?: string;
   limit?: number;
   offset?: number;
+  userId?: string;
 }) => {
   return useQuery({
     queryKey: ["paymentHistory", params],
     queryFn: () => PaymentHistory(params),
   });
 };
+// payment history api end
+
+// duel arena api
+export const useGetDuelGames = () => {
+  return useQuery({
+    queryKey: ["duelGames"],
+    queryFn: () => GetDuelGames(),
+  });
+};
+// duel arena api end

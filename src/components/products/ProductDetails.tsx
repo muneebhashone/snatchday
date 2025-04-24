@@ -240,23 +240,23 @@ const ProductDetails = ({
     );
   };
 
-  const handleWishList = (id: string) => {
-    addToWishList(id, {
-      onSuccess: (res) => {
-        console.log(res.data.message);
-        toast.success(
-          `${
-            res.data.message ? res.data.message : " product added to wishlist"
-          }`
-        );
-        refetchWishlist();
-      },
-      onError: (error) => {
-        toast.error(error.response.data.message || "Failed to add to wishlist");
-        console.error(error);
-      },
-    });
-  };
+  // const handleWishList = (id: string) => {
+  //   addToWishList(id, {
+  //     onSuccess: (res) => {
+  //       console.log(res.data.message);
+  //       toast.success(
+  //         `${
+  //           res.data.message ? res.data.message : " product added to wishlist"
+  //         }`
+  //       );
+  //       refetchWishlist();
+  //     },
+  //     onError: (error) => {
+  //       toast.error(error.response.data.message || "Failed to add to wishlist");
+  //       console.error(error);
+  //     },
+  //   });
+  // };
 
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
@@ -306,12 +306,12 @@ const ProductDetails = ({
                   New
                 </p>
               )}
-              <Button
+              {/* <Button
                 onClick={() => handleWishList(params.id as string)}
                 className="w-12 h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full"
               >
                 <Heart className="w-6 h-6 text-[#A5A5A5] " />
-              </Button>
+              </Button> */}
             </div>
 
             {/* Product Title */}

@@ -17,6 +17,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useCurrentOffers } from "@/hooks/api";
+import Link from "next/link";
 
 const DuelArenaPage = () => {
   const { data: currentOffers, isLoading } = useCurrentOffers();
@@ -63,7 +64,7 @@ const DuelArenaPage = () => {
               set your own stake.
             </p>
             <Button className="text-primary bg-white text-lg rounded-full py-5 min-h-14 mt-12 px-12 hover:bg-primary hover:text-white drop-shadow-[0_20px_35px_rgba(255,255,255,0.5)] shadow-[0_12px_24px_rgba(255,255,255,0.5)]">
-              Create a Duel
+              <Link href="/duel-arena/create">Create a Duel</Link>
             </Button>
           </div>
         </div>
