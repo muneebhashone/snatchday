@@ -71,7 +71,8 @@ const ProductDescription = [
   "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6`) IPS 1920 x 1080 (Full HD) - Wi-Fi 5 - Pure Silver - kbd: German",
 ];
 
-const ProductDetailTheorySec = () => {
+const ProductDetailTheorySec = (description: string) => {
+
   return (
     <div className="bg-white mt-8 max-w-[1440px] mx-auto">
       <Tabs defaultValue="description1" className="w-full">

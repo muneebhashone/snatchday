@@ -126,6 +126,7 @@ import {
   getWithdrawalRequestById,
   updateWithdrawalReject,
   checkEmail,
+  getOrdersStats,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1116,18 +1117,18 @@ export const useGetDuelGames = () => {
   });
 };
 // duel arena api end
-export const usePoints =() => {
+export const usePoints = () => {
   return useQuery({
     queryKey: ["points"],
     queryFn: getPoints,
   });
-}
+};
 
 export const useCreatePoints = () => {
   return useMutation({
     mutationFn: createPoints,
   });
-}
+};
 
 export const useGetWithdrawalRequest = (params?: { status?: string }) => {
   return useQuery({
@@ -1138,7 +1139,7 @@ export const useGetWithdrawalRequest = (params?: { status?: string }) => {
 
 export const useUpdateWithdrawalRequest = () => {
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: string }) => 
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
       updateWithdrawalRequest(id, { status }),
   });
 };
@@ -1147,18 +1148,24 @@ export const useGetWithdrawalRequestById = (id: string) => {
   return useQuery({
     queryKey: ["withdrawalRequest", id],
     queryFn: () => getWithdrawalRequestById(id),
-    enabled: !!id
+    enabled: !!id,
   });
 };
 export const useUpdateWithdrawalReject = () => {
   return useMutation({
-    mutationFn: ({ id, status }: { id: string; status: string }) => 
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
       updateWithdrawalReject(id, { status }),
   });
 };
 export const useCheckEmail = () => {
   return useMutation({
-    mutationFn: ({email}:{email:string}) => checkEmail(email),
+    mutationFn: ({ email }: { email: string }) => checkEmail(email),
   });
 };
 
+export const useGetOrdersStats = () => {
+  return useQuery({
+    queryKey: ["ordersStats"],
+    queryFn: getOrdersStats,
+  });
+};
