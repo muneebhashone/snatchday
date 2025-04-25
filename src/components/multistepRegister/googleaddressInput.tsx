@@ -29,6 +29,7 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [inputValue, setInputValue] = useState(value);
+  const lastAddressComponentsRef = useRef<AddressComponents | null>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [addressSelected, setAddressSelected] = useState(false);
@@ -116,6 +117,9 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
         let city = '';
         let state = '';
         
+        // Debug the raw components from Google
+        console.log("Raw address_components from Google:", place.address_components);
+        
         place.address_components.forEach(component => {
           const types = component.types;
           
@@ -158,18 +162,23 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
         // Update UI and parent component
         setInputValue(formattedAddress);
         
-        // Only pass back components if we have meaningful data
-        if (formattedStreet || zip) {
-          onChange(formattedAddress, {
-            street: formattedStreet,
-            streetNumber,
-            zip,
-            city,
-            state
-          });
-        } else {
-          onChange(formattedAddress);
-        }
+        // Create components object with explicit initialization
+        const addressComponentsObject = {
+          street: formattedStreet || '',
+          streetNumber: streetNumber || '',
+          zip: zip || '',
+          city: city || '',
+          state: state || ''
+        };
+        
+        // Store the last valid address components
+        lastAddressComponentsRef.current = addressComponentsObject;
+        
+        // Debug before sending to parent
+        console.log("About to send addressComponents to parent:", addressComponentsObject);
+        
+        // Always pass addressComponents (either the last valid one or an empty object)
+        onChange(formattedAddress, addressComponentsObject);
         
         // Ensure dropdown is hidden
         setTimeout(() => {
@@ -216,7 +225,7 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
         window.removeEventListener('scroll', updateDropdownPosition, true);
         
         if (inputRef.current) {
-          // @ts-ignore - removeEventListener with anonymous function
+         
           inputRef.current.removeEventListener('focus', updateDropdownPosition);
         }
       };
@@ -225,13 +234,20 @@ export default function GoogleAddressInput({ value, onChange }: GoogleAddressInp
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
+    console.log("Input change detected, new value:", newValue);
     setInputValue(newValue);
     
-    // Only reset address selection if user is typing something new
-    if (addressSelected && newValue !== value) {
+    // Reset selection state when typing manually
+    if (addressSelected) {
+      console.log("Resetting addressSelected state");
       setAddressSelected(false);
+      lastAddressComponentsRef.current = null;
     }
     
+    // For manual typing, just pass the value without any address components
+    console.log("Manual typing - calling onChange with just the value");
+    
+    // Don't pass address components for manual typing at all
     onChange(newValue);
   };
 
