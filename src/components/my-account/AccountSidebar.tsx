@@ -55,7 +55,7 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
     },
   ];
 
-  const disbaleTabs = ["Duels","Points Trends"];
+  const disbaleTabs = ["Duels", "Points Trends", "Payment History"];
 
   return (
     <div className="lg:col-span-3 rounded-3xl relative">
