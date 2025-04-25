@@ -34,8 +34,8 @@ export default function ForgotPassword() {
         toast.success("Email sent successfully");
         router.push(`/reset-password?email=${data.email}&admin=${isAdmin}`); // Pass isAdmin as a query parameter
       },
-      onError: (error) => {
-        toast.error("Email not found");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Email not found");
       },
     });
   };

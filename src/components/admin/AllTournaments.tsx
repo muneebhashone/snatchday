@@ -163,8 +163,8 @@ const AllTournaments = () => {
           setSelectedTournamentId(null);
           setIsCancelling(false);
         },
-        onError: () => {
-          toast.error("Failed to cancel tournament");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to cancel tournament");
           setShowCancelModal(false);
           setSelectedTournamentId(null);
           setIsCancelling(false);

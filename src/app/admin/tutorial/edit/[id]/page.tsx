@@ -94,8 +94,8 @@ const EditTutorialPage = () => {
           toast.success("Tutorial updated successfully");
           router.push("/admin/tutorial");
         },
-        onError: (error) => {
-          toast.error(error.message || "Failed to update tutorial");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to update tutorial");
         },
       }
     );

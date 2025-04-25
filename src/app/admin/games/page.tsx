@@ -42,9 +42,8 @@ const Page = () => {
         toast.success("Game deleted successfully");
         refetch();
       },
-      onError: (error) => {
-        console.log(error);
-        toast.error(`Error deleting game ${error.message}`);
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to delete game");
       },
     });
   };

@@ -115,8 +115,8 @@ const FaqTable = () => {
           setSelectedFaqId(null);
           setIsDeleting(false);
         },
-        onError: (error) => {
-          toast.error("Failed to delete FAQ");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to delete FAQ");
           console.error(error);
           setShowDeleteModal(false);
           setSelectedFaqId(null);

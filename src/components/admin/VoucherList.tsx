@@ -124,8 +124,8 @@ export function VoucherList() {
           setSelectedVoucherId(null);
           setIsDeleting(false);
         },
-        onError: (error) => {
-          toast.error("Failed to delete voucher");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to delete voucher");
           console.error(error);
           setShowDeleteModal(false);
           setSelectedVoucherId(null);

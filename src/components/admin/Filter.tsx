@@ -92,8 +92,8 @@ const Filter = () => {
           setSelectedFilterId(null);
           setIsDeleting(false);
         },
-        onError: (error) => {
-          toast.error("Failed to delete filter");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to delete filter");
           console.error(error);
           setShowDeleteModal(false);
           setSelectedFilterId(null);

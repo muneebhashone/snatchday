@@ -319,7 +319,7 @@ const MainProduct = () => {
       },
       onError: (error: any) => {
         toast.error(
-          `Failed to create product: ${error?.message || "Unknown error"}`
+          error.response?.data?.message || "Failed to create product"
         );
         console.error("Error creating product:", error);
       },

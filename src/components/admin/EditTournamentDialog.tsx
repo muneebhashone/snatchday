@@ -198,7 +198,7 @@ export function EditTournamentDialog({
             setOpen(false);
           },
           onError: (error) => {
-            toast.error("Failed to update tournament");
+            toast.error(error.response?.data?.message || "Failed to update tournament");
             console.error(error);
           },
         }

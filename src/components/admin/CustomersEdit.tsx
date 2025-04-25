@@ -91,8 +91,8 @@ export function CustomerdEdit() {
         toast.success("Customer deleted successfully");
         window.location.href = "/admin/customers";
       },
-      onError: () => {
-        toast.error("Failed to delete customer");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to delete customer");
       },
     });
   };

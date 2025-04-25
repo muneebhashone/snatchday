@@ -80,8 +80,8 @@ const ReviewModal = ({
         setOpen(false);
         refetch();
       },
-      onError: () => {
-        toast.error("Failed to create review");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to create review");
       },
     });
   };

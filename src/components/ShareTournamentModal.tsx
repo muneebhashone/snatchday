@@ -32,7 +32,7 @@ export const ShareTournamentModal = ({ tournamentId, open, onClose }: ShareTourn
         },
         onError: (error: any) => {
           console.error("Sharing failed:", error);
-          toast.error(error?.message || "Failed to share tournament");
+          toast.error(error.response?.data?.message || "Failed to share tournament");
         },
       }
     );

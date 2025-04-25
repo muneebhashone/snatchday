@@ -80,9 +80,9 @@ const CreateTicketPage = () => {
             ? router.push("/my-account/my-profile")
             : router.push(`/guest/my-tickets/${formData.get("email")}`);
         },
-        onError: (error) => {
+        onError: (error: any) => {
           console.error("Error creating ticket:", error);
-          toast.error("Failed to create ticket. Please try again.");
+          toast.error(error.response?.data?.message || "Failed to create ticket. Please try again.");
         },
       });
     } catch (error) {

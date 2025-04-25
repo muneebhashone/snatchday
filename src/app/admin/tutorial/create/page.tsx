@@ -58,8 +58,8 @@ const CreateTutorialPage = () => {
         toast.success("Tutorial created successfully");
         router.push("/admin/tutorial");
       },
-      onError: (error) => {
-        toast.error(error.message || "Failed to create tutorial");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to create tutorial");
       },
     });
   };

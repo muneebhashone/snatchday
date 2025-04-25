@@ -58,8 +58,8 @@ const ComparisonPage = () => {
         queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
         setIsRemove("");
       },
-      onError: (error) => {
-        toast.error("Failed to remove product");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to remove product");
         console.error(error);
         setIsRemove("");
       },

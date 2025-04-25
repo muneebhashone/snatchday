@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Search } from "lucide-react";
-import { useLoadScript } from '@react-google-maps/api';
+import { useLoadScript } from "@react-google-maps/api";
 
 import {
   Select,
@@ -22,7 +22,7 @@ import {
 import GoogleAddressInput from "./googleaddressInput";
 
 // Google Maps Places API libraries
-const libraries: ("places")[] = ['places'];
+const libraries: "places"[] = ["places"];
 
 // Fallback locations in case Google API fails
 const fallbackLocations = [
@@ -30,7 +30,7 @@ const fallbackLocations = [
   { value: "Hamburg, Germany", street: "Jungfernstieg 30", zip: "20354" },
   { value: "Munich, Germany", street: "Marienplatz 8", zip: "80331" },
   { value: "Cologne, Germany", street: "Hohe Straße 52", zip: "50667" },
-  { value: "Frankfurt, Germany", street: "Römerberg 26", zip: "60311" }
+  { value: "Frankfurt, Germany", street: "Römerberg 26", zip: "60311" },
 ];
 
 type AddressOption = {
@@ -50,14 +50,15 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
     setValue,
     formState: { errors },
     getValues,
-    watch
+    watch,
   } = formMethods;
 
   const [locationSelected, setLocationSelected] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [addressOptions, setAddressOptions] = useState<AddressOption[]>([]);
   const [isLoadingOptions, setIsLoadingOptions] = useState(false);
-  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
+  const autocompleteService =
+    useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [usingFallback, setUsingFallback] = useState(false);
@@ -66,7 +67,7 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
   // Load Google Maps API
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
-    libraries
+    libraries,
   });
 
   // Initialize Google Places services
@@ -78,8 +79,9 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
     }
 
     if (isLoaded) {
-      autocompleteService.current = new google.maps.places.AutocompleteService();
-      
+      autocompleteService.current =
+        new google.maps.places.AutocompleteService();
+
       // Create a hidden map element for PlacesService (required by Google API)
       if (mapRef.current) {
         const map = new google.maps.Map(mapRef.current);
@@ -96,32 +98,35 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
     }
 
     setIsLoadingOptions(true);
-    
+
     autocompleteService.current.getPlacePredictions(
       {
         input,
-        componentRestrictions: { country: ['de', 'at'] },
-        types: ['address']
+        componentRestrictions: { country: ["de", "at"] },
+        types: ["address"],
       },
       (predictions, status) => {
         setIsLoadingOptions(false);
-        
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+
+        if (
+          status !== google.maps.places.PlacesServiceStatus.OK ||
+          !predictions
+        ) {
           console.error("Error fetching place predictions:", status);
           setAddressOptions([]);
           return;
         }
-        
+
         console.log("Google Places predictions:", predictions);
-        
+
         // Format predictions for the dropdown
-        const options = predictions.map(prediction => ({
+        const options = predictions.map((prediction) => ({
           placeId: prediction.place_id,
           description: prediction.description,
           mainText: prediction.structured_formatting.main_text,
-          secondaryText: prediction.structured_formatting.secondary_text
+          secondaryText: prediction.structured_formatting.secondary_text,
         }));
-        
+
         setAddressOptions(options);
       }
     );
@@ -137,13 +142,13 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
 
     return () => clearTimeout(timer);
   }, [searchTerm]);
-  
+
   // Log form values when they change for debugging
   useEffect(() => {
     const subscription = watch((value) => {
       console.log("Form values updated:", value);
     });
-    
+
     return () => subscription.unsubscribe();
   }, [watch]);
 
@@ -157,72 +162,77 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
   // Get place details when a place is selected
   const handlePlaceSelect = (placeId: string) => {
     if (!placesService.current) return;
-    
+
     setIsDropdownVisible(false); // Close dropdown after selection
-    setSearchTerm(''); // Clear search term
-    
+    setSearchTerm(""); // Clear search term
+
     placesService.current.getDetails(
       {
         placeId: placeId,
-        fields: ['address_components', 'formatted_address', 'geometry']
+        fields: ["address_components", "formatted_address", "geometry"],
       },
       (place, status) => {
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !place || !place.address_components) {
+        if (
+          status !== google.maps.places.PlacesServiceStatus.OK ||
+          !place ||
+          !place.address_components
+        ) {
           console.error("Error fetching place details:", status);
           return;
         }
-        
+
         console.log("Selected place details:", place);
-        
+
         // Extract address components
-        let street = '';
-        let streetNumber = '';
-        let zip = '';
-        let city = '';
-        
-        place.address_components?.forEach(component => {
+        let street = "";
+        let streetNumber = "";
+        let zip = "";
+        let city = "";
+
+        place.address_components?.forEach((component) => {
           const types = component.types;
-          
-          if (types.includes('route')) {
+
+          if (types.includes("route")) {
             street = component.long_name;
-          } 
-          else if (types.includes('street_number')) {
+          } else if (types.includes("street_number")) {
             streetNumber = component.long_name;
-          }
-          else if (types.includes('postal_code')) {
+          } else if (types.includes("postal_code")) {
             zip = component.long_name;
-          }
-          else if (types.includes('locality')) {
+          } else if (types.includes("locality")) {
             city = component.long_name;
           }
         });
-        
+
         // Format street address
-        const formattedStreet = street ? (streetNumber ? `${street} ${streetNumber}` : street) : '';
-        const formattedAddress = place.formatted_address || '';
-        
+        const formattedStreet = street
+          ? streetNumber
+            ? `${street} ${streetNumber}`
+            : street
+          : "";
+        const formattedAddress = place.formatted_address || "";
+
         // Update form fields
         setValue("personalInfo.location", formattedAddress, {
           shouldValidate: true,
-          shouldDirty: true
+          shouldDirty: true,
         });
-        
+
         if (formattedStreet) {
           setValue("personalInfo.street", formattedStreet, {
             shouldValidate: true,
-            shouldDirty: true
+            shouldDirty: true,
           });
         }
-        
+
         if (zip) {
           setValue("personalInfo.zip", zip, {
             shouldValidate: true,
-            shouldDirty: true
+            shouldDirty: true,
           });
         }
-        
+
         setLocationSelected(true);
-        setSearchTerm('');
+        setSearchTerm("");
         setAddressOptions([]);
       }
     );
@@ -230,24 +240,26 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
 
   // When using fallback locations
   const handleFallbackSelect = (locationValue: string) => {
-    const selectedLocation = fallbackLocations.find(loc => loc.value === locationValue);
-    
+    const selectedLocation = fallbackLocations.find(
+      (loc) => loc.value === locationValue
+    );
+
     if (selectedLocation) {
       setValue("personalInfo.location", selectedLocation.value, {
         shouldValidate: true,
-        shouldDirty: true
+        shouldDirty: true,
       });
-      
+
       setValue("personalInfo.street", selectedLocation.street, {
         shouldValidate: true,
-        shouldDirty: true
+        shouldDirty: true,
       });
-      
+
       setValue("personalInfo.zip", selectedLocation.zip, {
         shouldValidate: true,
-        shouldDirty: true
+        shouldDirty: true,
       });
-      
+
       setLocationSelected(true);
     }
   };
@@ -276,10 +288,9 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
                   <SelectValue placeholder="Select Salutation" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Mr">Mr</SelectItem>
-                  <SelectItem value="Mrs">Mrs</SelectItem>
-                  <SelectItem value="Ms">Ms</SelectItem>
-                  <SelectItem value="Dr">Dr</SelectItem>
+                  <SelectItem value="Mr">Mister</SelectItem>
+                  <SelectItem value="Mrs">Miss</SelectItem>
+                  <SelectItem value="Dr">Doctor</SelectItem>
                 </SelectContent>
               </Select>
             )}
@@ -290,7 +301,7 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
             </span>
           )}
         </div>
-     
+
         <div className="relative z-20">
           <Controller
             name="personalInfo.location"
@@ -299,8 +310,8 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
             render={({ field }) => (
               <div className="relative">
                 {/* Hidden div for PlacesService */}
-                <div ref={mapRef} style={{ display: 'none' }}></div>
-              
+                <div ref={mapRef} style={{ display: "none" }}></div>
+
                 {isLoaded && !usingFallback ? (
                   <div>
                     <div className="relative">
@@ -318,14 +329,11 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
                         }`}
                       />
                       <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                      
+
                       {/* Hidden input for form value */}
-                      <input 
-                        type="hidden" 
-                        {...field}
-                      />
+                      <input type="hidden" {...field} />
                     </div>
-                    
+
                     {/* Show search results in a dropdown */}
                     {isDropdownVisible && addressOptions.length > 0 && (
                       <div className="absolute w-full mt-1 bg-white rounded-lg shadow-lg z-50 max-h-72 overflow-y-auto border border-gray-200">
@@ -339,27 +347,30 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
                             }}
                           >
                             <div className="font-medium">{option.mainText}</div>
-                            <div className="text-sm text-gray-500">{option.secondaryText}</div>
+                            <div className="text-sm text-gray-500">
+                              {option.secondaryText}
+                            </div>
                           </div>
                         ))}
                       </div>
                     )}
-                    
+
                     {isLoadingOptions && (
                       <div className="mt-2 text-sm text-gray-500">
                         Loading address suggestions...
                       </div>
                     )}
-                    
+
                     {field.value && !searchTerm && (
                       <div className="mt-2 text-sm">
-                        <span className="font-medium">Selected address:</span> {field.value}
+                        <span className="font-medium">Selected address:</span>{" "}
+                        {field.value}
                       </div>
                     )}
                   </div>
                 ) : (
                   // Fallback select when API fails
-                  <Select 
+                  <Select
                     onValueChange={(value) => {
                       field.onChange(value);
                       handleFallbackSelect(value);
@@ -422,14 +433,21 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
             name="personalInfo.title"
             control={control}
             render={({ field }) => (
-              <Input
-                {...field}
-                type="text"
-                placeholder="title"
-                className={`h-20 rounded-full text-lg text-[#A5A5A5] pl-10 ${
-                  errors.personalInfo?.title ? "border-red-500" : ""
-                }`}
-              />
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger
+                  className={`h-20 rounded-full text-lg text-[#A5A5A5] pl-10 ${
+                    errors.personalInfo?.title ? "border-red-500" : ""
+                  }`}
+                >
+                  <SelectValue placeholder="Select Title" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Dr">Dr.</SelectItem>
+                  <SelectItem value="Prof">Prof.</SelectItem>
+                  <SelectItem value="Mr">Mr.</SelectItem>
+                  <SelectItem value="Mrs">Ms.</SelectItem>
+                </SelectContent>
+              </Select>
             )}
           />
           {errors.personalInfo?.title && (

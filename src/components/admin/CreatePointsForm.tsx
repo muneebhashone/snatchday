@@ -93,8 +93,8 @@ export function CreatePointsForm() {
       onSuccess: () => {
         toast.success("Points settings updated successfully")
       },
-      onError: (error) => {
-        toast.error("Failed to update points settings")
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to update points settings")
       },
     })
   }

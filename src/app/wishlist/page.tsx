@@ -54,8 +54,8 @@ const Page = () => {
         wishlistRefetch();
         setRemoveWishlistId("")
       },
-      onError: (error) => {
-        toast.error("Failed to add to wishlist");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to add to wishlist");
         console.error(error);
       },
     });
@@ -90,8 +90,8 @@ const Page = () => {
           queryClient.invalidateQueries({ queryKey: ["cart"] });
           cartRefetch();
         },
-        onError: (error) => {
-          toast.error("Failed to remove from cart");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to remove from cart");
           console.error(error);
         },
       }

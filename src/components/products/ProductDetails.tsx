@@ -206,8 +206,8 @@ const ProductDetails = ({
           toast.success("product added for compare");
           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
         },
-        onError: (error) => {
-          toast.error("Failed to add for compare");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to add for compare");
           console.error(error);
         },
       });
@@ -218,8 +218,8 @@ const ProductDetails = ({
 
           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
         },
-        onError: (error) => {
-          toast.error("Failed to add for compare");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to add for compare");
           console.error(error);
         },
       });
@@ -234,8 +234,8 @@ const ProductDetails = ({
         setCartCount((prevCount) => prevCount + 1);
         queryClient.invalidateQueries({ queryKey: ["cart"] });
       },
-      onError: (error) => {
-        toast.error(error.response.data.message || "Failed to add to cart");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to add to cart");
         console.error(error);
       },
     });
@@ -250,8 +250,8 @@ const ProductDetails = ({
           queryClient.invalidateQueries({ queryKey: ["cart"] });
           refetch();
         },
-        onError: (error) => {
-          toast.error("Failed to remove from cart");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to remove from cart");
           console.error(error);
         },
       }
@@ -269,8 +269,8 @@ const ProductDetails = ({
         );
         refetchWishlist();
       },
-      onError: (error) => {
-        toast.error(error.response.data.message || "Failed to add to wishlist");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to add to wishlist");
         console.error(error);
       },
     });

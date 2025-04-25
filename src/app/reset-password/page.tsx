@@ -89,8 +89,8 @@ export default function ResetPassword() {
             router.push("/");
           }
         },
-        onError: (error) => {
-          toast.error("Password reset failed");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Password reset failed");
           console.log(error, "error from hooks");
         },
       }
@@ -115,8 +115,8 @@ export default function ResetPassword() {
           setTimer(60);
           setTimerActive(true);
         },
-        onError: (error) => {
-          toast.error("OTP sending failed");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "OTP sending failed");
         },
       });
     }

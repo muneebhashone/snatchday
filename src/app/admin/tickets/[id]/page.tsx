@@ -92,8 +92,8 @@ const TicketReplyPage = () => {
           toast.success("Reply sent successfully");
           router.push("/admin/tickets");
         },
-        onError: (error) => {
-          toast.error("Failed to send reply");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to send reply");
           console.error("Error:", error);
         },
       }

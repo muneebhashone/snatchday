@@ -129,8 +129,8 @@ export function EditFilterDialog({ filter }: EditFilterDialogProps) {
           setOpen(false);
           queryClient.invalidateQueries({ queryKey: ["filters"] });
         },
-        onError: (error) => {
-          toast.error("Failed to update filter");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to update filter");
           console.error(error);
         },
       }

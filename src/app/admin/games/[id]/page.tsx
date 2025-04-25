@@ -145,8 +145,8 @@ const Page = () => {
         form.reset();
         window.location.href = "/admin/games";
       },
-      onError: (error) => {
-        toast.error((error as unknown as IError)?.response.data.message);
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to update game");
       },
     });
   };
