@@ -42,7 +42,6 @@ const accountStepSchema = z
     terms: z.boolean().refine((val) => val === true, {
       message: "required",
     }),
-  
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
@@ -139,7 +138,7 @@ const Register = ({ onBack }: RegisterProps) => {
       email: "",
       password: "",
       confirmPassword: "",
-    
+
       terms: false,
     },
     mode: "onChange",
@@ -194,14 +193,15 @@ const Register = ({ onBack }: RegisterProps) => {
                 toast.dismiss();
                 toast.error(
                   error.response?.data?.message ||
-                    "Registration failed. Please try again."
-                  
-                ,{
-                  style: {
-                    backgroundColor: "red",
-                    color: "white",
-                  },
-                });
+                    "Registration failed. Please try again.",
+
+                  {
+                    style: {
+                      backgroundColor: "red",
+                      color: "white",
+                    },
+                  }
+                );
               },
             }
           );
@@ -244,6 +244,12 @@ const Register = ({ onBack }: RegisterProps) => {
       if (errorFields.length > 0) {
         personalStepMethods.setFocus(`personalInfo.${errorFields[0]}` as any);
       }
+      if (personalStepMethods.getValues().personalInfo.title === "") {
+        personalStepMethods.setValue("personalInfo", {
+          ...personalStepMethods.getValues().personalInfo,
+          title: undefined,
+        });
+      }
       return;
     }
 
@@ -251,7 +257,7 @@ const Register = ({ onBack }: RegisterProps) => {
     console.log("Account data being used for submission:", accountData);
 
     // Prepare the registration data in the format expected by the API
-    const { email, name, password} = accountData;
+    const { email, name, password } = accountData;
     const { personalInfo } = personalStepMethods.getValues();
 
     // Show loading state
@@ -264,11 +270,10 @@ const Register = ({ onBack }: RegisterProps) => {
         email,
         name,
         password,
-      
-        
+
         // Personal info step data
         salutation: personalInfo.salutation,
-        title: personalInfo.title || "",
+        ...(personalInfo.title ? { title: personalInfo.title } : {}),
         username: personalInfo.username,
         firstName: personalInfo.firstName,
         lastName: personalInfo.lastName,
@@ -283,41 +288,40 @@ const Register = ({ onBack }: RegisterProps) => {
         phoneNumber: personalInfo.phoneNumber,
         country: "Germany", // Static value as requested
       },
-      type: "register"
+      type: "register",
     };
 
     // Log all data for debugging
     console.log("Final registration data:", registrationData);
     console.log("Account data:", accountData);
     console.log("Personal info data:", personalInfo);
-    
+
     // Call the registration API with the proper format
-    register(
-      registrationData,
-      {
-        onSuccess: (data) => {
-          // After successful registration, update the user profile with the additional personal info
-          toast.dismiss();
-          setEmail(data?.email);
-          setIsotpOpen(true);
-          console.log(data, "res");
-          toast.success("Registration successful! Please verify your email.");
-        },
-        onError: (error: any) => {
-          toast.dismiss();
-          toast.error(
-            error.response?.data?.message ||
-              "Registration failed. Please try again."
-          );
-        },
-      }
-    );
+    register(registrationData, {
+      onSuccess: (data) => {
+        // After successful registration, update the user profile with the additional personal info
+        toast.dismiss();
+        setEmail(data?.email);
+        setIsotpOpen(true);
+        console.log(data, "res");
+        toast.success("Registration successful! Please verify your email.");
+      },
+      onError: (error: any) => {
+        toast.dismiss();
+        toast.error(
+          error.response?.data?.message ||
+            "Registration failed. Please try again."
+        );
+      },
+    });
   };
 
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <AccountStep formMethods={accountStepMethods} onClose={handleClose} />;
+        return (
+          <AccountStep formMethods={accountStepMethods} onClose={handleClose} />
+        );
       case 2:
         return <PersonalStep formMethods={personalStepMethods} />;
       default:
@@ -344,21 +348,19 @@ const Register = ({ onBack }: RegisterProps) => {
     <>
       {/* Custom Modal Implementation */}
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center overflow-y-auto">
-        <div 
+        <div
           id="register-modal-content"
-          className="bg-white rounded-lg w-full max-w-[1280px] relative overflow-hidden"
+          className="bg-white rounded-lg w-full max-w-[1280px] relative "
         >
-          <div className="text-left relative px-24 pt-8">
+          <div className="text-left px-24 pt-8 ">
             <button
               onClick={handleClose}
-              className="absolute -right-5 -top-5 z-30 h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100 flex items-center justify-center"
+              className="absolute -right-5 -top-5 z-10 h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100 flex items-center justify-center"
             >
-              <X className="h-6 w-6" />
+              <X className="h-6 w-6 " />
             </button>
             <div className="flex items-center justify-between">
-              <h2 className="text-[48px] font-extrabold">
-                Register
-              </h2>
+              <h2 className="text-[48px] font-extrabold">Register</h2>
             </div>
           </div>
 

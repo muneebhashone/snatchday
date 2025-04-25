@@ -189,7 +189,7 @@ const NextTournamentCard = ({
           <div className="flex items-center gap-2">
             <Button className="gradient-primary text-sm hover:gradient-primary/90 text-white rounded-full px-6 py-1 drop-shadow-lg max-h-[27px]">
               <Link href={`/tournament-detail?id=${id ? id : _id}`}>
-                To The Tournamentasdasdasd
+                To The Tournament
               </Link>
             </Button>
             <div className="bg-orange-200 rounded-full h-6 w-6 flex items-center justify-center">
