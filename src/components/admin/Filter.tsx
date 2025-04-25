@@ -212,7 +212,7 @@ const Filter = () => {
                 <TableFooter className="w-full">
                   <TableRow>
                     <TableCell colSpan={4} className="text-center">
-                      <div className="flex flex-col items-center gap-4">
+                      <div className="flex justify-between items-center gap-4">
                         <div className="text-sm text-gray-500">
                           Showing {page + 1} to{" "}
                           {Math.min(page + skip, totalItems)} of {totalItems}{" "}

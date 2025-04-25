@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarIcon, X, PlusCircle, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, X, PlusCircle, ChevronsUpDown, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
@@ -106,7 +106,6 @@ const formSchema = z
       });
     }
 
-    // Custom validation for discounts (dates)
     if (data.discounts && data.discounts.length > 0) {
       data.discounts.forEach((discount, index) => {
         const startDate = new Date(discount.away);
@@ -114,7 +113,6 @@ const formSchema = z
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Reset time to start of day
 
-        // Check if the start date is in the past (before today)
         if (startDate < today) {
           ctx.addIssue({
             path: [`discounts.${index}.away`],
@@ -123,7 +121,6 @@ const formSchema = z
           });
         }
 
-        // Check if the end date is greater than the start date
         if (endDate <= startDate) {
           ctx.addIssue({
             path: [`discounts.${index}.until`],
@@ -131,9 +128,45 @@ const formSchema = z
             message: "End Date must be greater than Start Date",
           });
         }
+        
+        // Check if discount price is greater than product price
+        if (discount.price > data.price) {
+          ctx.addIssue({
+            path: [`discounts.${index}.price`],
+            code: z.ZodIssueCode.custom,
+            message: `Discount price cannot be greater than product price (${data.price})`,
+          });
+        }
       });
     }
-  });
+  })
+  .refine(
+    (data) => {
+      if (data.images && data.images.length === 0) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "At least one image is required",
+      path: ["images"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (!data.images || data.images.length === 0) {
+        return true;
+      }
+
+      return data.images.every(
+        (file) => file instanceof File && file.type.startsWith("image/")
+      );
+    },
+    {
+      message: "Only image files are allowed",
+      path: ["images"],
+    }
+  );
 
 interface Category {
   _id: string;
@@ -418,6 +451,16 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
         type: "custom",
         message: "At least one image is required",
       });
+      return;
+    }
+    
+    // Check for invalid discounts
+    const invalidDiscounts = values.discounts?.filter(
+      discount => discount.price > values.price
+    );
+    
+    if (invalidDiscounts && invalidDiscounts.length > 0) {
+      toast.error("Discount prices cannot be greater than product price");
       return;
     }
 
@@ -1022,28 +1065,39 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                           <FormField
                             control={form.control}
                             name={`discounts.${index}.price`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Price</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    step="0.01"
-                                    placeholder="0.00"
-                                    onKeyDown={(e) => {
-                                      if (e.key === "-") {
-                                        e.preventDefault();
-                                      }
-                                    }}
-                                    {...field}
-                                    onChange={(e) =>
-                                      field.onChange(parseFloat(e.target.value))
-                                    }
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
+                            render={({ field }) => {
+                              const productPrice = form.watch('price');
+                              return (
+                                <FormItem>
+                                  <FormLabel>Price</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="number"
+                                      step="0.01"
+                                      placeholder="0.00"
+                                      onKeyDown={(e) => {
+                                        if (e.key === "-") {
+                                          e.preventDefault();
+                                        }
+                                      }}
+                                      {...field}
+                                      onChange={(e) => {
+                                        const value = parseFloat(e.target.value);
+                                        field.onChange(value);
+                                      }}
+                                      className={field.value > productPrice ? "border-destructive" : ""}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                  {field.value > productPrice && (
+                                    <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                                      <AlertCircle className="h-3 w-3" />
+                                      Discount price cannot be greater than product price ({productPrice})
+                                    </p>
+                                  )}
+                                </FormItem>
+                              );
+                            }}
                           />
 
                           <FormField
@@ -1088,10 +1142,15 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                                         const today = new Date();
                                         today.setHours(0, 0, 0, 0);
                                         const endDate = new Date(
-                                          form.getValues(`discounts.${index}.until`)
+                                          form.getValues(
+                                            `discounts.${index}.until`
+                                          )
                                         );
                                         endDate.setHours(0, 0, 0, 0);
-                                        return date < today || (endDate.getTime() && date >= endDate);
+                                        return (
+                                          date < today ||
+                                          (endDate.getTime() && date >= endDate)
+                                        );
                                       }}
                                       initialFocus
                                     />
@@ -1391,4 +1450,3 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     </div>
   );
 }
-

@@ -378,7 +378,7 @@ const OrderDetails = () => {
                                 <ReviewModal
                                   orderId={id as string}
                                   product={item.product._id}
-                                  userName={user?.name}
+                                  userName={user?.user?.name}
                                   refetch={refetch}
                                 />
                               )}

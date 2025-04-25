@@ -523,7 +523,7 @@ const Header = () => {
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
                       {myprofile?.data?.wallet?.snapPoints
-                        ? myprofile?.data?.wallet?.snapPoints / 10
+                        ? myprofile?.data?.wallet?.snapPoints / 100
                         : 0}€
                     </span>
                   </div>
@@ -542,7 +542,7 @@ const Header = () => {
                     <span className="text-gray-500">Equivalent Value</span>
                     <span className="text-primary font-medium">
                       {myprofile?.data?.wallet?.discountPoints
-                        ? myprofile?.data?.wallet?.discountPoints / 10
+                        ? myprofile?.data?.wallet?.discountPoints / 100
                         : 0}€
                     </span>
                   </div>

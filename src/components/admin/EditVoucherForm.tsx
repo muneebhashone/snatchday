@@ -91,7 +91,19 @@ const formSchema = z
         path: ["value"],
       });
     }
-  });
+  })
+  .refine(
+    (data) => {
+      if (data.noOfUsage < data.usagePerUser) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Number of usage cannot be less than usage per user",
+      path: ["noOfUsage"],
+    }
+  );
 
 interface EditVoucherFormProps {
   voucherId: string;
@@ -191,7 +203,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         router.refresh();
       },
       onError: (error: Error) => {
-        toast.error(error.message || "Failed to update voucher");
+        toast.error(error?.response?.data?.message || "Failed to update voucher");
       },
     });
   }

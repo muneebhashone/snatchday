@@ -31,41 +31,33 @@ export function DynamicPagination({
     const pages: (number | string)[] = [];
 
     if (totalPages <= maxVisiblePages) {
-      // If total pages are less than max visible, show all pages
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // Always show first page
       pages.push(1);
 
-      // Calculate start and end of visible page numbers
       let start = Math.max(currentPage - 1, 2);
       let end = Math.min(currentPage + 1, totalPages - 1);
 
-      // Adjust if we're near the start or end
       if (currentPage <= 3) {
         end = 4;
       } else if (currentPage >= totalPages - 2) {
         start = totalPages - 3;
       }
 
-      // Add ellipsis after first page if needed
       if (start > 2) {
         pages.push("...");
       }
 
-      // Add visible page numbers
       for (let i = start; i <= end; i++) {
         pages.push(i);
       }
 
-      // Add ellipsis before last page if needed
       if (end < totalPages - 1) {
         pages.push("...");
       }
 
-      // Always show last page
       if (totalPages > 1) {
         pages.push(totalPages);
       }

@@ -43,6 +43,7 @@ import { useAddToCart } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 import { useCart } from "@/context/CartContext";
 import Login from "../auth/Login";
+import { formatCurrency } from "@/lib/utils";
 
 // interface ProductDetailsProps {
 //   title: string;
@@ -57,7 +58,15 @@ import Login from "../auth/Login";
 //   };
 // }
 
+interface Discount {
+  away: string;
+  customerGroup: string;
+  price: number;
+  until: string;
+}
+
 interface ProductDetailsProps {
+  calculatedPrice;
   _id?: string;
   title: string;
   price: string;
@@ -71,7 +80,7 @@ interface ProductDetailsProps {
   colors: string[];
   company: string;
   createdAt: string;
-  discounts: Array<Record<string, unknown>>;
+  discounts: Discount[];
   description: string;
   images: Array<string | StaticImageData>;
   isActive: boolean;
@@ -108,6 +117,7 @@ const ProductDetails = ({
   price,
   isLoading,
   noStockMessage,
+  calculatedPrice,
 }: ProductDetailsProps & { isLoading?: boolean }) => {
   const { id } = useParams();
   const {
@@ -128,6 +138,7 @@ const ProductDetails = ({
   const { mutate: productIdForCompare, isPending } = useCompareProducts();
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isWishList, setIsWishList] = useState(false);
 
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
   const { data, refetch: refetchWishlist } = useGetWishList();
@@ -139,7 +150,14 @@ const ProductDetails = ({
     if (getReviews) {
       setReviewsData(getReviews.pages.flatMap((page) => page.data.reviews));
     }
-  }, [getReviews]);
+    if (data) {
+      setIsWishList(
+        data.data?.products?.some((item) => item._id === params.id)
+      );
+      console.log(data, "data");
+    }
+  }, [getReviews, data, isWishList]);
+  console.log(isWishList, "isWishList");
   // const handleIncrement = () => {
   //   setQuantity((prev) => prev + 1);
   // };
@@ -240,23 +258,39 @@ const ProductDetails = ({
     );
   };
 
-  // const handleWishList = (id: string) => {
-  //   addToWishList(id, {
-  //     onSuccess: (res) => {
-  //       console.log(res.data.message);
-  //       toast.success(
-  //         `${
-  //           res.data.message ? res.data.message : " product added to wishlist"
-  //         }`
-  //       );
-  //       refetchWishlist();
-  //     },
-  //     onError: (error) => {
-  //       toast.error(error.response.data.message || "Failed to add to wishlist");
-  //       console.error(error);
-  //     },
-  //   });
-  // };
+  const handleWishList = (id: string) => {
+    addToWishList(id, {
+      onSuccess: (res) => {
+        console.log(res.data.message);
+        toast.success(
+          `${
+            res.data.message ? res.data.message : " product added to wishlist"
+          }`
+        );
+        refetchWishlist();
+      },
+      onError: (error) => {
+        toast.error(error.response.data.message || "Failed to add to wishlist");
+        console.error(error);
+      },
+    });
+  };
+
+  let discount = 0;
+
+  if (discounts?.length) {
+    const userGroup = user && user?.user?.group ? user?.user?.group : "BASIC";
+    const discount1 = discounts.find((d) => d.customerGroup === userGroup);
+    if (discount1) {
+      const now = new Date();
+      if (
+        (!discount1?.away || new Date(discount1?.away) <= now) &&
+        (!discount1?.until || new Date(discount1?.until) >= now)
+      ) {
+        discount = discount1.price;
+      }
+    }
+  }
 
   return (
     <div className="container max-w-[1600px] mx-auto relative z-10">
@@ -300,18 +334,19 @@ const ProductDetails = ({
           {/* Right Column - Product Info */}
           <div>
             {/* New Badge */}
-            <div className="flex items-center justify-between">
-              {isNew && (
-                <p className="inline-block bg-[#3A672B] text-white text-xs px-3 py-1 rounded-full uppercase">
-                  New
-                </p>
-              )}
-              {/* <Button
+            <div className="flex items-center justify-end">
+              <Button
                 onClick={() => handleWishList(params.id as string)}
-                className="w-12 h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full"
+                className={`w-12 h-12 bg-white rounded-full border hover:bg-white ${
+                  isWishList ? "border-primary" : ""
+                }`}
               >
-                <Heart className="w-6 h-6 text-[#A5A5A5] " />
-              </Button> */}
+                <Heart
+                  className={`w-6 h-6 text-[#A5A5A5] ${
+                    isWishList ? "text-primary" : ""
+                  }`}
+                />
+              </Button>
             </div>
 
             {/* Product Title */}
@@ -344,24 +379,26 @@ const ProductDetails = ({
             {/* Price */}
 
             <div className="mt-3">
-              {discounts?.length > 0 ? (
+              {discount > 0 ? (
                 <div className="flex items-center gap-2">
-                  <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D] ">
-                    <span className="text-foreground">{price}</span>€
-                  </h2>
-                  {/* <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
-                    {discounts.map((discount, i) => (
-                      <span key={i} className="text-foreground">
-                        {Number(price) - Number(discount?.price) > 0 
-                          ? (Number(price) - Number(discount?.price)).toFixed() 
-                          : "0.00"}
+                  <span className="text-3xl text-gray-400 font-semibold line-through">
+                    {formatCurrency(calculatedPrice)}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D] ">
+                      <span className="text-foreground">
+                        {(calculatedPrice - discount).toFixed(2)}
                       </span>
-                    ))}€
-                  </h2> */}
+                      €
+                    </h2>
+                  </div>
                 </div>
               ) : (
                 <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
-                  <span className="text-foreground">{price}</span>€
+                  <span className="text-foreground">
+                    {calculatedPrice.toFixed(2)}
+                  </span>
+                  €
                 </h2>
               )}
               {/* <h2 className="text-3xl text-primary font-extrabold text-[#1C1B1D]">
