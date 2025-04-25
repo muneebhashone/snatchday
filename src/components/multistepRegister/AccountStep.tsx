@@ -132,11 +132,8 @@ const AccountStep = ({ formMethods }: AccountStepProps) => {
           />
           <label htmlFor="terms" className="text-foreground">
             I agree to the{" "}
-            <Link href="#" className="text-[#FF6B3D] hover:underline">
-              privacy policy
-            </Link>{" "}
-            and the{" "}
-            <Link href="#" className="text-[#FF6B3D] hover:underline">
+            
+            <Link href="/terms-and-conditions" className="text-[#FF6B3D] hover:underline">
               terms and conditions
             </Link>
           </label>

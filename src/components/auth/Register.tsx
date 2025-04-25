@@ -42,7 +42,7 @@ const accountStepSchema = z
     terms: z.boolean().refine((val) => val === true, {
       message: "required",
     }),
-    newsletter: z.boolean().optional(), // Made optional as requested
+  
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
@@ -64,7 +64,7 @@ const personalStepSchema = z.object({
     lastName: z
       .string()
       .min(2, "Last name must be at least 2 characters")
-      .max(50, "Last name cannot exceed 50 characters"),
+      .max(100, "Last name cannot exceed 50 characters"),
     firstName: z
       .string()
       .min(2, "First name must be at least 2 characters")
@@ -97,12 +97,16 @@ const personalStepSchema = z.object({
       .max(100, "Street cannot exceed 100 characters"),
     zip: z
       .string()
-      .min(3, "ZIP code must be at least 3 characters")
+      .min(2, "ZIP code must be at least 3 characters")
       .max(10, "ZIP code cannot exceed 10 characters"),
     location: z
       .string()
       .min(2, "Location must be at least 2 characters")
-      .max(50, "Location cannot exceed 50 characters"),
+      .max(100, "Location cannot exceed 50 characters"),
+    phoneNumber: z
+      .string()
+      .min(5, "Phone number must be at least 5 characters")
+      .max(20, "Phone number cannot exceed 15 characters"),
   }),
 });
 
@@ -135,7 +139,7 @@ const Register = ({ onBack }: RegisterProps) => {
       email: "",
       password: "",
       confirmPassword: "",
-      newsletter: false,
+    
       terms: false,
     },
     mode: "onChange",
@@ -154,6 +158,7 @@ const Register = ({ onBack }: RegisterProps) => {
         street: "",
         zip: "",
         location: "",
+        phoneNumber: "",
       },
     },
     mode: "onChange",
@@ -179,7 +184,8 @@ const Register = ({ onBack }: RegisterProps) => {
           checkEmail(
             { email: data.email },
             {
-              onSuccess: (data) => {
+              onSuccess: (response) => {
+                // Save all the account data, not just the API response
                 setAccountData(data);
                 setCurrentStep(2);
                 toast.success("Account information validated successfully");
@@ -241,8 +247,11 @@ const Register = ({ onBack }: RegisterProps) => {
       return;
     }
 
+    // Log account data to verify it's available
+    console.log("Account data being used for submission:", accountData);
+
     // Prepare the registration data in the format expected by the API
-    const { email, name, password } = accountData;
+    const { email, name, password} = accountData;
     const { personalInfo } = personalStepMethods.getValues();
 
     // Show loading state
@@ -251,10 +260,13 @@ const Register = ({ onBack }: RegisterProps) => {
     // Format data in the structure expected by the API
     const registrationData = {
       data: {
+        // Account step data
         email,
         name,
         password,
-        // Include only the properties the API needs
+      
+        
+        // Personal info step data
         salutation: personalInfo.salutation,
         title: personalInfo.title || "",
         username: personalInfo.username,
@@ -268,6 +280,7 @@ const Register = ({ onBack }: RegisterProps) => {
         street: personalInfo.street,
         zip: personalInfo.zip,
         location: personalInfo.location,
+        phoneNumber: personalInfo.phoneNumber,
         country: "Germany", // Static value as requested
       },
       type: "register"
@@ -304,7 +317,7 @@ const Register = ({ onBack }: RegisterProps) => {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return <AccountStep formMethods={accountStepMethods} />;
+        return <AccountStep formMethods={accountStepMethods} onClose={handleClose} />;
       case 2:
         return <PersonalStep formMethods={personalStepMethods} />;
       default:
