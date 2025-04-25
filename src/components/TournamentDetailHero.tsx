@@ -97,7 +97,7 @@ const TournamentDetailHero = ({
             },
             onError: (error: any) => {
               console.error("Participation failed:", error);
-              toast.error(error?.response?.data?.message);
+              toast.error(error.response?.data?.message || "Participation failed");
             },
           });
         }

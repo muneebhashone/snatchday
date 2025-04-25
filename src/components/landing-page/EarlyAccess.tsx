@@ -33,8 +33,8 @@ const EarlyAccess = () => {
         form.reset();
         toast.success("Successfully subscribed to newsletter");
       },
-      onError: (error) => {
-        toast.error("Failed to subscribe to newsletter");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to subscribe to newsletter");
         console.error(error);
       },
     } 

@@ -741,8 +741,8 @@ const AddressStep = ({
 
         setShowAddressForm(false)
       },
-      onError: (error) => {
-        toast.error(`Failed to add address: ${error.message}`)
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to add address")
       },
     })
 
@@ -759,8 +759,8 @@ const AddressStep = ({
         toast.success("Address removed successfully")
         refetchAddresses()
       },
-      onError: (error) => {
-        toast.error(`Failed to delete address: ${error.message}`)
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to delete address")
       },
     })
   }

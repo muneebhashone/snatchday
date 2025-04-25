@@ -74,8 +74,8 @@ const TutorialPage = () => {
         refetch();
         setShowDeleteModal(false);
       },
-      onError: (error) => {
-        toast.error(error.message || "Failed to delete tutorial");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to delete tutorial");
       },
       onSettled: () => {
         setIsDeleting(false);

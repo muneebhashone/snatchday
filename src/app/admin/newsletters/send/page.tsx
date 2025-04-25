@@ -95,8 +95,8 @@ const NewsletterComposer = () => {
         form.reset();
         setSelectedCustomers([]);
       },
-      onError: () => {
-        toast.error("error");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to send newsletter");
       },
     });
     // console.log(mail, "maildata log");

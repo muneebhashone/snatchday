@@ -120,6 +120,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (myProfile?.data?.user) {
+      console.log(myProfile.data.user, "myProfile");
       reset({
         salutation: myProfile.data.user.salutation,
         title: myProfile.data.user.title,
@@ -329,8 +330,7 @@ const UserProfile = () => {
                           Last online:
                         </span>
                         <span className="text-gray-900">
-                          {formatDate(Date.now()) ||
-                            "N/A"}
+                          {formatDate(Date.now()) || "N/A"}
                         </span>
                       </div>
                     </div>
@@ -573,8 +573,9 @@ const UserProfile = () => {
                                 <SelectValue placeholder="Select Salutation" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="mr">Mister</SelectItem>
-                                <SelectItem value="mrs">Mrs</SelectItem>
+                                <SelectItem value="Mr">Mister</SelectItem>
+                                <SelectItem value="Mrs">Miss</SelectItem>
+                                <SelectItem value="Dr">Doctor</SelectItem>
                               </SelectContent>
                             </Select>
                           )}
@@ -602,8 +603,10 @@ const UserProfile = () => {
                                 <SelectValue placeholder="-- Please select --" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="dr">Dr.</SelectItem>
-                                <SelectItem value="prof">Prof.</SelectItem>
+                                <SelectItem value="Dr">Dr.</SelectItem>
+                                <SelectItem value="Prof">Prof.</SelectItem>
+                                <SelectItem value="Mr">Mr.</SelectItem>
+                                <SelectItem value="Mrs">Ms.</SelectItem>
                               </SelectContent>
                             </Select>
                           )}

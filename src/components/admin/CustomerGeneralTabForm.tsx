@@ -100,7 +100,10 @@ export default function CustomerForm({
         onClose(false);
         window.location.reload();
       },
-      onError: (error) => {
+      onError: (error: any) => {
+        toast.error(
+          error.response?.data?.message || "Failed to update customer"
+        );
         console.log(error, "error on customer update");
       },
     });
@@ -164,9 +167,9 @@ export default function CustomerForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Mister">Mister</SelectItem>
-                            <SelectItem value="Miss">Miss</SelectItem>
-                            <SelectItem value="Doctor">Doctor</SelectItem>
+                            <SelectItem value="Mr">Mister</SelectItem>
+                            <SelectItem value="Mrs">Miss</SelectItem>
+                            <SelectItem value="Dr">Doctor</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -190,10 +193,10 @@ export default function CustomerForm({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Dr.">Dr.</SelectItem>
-                            <SelectItem value="Prof.">Prof.</SelectItem>
-                            <SelectItem value="Mr.">Mr.</SelectItem>
-                            <SelectItem value="Ms.">Ms.</SelectItem>
+                            <SelectItem value="Dr">Dr.</SelectItem>
+                            <SelectItem value="Prof">Prof.</SelectItem>
+                            <SelectItem value="Mr">Mr.</SelectItem>
+                            <SelectItem value="Mrs">Ms.</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

@@ -3,13 +3,33 @@
 import { useParams, useRouter } from "next/navigation";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState, useEffect } from "react";
-import { useGetWithdrawalRequestById, useUpdateWithdrawalReject, useUpdateWithdrawalRequest } from "@/hooks/api";
+import {
+  useGetWithdrawalRequestById,
+  useUpdateWithdrawalReject,
+  useUpdateWithdrawalRequest,
+} from "@/hooks/api";
 import { toast } from "sonner";
 import Link from "next/link";
 import { format } from "date-fns";
-import { ArrowLeft, Loader, User, CreditCard, DollarSign, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader,
+  User,
+  CreditCard,
+  DollarSign,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+} from "lucide-react";
 import { WithdrawalRequest, WithdrawalRequestResponse } from "@/types";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 
@@ -17,11 +37,16 @@ export default function WithdrawalDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { data: withdrawalRequest, isLoading, refetch } = useGetWithdrawalRequestById(id);
+  const {
+    data: withdrawalRequest,
+    isLoading,
+    refetch,
+  } = useGetWithdrawalRequestById(id);
 
   const [status, setStatus] = useState<WithdrawalRequest["status"]>("PENDING");
   const { mutate: updateWithdrawal, isPending } = useUpdateWithdrawalRequest();
-  const { mutate: updateWithdrawalReject, isPending: isRejectPending } = useUpdateWithdrawalReject();
+  const { mutate: updateWithdrawalReject, isPending: isRejectPending } =
+    useUpdateWithdrawalReject();
 
   useEffect(() => {
     if (withdrawalRequest?.data?.status) {
@@ -41,8 +66,8 @@ export default function WithdrawalDetailsPage() {
             toast.success("Withdrawal request rejected successfully");
             refetch();
           },
-          onError: (error) => {
-            toast.error("Failed to reject withdrawal request");
+          onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Failed to reject withdrawal request");
           },
         }
       );
@@ -57,8 +82,8 @@ export default function WithdrawalDetailsPage() {
             toast.success("Withdrawal request updated successfully");
             refetch();
           },
-          onError: (error) => {
-            toast.error("Failed to update withdrawal request");
+          onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Failed to update withdrawal request");
           },
         }
       );
@@ -89,7 +114,7 @@ export default function WithdrawalDetailsPage() {
   }
 
   const getStatusBadge = (status: string) => {
-    switch(status) {
+    switch (status) {
       case "APPROVED":
         return (
           <div className="flex items-center gap-1 bg-green-50 text-green-600 px-3 py-1 rounded-full text-sm">
@@ -118,12 +143,12 @@ export default function WithdrawalDetailsPage() {
     <AdminLayout>
       <div className="container mx-auto py-10">
         <div className="flex items-center justify-between mb-6">
-          <AdminBreadcrumb 
-            title="Withdrawal Details" 
+          <AdminBreadcrumb
+            title="Withdrawal Details"
             items={[
               { title: "Dashboard", href: "/admin" },
-              { title: "Withdrawal Requests", href: "/admin/withdrawal" }
-            ]} 
+              { title: "Withdrawal Requests", href: "/admin/withdrawal" },
+            ]}
           />
           <Link href="/admin/withdrawal">
             <Button variant="outline" className="flex items-center gap-2">
@@ -135,10 +160,14 @@ export default function WithdrawalDetailsPage() {
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">Withdrawal Request #{request._id.substring(0, 8)}</h1>
+              <h1 className="text-2xl font-bold tracking-tight">
+                Withdrawal Request #{request._id.substring(0, 8)}
+              </h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-gray-600">
-                  {request.createdAt ? format(new Date(request.createdAt), "MMM dd, yyyy") : "N/A"}
+                  {request.createdAt
+                    ? format(new Date(request.createdAt), "MMM dd, yyyy")
+                    : "N/A"}
                 </p>
                 {getStatusBadge(request.status)}
               </div>
@@ -156,20 +185,30 @@ export default function WithdrawalDetailsPage() {
               <div className="bg-blue-50 p-2 rounded-lg">
                 <User className="w-5 h-5 text-blue-600" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">Customer Details</h2>
+              <h2 className="text-lg font-semibold text-gray-800">
+                Customer Details
+              </h2>
             </div>
             <div className="space-y-3">
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500">Name</span>
-                <span className="font-medium">{request.user?.name || "Unknown"}</span>
+                <span className="font-medium">
+                  {request.user?.name || "Unknown"}
+                </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500">Email</span>
-                <span className="font-medium">{request.user?.email || request.bankDetails?.paypalEmail || "Not provided"}</span>
+                <span className="font-medium">
+                  {request.user?.email ||
+                    request.bankDetails?.paypalEmail ||
+                    "Not provided"}
+                </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500">Phone</span>
-                <span className="font-medium">{request.user?.phone || "Not provided"}</span>
+                <span className="font-medium">
+                  {request.user?.phone || "Not provided"}
+                </span>
               </div>
             </div>
           </div>
@@ -180,63 +219,86 @@ export default function WithdrawalDetailsPage() {
               <div className="bg-purple-50 p-2 rounded-lg">
                 <CreditCard className="w-5 h-5 text-purple-600" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">Payment Method</h2>
+              <h2 className="text-lg font-semibold text-gray-800">
+                Payment Method
+              </h2>
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">Method:</span>
-                <span className={`px-2 py-1 rounded-full text-xs ${request.bankDetails?.paypalEmail ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800"}`}>
-                  {request.bankDetails?.paypalEmail ? "PayPal" : "Bank Transfer"}
+                <span
+                  className={`px-2 py-1 rounded-full text-xs ${
+                    request.bankDetails?.paypalEmail
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-green-100 text-green-800"
+                  }`}
+                >
+                  {request.bankDetails?.paypalEmail
+                    ? "PayPal"
+                    : "Bank Transfer"}
                 </span>
               </div>
-              
+
               {request.bankDetails?.paypalEmail ? (
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">PayPal Email</span>
-                  <span className="font-medium">{request.bankDetails.paypalEmail}</span>
+                  <span className="font-medium">
+                    {request.bankDetails.paypalEmail}
+                  </span>
                 </div>
               ) : (
                 <>
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">IBAN</span>
-                    <span className="font-medium">{request.bankDetails?.iban || "Not provided"}</span>
+                    <span className="font-medium">
+                      {request.bankDetails?.iban || "Not provided"}
+                    </span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-sm text-gray-500">Account Holder</span>
-                    <span className="font-medium">{request.bankDetails?.accountName || "Not provided"}</span>
-                  
+                    <span className="text-sm text-gray-500">
+                      Account Holder
+                    </span>
+                    <span className="font-medium">
+                      {request.bankDetails?.accountName || "Not provided"}
+                    </span>
                   </div>
-                 
                 </>
               )}
             </div>
           </div>
 
-          
           <div className="bg-white rounded-xl shadow-sm p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="bg-green-50 p-2 rounded-lg">
                 <DollarSign className="w-5 h-5 text-green-600" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-800">Financial Summary</h2>
+              <h2 className="text-lg font-semibold text-gray-800">
+                Financial Summary
+              </h2>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Redemption Amount</span>
-                <span className="font-medium">{request.amount?.toFixed(2)}€</span>
+                <span className="font-medium">
+                  {request.amount?.toFixed(2)}€
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Shop Commission</span>
-                <span className="font-medium">{(request.platformFee || 0).toFixed(2)}€</span>
+                <span className="font-medium">1.00€</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Method Fee</span>
-                <span className="font-medium">{request.bankDetails?.paypalEmail ? "0.35" : "0.00"}€</span>
+                <span className="font-medium">
+                  {request.bankDetails?.paypalEmail ? "0.35" : "0.00"}€
+                </span>
               </div>
               <div className="border-t pt-2 mt-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Total</span>
-                  <span className="font-bold text-primary">{(request.amount ).toFixed(2)}€</span>
+                  <span className="font-medium">Total Deduction</span>
+                  <span className="font-bold text-primary">
+                    {(request.amount + request.platformFee).toFixed(2)}€
+                  </span>
                 </div>
               </div>
             </div>
@@ -270,34 +332,42 @@ export default function WithdrawalDetailsPage() {
         </div> */}
 
         {/* Status Update Card */}
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Action</h2>
-          <div className="flex items-center gap-4">
-            <div className="font-medium w-24">Status:</div>
-            <Select
-              value={status}
-              onValueChange={(value) => setStatus(value as WithdrawalRequest["status"])}
-              disabled={isPending || isRejectPending}
-            >
-              <SelectTrigger className="w-60">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="PENDING">Pending</SelectItem>
-                <SelectItem value="COMPLETED">Completed</SelectItem>
-                <SelectItem value="REJECTED">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button 
-              onClick={handleUpdateStatus}
-              disabled={isPending || isRejectPending || status === request.status}
-              className="bg-primary text-white hover:bg-primary/90"
-            >
-              {isPending || isRejectPending ? "Processing..." : "Update Status"}
-            </Button>
+        {request.status === "PENDING" && (
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Action</h2>
+            <div className="flex items-center gap-4">
+              <div className="font-medium w-24">Status:</div>
+              <Select
+                value={status}
+                onValueChange={(value) =>
+                  setStatus(value as WithdrawalRequest["status"])
+                }
+                disabled={isPending || isRejectPending}
+              >
+                <SelectTrigger className="w-60">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PENDING">Pending</SelectItem>
+                  <SelectItem value="COMPLETED">Completed</SelectItem>
+                  <SelectItem value="REJECTED">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                onClick={handleUpdateStatus}
+                disabled={
+                  isPending || isRejectPending || status === request.status
+                }
+                className="bg-primary text-white hover:bg-primary/90"
+              >
+                {isPending || isRejectPending
+                  ? "Processing..."
+                  : "Update Status"}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </AdminLayout>
   );
-} 
+}

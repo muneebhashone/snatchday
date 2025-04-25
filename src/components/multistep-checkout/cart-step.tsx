@@ -220,7 +220,7 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
         },
         onError: (error: any) => {
           console.log(error)
-          toast.error("Error occurred while removing item")
+          toast.error(error.response?.data?.message || "Error occurred while removing item")
         },
       }
     )

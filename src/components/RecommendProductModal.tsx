@@ -79,8 +79,8 @@ const RecommendProductModal = ({
         setIsOpen(false);
         form.reset();
       },
-      onError: (error) => {
-        toast.error("failed to recommend the product");
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "failed to recommend the product");
         console.log(error);
       },
     });

@@ -75,8 +75,8 @@ const ChangePasswordModal = ({
           })
           form.reset()
         },
-        onError: (error) => {
-          toast.error("Failed to update password")
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to update password")
           console.log(error)
         },
       },

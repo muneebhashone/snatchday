@@ -144,8 +144,8 @@ const Page = () => {
             router.push("/admin/reviews");
             setIsLoading(false);
           },
-          onError: () => {
-            toast.error("Failed to update review");
+          onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Failed to update review");
             setIsLoading(false);
           },
         }
@@ -158,8 +158,8 @@ const Page = () => {
           router.push("/admin/reviews");
           setIsLoading(false);
         },
-        onError: () => {
-          toast.error("Failed to create review");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to create review");
           setIsLoading(false);
         },
       });

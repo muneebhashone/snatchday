@@ -167,8 +167,8 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
             queryClient.invalidateQueries({ queryKey: ["categories"] });
             form.reset();
           },
-          onError: (error) => {
-            toast.error("Failed to update category");
+          onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Failed to update category");
             console.error(error);
           },
         }

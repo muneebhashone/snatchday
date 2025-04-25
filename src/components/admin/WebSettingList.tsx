@@ -72,8 +72,8 @@ const WebSettingsList = () => {
           setSelectedSettingId(null);
           setIsDeleting(false);
         },
-        onError: (error) => {
-          toast.error("Failed to delete web setting");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to delete web setting");
           console.error(error);
           setShowDeleteModal(false);
           setSelectedSettingId(null);

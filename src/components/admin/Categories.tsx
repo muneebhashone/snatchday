@@ -100,8 +100,8 @@ const Categories = () => {
           setSelectedCategoryId(null);
           setIsDeleting(false);
         },
-        onError: (error) => {
-          toast.error("Failed to delete category");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to delete category");
           console.error(error);
           setShowDeleteModal(false);
           setSelectedCategoryId(null);

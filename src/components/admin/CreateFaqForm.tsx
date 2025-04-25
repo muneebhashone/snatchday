@@ -122,8 +122,8 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
             toast.success("FAQ updated successfully");
             router.push("/admin/faq");
           },
-          onError: (error) => {
-            toast.error(error.message || "Failed to update FAQ");
+          onError: (error: any) => {
+            toast.error(error.response?.data?.message || "Failed to update FAQ");
           },
         }
       );
@@ -134,8 +134,8 @@ const CreateFaqForm = ({ faqId }: { faqId?: string }) => {
           toast.success("FAQ created successfully");
           router.push("/admin/faq");
         },
-        onError: (error) => {
-          toast.error(error.message || "Failed to create FAQ");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to create FAQ");
         },
       });
     }

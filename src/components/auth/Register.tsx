@@ -291,19 +291,13 @@ const Register = ({ onBack }: RegisterProps) => {
       type: "register",
     };
 
-    // Log all data for debugging
-    console.log("Final registration data:", registrationData);
-    console.log("Account data:", accountData);
-    console.log("Personal info data:", personalInfo);
-
     // Call the registration API with the proper format
     register(registrationData, {
       onSuccess: (data) => {
-        // After successful registration, update the user profile with the additional personal info
         toast.dismiss();
-        setEmail(data?.email);
+        // Set the email and open the OTP modal
+        setEmail(accountData.email);
         setIsotpOpen(true);
-        console.log(data, "res");
         toast.success("Registration successful! Please verify your email.");
       },
       onError: (error: any) => {
@@ -320,7 +314,7 @@ const Register = ({ onBack }: RegisterProps) => {
     switch (currentStep) {
       case 1:
         return (
-          <AccountStep formMethods={accountStepMethods} onClose={handleClose} />
+          <AccountStep formMethods={accountStepMethods} />
         );
       case 2:
         return <PersonalStep formMethods={personalStepMethods} />;

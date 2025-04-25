@@ -79,8 +79,8 @@ const ReturnOrderModal = ({
         refetch();
         router.push(`/my-account/returns`);
       },
-      onError: (error) => {
-        toast.error("Failed to submit return request: " + error.message);
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to submit return request");
       },
     });
   };

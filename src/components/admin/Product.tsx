@@ -130,8 +130,8 @@ export function Product() {
           setSelectedProductId(null);
           setIsDeleting(false);
         },
-        onError: (error) => {
-          toast.error("Failed to delete product");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to delete product");
           console.error(error);
           setShowDeleteModal(false);
           setSelectedProductId(null);

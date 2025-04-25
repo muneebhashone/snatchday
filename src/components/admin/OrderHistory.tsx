@@ -87,8 +87,8 @@ export default function OrderHistory() {
         queryClient.invalidateQueries({ queryKey: ["order"] });
         form.reset({ status: "", customerInformed: false, remarks: "" });
       },
-      onError: (error) => {
-        toast.error(`Failed to update order: ${error.message}`);
+      onError: (error: any) => {
+        toast.error(error.response?.data?.message || "Failed to update order");
       },
     });
   }

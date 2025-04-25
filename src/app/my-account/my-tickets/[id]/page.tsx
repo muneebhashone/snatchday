@@ -95,8 +95,8 @@ const TicketDetailsPage = () => {
           setAttachments([]);
           refetch();
         },
-        onError: (error) => {
-          toast.error("Failed to send reply");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to send reply");
           console.error("Error:", error);
         },
       }

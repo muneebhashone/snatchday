@@ -93,7 +93,7 @@ export default function ReturnHistory() {
         onError: (error) => {
           console.log(error, "error from api");
           console.log("Update failed");
-          toast.error("Return update failed");
+          toast.error(error.response?.data?.message || "Return update failed");
         },
       }
     );

@@ -311,13 +311,13 @@ export default function ProductsForm() {
           setPreviewUrls([]);
           form.reset();
         },
-        onError: (error) => {
-          toast.error("Failed to create product");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to create product");
           console.error(error);
         },
       });
     } catch (error) {
-      toast.error("Failed to create product");
+      toast.error(error.response?.data?.message || "Failed to create product");
       console.error(error);
     }
   }

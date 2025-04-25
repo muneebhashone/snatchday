@@ -195,9 +195,9 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
             form.reset();
             router.push("/admin/tournament");
           },
-          onError: (error: Error) => {
+          onError: (error: any) => {
             const errorMessage =
-              error?.message || "Failed to create tournament";
+              error.response?.data?.message || "Failed to create tournament";
             toast.error(errorMessage);
             console.error("Error creating tournament:", error);
           },

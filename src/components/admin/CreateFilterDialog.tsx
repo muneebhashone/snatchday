@@ -100,8 +100,8 @@ export function CreateFilterDialog() {
           form.reset();
           setValues([]);
         },
-        onError: (error) => {
-          toast.error("Failed to create filter");
+        onError: (error: any) => {
+          toast.error(error.response?.data?.message || "Failed to create filter");
           console.error(error);
         },
       }

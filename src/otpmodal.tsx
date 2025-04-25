@@ -58,7 +58,7 @@ export default function OtpModal({ open, onClose, email, isOpenLogin }: OtpModal
         toast.success("Verification email resent successfully");
         setCountdown(60); // Start 60-second countdown
       },
-      onError: (error) => {
+      onError: (error: any) => {
         toast.error(error?.response?.data?.message || "Failed to resend email");
       }
     });
@@ -76,12 +76,12 @@ export default function OtpModal({ open, onClose, email, isOpenLogin }: OtpModal
     verifyEmailMutation.mutate(
       {
         email,
-        emailVerificationToken: Number(data.pin),
+        emailVerificationToken: data.pin,
       },
       {
         onSuccess: (data) => {
           toast.success(data?.message || "Email verification has been completed");
-          isOpenLogin();
+          isOpenLogin && isOpenLogin();
           onClose();
         },
         onError: (error: any) => {
@@ -105,10 +105,11 @@ export default function OtpModal({ open, onClose, email, isOpenLogin }: OtpModal
     }
   }, [open]);
 
-const handleCloseOtpModal=()=>{
-
-  onClose()
-  isOpenLogin();
+const handleCloseOtpModal = () => {
+  onClose();
+  if (isOpenLogin) {
+    isOpenLogin();
+  }
 }
 
   return (
