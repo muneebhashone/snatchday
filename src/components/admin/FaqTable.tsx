@@ -131,17 +131,6 @@ const FaqTable = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-semibold text-gray-800">FAQ Management</h2>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="mr-2"
-          >
-            <RefreshCcw
-              className={`h-4 w-4 mr-1 ${isLoading ? "animate-spin" : ""}`}
-            />{" "}
-            Refresh
-          </Button>
           <Link href="/admin/faq/create">
             <Button className="bg-primary hover:bg-primary">
               <Plus className="mr-2 h-4 w-4" /> Add New FAQ

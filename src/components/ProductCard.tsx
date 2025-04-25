@@ -18,11 +18,18 @@ import {
 } from "./ui/tooltip";
 import { Button } from "./ui/button";
 import Login from "./auth/Login";
-import { useAddToCart, useGetCart, useUpdateCart, useAddToWishList, useGetWishList } from "@/hooks/api";
+import {
+  useAddToCart,
+  useGetCart,
+  useUpdateCart,
+  useAddToWishList,
+  useGetWishList,
+} from "@/hooks/api";
 import { toast } from "sonner";
 import { useCart } from "@/context/CartContext";
 import { QueryClient } from "@tanstack/react-query";
 import { useUserContext } from "@/context/userContext";
+import { formatCurrency } from "@/lib/utils";
 
 const roundToTwoDecimals = (value: number): number => {
   return Math.round((value + Number.EPSILON) * 100) / 100;
@@ -35,6 +42,7 @@ const ProductCard = ({
   price,
   type,
   _id,
+  calculatedPrice,
 }: Product) => {
   const { data: addToCartData, refetch } = useGetCart();
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
@@ -45,21 +53,44 @@ const ProductCard = ({
   const { user } = useUserContext();
   const { data: wishlist } = useGetWishList();
 
+  // const discount = discounts?.find(
+  //   (item) => item.customerGroup === user?.user?.group || "BASIC"
+  // )?.price;
 
+  let discount = 0;
+
+  if (discounts?.length) {
+    const userGroup = user && user?.user?.group ? user?.user?.group : "BASIC";
+    const discount1 = discounts.find((d) => d.customerGroup === userGroup);
+    if (discount1) {
+      const now = new Date();
+      if (
+        (!discount1?.away || new Date(discount1?.away) <= now) &&
+        (!discount1?.until || new Date(discount1?.until) >= now)
+      ) {
+        discount = discount1.price;
+      }
+    }
+  }
 
   const isWishListed = (productId: string) => {
     return wishlist?.data?.products?.some((item) => item._id === productId);
   };
 
-
   const handleWishList = (id: string) => {
     addToWishList(id, {
       onSuccess: () => {
-        toast.success(isWishListed(id) ? "Product removed from wishlist" : "Product added to wishlist");
-        refetchWishlist()
+        toast.success(
+          isWishListed(id)
+            ? "Product removed from wishlist"
+            : "Product added to wishlist"
+        );
+        refetchWishlist();
       },
       onError: (error) => {
-        toast.error(error.response.data.message || "Failed to add to wishlist");
+        toast.error(
+          error?.response?.data?.message || "Failed to add to wishlist"
+        );
       },
     });
   };
@@ -67,7 +98,6 @@ const ProductCard = ({
   const prooo = addToCartData?.data?.cart?.filter(
     (pro) => pro.product._id === _id
   );
-
 
   const handleAddToCart = () => {
     addToCart(_id as string, {
@@ -77,7 +107,7 @@ const ProductCard = ({
         refetch();
       },
       onError: (error) => {
-        toast.error(error.response.data.message || "Failed to add to cart");
+        toast.error(error?.response?.data?.message || "Failed to add to cart");
         console.error(error);
       },
     });
@@ -92,8 +122,10 @@ const ProductCard = ({
           refetch();
         },
         onError: (error) => {
-          toast.error("Failed to remove from cart");
-          console.error(error);
+          toast.error(
+            error?.response?.data?.message || "Failed to update cart"
+          );
+          // console.error(error);
         },
       }
     );
@@ -131,7 +163,12 @@ const ProductCard = ({
           <TooltipProvider>
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
-                <button onClick={() => handleWishList(_id)} className={`rounded-full ${isWishListed(_id) ? "bg-[#FF6B3D]" : "bg-[#F5F5F5]"} p-4 hover:bg-gray-100 transition-colors`}>
+                <button
+                  onClick={() => handleWishList(_id)}
+                  className={`rounded-full ${
+                    isWishListed(_id) ? "bg-[#FF6B3D]" : "bg-[#F5F5F5]"
+                  } p-4 hover:bg-gray-100 transition-colors`}
+                >
                   {isWishListed(_id) ? (
                     <Heart className="w-6 h-6 text-white" />
                   ) : (
@@ -161,14 +198,17 @@ const ProductCard = ({
             <span className="text-sm text-gray-500">({4})</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl  text-gray-400 font-semibold line-through">
-              {price}€
-            </span>
+            {discount > 0 ? (
+              <span className="text-2xl  text-gray-400 font-semibold line-through">
+                {formatCurrency(calculatedPrice)}
+              </span>
+            ) : (
+              <span className="text-2xl  text-gray-400 font-semibold line-through"></span>
+            )}
             <span className="text-2xl font-semibold text-card-foreground">
-              {discounts?.length > 0
-                ? roundToTwoDecimals(price - (price * discounts[0].price) / 100)
-                : price}
-              €
+              {discount
+                ? formatCurrency(calculatedPrice - discount)
+                : formatCurrency(calculatedPrice)}
             </span>
           </div>
         </div>
@@ -211,7 +251,7 @@ const ProductCard = ({
                           }
                         />
                       </div>
-                    ) :  (
+                    ) : (
                       <button
                         onClick={handleAddToCart}
                         disabled={isAddToCartPending}
@@ -222,11 +262,10 @@ const ProductCard = ({
                     )}
                   </div>
                 </TooltipTrigger>
-                
-                  <TooltipContent className="bg-gray-700 text-white">
-                    <p> Click here  add to cart </p>
-                  </TooltipContent>
-                
+
+                <TooltipContent className="bg-gray-700 text-white">
+                  <p> Click here add to cart </p>
+                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>

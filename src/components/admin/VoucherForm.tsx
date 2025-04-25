@@ -99,7 +99,16 @@ const formSchema = z
         path: ["value"],
       });
     }
-  });
+  }).refine((data) => {
+    if (data.noOfUsage < data.usagePerUser) {
+      return false;
+    }
+    return true;
+  }, {
+    message: "Number of usage cannot be less than usage per user",
+    path: ["noOfUsage"],
+  })
+  ;
 
 const VoucherForm = () => {
   const router = useRouter();
@@ -156,7 +165,7 @@ const VoucherForm = () => {
           router.push("/admin/voucher");
         },
         onError: (error: Error) => {
-          const errorMessage = error?.message || "Failed to create voucher";
+          const errorMessage = error?.response?.data?.message || "Failed to create voucher";
           toast.error(errorMessage);
           console.error("Error creating voucher:", error);
         },

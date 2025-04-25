@@ -32,10 +32,6 @@ import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
-// Import component parts
-
-// import SimpleImageUpload from './product/SimpleImageUpload'
 import ProductAttributesField from "./product/ProductAttributesField";
 import ProductCategoryField from "./product/ProductCategoryField";
 import ProductDiscountField from "./product/ProductDiscountField";
@@ -46,36 +42,83 @@ import Image from "next/image";
 const discountSchema = z.object({
   customerGroup: z.string().optional(),
   price: z.number().nonnegative("Price must be 0 or greater").optional(),
-  away: z.coerce.date().min(new Date(), "Start date must be in the future"),
-  until: z.coerce.date().min(new Date(), "End date must be in the future"),
+  away: z.coerce.date().optional(),
+  until: z.coerce.date().optional(),
 });
 
-const productFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  description: z.string().optional(),
-  company: z.string().optional(),
-  images: z.array(z.instanceof(File)).min(1, "At least one image is required"),
-  colors: z.string().min(1, "Colors are required"),
-  stock: z.coerce.number().min(0, "Stock must be 0 or greater"),
-  price: z.coerce.number().min(0, "Price must be 0 or greater"),
-  categoryIds: z.array(z.string()).min(1, "At least one category is required"),
-  type: z.enum(["NEW", "SALE"]).optional(),
-  discounts: z.array(discountSchema).optional(),
-  attributes: z.record(z.string(), z.array(z.string())).optional(),
-  currentOffer: z.boolean().optional(), // Added current offers field
+const productFormSchema = z
+  .object({
+    name: z.string().min(1, "Name is required"),
+    description: z.string().optional(),
+    company: z.string().optional(),
+    images: z
+      .array(z.instanceof(File))
+      .min(1, "At least one image is required"),
+    colors: z.string().min(1, "Colors are required"),
+    stock: z.coerce.number().min(0, "Stock must be 0 or greater"),
+    price: z.coerce.number().min(0, "Price must be 0 or greater"),
+    categoryIds: z
+      .array(z.string())
+      .min(1, "At least one category is required"),
+    type: z.enum(["NEW", "SALE"]).optional(),
+    discounts: z.array(discountSchema).optional(),
+    attributes: z.record(z.string(), z.array(z.string())).optional(),
+    currentOffer: z.boolean().optional(), // Added current offers field
 
-  isFeatured: z.boolean().default(false),
-  metaTitle: z.string().min(1, "Meta title is required"),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(),
-  article: z.string().min(1, "Article is required"),
-  sku: z.string().optional(),
-  barcodeEAN: z.string().optional(),
-  noStockMessage: z.string().optional(),
-  relatedProducts: z.array(z.string()).optional(),
-  requireShipping: z.boolean().default(true),
-  liscenseKey: z.string().optional(),
-});
+    isFeatured: z.boolean().default(false),
+    metaTitle: z.string().min(1, "Meta title is required"),
+    metaDescription: z.string().optional(),
+    metaKeywords: z.string().optional(),
+    article: z.string().min(1, "Article is required"),
+    sku: z.string().optional(),
+    barcodeEAN: z.string().optional(),
+    noStockMessage: z.string().optional(),
+    relatedProducts: z.array(z.string()).optional(),
+    requireShipping: z.boolean().default(true),
+    liscenseKey: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.images && data.images.length === 0) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "At least one image is required",
+      path: ["images"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (!data.images || data.images.length === 0) {
+        return true;
+      }
+
+      return data.images.every(
+        (file) => file instanceof File && file.type.startsWith("image/")
+      );
+    },
+    {
+      message: "Only image files are allowed",
+      path: ["images"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (!data.discounts || data.discounts.length === 0) {
+        return true;
+      }
+      
+      return data.discounts.every(discount => 
+        !discount.price || discount.price <= data.price
+      );
+    },
+    {
+      message: "Discount price cannot be greater than product price",
+      path: ["discounts"],
+    }
+  );
 
 type ProductFormValues = z.infer<typeof productFormSchema>;
 
@@ -146,6 +189,16 @@ const MainProduct = () => {
   });
 
   const onSubmit = (values: ProductFormValues) => {
+    // Check for invalid discounts
+    const invalidDiscounts = values.discounts?.filter(
+      discount => discount.price && discount.price > values.price
+    );
+    
+    if (invalidDiscounts && invalidDiscounts.length > 0) {
+      toast.error("Discount prices cannot be greater than product price");
+      return;
+    }
+    
     const formData = new FormData();
 
     // Make a copy of values to modify before appending to formData

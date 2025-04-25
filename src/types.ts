@@ -113,7 +113,8 @@ export interface Product {
   categoryIds: string[];
   type: "NEW" | "SALE";
   data?: any;
-  discounts?: [{ price: number }];
+  discounts?: [{ price: number, customerGroup: string, away: Date, until: Date }];
+  calculatedPrice?: number;
 }
 
 export interface ProductsData {

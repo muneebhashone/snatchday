@@ -88,8 +88,8 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
       (cart?.data?.subTotal || 0) - 
       (cart?.data?.appliedDiscount || 0) - 
       (applyvocherResponse?.data?.voucherDiscount || 0) - 
-      (Number(watch("snapPoints") || 0) / 10) - 
-      (Number(watch("discountPoints") || 0) / 10)
+      (Number(watch("snapPoints") || 0) / 100) - 
+      (Number(watch("discountPoints") || 0) / 100)
     );
   };
 
@@ -383,14 +383,14 @@ export function CartStep({ onNextStep, setCheckoutResponse}: CartStepProps) {
                   {watch("snapPoints") && Number(watch("snapPoints")) > 0 && (
                     <div className="flex justify-between text-lg text-green-600">
                       <span>Snap Points:</span>
-                      <span>-{(Number(watch("snapPoints")) / 10).toFixed(2)}€</span>
+                      <span>-{(Number(watch("snapPoints")) / 100).toFixed(2)}€</span>
                     </div>
                   )}
                   
                   {watch("discountPoints") && Number(watch("discountPoints")) > 0 && (
                     <div className="flex justify-between text-lg text-green-600">
                       <span>Discount Points:</span>
-                      <span>-{(Number(watch("discountPoints")) / 10).toFixed(2)}€</span>
+                      <span>-{(Number(watch("discountPoints")) / 100).toFixed(2)}€</span>
                     </div>
                   )}
                   

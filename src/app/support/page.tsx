@@ -18,7 +18,7 @@ import { useGetFaq, useGetTutorial } from "@/hooks/api";
 import Link from "next/link";
 import { YouTubePlayer } from "@/components/admin/YouTubePlayer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LucideShieldQuestion, Ticket, Video } from "lucide-react";
+import { LucideShieldQuestion, Mic, Ticket, Video } from "lucide-react";
 
 const SupportPage = () => {
   const router = useRouter();
@@ -126,35 +126,45 @@ const SupportPage = () => {
           {/* Content layer */}
           <div className="relative z-10 max-w-[1200px] mx-auto">
             <Tabs defaultValue="ticket" className="w-full">
-              <TabsList className="w-full h-max mb-20 grid grid-cols-3 bg-transparent border-2 border-gray-100 bg-white">
+              <TabsList className="w-full h-max mb-20 flex justify-between bg-transparent border-2 border-gray-100 rounded-xl p-2 shadow-md">
                 <TabsTrigger
                   value="ticket"
-                  className="group flex flex-col items-center gap-4 bg-transparent data-[state=active]:bg-white data-[state=active]:border-primary data-[state=active]:border-2 data-[state=active]:text-primary text-xl data-[state=active]:font-bold data-[state=active]:text-2xl text-foreground"
+                  className="group flex-1 flex flex-col items-center gap-3 py-4 bg-transparent data-[state=active]:bg-white data-[state=active]:border-b-4 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-md rounded-lg transition-all duration-300 text-lg font-medium data-[state=active]:font-bold text-foreground hover:bg-gray-50"
                 >
-                  <div className="w-[100px] h-[100px] rounded-full flex items-center justify-center bg-white border-2 border-foreground group-data-[state=active]:border-primary shadow-md group-data-[state=active]:bg-white">
-                    <Ticket className="w-10 h-10 text-foreground group-data-[state=active]:text-primary" />
+                  <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center bg-gray-50 group-data-[state=active]:bg-primary/10 group-data-[state=active]:border-primary border-2 shadow-sm group-hover:shadow-md transition-all duration-300">
+                    <Ticket className="w-8 h-8 text-foreground group-data-[state=active]:text-primary" />
                   </div>
                   Create ticket
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="videos"
-                  className="group flex flex-col items-center gap-4 bg-transparent data-[state=active]:bg-white data-[state=active]:border-primary data-[state=active]:border-2 data-[state=active]:text-primary text-xl data-[state=active]:font-bold data-[state=active]:text-2xl text-foreground"
+                  className="group flex-1 flex flex-col items-center gap-3 py-4 bg-transparent data-[state=active]:bg-white data-[state=active]:border-b-4 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-md rounded-lg transition-all duration-300 text-lg font-medium data-[state=active]:font-bold text-foreground hover:bg-gray-50"
                 >
-                  <div className="w-[100px] h-[100px] rounded-full flex items-center justify-center bg-white border-2 border-foreground group-data-[state=active]:border-primary shadow-md group-data-[state=active]:bg-white">
-                    <Video className="w-10 h-10 text-foreground group-data-[state=active]:text-primary" />
+                  <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center bg-gray-50 group-data-[state=active]:bg-primary/10 group-data-[state=active]:border-primary border-2 shadow-sm group-hover:shadow-md transition-all duration-300">
+                    <Video className="w-8 h-8 text-foreground group-data-[state=active]:text-primary" />
                   </div>
                   Explanatory videos
                 </TabsTrigger>
 
                 <TabsTrigger
                   value="faq"
-                  className="group flex flex-col items-center gap-4 bg-transparent data-[state=active]:bg-white data-[state=active]:border-primary data-[state=active]:border-2 data-[state=active]:text-primary text-xl data-[state=active]:font-bold data-[state=active]:text-2xl text-foreground"
+                  className="group flex-1 flex flex-col items-center gap-3 py-4 bg-transparent data-[state=active]:bg-white data-[state=active]:border-b-4 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-md rounded-lg transition-all duration-300 text-lg font-medium data-[state=active]:font-bold text-foreground hover:bg-gray-50"
                 >
-                  <div className="w-[100px] h-[100px] rounded-full flex items-center justify-center bg-white border-2 border-foreground group-data-[state=active]:border-primary shadow-md group-data-[state=active]:bg-white">
-                    <LucideShieldQuestion className="w-10 h-10 text-foreground group-data-[state=active]:text-primary" />
+                  <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center bg-gray-50 group-data-[state=active]:bg-primary/10 group-data-[state=active]:border-primary border-2 shadow-sm group-hover:shadow-md transition-all duration-300">
+                    <LucideShieldQuestion className="w-8 h-8 text-foreground group-data-[state=active]:text-primary" />
                   </div>
                   FAQ's
+                </TabsTrigger>
+
+                <TabsTrigger
+                  value="contact"
+                  className="group flex-1 flex flex-col items-center gap-3 py-4 bg-transparent data-[state=active]:bg-white data-[state=active]:border-b-4 data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:shadow-md rounded-lg transition-all duration-300 text-lg font-medium data-[state=active]:font-bold text-foreground hover:bg-gray-50"
+                >
+                  <div className="w-[60px] h-[60px] rounded-full flex items-center justify-center bg-gray-50 group-data-[state=active]:bg-primary/10 group-data-[state=active]:border-primary border-2 shadow-sm group-hover:shadow-md transition-all duration-300">
+                    <Mic className="w-8 h-8 text-foreground group-data-[state=active]:text-primary" />
+                  </div>
+                  Voice Assistant
                 </TabsTrigger>
               </TabsList>
 
@@ -259,6 +269,67 @@ const SupportPage = () => {
                     </Button>
                   </div>
                 )}
+              </TabsContent>
+              <TabsContent value="contact" className="mt-6">
+                <h2 className="text-3xl lg:text-[48px] font-bold my-5 text-center mb-16">
+                  Voice Assistant
+                  <span className="bg-primary text-white px-4 py-1 rounded-lg ml-2">
+                    Support
+                  </span>
+                </h2>
+
+                <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-10">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold mb-4">
+                        Need immediate assistance?
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        Our voice support team is available to help you with any
+                        questions or issues you might have. Call us directly for
+                        the fastest response to your inquiries about orders,
+                        tournaments, technical problems, or any other concerns.
+                      </p>
+                      {/* <p className="text-gray-600 mb-8">
+                        Available Monday to Friday, 9:00 AM - 6:00 PM EST.
+                      </p> */}
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-xl border-2 border-gray-100">
+                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                        <Mic className="w-8 h-8 text-primary" />
+                      </div>
+                      <p className="text-lg font-medium text-gray-500 mb-2">
+                        Call us at
+                      </p>
+                      <a
+                        href="tel:0213213"
+                        className="text-3xl font-bold text-primary mb-4 hover:underline"
+                      >
+                        021-3213
+                      </a>
+                      <Button
+                        className="gradient-primary text-white rounded-full px-6 py-6 font-bold hover:shadow-lg transition-all duration-300"
+                        onClick={() => (window.location.href = "tel:0213213")}
+                      >
+                        <Mic className="w-5 h-5 mr-2" /> Call Support
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="mt-12 p-6 bg-gray-50 rounded-lg border border-gray-200">
+                    <h4 className="text-xl font-bold mb-4">Before you call</h4>
+                    <p className="text-gray-600 mb-4">
+                      To help us serve you better, please have the following
+                      information ready:
+                    </p>
+                    <ul className="list-disc pl-6 text-gray-600 space-y-2">
+                      <li>Your account email or username</li>
+                      <li>Order number (if applicable)</li>
+                      <li>Brief description of your issue</li>
+                    </ul>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
