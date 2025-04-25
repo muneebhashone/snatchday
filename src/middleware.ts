@@ -3,12 +3,16 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const Cookies = request?.cookies?.get("userData")?.value;
-  console.log(Cookies, "data111111");
+  const CookiesId = request?.cookies?.get("connect.sid")?.value;
+
+  console.log(request.cookies, "Cookies");
+
 
   const pathname = request.nextUrl.pathname;
 
   let role = null;
-  const isLoggedIn = !!Cookies;
+  const isLoggedIn = CookiesId ? true : false;
+
 
   if (isLoggedIn) {
     try {
@@ -18,7 +22,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  const isLoginPage = pathname === "/admin/login";
+  const isLoginPage = pathname === "/login";
   const isAdminRoute = pathname.startsWith("/admin");
 
   // 1. Redirect logged-in admin away from login page
@@ -37,7 +41,7 @@ export async function middleware(request: NextRequest) {
 //   }
 
   // 4. Non-admin trying to access /admin
-  if (isLoggedIn && role !== "admin" && isAdminRoute) {
+  if (role !== "admin" && isAdminRoute) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

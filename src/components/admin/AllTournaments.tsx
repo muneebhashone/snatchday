@@ -245,7 +245,7 @@ const AllTournaments = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button className="bg-primary hover:bg-primary/90">
+                  <Button className="bg-primary hover:bg-primary">
                     <Link href="/admin/tournament/create-tournament">
                       Create Tournament
                     </Link>
@@ -401,7 +401,8 @@ const AllTournaments = () => {
                                 onClick={() => handleCancel(tournament._id)}
                                 className="hover:bg-gray-100"
                                 disabled={
-                                  isCancelling &&
+                                  tournament.status === "cancelled" ||
+                                  isCancelling ||
                                   selectedTournamentId === tournament._id
                                 }
                               >
@@ -459,8 +460,10 @@ const AllTournaments = () => {
         <div className="flex items-center justify-between py-4">
           <p className="text-sm text-gray-500">
             Displaying {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{" "}
-            {Math.min(currentPage * ITEMS_PER_PAGE, totalItems)} of {totalItems}{" "}
-            entries
+            {parseInt(filters.limit) < totalItems
+              ? parseInt(filters.limit)
+              : totalItems}{" "}
+            of {totalItems} entries
           </p>
           <DynamicPagination
             totalItems={totalItems}

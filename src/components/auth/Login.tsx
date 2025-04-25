@@ -84,24 +84,51 @@ const Login = ({
     setIsLoginOpen(true);
   };
 
-  const handleLogout = () => {
-    Userlogout(undefined, {
-      onSuccess: () => {
-        toast.success("Logout successfully");
-        socket.emit("logout");
+
+  
+  const handleLogout = async () => {
+    try {
+      setIsLoggedIn(true);
+      const res = await fetch("/api/v2/auth/logout", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await res.json();
+      if (res.ok) {
         setUserData(null);
-        setIsLoggedIn(false);
-        setIsLoginOpen(false);
-        logout();
-       
+        localStorage.removeItem("snatchday_user");
+        setIsEmailVerified(true);
+        toast.success("Logout successful");
         window.location.href = "/";
-      },
-      onError: (error) => {
-        console.error("Logout failed:", error);
-        toast.error("Logout failed");
-      },
-    });
+      } else {
+        toast.error(response.message || "Logout failed");
+      }
+    } catch (error) {
+      toast.error("Login failed");
+    } finally {
+      setIsLoggedIn(false);
+    }
   };
+
+  // const handleLogout = () => {
+  //   Userlogout(undefined, {
+  //     onSuccess: () => {
+  //       toast.success("Logout successfully");
+  //       socket.emit("logout");
+  //       setUserData(null);
+  //       setIsLoggedIn(false);
+  //       setIsLoginOpen(false);
+  //       logout();
+       
+  //       window.location.href = "/";
+  //     },
+  //     onError: (error) => {
+  //       console.error("Logout failed:", error);
+  //       toast.error("Logout failed");
+  //     },
+  //   });
+  // };
 
   // useEffect(() => {
   //   if (user) {

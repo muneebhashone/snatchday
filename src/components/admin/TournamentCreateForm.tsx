@@ -294,7 +294,7 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
           </Popover>
           <FormDescription className="text-xs text-primary">
             <span className="text-black">*</span> if you select an article then
-            the strating price and product name will be automatically filled{" "}
+            the starting price and product name will be automatically filled{" "}
             <span className="text-black">*</span>
           </FormDescription>
           <FormMessage />
@@ -705,9 +705,9 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                         }}
                       />
                       <FormDescription className="text-xs text-primary">
-                        <span className="text-black">*</span> The start date is
-                        same as the end date then make sure the end time is
-                        greater than the start time{" "}
+                        <span className="text-black">*</span> If the start date
+                        is the same as the end date then make sure the end time
+                        is greater than the start time{" "}
                         <span className="text-black">*</span>
                       </FormDescription>
                     </FormItem>

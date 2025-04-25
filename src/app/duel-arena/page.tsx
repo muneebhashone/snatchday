@@ -16,9 +16,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useCurrentOffers } from "@/hooks/api";
+import Link from "next/link";
 
 const DuelArenaPage = () => {
-  const displayProducts = [
+  const { data: currentOffers, isLoading } = useCurrentOffers();
+  const displayProducts = currentOffers?.data.products;
+  const displayProducts2 = [
     {
       title: "14 - AMD Ryzen 9 3 GHz - Win 11",
       price: "2.644",
@@ -43,87 +47,6 @@ const DuelArenaPage = () => {
       discount: "€99",
       category: "computer",
     },
-    {
-      title: "SanDisk Extreme - Flash-Speicherkarte (microSDXC)",
-      price: "31,40",
-      oldPrice: "31,40",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "Razer Blade 14 - AMD Ryzen 9 6900HX / 3.3 GHz - Win 11",
-      price: "2.644",
-      oldPrice: "2.694",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: false,
-      isNew: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "Canon CLI-551 C/M/Y/BK Multipack - 4er-Pack - Schwarz",
-      price: "52,44",
-      oldPrice: "64,44",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "€99",
-      category: "elektro",
-    },
-
-    {
-      title: "ZOTAC GAMING GeForce RTX 3050 AMP - Grafikkarten",
-      price: "319,80",
-      oldPrice: "334,80",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: false,
-      isNew: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "SanDisk Extreme - Flash-Speicherkarte (microSDXC)",
-      price: "31,40",
-      oldPrice: "31,40",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "Razer Blade 14 - AMD Ryzen 9 6900HX / 3.3 GHz - Win 11",
-      price: "2.644",
-      oldPrice: "2.694",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: false,
-      isNew: true,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "Canon CLI-551 C/M/Y/BK Multipack - 4er-Pack - Schwarz",
-      price: "52,44",
-      oldPrice: "64,44",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      discount: "€99",
-      category: "elektro",
-    },
   ];
   return (
     <ClientLayout>
@@ -141,7 +64,7 @@ const DuelArenaPage = () => {
               set your own stake.
             </p>
             <Button className="text-primary bg-white text-lg rounded-full py-5 min-h-14 mt-12 px-12 hover:bg-primary hover:text-white drop-shadow-[0_20px_35px_rgba(255,255,255,0.5)] shadow-[0_12px_24px_rgba(255,255,255,0.5)]">
-              Create a Duel
+              <Link href="/duel-arena/create">Create a Duel</Link>
             </Button>
           </div>
         </div>
@@ -166,10 +89,10 @@ const DuelArenaPage = () => {
                 skipSnaps: false,
                 slidesToScroll: 1,
               }}
-              className="w-full relative"
+              className="w-full relative max-w-[100%] mx-auto"
             >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {displayProducts.map((product, index) => (
+              <CarouselContent className="-ml-2 md:ml-6 max-w-[100%] mx-auto">
+                {displayProducts?.map((product, index) => (
                   <CarouselItem
                     key={index}
                     className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3 xl:basis-1/4 2xl:basis-1/5"
