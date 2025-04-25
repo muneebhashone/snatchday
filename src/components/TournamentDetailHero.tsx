@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { useUserContext } from "@/context/userContext";
 import Login from "@/components/auth/Login";
 import { ShareTournamentModal } from "@/components/ShareTournamentModal";
-import heroImage from "@/app/images/hero-bg.png";
+import heroImage from "@/app/images/updateTournamentimage.jpg";
 
 const TournamentDetailHero = ({
   tournamentData,
@@ -97,7 +97,9 @@ const TournamentDetailHero = ({
             },
             onError: (error: any) => {
               console.error("Participation failed:", error);
-              toast.error(error.response?.data?.message || "Participation failed");
+              toast.error(
+                error.response?.data?.message || "Participation failed"
+              );
             },
           });
         }
@@ -112,7 +114,7 @@ const TournamentDetailHero = ({
   return (
     <div className="relative h-max">
       <Image
-        className="absolute top-0 z-[-1] grayscale"
+        className="absolute top-0 z-[-1] grayscale w-full h-full object-cover"
         src={heroImage}
         alt="tournamentdetailhero"
       />

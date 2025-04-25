@@ -21,7 +21,7 @@ import {
   MainProduct,
   FaqFormData,
   TutorialFormData,
-  points
+  points,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -935,26 +935,34 @@ export const GetDuelGames = async () => {
 export const getPoints = async () => {
   const response = await axiosInstance.get("/web-settings/points");
   return response.data;
-  };
+};
 
-  export const createPoints =async (data:points) => {
-    const response = await axiosInstance.post("/web-settings/points", data);
-    return response.data;
-  };
+export const createPoints = async (data: points) => {
+  const response = await axiosInstance.post("/web-settings/points", data);
+  return response.data;
+};
 //points api end
-interface params{
-  status?:string
+interface params {
+  status?: string;
 }
 
-export const getWithdrawalRequest = async (params?:params) => {
-  const response = await axiosInstance.get("/withdrawal/admin/requests",{params});
+export const getWithdrawalRequest = async (params?: params) => {
+  const response = await axiosInstance.get("/withdrawal/admin/requests", {
+    params,
+  });
   return response.data;
 };
 
 // Add the new function to update withdrawal requests
-export const updateWithdrawalRequest = async (id: string, data: { status: string }) => {
+export const updateWithdrawalRequest = async (
+  id: string,
+  data: { status: string }
+) => {
   try {
-    const response = await axiosInstance.put(`/withdrawal/admin/approve/${id}`, data);
+    const response = await axiosInstance.put(
+      `/withdrawal/admin/approve/${id}`,
+      data
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating withdrawal request:", error);
@@ -972,9 +980,15 @@ export const getWithdrawalRequestById = async (id: string) => {
   }
 };
 
-export const updateWithdrawalReject = async (id: string, data: { status: string }) => {
+export const updateWithdrawalReject = async (
+  id: string,
+  data: { status: string }
+) => {
   try {
-    const response = await axiosInstance.put(`/withdrawal/admin/reject/${id}`, data);
+    const response = await axiosInstance.put(
+      `/withdrawal/admin/reject/${id}`,
+      data
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating withdrawal request:", error);
@@ -986,5 +1000,7 @@ export const checkEmail = async (email) => {
   return response.data;
 };
 
-
-
+export const getOrdersStats = async () => {
+  const response = await axiosInstance.get(`/order/stats`);
+  return response.data;
+};

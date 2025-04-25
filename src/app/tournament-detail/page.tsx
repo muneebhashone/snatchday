@@ -87,6 +87,7 @@ const TournamentDetailPage = () => {
       image: image4,
     },
   ];
+  console.log(tournament, "tournament");
 
   // Filter out current tournament and past tournaments
   const filteredNextTournaments = tournaments?.data?.filter(
