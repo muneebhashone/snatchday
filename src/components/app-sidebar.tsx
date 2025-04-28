@@ -208,6 +208,11 @@ const navItems = [
       },
     ],
   },
+  {
+    title: "Duel",
+    url: "/admin/duel",
+    icon: <Gamepad className="h-4 w-4" />,
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

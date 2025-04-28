@@ -43,6 +43,8 @@ const HeroSection = () => {
   const { data: upComingTournament, isLoading: isUpComingTournamentLoading } =
     useUpComingTournament();
 
+  console.log(upComingTournament, "upComingTournament");
+
   useEffect(() => {
     setIsLoaded(true);
   }, []);
@@ -318,7 +320,7 @@ const HeroSection = () => {
                             Bargain or Discount Tournament
                           </div>
                           <div className="flex items-center text-lg font-bold">
-                            {tournament?.status === "live" ? (
+                            {tournament?.status === "active" ? (
                               <div className="flex flex-col text-xs items-center justify-center leading-[3px]">
                                 <LiveIcon />
                                 Live

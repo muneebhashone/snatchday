@@ -1,72 +1,82 @@
 "use client";
-import ClientLayout from "@/components/landing-page/ClientLayout";
-import React from "react";
-import { useGetDuelGames } from "@/hooks/api";
+
+import React, { useState } from "react";
+import DuelCards from "@/components/landing-page/DuelCards";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
-import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ClientLayout from "@/components/landing-page/ClientLayout";
+import { useGetDuelGames } from "@/hooks/api";
+import { Loader2 } from "lucide-react";
 
 const CreateDuelPage = () => {
-  const { data: duelGames, isLoading: isDuelGamesLoading } = useGetDuelGames();
-  const games = duelGames?.data;
+  const router = useRouter();
+  const [selectedGame, setSelectedGame] = useState<any>(null);
+  const { data: duelGamesData, isLoading } = useGetDuelGames();
+  const games = duelGamesData?.data || [];
+
+  const handleSuccess = () => {
+    setSelectedGame(null);
+    // You can add additional success handling here
+  };
+
+  if (isLoading) {
+    return (
+      <ClientLayout>
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="w-8 h-8 animate-spin" />
+        </div>
+      </ClientLayout>
+    );
+  }
 
   return (
     <ClientLayout>
-      <div className="py-44 mx-auto max-w-[1440px] px-4">
-        {/* Breadcrumb */}
-        <AdminBreadcrumb
-          title="Create"
-          items={[{ title: "Duel Arena", href: "/duel-arena" }]}
-        />
+      <div className="container mx-auto px-4 py-64">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+            Select a Game to Create Duel
+          </h1>
 
-        {/* Hero Section with Trophies */}
-        <div className="mb-10 relative">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
-              Create duel
-            </h1>
+          {/* Game Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {games.map((game) => (
+              <button
+                key={game._id}
+                onClick={() => setSelectedGame(game)}
+                className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 flex items-center gap-4 w-full"
+              >
+                <div className="w-16 h-16 relative flex-shrink-0">
+                  <Image
+                    src={game.logo}
+                    alt={game.title}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+                <span className="text-xl font-semibold">{game.title}</span>
+              </button>
+            ))}
           </div>
         </div>
-
-        {/* Game cards grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {isDuelGamesLoading ? (
-            <div className="col-span-full text-center py-10">
-              Loading games...
-            </div>
-          ) : (
-            games?.map((game) => (
-              <Link key={game._id} href={`/duel-arena/create/${game._id}`}>
-                <Card className="hover:shadow-md transition-shadow overflow-hidden border border-gray-200 h-full">
-                  <CardContent className="p-0">
-                    <div className="flex items-center p-6">
-                      <div className="w-16 h-16 min-w-16 mr-4 relative">
-                        <Image
-                          src={game.logo || "/images/game-placeholder.png"}
-                          alt={game.title || "N/A"}
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      <h3 className="text-xl font-semibold uppercase">
-                        {game.title || "N/A"}
-                      </h3>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))
-          )}
-
-          {/* Fallback if no games */}
-          {!isDuelGamesLoading && (!games || games.length === 0) && (
-            <div className="col-span-full text-center py-10">
-              No games available at the moment.
-            </div>
-          )}
-        </div>
       </div>
+
+      {/* Game Selection Dialog */}
+      <Dialog open={!!selectedGame} onOpenChange={() => setSelectedGame(null)}>
+        <DialogContent className="sm:max-w-md">
+          <div className="py-4">
+            {selectedGame && (
+              <DuelCards
+                gameId={selectedGame._id}
+                gameTitle={selectedGame.title}
+                gameIcon={selectedGame.logo}
+                onSuccess={handleSuccess}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </ClientLayout>
   );
 };
