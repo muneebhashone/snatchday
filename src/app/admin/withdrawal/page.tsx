@@ -56,7 +56,6 @@ const WithdrawalRequestPage = () => {
         <AdminBreadcrumb 
           title="Withdrawal Requests" 
           items={[
-            { title: "Dashboard", href: "/admin" }
           ]} 
         />
         

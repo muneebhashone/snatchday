@@ -50,12 +50,14 @@ import {
 } from "@/components/ui/table";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
 import { formatCurrency } from "@/lib/utils";
+import { useLoadScript } from "@react-google-maps/api";
 
 export function CustomerdEdit() {
   const params = useParams();
   const paramsId = params.id;
   const { data: customer } = useGetCustomerById(paramsId);
   const customerData = customer?.data.customer;
+  const wallet = customer?.data?.wallet;
   const [paymentPage, setPaymentPage] = useState(0);
   const user = paramsId;
   const date = "";
@@ -76,6 +78,7 @@ export function CustomerdEdit() {
     isLoading,
     refetch,
   } = useGetCustomerOrdersData(page, status, user, date);
+  
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
@@ -92,7 +95,9 @@ export function CustomerdEdit() {
         window.location.href = "/admin/customers";
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Failed to delete customer");
+        toast.error(
+          error.response?.data?.message || "Failed to delete customer"
+        );
       },
     });
   };
@@ -181,7 +186,16 @@ export function CustomerdEdit() {
                       <p className="text-sm text-gray-500">Group</p>
                     </div>
                   </div>
-
+                  <div className="flex items-center justify-around text-center gap-4 w-full mt-6">
+                    <div>
+                      <p className=" font-bold">{wallet?.snapPoints}</p>
+                      <p className=" text-gray-500">Snap Points:</p>
+                    </div>
+                    <div>
+                      <p className=" font-bold">{wallet?.discountPoints}</p>
+                      <p className="text-sm text-gray-500">Discount Points:</p>
+                    </div>
+                  </div>
                   <div className="w-full mt-6">
                     <h4 className="text-sm font-medium mb-2">Details</h4>
                     <div className="space-y-3">
@@ -216,15 +230,21 @@ export function CustomerdEdit() {
                         </div>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-500">Role:</p>
+                        <p className="text-sm text-gray-500">DOB:</p>
                         <p className="text-sm capitalize">
-                          {customerData?.role || "N/A"}
+                          {formatDate(customerData?.dob).split(",")[0] || "N/A"}
                         </p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-500">Username:</p>
                         <p className="text-sm">
                           {customerData?.username || "N/A"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Phone Number:</p>
+                        <p className="text-sm">
+                          {customerData?.phoneNumber || "N/A"}
                         </p>
                       </div>
                       <div>

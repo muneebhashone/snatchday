@@ -149,6 +149,9 @@ const ForgotPassword = ({
         onClose={() => setShowOtpModal(false)}
         email={userEmail}
         isOpenLogin={() => setShowOtpModal(false)}
+
+        forgotPasswordModal={() => true}
+
       />
     </>
   );

@@ -39,11 +39,12 @@ import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
 import { Category, SubCategory } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
+import { formatCurrency } from "@/lib/utils";
 
 const Header = () => {
   const { data: cartData } = useGetCart();
   const { data: wishlist } = useGetWishList();
-  
+
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -54,7 +55,7 @@ const Header = () => {
 
   const [filter, setFilter] = useState<ProductFilters>({});
 
-  const {data: products, isLoading: productLoading} = useGetProducts(filter);
+  const { data: products, isLoading: productLoading } = useGetProducts(filter);
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -363,7 +364,7 @@ const Header = () => {
                   Search
                 </Button>
               </div>
-              
+
               {/* Display search results */}
               {debouncedSearch && (
                 <div className="mt-6 max-h-[400px] overflow-y-auto">
@@ -375,38 +376,49 @@ const Header = () => {
                       <div className="flex justify-center py-4">
                         <Loader2 className="h-6 w-6 animate-spin text-primary" />
                       </div>
-                    ) : products?.data?.products && products.data.products.length > 0 ? (
+                    ) : products?.data?.products &&
+                      products.data.products.length > 0 ? (
                       products.data.products.map((product) => (
-                        <div 
+                        <div
                           key={product._id}
-                          onClick={() => product._id && handleProductClick(product._id)}
+                          onClick={() =>
+                            product._id && handleProductClick(product._id)
+                          }
                           className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
                         >
                           {product.images && product.images[0] && (
                             <div className="relative h-16 w-16 rounded-md overflow-hidden">
-                              <Image 
-                                src={product.images[0]} 
-                                alt={product.name || "Product"} 
-                                fill 
-                                className="object-cover"
+                              <Image
+                                src={product.images[0]}
+                                alt={product.name || "Product"}
+                                fill
+                                className="object-contain"
                                 unoptimized
                               />
                             </div>
                           )}
                           <div className="flex-1">
-                            <h4 className="font-medium text-foreground line-clamp-1">{product.name || "Unnamed Product"}</h4>
-                            <p className="text-sm text-gray-500 line-clamp-1">{product.description || "No description"}</p>
-                            <p className="text-primary font-bold">{product.price || "0.00"}€</p>
+                            <h4 className="font-medium text-foreground line-clamp-1">
+                              {product.name || "Unnamed Product"}
+                            </h4>
+                            <p className="text-sm text-gray-500 line-clamp-1">
+                              {product.description || "No description"}
+                            </p>
+                            <p className="text-primary font-bold">
+                              {product.price || "0.00"}€
+                            </p>
                           </div>
                         </div>
                       ))
                     ) : (
-                      <p className="text-center py-4 text-gray-500">No products found</p>
+                      <p className="text-center py-4 text-gray-500">
+                        No products found
+                      </p>
                     )}
                   </div>
                 </div>
               )}
-              
+
               <div className="mt-6">
                 <h3 className="text-sm font-medium text-gray-500 mb-3">
                   Popular Searches
@@ -452,9 +464,7 @@ const Header = () => {
             className="relative hover:text-primary bg-transparent p-0 text-[#888888]"
           >
             <div className="absolute -top-4 -right-3 bg-primary text-white px-[7px] py-[2px] text-xs rounded-full">
-              {wishlist?.data  
-                ? wishlist?.data.products?.length
-                : 0}
+              {wishlist?.data ? wishlist?.data.products?.length : 0}
             </div>
             <Heart className="h-6 w-6 " />
           </Link>
@@ -469,7 +479,13 @@ const Header = () => {
           </button>
           <div className="text-sm text-foreground text-start">
             <p className="font-bold">Your Shopping Cart</p>
-            <p className="text-sm text-primary font-bold">0.00 €</p>
+            <p className="text-sm text-primary font-bold">
+              {formatCurrency(
+                myprofile?.data?.cart?.total
+                  ? myprofile?.data?.cart?.total
+                  : cartData?.data?.total
+              ) || 0}
+            </p>
           </div>
         </div>
 
@@ -490,7 +506,7 @@ const Header = () => {
         </div>
 
         {/* Replace the User Points Display with this new dropdown */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-1 hover:text-primary bg-primary px-2 rounded-md py-1">
             <div className="text-right">
               <div className="flex items-center gap-2 text-white ">
@@ -550,7 +566,37 @@ const Header = () => {
               </div>
             )}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
+        <div className="flex flex-col items-start justify-center gap-2 border border-gray-200 rounded-md p-2">
+          <div className="flex items-center justify-between w-full gap-2">
+            <span className="text-gray-600 text-xs font-bold">
+              Snap Points:
+            </span>
+            <span className="text-primary font-bold text-sm">
+              {myprofile?.data?.wallet?.snapPoints
+                ? myprofile?.data?.wallet?.snapPoints
+                : 0}{" "}
+              /{" "}
+              {myprofile?.data?.wallet?.snapPoints
+                ? formatCurrency(myprofile?.data?.wallet?.snapPoints / 100)
+                : 0}
+            </span>
+          </div>
+          <div className="flex items-center justify-between w-full gap-2">
+            <span className="text-gray-600 text-xs font-bold">
+              Discount Points:
+            </span>
+            <span className="text-primary font-bold text-sm">
+              {myprofile?.data?.wallet?.discountPoints
+                ? myprofile?.data?.wallet?.discountPoints
+                : 0}{" "}
+              /{" "}
+              {myprofile?.data?.wallet?.discountPoints
+                ? formatCurrency(myprofile?.data?.wallet?.discountPoints / 100)
+                : 0}
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* {/ Mobile Menu /} */}

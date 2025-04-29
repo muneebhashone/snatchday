@@ -52,14 +52,6 @@ const personalStepSchema = z.object({
   personalInfo: z.object({
     salutation: z.string().min(1, "Salutation is required"),
     title: z.string().optional(),
-    username: z
-      .string()
-      .min(3, "Username must be at least 3 characters")
-      .max(20, "Username cannot exceed 20 characters")
-      .regex(
-        /^[a-zA-Z0-9_]+$/,
-        "Username can only contain letters, numbers, and underscores"
-      ),
     lastName: z
       .string()
       .min(2, "Last name must be at least 2 characters")
@@ -150,7 +142,6 @@ const Register = ({ onBack }: RegisterProps) => {
       personalInfo: {
         salutation: "",
         title: "",
-        username: "",
         firstName: "",
         lastName: "",
         dob: undefined,
@@ -274,7 +265,7 @@ const Register = ({ onBack }: RegisterProps) => {
         // Personal info step data
         salutation: personalInfo.salutation,
         ...(personalInfo.title ? { title: personalInfo.title } : {}),
-        username: personalInfo.username,
+        username: name,
         firstName: personalInfo.firstName,
         lastName: personalInfo.lastName,
         dob: personalInfo.dob

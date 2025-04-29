@@ -84,6 +84,7 @@ export function CustomeListTable({
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50">
+              <TableHead className="text-gray-500">Customer ID</TableHead>
               <TableHead className="text-gray-500">NAME</TableHead>
               <TableHead className="text-gray-500">E-MAIL</TableHead>
               <TableHead className="text-gray-500">CUSTOMER GROUP</TableHead>
@@ -91,7 +92,9 @@ export function CustomeListTable({
               <TableHead className="text-gray-500">SPENDINGS</TableHead>
               <TableHead className="text-gray-500">CREATED</TableHead>
               <TableHead className="text-gray-500">POINTS</TableHead>
-              <TableHead className="text-gray-500 text-right">ACTIONS</TableHead>
+              <TableHead className="text-gray-500 text-right">
+                ACTIONS
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -107,10 +110,17 @@ export function CustomeListTable({
               customers.data.customers[0].data.map((customer) => (
                 <TableRow key={customer.name} className="hover:bg-gray-50">
                   <TableCell className="font-medium text-gray-900">
+                    {customer.customerNumber}
+                  </TableCell>
+                  <TableCell className="font-medium text-gray-900">
                     {customer.name}
                   </TableCell>
-                  <TableCell className="text-gray-500">{customer.email}</TableCell>
-                  <TableCell className="text-gray-500">{customer.group}</TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer.email}
+                  </TableCell>
+                  <TableCell className="text-gray-500">
+                    {customer.group}
+                  </TableCell>
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${
@@ -137,7 +147,11 @@ export function CustomeListTable({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Link href={`/admin/customers/${customer._id}`}>
-                              <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-gray-100"
+                              >
                                 <Edit className="h-4 w-4" />
                               </Button>
                             </Link>
@@ -164,7 +178,8 @@ export function CustomeListTable({
 
       <div className="flex items-center justify-between py-4">
         <p className="text-sm text-gray-500">
-          Displaying {page + 1} to {Math.min(page + skip, totalItems)} of {totalItems} entries
+          Displaying {page + 1} to {Math.min(page + skip, totalItems)} of{" "}
+          {totalItems} entries
         </p>
         <DynamicPagination
           totalItems={totalItems}

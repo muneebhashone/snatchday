@@ -6,6 +6,7 @@
 
 body {
   font-family: var(--font-hanken-grotesk), sans-serif;
+  pointer-events: all !important;
 }
 
 /* Ant Design Select Styling */

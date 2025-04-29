@@ -40,6 +40,7 @@ const TournamentDetailHero = ({
 
   const [selectedImage, setSelectedImage] = useState(0);
   const { user } = useUserContext();
+  console.log(user, "user");
   const { mutate: participateTournament, isPending } =
     useParticipateTournament();
 
@@ -88,7 +89,7 @@ const TournamentDetailHero = ({
 
       // Allow VIP users to participate in any tournament
       // Only restrict non-VIP users from joining VIP tournaments
-      if (userGroup === "vip" || (!isVipTournament && userGroup !== "vip")) {
+      if (userGroup === "VIP" || (!isVipTournament && userGroup !== "VIP")) {
         if (tournamentData?.data?._id) {
           participateTournament(tournamentData?.data?._id, {
             onSuccess: () => {

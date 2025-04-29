@@ -8,13 +8,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
+import { ReactNode } from "react";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title: string;
-  description: string;
+  description: ReactNode;
   confirmText?: string;
   cancelText?: string;
   isLoading?: boolean;
@@ -32,18 +33,17 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogTitle className="text-2xl">{title}</DialogTitle>
         </DialogHeader>
+        <div className="py-4">{description}</div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
             {cancelText}
           </Button>
           <Button
             className="bg-primary hover:bg-primary"
-            variant="destructive"
             onClick={onConfirm}
             disabled={isLoading}
           >

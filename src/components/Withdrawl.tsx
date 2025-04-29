@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { validateIBAN } from "ibantools";
 import {
   Form,
   FormControl,
@@ -23,6 +24,10 @@ import { Button } from "@/components/ui/button";
 import { useGetPoints, useWithdrawl } from "@/hooks/api";
 import { toast } from "sonner";
 import { ArrowRight, Loader } from "lucide-react";
+import Link from "next/link";
+import { Checkbox } from "./ui/checkbox";
+import { ConfirmationModal } from "./ui/confirmation-modal";
+import { useUserContext } from "@/context/userContext";
 
 const formSchema = z
   .object({
@@ -34,7 +39,19 @@ const formSchema = z
     bankDetails: z.object({
       bic: z.string().optional(),
       accountName: z.string().optional(),
-      iban: z.string().optional(),
+      iban: z
+        .string()
+        .optional()
+        .refine(
+          (val) => {
+            if (!val) return true;
+            const validation = validateIBAN(val);
+            return validation.valid;
+          },
+          {
+            message: "Invalid IBAN format",
+          }
+        ),
       // PayPal method fields
       paypalEmail: z.string().optional(),
     }),
@@ -60,6 +77,10 @@ const formSchema = z
     }
   );
 const Withdrawl = () => {
+  const user = useUserContext();
+  console.log(user);
+  const [checked, setChecked] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const { data: getPoints } = useGetPoints();
   const [Totalamount, setAmount] = useState(0);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -86,12 +107,21 @@ const Withdrawl = () => {
   const finalAmount = amount + totalFee;
 
   const { mutate: withdrawl, isPending } = useWithdrawl();
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
+    if (!checked) {
+      toast.error("Please accept the terms and conditions");
+      return;
+    }
     if (!values.withdrawalMethod) {
       toast.error("Please select a withdrawal method");
       return;
     }
+    setShowConfirmation(true);
+  };
 
+  const handleConfirmWithdrawal = () => {
+    const values = form.getValues();
     const data = { ...values };
     if (values.withdrawalMethod === "transfer") {
       data.bankDetails.paypalEmail = undefined;
@@ -114,6 +144,7 @@ const Withdrawl = () => {
             paypalEmail: "",
           },
         });
+        setShowConfirmation(false);
       },
       onError: (error: any) => {
         toast.error(error.response.data.message || "Something went wrong");
@@ -126,7 +157,7 @@ const Withdrawl = () => {
       <h2 className="text-xl font-bold mb-6">Pay out credit:</h2>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(handleSubmit)}
           className="grid grid-cols-2 gap-5"
         >
           <div>
@@ -249,20 +280,41 @@ const Withdrawl = () => {
           )}
 
           {withdrawalMethod === "paypal" && (
-            <FormField
-              control={form.control}
-              name="bankDetails.paypalEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>PayPal Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter PayPal email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <>
+              <FormField
+                control={form.control}
+                name="bankDetails.paypalEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PayPal Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter PayPal email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
           )}
+          <div className="flex items-center space-x-2 mt-5">
+            <Checkbox
+              checked={checked}
+              onCheckedChange={(checked) => setChecked(checked)}
+              id="terms"
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Accept{" "}
+              <Link
+                className="text-primary underline"
+                href="/terms-and-conditions"
+              >
+                terms and conditions
+              </Link>
+            </label>
+          </div>
 
           <div className="col-span-2 flex justify-end">
             <Button
@@ -296,6 +348,80 @@ const Withdrawl = () => {
           )}
         </form>
       </Form>
+
+      <ConfirmationModal
+        isOpen={showConfirmation}
+        onClose={() => setShowConfirmation(false)}
+        onConfirm={handleConfirmWithdrawal}
+        title="Pay out credit"
+        description={
+          <div className="space-y-6">
+            <p className="text-lg font-medium">Please check your payout details again. If everything is fine, click on the "Apply" button:</p>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Client:</span>
+                <span className="font-medium">ID: {user ? user?.user?.user?.customerNumber : "Guest User"}</span>
+              </div>
+              
+              <div className="space-y-1">
+                <div className="text-gray-800">{getPoints?.data?.userName}</div>
+                <div className="text-gray-600">{getPoints?.data?.userEmail}</div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Payout details:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{withdrawalMethod === "transfer" ? "Bank transfer" : "PayPal"}</span>
+                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">€</span>
+                </div>
+              </div>
+
+              {withdrawalMethod === "transfer" && (
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">IBAN:</span>
+                    <span className="text-right">{form.getValues("bankDetails.iban")}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-gray-600">Account holder:</span>
+                    <span className="text-right">{form.getValues("bankDetails.accountName")}</span>
+                  </div>
+                </>
+              )}
+
+              {withdrawalMethod === "paypal" && (
+                <div className="grid grid-cols-2 gap-2">
+                  <span className="text-gray-600">PayPal Email:</span>
+                  <span className="text-right">{form.getValues("bankDetails.paypalEmail")}</span>
+                </div>
+              )}
+
+              <div className="border-t pt-4 mt-4">
+                <div className="grid grid-cols-2 gap-2">
+                  <span className="text-gray-600">Withdrawing amount:</span>
+                  <span className="text-right">{amount.toFixed(2)}€</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <span className="text-gray-600">Payment commission:</span>
+                  <span className="text-right">{paypalFee.toFixed(2)}€</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <span className="text-gray-600">Payment fee:</span>
+                  <span className="text-right">{getPoints?.data.platformFee.toFixed(2)}€</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 pt-2 border-t mt-2 font-medium">
+                  <span>Total:</span>
+                  <span className="text-right">{finalAmount.toFixed(2)}€</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        confirmText="APPLY"
+        cancelText="Cancel"
+        isLoading={isPending}
+      />
     </div>
   );
 };

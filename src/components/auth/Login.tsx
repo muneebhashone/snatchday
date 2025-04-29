@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import GredientButton from "../GredientButton";
 import { useSocket } from "@/context/SocketContext";
 import OtpModal from "@/otpmodal";
+import ForgotPassword from "./ForgotPassword";
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -49,6 +50,8 @@ const Login = ({
   smallAddtoCart = false,
   useForTournament = false,
 }: LoginProps) => {
+  // const router = useRouter();
+  const [forgotOpen, setforgotOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -84,8 +87,6 @@ const Login = ({
     setIsLoginOpen(true);
   };
 
-
-  
   const handleLogout = async () => {
     try {
       setIsLoggedIn(true);
@@ -120,7 +121,7 @@ const Login = ({
   //       setIsLoggedIn(false);
   //       setIsLoginOpen(false);
   //       logout();
-       
+
   //       window.location.href = "/";
   //     },
   //     onError: (error) => {
@@ -222,41 +223,40 @@ const Login = ({
     return <Register onBack={handleBackToLogin} />;
   }
 
-
   if (user?.user) {
     return (
       <>
-      {isMyProfilePending ? (
-        <Loader2 className="animate-spin" />
-      ) : (
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
-          <p className="text-lg font-medium text-card-foreground">
-          {myProfile?.data?.user?.username || myProfile?.data?.user?.name}
-          </p>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-36 mt-6">
-          <Link href="/my-account/my-profile">
-            <DropdownMenuItem className="cursor-pointer">
-              <User className="mr-2 h-4 w-4" />
-              <p className="text-sm font-medium text-card-foreground">
-                My Account
+        {isMyProfilePending ? (
+          <Loader2 className="animate-spin" />
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
+              <p className="text-lg font-medium text-card-foreground">
+                {myProfile?.data?.user?.username || myProfile?.data?.user?.name}
               </p>
-            </DropdownMenuItem>
-          </Link>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="cursor-pointer text-red-600"
-            onClick={handleLogout}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            <p className="text-sm font-medium text-card-foreground text-red-600">
-              Logout
-            </p>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36 mt-6">
+              <Link href="/my-account/my-profile">
+                <DropdownMenuItem className="cursor-pointer">
+                  <User className="mr-2 h-4 w-4" />
+                  <p className="text-sm font-medium text-card-foreground">
+                    My Account
+                  </p>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer text-red-600"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <p className="text-sm font-medium text-card-foreground text-red-600">
+                  Logout
+                </p>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </>
     );
   }
@@ -280,120 +280,132 @@ const Login = ({
   };
 
   return (
-    <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
-      <DialogTrigger asChild>
-        <div className="cursor-pointer">
-          {type === "TournamentRegister" ? (
-            "Login"
-          ) : type === "Register" ? (
-            <GredientButton
-              buttonText="Register for free"
-              onClick={() => setIsRegisterOpen(true)}
-            />
-          ) : addToCart === false ? (
-            <User className="h-6 w-6" />
-          ) : useForTournament ? (
-            <Button className="hover:bg-primary ">Play</Button>
-          ) : (
-            <button
-              className={`gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full hover:opacity-90 ${
-                smallAddtoCart ? "py-1 px-7 text-sm" : "w-64 h-14"
-              } `}
-            >
-              <ShoppingCartIcon size={28} className="mr-2" />
-              Add to Cart
-              {/* {isAddToCartPending ? "adding..." : "Add to Cart"} */}
-            </button>
-          )}
-        </div>
-      </DialogTrigger>
-      <DialogContent className="max-w-[682px] p-0 " hideCloseButton={true}>
-        <DialogHeader className="text-left relative px-24 pt-10 ">
-          <DialogTrigger asChild className="absolute -right-5 -top-5 z-30">
-            <Button
-              onClick={() => reset()}
-              variant="ghost"
-              className="h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100"
-            >
-              <X className="h-6 w-6" />
-            </Button>
-          </DialogTrigger>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-[48px] font-extrabold">
-              Log In
-            </DialogTitle>
-          </div>
-        </DialogHeader>
-
-        <div className="mt-5 px-24 pb-16">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Input
-              type="email"
-              placeholder="E-mail address"
-              className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-red-500">{errors.email.message}</p>
-            )}
-            <Input
-              type="password"
-              placeholder="Password"
-              className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
-              {...register("password")}
-            />
-            {errors.password && (
-              <p className="text-red-500">{errors.password.message}</p>
-            )}
-            {showResendButton && (
-              <Button
-                type="button"
-                onClick={handleResendVerification}
-                disabled={isResending}
-                className="w-full min-h-[60px] text-lg font-semibold bg-orange-500 text-white rounded-full mt-4"
+    <>
+      <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
+        <DialogTrigger asChild>
+          <div className="cursor-pointer">
+            {type === "TournamentRegister" ? (
+              "Login"
+            ) : type === "Register" ? (
+              <GredientButton
+                buttonText="Register for free"
+                onClick={() => setIsRegisterOpen(true)}
+              />
+            ) : addToCart === false ? (
+              <User className="h-6 w-6" />
+            ) : useForTournament ? (
+              <Button className="hover:bg-primary ">Play</Button>
+            ) : (
+              <button
+                className={`gradient-primary flex items-center shadow-xl justify-center text-white text-lg rounded-full hover:opacity-90 ${
+                  smallAddtoCart ? "py-1 px-7 text-sm" : "w-64 h-14"
+                } `}
               >
-                {isResending ? "Resending..." : "Resend Verification Code"}
-              </Button>
+                <ShoppingCartIcon size={28} className="mr-2" />
+                Add to Cart
+                {/* {isAddToCartPending ? "adding..." : "Add to Cart"} */}
+              </button>
             )}
-            <Button
-              type="submit"
-              className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10"
-              disabled={isLoggedIn}
-            >
-              {isLoggedIn ? "Logging in..." : "Login to your account"}
-            </Button>
-          </form>
+          </div>
+        </DialogTrigger>
+        <DialogContent className="max-w-[682px] p-0 " hideCloseButton={true}>
+          <DialogHeader className="text-left relative px-24 pt-10 ">
+            <DialogTrigger asChild className="absolute -right-5 -top-5 z-30">
+              <Button
+                onClick={() => reset()}
+                variant="ghost"
+                className="h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100"
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </DialogTrigger>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-[48px] font-extrabold">
+                Log In
+              </DialogTitle>
+            </div>
+          </DialogHeader>
 
-          <div className="text-right mt-5">
-            <Link
+          <div className="mt-5 px-24 pb-16">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <Input
+                type="email"
+                placeholder="E-mail address"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                {...register("email")}
+              />
+              {errors.email && (
+                <p className="text-red-500">{errors.email.message}</p>
+              )}
+              <Input
+                type="password"
+                placeholder="Password"
+                className="h-20 rounded-full text-lg text-[#A5A5A5] pl-10"
+                {...register("password")}
+              />
+              {errors.password && (
+                <p className="text-red-500">{errors.password.message}</p>
+              )}
+              {showResendButton && (
+                <Button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={isResending}
+                  className="w-full min-h-[60px] text-lg font-semibold bg-orange-500 text-white rounded-full mt-4"
+                >
+                  {isResending ? "Resending..." : "Resend Verification Code"}
+                </Button>
+              )}
+              <Button
+                type="submit"
+                className="w-full min-h-[60px] text-lg font-semibold gradient-primary text-white rounded-full mt-10"
+                disabled={isLoggedIn}
+              >
+                {isLoggedIn ? "Logging in..." : "Login to your account"}
+              </Button>
+            </form>
+
+            <div className="text-right mt-5">
+              <button
+                onClick={() => {
+                  setIsLoginOpen(false);
+                  setforgotOpen(true);
+                }}
+                className="bg-white underline text-sm text-gray-500 hover:bg-white hover:text-gray-500"
+              >
+                forgot password?
+              </button>
+              {/* <Link
               href="/forgot-password"
               className="text-gray-600 hover:underline text-sm"
             >
               Forgot your password?
-            </Link>
-          </div>
+            </Link> */}
+            </div>
 
-          <div className="flex items-center justify-between mt-10">
-            <p className="text-center text-gray-600 mx-4">
-              Or Login with Social Media
-            </p>
-            <FacebookIcon />
-          </div>
+            <div className="flex items-center justify-between mt-10">
+              <p className="text-center text-gray-600 mx-4">
+                Or Login with Social Media
+              </p>
+              <FacebookIcon />
+            </div>
 
-          <Separator className="my-10" />
+            <Separator className="my-10" />
 
-          <div className="text-left space-x-1">
-            <span className="text-gray-600">Don&apos;t have account?</span>
-            <button
-              onClick={handleOpenRegister}
-              className="text-[#FF6B3D] hover:underline font-light"
-            >
-              Register Now
-            </button>
+            <div className="text-left space-x-1">
+              <span className="text-gray-600">Don&apos;t have account?</span>
+              <button
+                onClick={handleOpenRegister}
+                className="text-[#FF6B3D] hover:underline font-light"
+              >
+                Register Now
+              </button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      <ForgotPassword isOpen={forgotOpen} setIsOpen={setforgotOpen} />
+    </>
   );
 };
 

@@ -127,6 +127,10 @@ import {
   updateWithdrawalReject,
   checkEmail,
   getOrdersStats,
+  createDuel,
+  getDuelGames,
+  getDuels,
+  getReviewsStats,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1000,6 +1004,7 @@ export const useGetReviews = (params?: {
   sort_attr?: string;
   sort?: string;
   productId?: string;
+  search?: string;
 }) => {
   return useQuery({
     queryKey: ["reviews", params],
@@ -1116,6 +1121,19 @@ export const useGetDuelGames = () => {
     queryFn: () => GetDuelGames(),
   });
 };
+
+export const useGetDuels = (params?: {
+  search?: string;
+  limit?: number;
+  offset?: number;
+  priceRange?: string;  
+
+}) => {
+  return useQuery({
+    queryKey: ["duels", params],
+    queryFn: () => getDuels(params),
+  });
+};
 // duel arena api end
 export const usePoints = () => {
   return useQuery({
@@ -1169,3 +1187,17 @@ export const useGetOrdersStats = () => {
     queryFn: getOrdersStats,
   });
 };
+
+export const useCreateDuel = () => {
+  return useMutation({
+    mutationFn: createDuel,
+  });
+};
+
+export const useGetReviewsStats = () => {
+  return useQuery({
+    queryKey: ["reviewsStats"],
+    queryFn: getReviewsStats,
+  });
+};
+

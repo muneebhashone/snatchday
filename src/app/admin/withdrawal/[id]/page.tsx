@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { WithdrawalRequest, WithdrawalRequestResponse } from "@/types";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
+import { formatCurrency } from "@/lib/utils";
 
 export default function WithdrawalDetailsPage() {
   const params = useParams();
@@ -47,12 +48,15 @@ export default function WithdrawalDetailsPage() {
   const { mutate: updateWithdrawal, isPending } = useUpdateWithdrawalRequest();
   const { mutate: updateWithdrawalReject, isPending: isRejectPending } =
     useUpdateWithdrawalReject();
+  console.log(withdrawalRequest?.data, "status2");
 
   useEffect(() => {
-    if (withdrawalRequest?.data?.status) {
-      setStatus(withdrawalRequest.data.status);
+    if (withdrawalRequest?.data) {
+      setStatus(withdrawalRequest.data.withdrawal.status);
+      console.log(withdrawalRequest.data.withdrawal.status, "status");
     }
-  }, [withdrawalRequest]);
+    console.log(withdrawalRequest?.data?.withdrawal?.status);
+  }, [withdrawalRequest?.data]);
 
   const handleUpdateStatus = () => {
     if (status === "REJECTED") {
@@ -67,7 +71,10 @@ export default function WithdrawalDetailsPage() {
             refetch();
           },
           onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Failed to reject withdrawal request");
+            toast.error(
+              error.response?.data?.message ||
+                "Failed to reject withdrawal request"
+            );
           },
         }
       );
@@ -83,7 +90,10 @@ export default function WithdrawalDetailsPage() {
             refetch();
           },
           onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Failed to update withdrawal request");
+            toast.error(
+              error.response?.data?.message ||
+                "Failed to update withdrawal request"
+            );
           },
         }
       );
@@ -103,6 +113,8 @@ export default function WithdrawalDetailsPage() {
   }
 
   const request = withdrawalRequest?.data as WithdrawalRequest;
+
+  console.log(request);
   if (!request) {
     return (
       <AdminLayout>
@@ -146,7 +158,6 @@ export default function WithdrawalDetailsPage() {
           <AdminBreadcrumb
             title="Withdrawal Details"
             items={[
-              { title: "Dashboard", href: "/admin" },
               { title: "Withdrawal Requests", href: "/admin/withdrawal" },
             ]}
           />
@@ -161,19 +172,23 @@ export default function WithdrawalDetailsPage() {
           <div className="flex justify-between items-center mb-4">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
-                Withdrawal Request #{request._id.substring(0, 8)}
+                Withdrawal Request #{" "}
+                {request?.withdrawal?.withdrawalNumber || "N/A"}
               </h1>
               <div className="flex items-center gap-2 mt-1">
                 <p className="text-gray-600">
-                  {request.createdAt
-                    ? format(new Date(request.createdAt), "MMM dd, yyyy")
+                  {request
+                    ? format(
+                        new Date(request?.withdrawal?.createdAt),
+                        "MMM dd, yyyy"
+                      )
                     : "N/A"}
                 </p>
-                {getStatusBadge(request.status)}
+                {getStatusBadge(request?.withdrawal?.status)}
               </div>
             </div>
             <div className="text-3xl font-bold text-primary">
-              {request.amount?.toFixed(2)}€
+              {formatCurrency(request?.withdrawal?.amount)}
             </div>
           </div>
         </div>
@@ -193,21 +208,21 @@ export default function WithdrawalDetailsPage() {
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500">Name</span>
                 <span className="font-medium">
-                  {request.user?.name || "Unknown"}
+                  {request?.withdrawal?.user?.name || "Unknown"}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500">Email</span>
                 <span className="font-medium">
-                  {request.user?.email ||
-                    request.bankDetails?.paypalEmail ||
+                  {request?.withdrawal?.user?.email ||
+                    request?.withdrawal?.bankDetails?.paypalEmail ||
                     "Not provided"}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500">Phone</span>
                 <span className="font-medium">
-                  {request.user?.phone || "Not provided"}
+                  {request?.withdrawal?.user?.phone || "N/A"}
                 </span>
               </div>
             </div>
@@ -228,22 +243,22 @@ export default function WithdrawalDetailsPage() {
                 <span className="text-sm text-gray-500">Method:</span>
                 <span
                   className={`px-2 py-1 rounded-full text-xs ${
-                    request.bankDetails?.paypalEmail
+                    request?.withdrawal?.bankDetails?.paypalEmail
                       ? "bg-blue-100 text-blue-800"
                       : "bg-green-100 text-green-800"
                   }`}
                 >
-                  {request.bankDetails?.paypalEmail
+                  {request?.withdrawal?.bankDetails?.paypalEmail
                     ? "PayPal"
                     : "Bank Transfer"}
                 </span>
               </div>
 
-              {request.bankDetails?.paypalEmail ? (
+              {request?.withdrawal?.bankDetails?.paypalEmail ? (
                 <div className="flex flex-col">
                   <span className="text-sm text-gray-500">PayPal Email</span>
                   <span className="font-medium">
-                    {request.bankDetails.paypalEmail}
+                    {request?.withdrawal?.bankDetails?.paypalEmail}
                   </span>
                 </div>
               ) : (
@@ -251,7 +266,7 @@ export default function WithdrawalDetailsPage() {
                   <div className="flex flex-col">
                     <span className="text-sm text-gray-500">IBAN</span>
                     <span className="font-medium">
-                      {request.bankDetails?.iban || "Not provided"}
+                      {request?.withdrawal?.bankDetails?.iban || "Not provided"}
                     </span>
                   </div>
                   <div className="flex flex-col">
@@ -259,7 +274,8 @@ export default function WithdrawalDetailsPage() {
                       Account Holder
                     </span>
                     <span className="font-medium">
-                      {request.bankDetails?.accountName || "Not provided"}
+                      {request?.withdrawal?.bankDetails?.accountName ||
+                        "Not provided"}
                     </span>
                   </div>
                 </>
@@ -280,7 +296,7 @@ export default function WithdrawalDetailsPage() {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Redemption Amount</span>
                 <span className="font-medium">
-                  {request.amount?.toFixed(2)}€
+                  {formatCurrency(request?.withdrawal?.amount)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -290,14 +306,31 @@ export default function WithdrawalDetailsPage() {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Method Fee</span>
                 <span className="font-medium">
-                  {request.bankDetails?.paypalEmail ? "0.35" : "0.00"}€
+                  {request?.withdrawal?.bankDetails?.paypalEmail
+                    ? "0.35"
+                    : "0.00"}
+                  €
                 </span>
               </div>
               <div className="border-t pt-2 mt-2">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Total Deduction</span>
+                  <span className="font-medium">Clearing</span>
                   <span className="font-bold text-primary">
-                    {(request.amount + request.platformFee).toFixed(2)}€
+                    {formatCurrency(
+                      request?.withdrawal?.amount +
+                        request?.withdrawal?.platformFee
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500">Current Balance</span>
+                  <span className="font-medium">
+                    {formatCurrency(
+                      withdrawalRequest?.data?.customerWallet?.snapPoints /
+                        100 +
+                        (request?.withdrawal?.amount +
+                          request?.withdrawal?.platformFee)
+                    ) || "Not provided"}
                   </span>
                 </div>
               </div>
@@ -332,7 +365,7 @@ export default function WithdrawalDetailsPage() {
         </div> */}
 
         {/* Status Update Card */}
-        {request.status === "PENDING" && (
+        {request?.withdrawal?.status === "PENDING" && (
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Action</h2>
             <div className="flex items-center gap-4">
@@ -356,7 +389,9 @@ export default function WithdrawalDetailsPage() {
               <Button
                 onClick={handleUpdateStatus}
                 disabled={
-                  isPending || isRejectPending || status === request.status
+                  isPending ||
+                  isRejectPending ||
+                  status === request?.withdrawal?.status
                 }
                 className="bg-primary text-white hover:bg-primary/90"
               >

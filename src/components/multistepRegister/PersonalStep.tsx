@@ -33,7 +33,7 @@ const fallbackLocations = [
   { value: "Frankfurt, Germany", street: "Römerberg 26", zip: "60311" },
 ];
 
-type AddressOption = {
+export type AddressOption = {
   placeId: string;
   description: string;
   mainText: string;
@@ -407,7 +407,7 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
             </div>
           )} */}
         </div>
-        <div>
+        {/* <div>
           <Controller
             name="personalInfo.username"
             control={control}
@@ -427,7 +427,7 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
               {errors.personalInfo.username.message}
             </span>
           )}
-        </div>
+        </div> */}
         <div>
           <Controller
             name="personalInfo.title"
@@ -532,27 +532,6 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
         </div>
         <div>
           <Controller
-            name="personalInfo.street"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="text"
-                placeholder="Street"
-                className={`h-20 rounded-full text-lg text-[#A5A5A5] pl-10 ${
-                  errors.personalInfo?.street ? "border-red-500" : ""
-                }`}
-              />
-            )}
-          />
-          {errors.personalInfo?.street && (
-            <span className="text-red-500 text-sm mt-1">
-              {errors.personalInfo.street.message}
-            </span>
-          )}
-        </div>
-        <div>
-          <Controller
             name="personalInfo.zip"
             control={control}
             render={({ field }) => (
@@ -591,6 +570,27 @@ const PersonalStep = ({ formMethods }: PersonalStepProps) => {
           {errors.personalInfo?.phoneNumber && (
             <span className="text-red-500 text-sm mt-1">
               {errors.personalInfo.phoneNumber.message}
+            </span>
+          )}
+        </div>
+        <div>
+          <Controller
+            name="personalInfo.street"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="text"
+                placeholder="Street"
+                className={`hidden h-20 rounded-full text-lg text-[#A5A5A5] pl-10 ${
+                  errors.personalInfo?.street ? "border-red-500" : ""
+                }`}
+              />
+            )}
+          />
+          {errors.personalInfo?.street && (
+            <span className="text-red-500 text-sm mt-1">
+              {errors.personalInfo.street.message}
             </span>
           )}
         </div>
