@@ -24,16 +24,12 @@ import { Swiper as SwiperType } from "swiper";
 import { useUpComingTournament } from "@/hooks/api";
 import CountdownDisplay from "../CountdownProps";
 import { calculateCountdown } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
-
-
-
-
+import { Loader2, User } from "lucide-react";
+import UserIcon from "@/app/images/R.png";
 
 interface HeroSectionProps {
   upComingTournament: any;
 }
-
 
 const HeroSection = () => {
   const [, setActiveIndex] = useState(0);
@@ -48,6 +44,10 @@ const HeroSection = () => {
   useEffect(() => {
     setIsLoaded(true);
   }, []);
+
+  upComingTournament?.data?.map((tournament) => {
+    console.log(new Date(tournament?.start) < new Date(), "tournament");
+  });
 
   // console.log(upComingTournament,"upComingTournament")
 
@@ -212,7 +212,7 @@ const HeroSection = () => {
     },
   };
 
-  return  isUpComingTournamentLoading  ? (
+  return isUpComingTournamentLoading ? (
     <div className="my-40  flex items-center justify-center">
       <Loader2 className="animate-spin size-18" />
     </div>
@@ -310,6 +310,19 @@ const HeroSection = () => {
                               {tournament.tournamentId}
                             </span>
                           </h2>
+                          {new Date(tournament?.start) < new Date() ? (
+                            // <div className="flex flex-col text-xs items-center justify-center leading-[3px]">
+                            //   <LiveIcon />
+                            //   Live
+                            // </div>
+                            <span className="text-green-500 font-bold ml-4 bg-green-500/20 px-2 rounded-full">
+                              LIVE
+                            </span>
+                          ) : (
+                            <span className="text-red-500 font-bold ml-4 bg-red-500/20 px-2 rounded-full">
+                              UPCOMING
+                            </span>
+                          )}
                         </motion.div>
                         <motion.div
                           variants={staggerItemVariants}
@@ -320,15 +333,17 @@ const HeroSection = () => {
                             Bargain or Discount Tournament
                           </div>
                           <div className="flex items-center text-lg font-bold">
-                            {tournament?.status === "active" ? (
-                              <div className="flex flex-col text-xs items-center justify-center leading-[3px]">
-                                <LiveIcon />
-                                Live
-                              </div>
-                            ) : (
+                            {tournament?.vip === true ? (
                               <Image
                                 src={crown}
                                 alt="crown"
+                                width={40}
+                                height={40}
+                              />
+                            ) : (
+                              <Image
+                                src={UserIcon}
+                                alt="User"
                                 width={40}
                                 height={40}
                               />

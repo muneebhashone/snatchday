@@ -1032,6 +1032,10 @@ export const getDuels = async (params?: {
   return response.data;
 };
 
+export const getReviewsStats = async () => {
+  const response = await axiosInstance.get("/review/stats");
+  return response.data;
+};
 
 
 

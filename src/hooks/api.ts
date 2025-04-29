@@ -130,6 +130,7 @@ import {
   createDuel,
   getDuelGames,
   getDuels,
+  getReviewsStats,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1191,3 +1192,11 @@ export const useCreateDuel = () => {
     mutationFn: createDuel,
   });
 };
+
+export const useGetReviewsStats = () => {
+  return useQuery({
+    queryKey: ["reviewsStats"],
+    queryFn: getReviewsStats,
+  });
+};
+

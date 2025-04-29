@@ -20,12 +20,14 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Loader, Save } from "lucide-react";
+import { Calendar as CalendarIcon, Loader, Save } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useGetCustomerById, useUpdateCustomer } from "@/hooks/api";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Switch } from "../ui/switch";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 const formSchema = z.object({
   salutation: z.string().optional(),
@@ -38,6 +40,8 @@ const formSchema = z.object({
   country: z.string().optional(),
   email: z.string().email("Invalid email format"),
   approved: z.boolean().optional(),
+  phone: z.string().optional(),
+  dob: z.date().optional(),
 });
 
 type IForm = z.infer<typeof formSchema>;
@@ -68,6 +72,8 @@ export default function CustomerForm({
       country: customerData?.country || "Germany",
       email: customerData?.email || "",
       approved: customerData?.approved || false,
+      phone: customerData?.phone || "",
+      dob: customerData?.dob || "",
     },
   });
 
@@ -261,6 +267,56 @@ export default function CustomerForm({
                           {...field}
                           placeholder="Enter email"
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Enter phone number" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dob"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline" className="w-full">
+                              <CalendarIcon className="h-4 w-4" />
+                              {field.value
+                                ? new Date(field.value).toLocaleDateString()
+                                : "Select Date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) => {
+                                if (date) {
+                                  field.onChange(date);
+                                }
+                              }}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

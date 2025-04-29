@@ -200,7 +200,7 @@ export default function OtpModal({
 
   return (
     <Dialog open={open} onOpenChange={handleCloseOtpModal}>
-      <DialogContent className="max-w-[682px] p-0">
+      <DialogContent hideCloseButton={true} className="max-w-[682px] p-0">
         <DialogHeader className="text-left relative px-24 pt-10">
           <Button
             onClick={handleCloseOtpModal}

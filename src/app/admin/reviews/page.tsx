@@ -2,7 +2,7 @@
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { useGetReviews, useGetProducts, useDeleteReview } from "@/hooks/api";
+import { useGetReviews, useGetProducts, useDeleteReview, useGetReviewsStats } from "@/hooks/api";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Star, Edit, Loader, Trash, Search } from "lucide-react";
@@ -58,6 +58,8 @@ interface ReviewsResponse {
 }
 
 const Page = () => {
+  const { data: reviewsStats } = useGetReviewsStats();
+  console.log(reviewsStats);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const { mutate: deleteReview } = useDeleteReview();
