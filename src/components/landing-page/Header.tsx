@@ -388,7 +388,7 @@ const Header = () => {
                                 src={product.images[0]} 
                                 alt={product.name || "Product"} 
                                 fill 
-                                className="object-cover"
+                                className="object-contain"
                                 unoptimized
                               />
                             </div>

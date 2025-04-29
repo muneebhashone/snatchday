@@ -127,12 +127,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { LocateFixed, MailIcon, PhoneCallIcon } from "lucide-react";
 import { BubblesIcon, BubblesIcon1 } from "@/components/icons/icon";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
-  refrence: z
-    .string()
-    .min(3, "Reference must be between 3 and 255 characters")
-    .max(255, "Reference must be between 3 and 255 characters"),
   name: z
     .string()
     .min(3, "name must have atleast 3 characters")
@@ -142,7 +139,7 @@ const formSchema = z.object({
     .string()
     .min(11, "Phone must be atleast 3 characters")
     .max(15, "Phone must be less than 15 characters"),
-  news: z.string(),
+  subject: z.string(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -150,7 +147,7 @@ type FormValues = z.infer<typeof formSchema>;
 const Page = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { refrence: "", name: "", email: "", phone: "", news: "" },
+    defaultValues: { name: "", email: "", phone: "", subject: "" },
   });
 
   const onSubmit = form.handleSubmit((values) => {
@@ -163,7 +160,7 @@ const Page = () => {
         <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-16 mt-12">
           Contact
         </h1>
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <div className="absolute inset-0 w-full h-full overflow-hidden -z-10">
           <BubblesIcon className="absolute top-[10%] left-[5%] animate-bubble-1" />
           <BubblesIcon1 className="absolute top-[15%] right-[15%] animate-bubble-5" />
           <BubblesIcon1 className="absolute top-[35%] right-[20%] animate-bubble-4" />
@@ -179,7 +176,7 @@ const Page = () => {
             <Form {...form}>
               <form className="flex flex-col items-center" onSubmit={onSubmit}>
                 <div className="flex gap-2 flex-col items-center">
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="refrence"
                     render={({ field }) => (
@@ -198,7 +195,7 @@ const Page = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="name"
@@ -212,9 +209,6 @@ const Page = () => {
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          {form.formState.errors.name?.message}
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -232,9 +226,6 @@ const Page = () => {
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          {form.formState.errors.email?.message}
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -247,34 +238,29 @@ const Page = () => {
                         <FormLabel>Phone</FormLabel>
                         <FormControl>
                           <Input
+                            type="number"
                             className="font-bold w-[500px]"
                             placeholder="Phone*"
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          {form.formState.errors.phone?.message}
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name="news"
+                    name="subject"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>News</FormLabel>
                         <FormControl>
-                          <Input
-                            className="font-bold w-[500px]"
-                            placeholder="News*"
+                          <Textarea
+                            className="w-[500px]"
+                            placeholder="Type your message here."
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          {form.formState.errors.news?.message}
-                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
