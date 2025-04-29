@@ -872,6 +872,7 @@ export const getReviews = async (params?: {
   sort_attr?: string;
   sort?: string;
   product?: string;
+  search?: string;
 }) => {
   const response = await axiosInstance.get("/review", { params });
   return response.data;
@@ -1033,7 +1034,7 @@ export const getDuels = async (params?: {
 };
 
 export const getReviewsStats = async () => {
-  const response = await axiosInstance.get("/review/stats");
+  const response = await axiosInstance.get("/review/stats/all");
   return response.data;
 };
 

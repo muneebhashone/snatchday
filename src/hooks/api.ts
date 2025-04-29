@@ -1004,6 +1004,7 @@ export const useGetReviews = (params?: {
   sort_attr?: string;
   sort?: string;
   productId?: string;
+  search?: string;
 }) => {
   return useQuery({
     queryKey: ["reviews", params],

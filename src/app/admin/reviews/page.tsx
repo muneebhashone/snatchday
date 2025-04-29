@@ -2,9 +2,14 @@
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
-import { useGetReviews, useGetProducts, useDeleteReview, useGetReviewsStats } from "@/hooks/api";
+import {
+  useGetReviews,
+  useGetProducts,
+  useDeleteReview,
+  useGetReviewsStats,
+} from "@/hooks/api";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Star, Edit, Loader, Trash, Search } from "lucide-react";
 import {
   Table,
@@ -27,19 +32,26 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Select } from "antd";
 
 interface Product {
   _id: string;
   name: string;
+  description?: string;
+  images?: string[];
 }
 
 interface Review {
   _id: string;
   userName: string;
-  product: string | Product;
+  product: Product;
   rating: number;
   comment: string;
   createdAt: string;
+  userId?: {
+    image?: string;
+  };
 }
 
 interface ProductsResponse {
@@ -58,15 +70,39 @@ interface ReviewsResponse {
 }
 
 const Page = () => {
-  const { data: reviewsStats } = useGetReviewsStats();
-  console.log(reviewsStats);
+  const { data: reviewsStats, refetch: fetchReviewStats } =
+    useGetReviewsStats();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const { mutate: deleteReview } = useDeleteReview();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [selectedProduct, setSelectedProduct] = useState<string | undefined>(
+    undefined
+  );
+  const [productSearch, setProductSearch] = useState("");
+  const [isFetchingProducts, setIsFetchingProducts] = useState(false);
+
+  const [productPage, setProductPage] = useState(1);
+  const [hasMoreProducts, setHasMoreProducts] = useState(true);
+  const [productOptions, setProductOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setCurrentPage(1); // Reset to first page when searching
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const {
     data: reviewsData,
@@ -75,11 +111,34 @@ const Page = () => {
   } = useGetReviews({
     limit: pageSize,
     offset: (currentPage - 1) * pageSize,
-    sort_attr: "createdAt",
-    sort: "desc",
+    search: debouncedSearch.trim(),
+    product: selectedProduct,
   });
 
-  const { data: productsData } = useGetProducts();
+  const { data: productsData, isLoading: isLoadingProducts } = useGetProducts({
+    limit: "10",
+    offset: ((productPage - 1) * 10).toString(),
+    sort_attr: "createdAt",
+    sort: "desc",
+    name: productSearch,
+  });
+
+  useEffect(() => {
+    if (productsData?.data?.products) {
+      const newOptions = productsData.data.products.map((product) => ({
+        value: product._id,
+        label: product.name,
+      }));
+
+      if (productPage === 1) {
+        setProductOptions(newOptions);
+      } else {
+        setProductOptions((prev) => [...prev, ...newOptions]);
+      }
+
+      setHasMoreProducts(productsData.data.products.length === 10);
+    }
+  }, [productsData, productPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -100,12 +159,36 @@ const Page = () => {
           setSelectedReviewId(null);
           setIsDeleting(false);
           refetch();
+          fetchReviewStats();
         },
         onError: (error) => {
           toast.error(error?.message || "Failed to delete review");
           setIsDeleting(false);
         },
       });
+    }
+  };
+
+  const handleProductSearch = (value: string) => {
+    setProductSearch(value);
+    setProductPage(1);
+    setProductOptions([]);
+    setHasMoreProducts(true);
+  };
+
+  const handleProductChange = (value: string) => {
+    setSelectedProduct(value);
+    setCurrentPage(1); // Reset to first page when changing product
+  };
+
+  const handleProductPopupScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (
+      scrollHeight - scrollTop === clientHeight &&
+      hasMoreProducts &&
+      !isLoadingProducts
+    ) {
+      setProductPage((prev) => prev + 1);
     }
   };
 
@@ -116,27 +199,27 @@ const Page = () => {
 
   const totalItems = (reviewsData as ReviewsResponse)?.data?.total || 0;
 
-  // Calculate rating statistics
-  const ratingStats = useMemo(() => {
-    const stats = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    reviews.forEach((review) => {
-      stats[review.rating] = (stats[review.rating] || 0) + 1;
-    });
-    return stats;
-  }, [reviews]);
+  // Get stats from reviewsStats
+  const stats = reviewsStats?.data || {
+    averageRating: 0,
+    currentWeekReviews: 0,
+    fiveStarReviews: 0,
+    fourStarReviews: 0,
+    oneStarReviews: 0,
+    positiveReviewsPercentage: 0,
+    threeStarReviews: 0,
+    totalReviews: 0,
+    twoStarReviews: 0,
+  };
 
-  const averageRating = useMemo(() => {
-    if (reviews.length === 0) return 0;
-    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return (sum / reviews.length).toFixed(2);
-  }, [reviews]);
-
-  const positiveReviews = useMemo(() => {
-    const fourAndFiveStars = reviews.filter((review) => review.rating >= 4).length;
-    return Math.round((fourAndFiveStars / reviews.length) * 100) || 0;
-  }, [reviews]);
-
-  const newReviewsGrowth = "+8.4%"; // You can calculate this based on your data
+  // Calculate rating statistics from the API data
+  const ratingStats = {
+    1: stats.oneStarReviews,
+    2: stats.twoStarReviews,
+    3: stats.threeStarReviews,
+    4: stats.fourStarReviews,
+    5: stats.fiveStarReviews,
+  };
 
   return (
     <AdminLayout>
@@ -151,19 +234,34 @@ const Page = () => {
                 <div className="flex items-center gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-4xl font-bold">{averageRating}</span>
+                      <span className="text-4xl font-bold">
+                        {stats.averageRating.toFixed(2)}
+                      </span>
                       <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
                     </div>
-                    <p className="text-sm text-muted-foreground">Total {totalItems} reviews</p>
-                    <p className="text-sm text-muted-foreground">All reviews are from genuine customers</p>
-                    <Badge variant="secondary" className="mt-2">+5 This week</Badge>
+                    <p className="text-sm text-muted-foreground">
+                      Total {stats.totalReviews} reviews
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      All reviews are from genuine customers
+                    </p>
+                    <Badge variant="secondary" className="mt-2">
+                      +{stats.currentWeekReviews} This week
+                    </Badge>
                   </div>
                   <div className="flex-1 space-y-2">
                     {[5, 4, 3, 2, 1].map((rating) => (
                       <div key={rating} className="flex items-center gap-2">
                         <span className="text-sm w-12">{rating} Star</span>
-                        <Progress value={(ratingStats[rating] / totalItems) * 100} className="h-2" />
-                        <span className="text-sm w-8">{ratingStats[rating]}</span>
+                        <Progress
+                          value={
+                            (ratingStats[rating] / stats.totalReviews) * 100
+                          }
+                          className="h-2"
+                        />
+                        <span className="text-sm w-8">
+                          {ratingStats[rating]}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -176,20 +274,36 @@ const Page = () => {
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-semibold">Reviews statistics</h3>
+                    <h3 className="text-lg font-semibold">
+                      Reviews statistics
+                    </h3>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-sm">12 New reviews</span>
-                      <Badge variant="success">{newReviewsGrowth}</Badge>
+                      <span className="text-sm">
+                        {stats.currentWeekReviews} New reviews
+                      </span>
+                      <Badge variant="success">
+                        +
+                        {(
+                          (stats.currentWeekReviews / stats.totalReviews) *
+                          100
+                        ).toFixed(1)}
+                        %
+                      </Badge>
                     </div>
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold">{positiveReviews}%</span>
-                      <span className="text-sm text-muted-foreground">Positive reviews</span>
+                      <span className="text-2xl font-bold">
+                        {stats.positiveReviewsPercentage.toFixed(1)}%
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        Positive reviews
+                      </span>
                     </div>
-                    <p className="text-sm text-muted-foreground">Weekly Report</p>
+                    <p className="text-sm text-muted-foreground">
+                      Weekly Report
+                    </p>
                   </div>
-                  {/* Weekly chart would go here */}
                 </div>
               </CardContent>
             </Card>
@@ -201,9 +315,41 @@ const Page = () => {
               <div className="flex justify-between items-center">
                 <CardTitle>Reviews List</CardTitle>
                 <div className="flex items-center gap-4">
+                  <div className="w-[200px]">
+                    <Select
+                      size="large"
+                      showSearch
+                      placeholder="Select Product"
+                      optionFilterProp="label"
+                      onChange={handleProductChange}
+                      onSearch={handleProductSearch}
+                      value={selectedProduct}
+                      options={productOptions}
+                      notFoundContent={
+                        isLoadingProducts ? (
+                          <div className="flex justify-center p-2">
+                            <Loader className="h-4 w-4 animate-spin text-primary" />
+                          </div>
+                        ) : (
+                          "No products found"
+                        )
+                      }
+                      onPopupScroll={handleProductPopupScroll}
+                      style={{ width: "100%" }}
+                      allowClear
+                      loading={isLoadingProducts}
+                    />
+                  </div>
                   <div className="relative">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Search Review" className="pl-8" />
+                    <Input
+                      placeholder="Search Review"
+                      className="pl-8"
+                      value={search}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                      }}
+                    />
                   </div>
                   <Button asChild>
                     <Link href="/admin/reviews/create">Add Review</Link>
@@ -220,7 +366,7 @@ const Page = () => {
                       <TableHead>REVIEWER</TableHead>
                       <TableHead>REVIEW</TableHead>
                       <TableHead>DATE</TableHead>
-                      <TableHead>STATUS</TableHead>
+                      {/* <TableHead>STATUS</TableHead> */}
                       <TableHead>ACTIONS</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -247,22 +393,53 @@ const Page = () => {
                         <TableRow key={review._id}>
                           <TableCell>
                             <div className="flex items-center gap-3">
-                              {/* Add product image here if available */}
+                              <Avatar>
+                                <AvatarImage
+                                  className="w-10 h-10 object-cover object-center"
+                                  src={
+                                    typeof review.product === "object"
+                                      ? (review.product as Product)?.images?.[0]
+                                      : undefined
+                                  }
+                                />
+                                <AvatarFallback>
+                                  {typeof review.product === "object"
+                                    ? (review.product as Product)?.name?.charAt(
+                                        0
+                                      )
+                                    : "P"}
+                                </AvatarFallback>
+                              </Avatar>
                               <div>
-                                <p className="font-medium">
-                                  {typeof review.product === "object" && review.product !== null
+                                <p className="font-medium md:w-[500px] w-[300px] truncate">
+                                  {typeof review.product === "object" &&
+                                  review.product !== null
                                     ? (review.product as Product).name
                                     : "No product"}
                                 </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {typeof review.product === "object" && review.product !== null
-                                    ? (review.product as Product).name
+                                <p className="text-sm text-muted-foreground md:w-[500px] w-[300px] line-clamp-2">
+                                  {typeof review.product === "object" &&
+                                  review.product !== null
+                                    ? (review.product as Product).description
                                     : ""}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell>{review.userName}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Avatar>
+                                <AvatarImage
+                                  className="w-10 h-10 object-cover object-center"
+                                  src={review?.userId?.image}
+                                />
+                                <AvatarFallback>
+                                  {review.userName.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div>{review.userName}</div>
+                            </div>
+                          </TableCell>
                           <TableCell>
                             <div className="space-y-1">
                               <div className="flex">
@@ -278,7 +455,7 @@ const Page = () => {
                                   />
                                 ))}
                               </div>
-                              <p className="text-sm text-muted-foreground line-clamp-2">
+                              <p className="text-sm text-muted-foreground line-clamp-2 md:w-[300px] w-[200px]">
                                 {review.comment}
                               </p>
                             </div>
@@ -286,16 +463,20 @@ const Page = () => {
                           <TableCell>
                             {new Date(review.createdAt).toLocaleDateString()}
                           </TableCell>
-                          <TableCell>
-                            <Badge className="text-green-500 bg-green-500/10">Published</Badge>
-                          </TableCell>
+                          {/* <TableCell>
+                            <Badge className="text-green-500 bg-green-500/10">
+                              Published
+                            </Badge>
+                          </TableCell> */}
                           <TableCell>
                             <div className="flex gap-2">
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
                                     <Button variant="ghost" size="icon" asChild>
-                                      <Link href={`/admin/reviews/edit/${review._id}`}>
+                                      <Link
+                                        href={`/admin/reviews/edit/${review._id}`}
+                                      >
                                         <Edit className="h-4 w-4" />
                                       </Link>
                                     </Button>
@@ -312,9 +493,13 @@ const Page = () => {
                                       variant="ghost"
                                       size="icon"
                                       onClick={() => handleDelete(review._id)}
-                                      disabled={isDeleting && selectedReviewId === review._id}
+                                      disabled={
+                                        isDeleting &&
+                                        selectedReviewId === review._id
+                                      }
                                     >
-                                      {isDeleting && selectedReviewId === review._id ? (
+                                      {isDeleting &&
+                                      selectedReviewId === review._id ? (
                                         <Loader className="h-4 w-4 animate-spin" />
                                       ) : (
                                         <Trash className="h-4 w-4" />

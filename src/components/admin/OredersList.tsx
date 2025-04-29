@@ -298,12 +298,13 @@ export default function OrdersList() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="pending">Payment Pending</SelectItem>
+                      <SelectItem value="paid">Pending</SelectItem>
                       <SelectItem value="dispatch">Dispatch</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
                       <SelectItem value="cancelled">Cancelled</SelectItem>
                       <SelectItem value="returned">Returned</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="refunded">Refunded</SelectItem>
                     </SelectContent>
                   </ShadcnSelect>
                   <FormMessage />

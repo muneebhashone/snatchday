@@ -20,13 +20,22 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Loader, MapPin, Save, Search } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Loader,
+  MapPin,
+  Save,
+  Search,
+} from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useGetCustomerById, useUpdateCustomer } from "@/hooks/api";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Switch } from "../ui/switch";
 import { useLoadScript } from "@react-google-maps/api";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 // Google Maps Places API libraries
 const libraries: "places"[] = ["places"];
@@ -50,7 +59,7 @@ type AddressOption = {
 const formSchema = z.object({
   salutation: z.string().optional(),
   title: z.string().optional(),
-  name: z.string().min(1, "Name is required"),
+  // name: z.string().min(1, "Name is required"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   street: z.string().optional(),
@@ -78,13 +87,14 @@ export default function CustomerForm({
   const { data: customer } = useGetCustomerById(paramsId);
   const customerData = customer?.data.customer;
   const { mutate: updateCustomer, isPending } = useUpdateCustomer(paramsId);
-  
+
   // Google Maps integration states
   const [locationSelected, setLocationSelected] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [addressOptions, setAddressOptions] = useState<AddressOption[]>([]);
   const [isLoadingOptions, setIsLoadingOptions] = useState(false);
-  const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
+  const autocompleteService =
+    useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [usingFallback, setUsingFallback] = useState(false);
@@ -103,7 +113,7 @@ export default function CustomerForm({
     defaultValues: {
       salutation: customerData?.salutation || "Mr",
       title: customerData?.title || "Dr",
-      name: customerData?.username || "",
+      // name: customerData?.username || "",
       firstName: customerData?.firstName || "",
       lastName: customerData?.lastName || "",
       street: customerData?.street || "",
@@ -124,7 +134,7 @@ export default function CustomerForm({
       form.reset({
         salutation: customerData?.salutation || "Mr",
         title: customerData?.title || "Dr",
-        name: customerData?.name || "",
+        // name: customerData?.name || "",
         firstName: customerData?.firstName || "",
         lastName: customerData?.lastName || "",
         street: customerData?.street || "",
@@ -135,6 +145,7 @@ export default function CustomerForm({
         phoneNumber: customerData?.phoneNumber || "",
         username: customerData?.username || "",
         approved: customerData?.approved || false,
+        dob: new Date(customerData?.dob) || "",
       });
     }
   }, [customerData, form]);
@@ -148,7 +159,8 @@ export default function CustomerForm({
     }
 
     if (isLoaded) {
-      autocompleteService.current = new google.maps.places.AutocompleteService();
+      autocompleteService.current =
+        new google.maps.places.AutocompleteService();
 
       // Create a hidden map element for PlacesService (required by Google API)
       if (mapRef.current) {
@@ -176,7 +188,10 @@ export default function CustomerForm({
       (predictions, status) => {
         setIsLoadingOptions(false);
 
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+        if (
+          status !== google.maps.places.PlacesServiceStatus.OK ||
+          !predictions
+        ) {
           console.error("Error fetching place predictions:", status);
           setAddressOptions([]);
           return;
@@ -220,7 +235,11 @@ export default function CustomerForm({
         fields: ["address_components", "formatted_address", "geometry"],
       },
       (place, status) => {
-        if (status !== google.maps.places.PlacesServiceStatus.OK || !place || !place.address_components) {
+        if (
+          status !== google.maps.places.PlacesServiceStatus.OK ||
+          !place ||
+          !place.address_components
+        ) {
           console.error("Error fetching place details:", status);
           return;
         }
@@ -312,7 +331,11 @@ export default function CustomerForm({
         return value === "" || value === null ? undefined : value;
       })
     );
-    updateCustomer(cleanedValues, {
+    const sendValues = {
+      ...cleanedValues,
+      name: `${cleanedValues.username}`,
+    };
+    updateCustomer(sendValues, {
       onSuccess: () => {
         toast.success("customer updated successfully");
         onClose(false);
@@ -453,7 +476,7 @@ export default function CustomerForm({
                   />
                 </div>
 
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="name"
                   render={({ field }) => (
@@ -465,7 +488,7 @@ export default function CustomerForm({
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <FormField
                   control={form.control}
@@ -506,11 +529,47 @@ export default function CustomerForm({
                     <FormItem>
                       <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input 
+                        <Input
                           type="tel"
-                          {...field} 
-                          placeholder="Enter phone number" 
+                          {...field}
+                          placeholder="Enter phone number"
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="dob"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Birth</FormLabel>
+                      <FormControl>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="outline">
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value
+                                ? format(field.value, "PPP")
+                                : "Pick a date"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(day) => {
+                                if (day) {
+                                  field.onChange(day);
+                                }
+                              }}
+                            />
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -546,8 +605,8 @@ export default function CustomerForm({
                     <FormItem>
                       <FormLabel>ZIP Code</FormLabel>
                       <FormControl>
-                        <Input 
-                          {...field} 
+                        <Input
+                          {...field}
                           placeholder="Enter ZIP code"
                           readOnly={locationSelected}
                         />
@@ -573,7 +632,7 @@ export default function CustomerForm({
                               <FormControl>
                                 <div className="relative">
                                   <Input
-                                  className="pl-10"
+                                    className="pl-10"
                                     type="text"
                                     placeholder="Search for an address"
                                     value={searchTerm}
@@ -603,7 +662,9 @@ export default function CustomerForm({
                                       field.onChange(option.description);
                                     }}
                                   >
-                                    <div className="font-medium">{option.mainText}</div>
+                                    <div className="font-medium">
+                                      {option.mainText}
+                                    </div>
                                     <div className="text-sm text-gray-500">
                                       {option.secondaryText}
                                     </div>
@@ -620,7 +681,9 @@ export default function CustomerForm({
 
                             {field.value && !searchTerm && (
                               <div className="mt-2 text-sm">
-                                <span className="font-medium">Selected address:</span>{" "}
+                                <span className="font-medium">
+                                  Selected address:
+                                </span>{" "}
                                 {field.value}
                               </div>
                             )}
@@ -640,7 +703,10 @@ export default function CustomerForm({
                               </SelectTrigger>
                               <SelectContent>
                                 {fallbackLocations.map((location) => (
-                                  <SelectItem key={location.value} value={location.value}>
+                                  <SelectItem
+                                    key={location.value}
+                                    value={location.value}
+                                  >
                                     {location.value}
                                   </SelectItem>
                                 ))}
