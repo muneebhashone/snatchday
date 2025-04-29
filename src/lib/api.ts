@@ -1004,3 +1004,35 @@ export const getOrdersStats = async () => {
   const response = await axiosInstance.get(`/order/stats`);
   return response.data;
 };
+interface DuelData {
+  game: string;
+  amount: number;
+  rounds: number;
+  value: number;
+  type: "snap" | "discount";
+}
+
+export const createDuel = async (data: DuelData) => {
+  const response = await axiosInstance.post("/duel", data);
+  return response.data;
+};
+
+export const getDuelGames = async () => {
+  const response = await axiosInstance.get("/duel");
+  return response.data;
+};
+
+export const getDuels = async (params?: {
+  priceRange?: string;
+  limit?: number;
+  offset?: number;
+  search?: string;
+}) => {
+  const response = await axiosInstance.get("/duel", { params });
+  return response.data;
+};
+
+
+
+
+

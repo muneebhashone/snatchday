@@ -127,6 +127,9 @@ import {
   updateWithdrawalReject,
   checkEmail,
   getOrdersStats,
+  createDuel,
+  getDuelGames,
+  getDuels,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1116,6 +1119,19 @@ export const useGetDuelGames = () => {
     queryFn: () => GetDuelGames(),
   });
 };
+
+export const useGetDuels = (params?: {
+  search?: string;
+  limit?: number;
+  offset?: number;
+  priceRange?: string;  
+
+}) => {
+  return useQuery({
+    queryKey: ["duels", params],
+    queryFn: () => getDuels(params),
+  });
+};
 // duel arena api end
 export const usePoints = () => {
   return useQuery({
@@ -1167,5 +1183,11 @@ export const useGetOrdersStats = () => {
   return useQuery({
     queryKey: ["ordersStats"],
     queryFn: getOrdersStats,
+  });
+};
+
+export const useCreateDuel = () => {
+  return useMutation({
+    mutationFn: createDuel,
   });
 };
