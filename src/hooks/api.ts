@@ -130,6 +130,10 @@ import {
   createDuel,
   getDuelGames,
   getDuels,
+  subscriptionPlan,
+  getSubscriptionPlan,
+  updateSubscriptionPlan,
+  deleteSubscriptionPlan,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1189,5 +1193,31 @@ export const useGetOrdersStats = () => {
 export const useCreateDuel = () => {
   return useMutation({
     mutationFn: createDuel,
+  });
+};
+
+export const useCreateSubscriptionPlan = () => {
+  return useMutation({
+    mutationFn: subscriptionPlan,
+  });
+};
+
+export const useGetSubscriptionPlan = (params?: {search?: string}) => {
+  return useQuery({
+    queryKey: ["subscriptionPlan", params],
+    queryFn: () => getSubscriptionPlan(params),
+  });
+};
+
+export const useUpdateSubscriptionPlan = () => {
+  return useMutation({
+    mutationFn: ({ packageId, data }: { packageId: string; data: any }) =>
+      updateSubscriptionPlan(packageId, data),
+  });
+};
+
+export const useDeleteSubscriptionPlan = () => {
+  return useMutation({
+    mutationFn: (packageId: string) => deleteSubscriptionPlan(packageId),
   });
 };

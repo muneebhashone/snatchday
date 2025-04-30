@@ -213,6 +213,24 @@ const navItems = [
     url: "/admin/duel",
     icon: <Gamepad className="h-4 w-4" />,
   },
+
+  {
+    title: "Packages",
+    
+    icon: <Heart className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Packages",
+        url: "/admin/packages",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Package",
+        url: "/admin/packages/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
