@@ -490,6 +490,7 @@ const VoucherForm = () => {
                             <div className="h-full">
                               <div>
                                 <Input
+                                className="mb-2"
                                   placeholder="Search products"
                                   onChange={(e) => {
                                     setProductDataList([]);
