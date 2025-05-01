@@ -16,38 +16,18 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { useCurrentOffers } from "@/hooks/api";
+import { useCurrentOffers, useGetDuels } from "@/hooks/api";
 import Link from "next/link";
+import DuelHistory from "@/components/DuelHistory";
 
 const DuelArenaPage = () => {
+  const { data: duelHistory } = useGetDuels({
+    limit: 10,
+    offset: 0,
+  });
+  console.log(duelHistory);
   const { data: currentOffers, isLoading } = useCurrentOffers();
   const displayProducts = currentOffers?.data.products;
-  const displayProducts2 = [
-    {
-      title: "14 - AMD Ryzen 9 3 GHz - Win 11",
-      price: "2.644",
-      oldPrice: "2.694",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: true,
-      isNew: false,
-      discount: "€99",
-      category: "computer",
-    },
-    {
-      title: "ZOTAC GAMING GeForce RTX 3050 AMP - Grafikkarten",
-      price: "319,80",
-      oldPrice: "334,80",
-      rating: 5,
-      reviews: 5,
-      image: graphiccard,
-      isSale: false,
-      isNew: true,
-      discount: "€99",
-      category: "computer",
-    },
-  ];
   return (
     <ClientLayout>
       <main>
@@ -67,6 +47,15 @@ const DuelArenaPage = () => {
               <Link href="/duel-arena/create">Create a Duel</Link>
             </Button>
           </div>
+        </div>
+        <div className="pt-20 text-center">
+          <h2 className="text-4xl font-bold">
+            Your
+            <span className="bg-primary text-white px-6 py-1 rounded-lg">
+              Duel History
+            </span>
+          </h2>
+          <DuelHistory />
         </div>
         <div className="pt-20">
           <TrainingCenter />

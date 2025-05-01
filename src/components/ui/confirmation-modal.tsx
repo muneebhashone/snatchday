@@ -33,7 +33,7 @@ export function ConfirmationModal({
 }: ConfirmationModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[800px]">
+      <DialogContent className="max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl">{title}</DialogTitle>
         </DialogHeader>

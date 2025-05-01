@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Loader, Loader2, User, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -36,6 +36,11 @@ import ChangePasswordModal from "../updatePasswordModal";
 import Withdrawl from "../Withdrawl";
 import { ConfirmationModal } from "../ui/confirmation-modal";
 import { useRouter } from "next/navigation";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  StandaloneSearchBox,
+} from "@react-google-maps/api";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -72,6 +77,20 @@ const UserProfile = () => {
     resolver: zodResolver(profileSchema),
   });
 
+  // Google Maps API
+  const inputRef = useRef(null);
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+    libraries: ["places"],
+  });
+
+  console.log(isLoaded, "isLoaded");
+
+  const options = {
+    componentRestrictions: { country: "de" },
+  };
+  // Google Maps API
   const { data: myProfile, isLoading, refetch } = useGetMyProfile();
   const Profile = myProfile?.data?.user;
 
@@ -678,10 +697,28 @@ const UserProfile = () => {
                         <Label className="text-foreground font-medium text-lg">
                           Location *
                         </Label>
-                        <Input
-                          {...register("location")}
-                          defaultValue="Berlin"
-                        />
+                        {isLoaded && (
+                          <StandaloneSearchBox
+                            onLoad={(ref) => {
+                              inputRef.current = ref;
+                            }}
+                            options={options}
+                            // onPlacesChanged={() => {
+                            //   const place = inputRef.current?.getPlace();
+                            //   setValue("location", place.formatted_address);
+                            // }}
+                            onPlacesChanged={() => {
+                              const place = inputRef.current?.getPlace();
+                              console.log(place, "place");
+                              // setValue("location", place.formatted_address);
+                            }}
+                          >
+                            <Input
+                              {...register("location")}
+                              defaultValue="Berlin"
+                            />
+                          </StandaloneSearchBox>
+                        )}
                         {errors.location && (
                           <span className="text-red-500">
                             {errors.location.message}

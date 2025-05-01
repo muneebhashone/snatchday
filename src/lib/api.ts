@@ -1038,6 +1038,15 @@ export const getReviewsStats = async () => {
   return response.data;
 };
 
+export const getDuelGameById = async (id: string) => {
+  const response = await axiosInstance.get(`/duel/${id}`);
+  return response.data;
+};
 
-
-
+export const getDuelScore = async (
+  id: string,
+  data: { score: number; time: number }
+) => {
+  const response = await axiosInstance.post(`/duel/score/${id}`, data);
+  return response.data;
+};

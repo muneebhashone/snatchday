@@ -25,7 +25,7 @@ import { useUpComingTournament } from "@/hooks/api";
 import CountdownDisplay from "../CountdownProps";
 import { calculateCountdown } from "@/lib/utils";
 import { Loader2, User } from "lucide-react";
-import UserIcon from "@/app/images/R.png";
+import UserIcon from "@/app/images/basic.png";
 
 interface HeroSectionProps {
   upComingTournament: any;

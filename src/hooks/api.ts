@@ -131,6 +131,8 @@ import {
   getDuelGames,
   getDuels,
   getReviewsStats,
+  getDuelGameById,
+  getDuelScore,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1126,8 +1128,7 @@ export const useGetDuels = (params?: {
   search?: string;
   limit?: number;
   offset?: number;
-  priceRange?: string;  
-
+  priceRange?: string;
 }) => {
   return useQuery({
     queryKey: ["duels", params],
@@ -1201,3 +1202,17 @@ export const useGetReviewsStats = () => {
   });
 };
 
+export const useGetDuelGameById = (id: string) => {
+  return useQuery({
+    queryKey: ["duelGame", id],
+    queryFn: () => getDuelGameById(id),
+    enabled: !!id,
+  });
+};
+
+export const useGetDuelScore = (id: string) => {
+  return useMutation({
+    mutationFn: ({ score, time }: { score: number; time: number }) =>
+      getDuelScore(id, { score, time }),
+  });
+};
