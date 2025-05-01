@@ -272,7 +272,12 @@ export default function CustomerForm({
           : "";
         const formattedAddress = place.formatted_address || "";
 
-        // Update form fields
+        // Clear old values first
+        form.setValue("location", "", { shouldValidate: true, shouldDirty: true });
+        form.setValue("street", "", { shouldValidate: true, shouldDirty: true });
+        form.setValue("zip", "", { shouldValidate: true, shouldDirty: true });
+
+        // Set new values
         form.setValue("location", formattedAddress, {
           shouldValidate: true,
           shouldDirty: true,

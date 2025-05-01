@@ -91,7 +91,7 @@ const OrdersTable = () => {
                 <TableCell className="">
                   <ul className="p-0 m-0">
                     {order?.cartObject?.cart?.map((item) => (
-                      <li key={item?.product?.id}>{item?.product?.article}</li>
+                      <li key={item?.product?.id}>{item?.product?.name}</li>
                     )) || "N/A"}
                   </ul>
                 </TableCell>
@@ -114,7 +114,9 @@ const OrdersTable = () => {
                         : "bg-primary text-white"
                     }`}
                   >
-                    {order.status || "N/A"}
+                    {order.status === "pending"
+                      ? "payment pending"
+                      : order.status || "N/A"}
                   </div>
                 </TableCell>
                 <TableCell className="text-center flex items-center justify-center">
@@ -129,7 +131,9 @@ const OrdersTable = () => {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center">
-                  <InvoiceButton orderDetails={order} />
+                  {order.status !== "pending" && (
+                    <InvoiceButton orderDetails={order} />
+                  )}
                 </TableCell>
               </TableRow>
             ))

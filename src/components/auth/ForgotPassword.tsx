@@ -78,7 +78,7 @@ const ForgotPassword = ({
             Forgot password?
           </Button>
         </DialogTrigger> */}
-        <DialogContent className="max-w-[682px] p-0">
+        <DialogContent hideCloseButton={true} className="max-w-[682px] p-0">
           <DialogHeader className="text-left relative px-24 pt-10">
             <Button
               onClick={() => setIsOpen(false)}
@@ -149,9 +149,7 @@ const ForgotPassword = ({
         onClose={() => setShowOtpModal(false)}
         email={userEmail}
         isOpenLogin={() => setShowOtpModal(false)}
-
         forgotPasswordModal={() => true}
-
       />
     </>
   );

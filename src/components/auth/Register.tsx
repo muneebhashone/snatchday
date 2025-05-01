@@ -82,10 +82,7 @@ const personalStepSchema = z.object({
         },
         { message: "You must be at least 18 years old to register" }
       ),
-    street: z
-      .string()
-      .min(5, "Street must be at least 5 characters")
-      .max(100, "Street cannot exceed 100 characters"),
+    street: z.string().optional(),
     zip: z
       .string()
       .min(2, "ZIP code must be at least 3 characters")
@@ -304,9 +301,7 @@ const Register = ({ onBack }: RegisterProps) => {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <AccountStep formMethods={accountStepMethods} />
-        );
+        return <AccountStep formMethods={accountStepMethods} />;
       case 2:
         return <PersonalStep formMethods={personalStepMethods} />;
       default:

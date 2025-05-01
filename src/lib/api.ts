@@ -1037,7 +1037,59 @@ export const getReviewsStats = async () => {
   const response = await axiosInstance.get("/review/stats/all");
   return response.data;
 };
+interface SubscriptionPlan {
+  name: string;
+  description: string;
+  price: number;
+  interval: string;
+  times: number;
+}
+
+export const subscriptionPlan = async (data: SubscriptionPlan) => {
+  const response = await axiosInstance.post<SubscriptionPlan>(
+    "/subscriptions/packages",
+    data
+  );
+  return response.data;
+};
+
+interface params {
+  search?: string;
+}
+
+export const getSubscriptionPlan = async ( params?: params) => {
+  const response = await axiosInstance.get(
+    "/subscriptions/packages" , {params}
+  );
+  return response.data;
+};
+
+export const updateSubscriptionPlan = async (packageId: string, data: SubscriptionPlan) => {
+  const response = await axiosInstance.put<SubscriptionPlan>(
+    `/subscriptions/packages/${packageId}`,
+    data
+  );
+  return response.data;
+};
+
+export const deleteSubscriptionPlan = async (packageId: string) => {
+  const response = await axiosInstance.delete(
+    `/subscriptions/packages/${packageId}`
+  );
+  return response.data;
+};
 
 
 
+export const getDuelGameById = async (id: string) => {
+  const response = await axiosInstance.get(`/duel/${id}`);
+  return response.data;
+};
 
+export const getDuelScore = async (
+  id: string,
+  data: { score: number; time: number }
+) => {
+  const response = await axiosInstance.post(`/duel/score/${id}`, data);
+  return response.data;
+};

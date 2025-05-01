@@ -1,6 +1,10 @@
+'use client';
+
 import React from "react";
 import Image from "next/image";
 import crown from "@/app/images/crown.png";
+import { useGetSubscriptionPlan } from "@/hooks/api";
+import { Loader } from "lucide-react";
 
 interface PricingFeature {
   text: string;
@@ -17,165 +21,147 @@ interface PricingCard {
   buttonText: string;
   isPopular?: boolean;
   bgcolor?: string;
-
 }
 
-const pricingCards: PricingCard[] = [
-  {
-    icon: crown.src,
-    title: "Basic",
-    subtitle: "For individuals",
-    price: "99",
-    period: "/Monthly",
-    features: [
-      { text: "All analytics features" },
-      { text: "Up to 250,000 tracked visits" },
-      { text: "Normal support" },
-      { text: "Up to 3 team members" },
-    ],
-    buttonText: "Get started",
-    bgcolor: "bg-gray-200",
-  },
-  {
-    badge: "POPULAR",
-    icon: crown.src,
-    title: "Pro",
-    subtitle: "For startups",
-    price: "199",
-    period: "/Semi-Annually",
-    features: [
-      { text: "All analytics features" },
-      { text: "Up to 250,000 tracked visits" },
-      { text: "Normal support" },
-      { text: "Up to 3 team members" },
-    ],
-    buttonText: "Get started",
-    isPopular: true,
-    bgcolor: "bg-white",
-  },
-  {
-    icon: crown.src,
-    title: "Enterprise",
-    subtitle: "For big companies",
-    price: "399",
-    period: "/Annually",
-    features: [
-      { text: "All analytics features" },
-      { text: "Up to 250,000 tracked visits" },
-      { text: "Normal support" },
-      { text: "Up to 3 team members" },
-    ],
-    buttonText: "Get started",
-    bgcolor: "bg-[#F6E9E1]",
-  },
-];
+// Helper function to format interval display
+const formatInterval = (interval: string) => {
+  switch (interval) {
+    case "3months":
+      return "/Quarterly";
+    case "6months":
+      return "/Semi-Annually";
+    case "month":
+      return "/Monthly";
+    case "year":
+      return "/Annually";
+    default:
+      return `/${interval}`;
+  }
+};
 
 const ExclusiveCards = () => {
+  const { data: subscriptionPlan, isLoading } = useGetSubscriptionPlan();
+  const packages = subscriptionPlan?.data?.packages || [];
+
+  // Background colors for cards
+  const bgColors = ["bg-gray-200", "bg-white", "bg-[#F6E9E1]"];
+  
+  // If there are no packages, show loading or fallback
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-40">
+        <Loader className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
-    // <div className="grid grid-cols-1 md:grid-cols-2 items-center lg:grid-cols-3 gap-6 max-w-[1200px] mx-auto">
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1440px] mx-auto">
-      {pricingCards.map((card, index) => (
-        <div
-          key={index}
-          className={`relative rounded-xl p-10 md:p-10 lg:p-8 lg:pt-16 xl:p-16 w-full md:w-auto ${card.isPopular ? "bg-[#8D4CC4]" : "bg-white"
-            } ${card.isPopular ? "mt-0" : "lg:mt-20"} ${card.isPopular ? "lg:mb-20" : "mb-0"} ${card.isPopular ? "shadow-none" : "shadow-[0px_0px_15px_#f1f1f1]"} hover:scale-105 transition-transform duration-300`}
-        >
-          {/* Popular Badge */}
-          {card.badge && (
-            <span className="absolute top-5 right-5 bg-primary text-white text-sm px-4 py-1 rounded-full">
-              {card.badge}
-            </span>
-          )}
-
-          {/* Card Header */}
-
-          <div className="flex items-center gap-3">
-            <div className={`flex items-center gap-3 p-5 rounded-xl ${card.bgcolor}`}>
-              <Image src={card.icon} alt={card.title} width={24} height={24} className={`w-6 h-6 ${card.title !== "Basic" ? "grayscale-0" : "grayscale"}`} />
-            </div>
-            <div>
-              <p
-                className={`text-lg ${card.isPopular ? "text-white" : "text-foreground"
-                  }`}
-              >
-                {card.subtitle}
-              </p>
-              <h3
-                className={`text-xl font-extrabold ${card.isPopular ? "text-white" : "text-gray-900"
-                  }`}
-              >
-                {card.title}
-              </h3>
-            </div>
-          </div>
-          <p className={`mt-5 ${card.isPopular ? "text-white" : "text-foreground"}`}>Lorem ipsum dolor sit amet doloroli sitiol conse ctetur adipiscing elit. </p>
-
-
-          {/* Pricing */}
-          <div className="lg:mt-4">
-            <div className="flex items-baseline">
-              <span
-                className={`text-[50px] xl:text-[68px] font-extrabold ${card.isPopular ? "text-white" : "text-[#1C1B1D]"
-                  }`}
-              >
-                ${card.price}
-              </span>
-              <span
-                className={`ml-1 text-md xl:text-lg ${card.isPopular ? "text-white/80" : "text-foreground"
-                  }`}
-              >
-                {card.period}
-              </span>
-            </div>
-          </div>
-
-          {/* Features */}
-          <div className="mt-3 space-y-2 lg:space-y-4">
-            <h4
-              className={`text-lg font-extrabold ${card.isPopular ? "text-white" : "text-[#1C1B1D]"
-                }`}
-            >
-              Whats Included
-            </h4>
-            <ul className="space-y-1 lg:space-y-3">
-              {card.features.map((feature, featureIndex) => (
-                <li key={featureIndex} className="flex items-center gap-3">
-                  <svg
-                    className={`w-6 h-6 ${card.isPopular ? "text-white" : "text-[#8D4CC4]"
-                      }`}
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <span
-                    className={`text-sm sm:text-lg ${card.isPopular ? "text-white/80" : "text-[#1C1B1D]"
-                      }`}
-                  >
-                    {feature.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* CTA Button */}
-          <div className="w-full flex items-center sm:justify-center"><button
-            className={`w-max sm:w-[70%] lg:w-full min-h-[48px] lg:min-h-[68px] mt-5 lg:mt-8 px-14 py-4 lg:px-4 lg:py-3 rounded-full text-lg font-medium transition-colors
-              ${card.isPopular
-                ? "bg-white text-[#8D4CC4] hover:bg-gray-50"
-                : "gradient-primary text-white hover:opacity-90"
-              }
-            `}
+      {packages.map((pkg, index) => {
+        // Determine if this card should be highlighted as popular (middle card)
+        const isPopular = index === 1;
+        
+        return (
+          <div
+            key={pkg._id}
+            className={`relative rounded-xl p-10 md:p-10 lg:p-8 lg:pt-16 xl:p-16 w-full md:w-auto ${
+              isPopular ? "bg-[#8D4CC4]" : "bg-white"
+            } ${isPopular ? "mt-0" : "lg:mt-20"} ${
+              isPopular ? "lg:mb-20" : "mb-0"
+            } ${
+              isPopular ? "shadow-none" : "shadow-[0px_0px_15px_#f1f1f1]"
+            } hover:scale-105 transition-transform duration-300`}
           >
-            {card.buttonText}
-          </button></div>
-        </div>
-      ))}
+            {/* Popular Badge */}
+            {isPopular && (
+              <span className="absolute top-5 right-5 bg-primary text-white text-sm px-4 py-1 rounded-full">
+                POPULAR
+              </span>
+            )}
+
+            {/* Card Header */}
+            <div className="flex items-center gap-3">
+              <div className={`flex items-center gap-3 p-5 rounded-xl ${bgColors[index % bgColors.length]}`}>
+                <Image
+                  src={crown.src}
+                  alt={pkg.name}
+                  width={24}
+                  height={24}
+                  className={`w-6 h-6 ${index !== 0 ? "grayscale-0" : "grayscale"}`}
+                />
+              </div>
+              <div>
+                <p className={`text-lg ${isPopular ? "text-white" : "text-foreground"}`}>
+                  {pkg.interval === "month" ? "For individuals" : 
+                   pkg.interval === "6months" ? "For startups" : 
+                   pkg.interval === "year" ? "For businesses" : "For customers"}
+                </p>
+                <h3 className={`text-xl font-extrabold ${isPopular ? "text-white" : "text-gray-900"}`}>
+                  {pkg.name}
+                </h3>
+              </div>
+            </div>
+
+            <p className={`mt-5 ${isPopular ? "text-white" : "text-foreground"}`}>
+              {pkg.description}
+            </p>
+
+            {/* Pricing */}
+            <div className="lg:mt-4">
+              <div className="flex items-baseline">
+                <span className={`text-[50px] xl:text-[68px] font-extrabold ${isPopular ? "text-white" : "text-[#1C1B1D]"}`}>
+                  ${pkg.price}
+                </span>
+                <span className={`ml-1 text-md xl:text-lg ${isPopular ? "text-white/80" : "text-foreground"}`}>
+                  {formatInterval(pkg.interval)}
+                </span>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="mt-3 space-y-2 lg:space-y-4">
+              <h4 className={`text-lg font-extrabold ${isPopular ? "text-white" : "text-[#1C1B1D]"}`}>
+                Whats Included
+              </h4>
+              <ul className="space-y-1 lg:space-y-3">
+                {pkg.features && pkg.features.map((feature, featureIndex) => (
+                  <li key={featureIndex} className="flex items-center gap-3">
+                    <svg
+                      className={`w-6 h-6 ${isPopular ? "text-white" : "text-[#8D4CC4]"}`}
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span className={`text-sm sm:text-lg ${isPopular ? "text-white/80" : "text-[#1C1B1D]"}`}>
+                      {feature}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* CTA Button */}
+            <div className="w-full flex items-center sm:justify-center">
+              <button
+                className={`w-max sm:w-[70%] lg:w-full min-h-[48px] lg:min-h-[68px] mt-5 lg:mt-8 px-14 py-4 lg:px-4 lg:py-3 rounded-full text-lg font-medium transition-colors
+                  ${
+                    isPopular
+                      ? "bg-white text-[#8D4CC4] hover:bg-gray-50"
+                      : "gradient-primary text-white hover:opacity-90"
+                  }
+                `}
+              >
+                Get started
+              </button>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };

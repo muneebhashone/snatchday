@@ -192,11 +192,11 @@ const navItems = [
       },
     ],
   },
-  // {
-  //   title: "Points",
-  //   url: "/admin/points",
-  //   icon: <Plus className="h-4 w-4" />,
-  // },
+  {
+    title: "Points",
+    url: "/admin/points",
+    icon: <Plus className="h-4 w-4" />,
+  },
   {
     title: "Payouts",
     icon: <DollarSign className="h-4 w-4" />,
@@ -212,6 +212,24 @@ const navItems = [
     title: "Duel",
     url: "/admin/duel",
     icon: <Gamepad className="h-4 w-4" />,
+  },
+
+  {
+    title: "Packages",
+    
+    icon: <Heart className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Packages",
+        url: "/admin/packages",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Package",
+        url: "/admin/packages/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
   },
 ];
 
