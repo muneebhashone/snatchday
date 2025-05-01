@@ -118,6 +118,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
     handleSubmit: handleVoucherSubmit,
     formState: { errors: voucherErrors },
     watch: watchVoucher,
+    reset:voucherReset
   } = useForm({
     resolver: zodResolver(voucherSchema),
     defaultValues: {
@@ -245,6 +246,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
         onSuccess: (response) => {
           setApplyvocherResponse(response);
           refetch()
+          voucherReset()
           toast.success("Voucher applied successfully", {
             position: "top-right",
             style: { backgroundColor: "green", color: "white" },
@@ -286,11 +288,14 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
   const handleDeleteVoucher = () => {
     DeleteVoucher(undefined, {
       onSuccess: () => {
-        setApplyvocherResponse(null); // Clear the applied voucher response
+        setApplyvocherResponse(null); 
+        voucherReset()
+        // Clear the applied voucher response
         toast.success("Voucher code removed successfully", {
           position: "top-right",
           style: { backgroundColor: "green", color: "white" },
         });
+        
         refetch(); // Refetch cart data to update the UI
       },
       onError: (error: any) => {
@@ -522,7 +527,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                       </span>
                     </div>
                   )}
-                  {watchVoucher("voucherCode") &&
+                  {/* {watchVoucher("voucherCode") &&
                     applyvocherResponse?.data?.voucherDiscount > 0 && (
                       <div className="flex justify-between text-lg text-green-600">
                         <span>Voucher Discount:</span>
@@ -534,7 +539,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                           €
                         </span>
                       </div>
-                    )}
+                    )} */}
 
                   {watch("snapPoints") && Number(watch("snapPoints")) > 0 && (
                     <div className="flex justify-between text-lg text-green-600">
