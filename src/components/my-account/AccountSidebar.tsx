@@ -55,7 +55,7 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
     },
   ];
 
-  const disbaleTabs = ["Duels", "Points Trends", "Payment History"];
+  const disbaleTabs = ["Duels", "Points Trends"];
 
   return (
     <div className="lg:col-span-3 rounded-3xl relative">
@@ -90,16 +90,24 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
             return (
               <Link
                 key={index}
-                href={isDisabled ? "#" : link.href} 
+                href={isDisabled ? "#" : link.href}
                 className={`group flex items-center gap-3 p-3 rounded-lg transition-colors
-                ${isActive
+                ${
+                  isActive
                     ? "bg-primary text-white"
                     : "text-card-foreground font-medium hover:bg-primary hover:text-white"
-                  } ${isDisabled ? "pointer-events-none cursor-not-allowed text-gray-400" : ""}`}
+                } ${
+                  isDisabled
+                    ? "pointer-events-none cursor-not-allowed text-gray-400"
+                    : ""
+                }`}
               >
                 <span
-                  className={`w-5 h-5 ${isActive ? "text-white" : "text-primary group-hover:text-white"
-                    }`}
+                  className={`w-5 h-5 ${
+                    isActive
+                      ? "text-white"
+                      : "text-primary group-hover:text-white"
+                  }`}
                 >
                   {link.icon}
                 </span>

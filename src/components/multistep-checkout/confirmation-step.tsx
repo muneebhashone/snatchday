@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGetOrderById } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
+import { formatCurrency } from "@/lib/utils";
 
 // Define types
 interface Address {
@@ -190,13 +191,12 @@ export function ConfirmationStep({
                             </div>
                             <div className="text-right">
                               <p className="font-medium text-gray-800">
-                                {item?.product?.price?.toFixed(2)}€
+                                {formatCurrency(item?.product?.price)}
                               </p>
                               <p className="text-sm text-gray-500">
-                                {(
+                                {formatCurrency(
                                   item?.product?.price * item?.quantity
-                                )?.toFixed(2)}
-                                €
+                                )}
                               </p>
                             </div>
                           </div>
@@ -218,7 +218,7 @@ export function ConfirmationStep({
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Sub Total</span>
                       <span className="font-medium">
-                        {order?.data?.cartObject?.subTotal.toFixed(2)}€
+                        {formatCurrency(order?.data?.cartObject?.subTotal)}
                       </span>
                     </div>
 
@@ -226,7 +226,10 @@ export function ConfirmationStep({
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Applied Discount</span>
                         <span className="font-medium text-green-600">
-                          -{order?.data?.cartObject?.appliedDiscount}€
+                          -
+                          {formatCurrency(
+                            order?.data?.cartObject?.appliedDiscount
+                          )}
                         </span>
                       </div>
                     ) : null}
@@ -234,14 +237,18 @@ export function ConfirmationStep({
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Discount Points</span>
                       <span className="font-medium">
-                        {order?.data?.cartObject?.discountPoints}€
+                        {formatCurrency(
+                          order?.data?.cartObject?.discountPoints / 100
+                        )}
                       </span>
                     </div>
 
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Snap Points</span>
                       <span className="font-medium">
-                        {order?.data?.cartObject?.snapPoints}€
+                        {formatCurrency(
+                          order?.data?.cartObject?.snapPoints / 100
+                        )}
                       </span>
                     </div>
 
@@ -249,7 +256,10 @@ export function ConfirmationStep({
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Voucher Discount</span>
                         <span className="font-medium text-green-600">
-                          -{order?.data?.cartObject?.voucherDiscount}€
+                          -
+                          {formatCurrency(
+                            order?.data?.cartObject?.voucherDiscount
+                          )}
                         </span>
                       </div>
                     ) : null}
@@ -261,7 +271,9 @@ export function ConfirmationStep({
 
                     <div className="flex justify-between font-bold text-lg pt-3 border-t mt-2 text-[#F37835]">
                       <span>Total</span>
-                      <span>{order?.data?.cartObject?.total.toFixed(2)}€</span>
+                      <span>
+                        {formatCurrency(order?.data?.cartObject?.total)}
+                      </span>
                     </div>
                   </div>
 
