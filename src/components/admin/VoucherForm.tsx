@@ -39,6 +39,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Loader } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { useEffect, useRef, useState } from "react";
 
 const formSchema = z
   .object({
@@ -99,27 +100,75 @@ const formSchema = z
         path: ["value"],
       });
     }
-  }).refine((data) => {
-    if (data.noOfUsage < data.usagePerUser) {
-      return false;
-    }
-    return true;
-  }, {
-    message: "Number of usage cannot be less than usage per user",
-    path: ["noOfUsage"],
   })
-  ;
-
+  .refine(
+    (data) => {
+      if (data.noOfUsage < data.usagePerUser) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Number of usage cannot be less than usage per user",
+      path: ["noOfUsage"],
+    }
+  );
 const VoucherForm = () => {
+  const productList = useRef(null);
+  const categoryList = useRef(null);
+  const showProductList = () => {
+    console.log("ok");
+    console.log(productList.current.scrollTop, "productList");
+    console.log(productList.current.scrollHeight);
+    console.log(productList.current.clientHeight);
+    console.log(
+      productList.current.scrollHeight - productList.current.scrollTop
+    );
+  };
   const router = useRouter();
   const { mutate: createVoucher, isPending } = useCreateVoucher();
-  const { data: productsResponse } = useGetProducts();
-  const { data: categoriesResponse } = useGetCategories({
-    limit: "9999999",
+  const [productOffset, setProductOffset] = useState(0);
+  const [categoryOffset, setCategoryOffset] = useState(0);
+  const [search, setSearch] = useState("");
+  const [searchCategory, setSearchCategory] = useState("");
+  const { data: productsResponse, isLoading } = useGetProducts({
+    limit: "10",
+    offset: productOffset.toString(),
+    name: search,
   });
+  const { data: categoriesResponse, isLoading: isCategoriesLoading } =
+    useGetCategories({
+      limit: "10",
+      offset: categoryOffset.toString(),
+      name: searchCategory,
+    });
 
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
+  const [productDataList, setProductDataList] = useState(products);
+  const [categoryDataList, setCategoryDataList] = useState(categories);
+  const totalProductCount = productsResponse?.data?.total || 0;
+  const totalCategoryCount = categoriesResponse?.data?.total || 0;
+
+  useEffect(() => {
+    if (products.length > 0) {
+      setProductDataList((prev) => {
+        const existingIds = new Set(prev.map((p) => p._id));
+        const newProducts = products.filter((p) => !existingIds.has(p._id));
+        return [...prev, ...newProducts];
+      });
+    }
+  }, [productsResponse?.data?.products]);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      setCategoryDataList((prev) => {
+        const existingIds = new Set(prev.map((c) => c._id));
+        const newCategories = categories.filter((c) => !existingIds.has(c._id));
+        return [...prev, ...newCategories];
+      });
+    }
+  }, [categoriesResponse?.data?.categories]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -165,7 +214,8 @@ const VoucherForm = () => {
           router.push("/admin/voucher");
         },
         onError: (error: Error) => {
-          const errorMessage = error?.response?.data?.message || "Failed to create voucher";
+          const errorMessage =
+            error?.response?.data?.message || "Failed to create voucher";
           toast.error(errorMessage);
           console.error("Error creating voucher:", error);
         },
@@ -419,19 +469,54 @@ const VoucherForm = () => {
                           <SelectTrigger>
                             <SelectValue placeholder="Select products" />
                           </SelectTrigger>
-                          <SelectContent>
-                            {products.map((product) => (
-                              <SelectItem key={product._id} value={product._id}>
-                                {product.name}
-                              </SelectItem>
-                            ))}
+                          <SelectContent
+                            onScrollCapture={(e) => {
+                              const target = e.target as HTMLElement;
+                              const isBottom =
+                                target.scrollTop + target.clientHeight >=
+                                target.scrollHeight - 10;
+
+                              if (
+                                isBottom &&
+                                productDataList.length < totalProductCount &&
+                                !isLoading
+                              ) {
+                                setProductOffset((prev) => prev + 10);
+                              }
+                            }}
+                            ref={productList}
+                            className="max-h-52"
+                          >
+                            <div className="h-full">
+                              <div>
+                                <Input
+                                  placeholder="Search products"
+                                  onChange={(e) => {
+                                    setProductDataList([]);
+                                    setSearch(e.target.value);
+                                    setProductOffset(0);
+                                  }}
+                                />
+                                {productDataList.map((product) => (
+                                  <SelectItem
+                                    key={product._id}
+                                    value={product._id}
+                                  >
+                                    {product.name}
+                                  </SelectItem>
+                                ))}
+                                {isLoading && (
+                                  <Loader className="h-4 w-4 animate-spin mx-auto" />
+                                )}
+                              </div>
+                            </div>
                           </SelectContent>
                         </Select>
                       </FormControl>
                       {field.value?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((productId) => {
-                            const product = products.find(
+                            const product = productDataList.find(
                               (p) => p._id === productId
                             );
                             return (
@@ -485,15 +570,45 @@ const VoucherForm = () => {
                           <SelectTrigger>
                             <SelectValue placeholder="Select categories" />
                           </SelectTrigger>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem
-                                key={category._id}
-                                value={category._id}
-                              >
-                                {category.name}
-                              </SelectItem>
-                            ))}
+                          <SelectContent
+                            onScrollCapture={(e) => {
+                              const target = e.target as HTMLElement;
+                              const isBottom =
+                                target.scrollTop + target.clientHeight >=
+                                target.scrollHeight - 10;
+
+                              if (
+                                isBottom &&
+                                categoryDataList.length < totalCategoryCount &&
+                                !isCategoriesLoading
+                              ) {
+                                setCategoryOffset((prev) => prev + 10);
+                              }
+                            }}
+                            ref={categoryList}
+                            className="max-h-52"
+                          >
+                            <div className="h-full">
+                              <Input
+                                placeholder="Search products"
+                                onChange={(e) => {
+                                  setCategoryDataList([]);
+                                  setSearchCategory(e.target.value);
+                                  setCategoryOffset(0);
+                                }}
+                              />
+                              {categoryDataList.map((category) => (
+                                <SelectItem
+                                  key={category._id}
+                                  value={category._id}
+                                >
+                                  {category.name}
+                                </SelectItem>
+                              ))}
+                              {isCategoriesLoading && (
+                                <Loader className="h-4 w-4 animate-spin mx-auto" />
+                              )}
+                            </div>
                           </SelectContent>
                         </Select>
                       </FormControl>

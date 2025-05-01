@@ -273,8 +273,14 @@ export default function CustomerForm({
         const formattedAddress = place.formatted_address || "";
 
         // Clear old values first
-        form.setValue("location", "", { shouldValidate: true, shouldDirty: true });
-        form.setValue("street", "", { shouldValidate: true, shouldDirty: true });
+        form.setValue("location", "", {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("street", "", {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
         form.setValue("zip", "", { shouldValidate: true, shouldDirty: true });
 
         // Set new values
@@ -514,9 +520,10 @@ export default function CustomerForm({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email *</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
+                          disabled={true}
                           type="email"
                           {...field}
                           placeholder="Enter email"
@@ -549,12 +556,16 @@ export default function CustomerForm({
                   control={form.control}
                   name="dob"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full flex flex-col items-start justify-between">
                       <FormLabel>Date of Birth</FormLabel>
                       <FormControl>
                         <Popover>
                           <PopoverTrigger asChild>
-                            <Button variant="outline">
+                            <Button
+                              disabled={true}
+                              variant="outline"
+                              className="w-full"
+                            >
                               <CalendarIcon className="mr-2 h-4 w-4" />
                               {field.value
                                 ? format(field.value, "PPP")

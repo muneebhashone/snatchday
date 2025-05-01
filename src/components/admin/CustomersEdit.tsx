@@ -344,12 +344,12 @@ export function CustomerdEdit() {
                   >
                     <Trophy size={16} className="mr-2" /> Tournaments
                   </TabsTrigger>
-                  {/* <TabsTrigger
+                  <TabsTrigger
                     value="payment"
                     className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3"
                   >
                     <History size={16} className="mr-2" /> Payment History
-                  </TabsTrigger> */}
+                  </TabsTrigger>
                   <TabsTrigger
                     value="ip"
                     className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3"

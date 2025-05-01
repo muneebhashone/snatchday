@@ -12,7 +12,7 @@ import {
   useGetCategories,
 } from "@/hooks/api";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -74,7 +74,6 @@ const formSchema = z
     usagePerUser: z.coerce.number().min(1, "Usage per user must be at least 1"),
   })
   .superRefine((val, ctx) => {
-    // End date must be after start date
     if (new Date(val.until) <= new Date(val.from)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -109,19 +108,93 @@ interface EditVoucherFormProps {
   voucherId: string;
 }
 
+interface Product {
+  _id: string;
+  name: string;
+}
+
+interface ProductWithOptionalName {
+  _id: string;
+  name?: string;
+}
+
+interface Category {
+  _id: string;
+  name: string;
+}
+
+interface VoucherData {
+  _id: string;
+  code: string;
+  name: string;
+  type: "PERCENTAGE" | "FIXED";
+  estate: string;
+  value: number;
+  registered: boolean;
+  noShipping: boolean;
+  products: string[];
+  categories: string[];
+  from: string;
+  until: string;
+  noOfUsage: number;
+  usagePerUser: number;
+}
+
+interface ApiError extends Error {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
+interface ProductsResponse {
+  data: {
+    products: Product[];
+  };
+}
+
+interface CategoriesResponse {
+  data: {
+    categories: Category[];
+  };
+}
+
+interface VoucherResponse {
+  data: VoucherData;
+}
+
 export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   const router = useRouter();
   const { mutate: updateVoucher, isPending } = useUpdateVoucher(voucherId);
-  const { data: voucherResponse } = useGetVoucherById(voucherId);
-  const { data: productsResponse } = useGetProducts({
-    limit: "99999999",
+  const { data: voucherResponse } = useGetVoucherById(voucherId) as {
+    data: VoucherResponse;
+  };
+  const productList = useRef(null);
+  const categoryList = useRef(null);
+  const [productOffset, setProductOffset] = useState(0);
+  const [categoryOffset, setCategoryOffset] = useState(0);
+  const [search, setSearch] = useState("");
+  const [searchCategory, setSearchCategory] = useState("");
+
+  const { data: productsResponse, isLoading } = useGetProducts({
+    limit: "10",
+    offset: productOffset.toString(),
+    name: search,
   });
-  const { data: categoriesResponse } = useGetCategories({
-    limit: "99999999",
-  });
+
+  const { data: categoriesResponse, isLoading: isCategoriesLoading } =
+    useGetCategories({
+      limit: "10",
+      offset: categoryOffset.toString(),
+      name: searchCategory,
+    });
 
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
+  const [categoryDataList, setCategoryDataList] = useState(categories);
+  const [hasMoreProducts, setHasMoreProducts] = useState(true);
+  const [hasMoreCategories, setHasMoreCategories] = useState(true);
 
   const voucher = voucherResponse?.data;
 
@@ -137,7 +210,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
       value: voucher?.value || 0,
       registered: voucher?.registered || false,
       noShipping: voucher?.noShipping || false,
-      products: voucher?.products || [],
+      products: voucher?.products.map((p) => p._id) || [],
       categories: voucher?.categories || [],
       noOfUsage: Number(voucher?.noOfUsage) || 1,
       usagePerUser: Number(voucher?.usagePerUser) || 1,
@@ -146,6 +219,19 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
 
   useEffect(() => {
     if (voucher) {
+      const selectedCategories = voucher.categories.map((categoryId) => {
+        const fullCategory = categories.find((c) => c._id === categoryId);
+        return fullCategory || { _id: categoryId, name: "" };
+      });
+
+      setCategoryDataList((prevList) => {
+        const existingIds = new Set(prevList.map((c) => c._id));
+        const newCategories = selectedCategories.filter(
+          (c) => !existingIds.has(c._id)
+        );
+        return [...prevList, ...newCategories];
+      });
+
       form.reset({
         from: voucher.from,
         until: voucher.until,
@@ -156,13 +242,37 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         value: voucher.value,
         registered: voucher.registered,
         noShipping: voucher.noShipping,
-        products: voucher.products || [],
-        categories: voucher.categories || [],
-        noOfUsage: Number(voucher?.noOfUsage) || 1,
-        usagePerUser: Number(voucher?.usagePerUser) || 1,
+        products: voucher.products.map((p) => {
+          console.log(p);
+          return p;
+        }),
+        categories: voucher.categories,
+        noOfUsage: Number(voucher.noOfUsage) || 1,
+        usagePerUser: Number(voucher.usagePerUser) || 1,
       });
     }
-  }, [voucher, form]);
+  }, [voucher]);
+
+  useEffect(() => {
+    if (products.length > 0) {
+      setHasMoreProducts(products.length === 10);
+    } else if (!search) {
+      setHasMoreProducts(false);
+    }
+  }, [products, search]);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      setCategoryDataList((prev) => {
+        const existingIds = new Set(prev.map((c) => c._id));
+        const newCategories = categories.filter((c) => !existingIds.has(c._id));
+        return [...prev, ...newCategories];
+      });
+      setHasMoreCategories(categories.length === 10);
+    } else if (!searchCategory) {
+      setHasMoreCategories(false);
+    }
+  }, [categories, searchCategory]);
 
   const watchProducts = form.watch("products");
   const watchCategories = form.watch("categories");
@@ -172,11 +282,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const formattedProducts = values.products.map((productId) => {
-      const product = products.find((p) => p._id === productId);
-      return {
-        _id: productId,
-        name: product?.name || "",
-      };
+      return productId;
     });
 
     const updateData: VoucherData = {
@@ -202,8 +308,10 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         router.push("/admin/voucher");
         router.refresh();
       },
-      onError: (error: Error) => {
-        toast.error(error?.response?.data?.message || "Failed to update voucher");
+      onError: (error: ApiError) => {
+        toast.error(
+          error?.response?.data?.message || "Failed to update voucher"
+        );
       },
     });
   }
@@ -451,9 +559,29 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                           <SelectTrigger>
                             <SelectValue placeholder="Select products" />
                           </SelectTrigger>
-                          <SelectContent>
-                            {products?.length > 0 &&
-                              products.map((product) => (
+                          <SelectContent
+                            onScrollCapture={(e) => {
+                              const target = e.target as HTMLElement;
+                              const isBottom =
+                                target.scrollTop + target.clientHeight >=
+                                target.scrollHeight - 10;
+
+                              if (isBottom && hasMoreProducts && !isLoading) {
+                                setProductOffset((prev) => prev + 10);
+                              }
+                            }}
+                            ref={productList}
+                            className="max-h-52"
+                          >
+                            <div className="h-full">
+                              <Input
+                                placeholder="Search products"
+                                onChange={(e) => {
+                                  setSearch(e.target.value);
+                                  setProductOffset(0);
+                                }}
+                              />
+                              {products.map((product) => (
                                 <SelectItem
                                   key={product._id}
                                   value={product._id}
@@ -461,23 +589,29 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                                   {product.name}
                                 </SelectItem>
                               ))}
+                              {isLoading && (
+                                <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                              )}
+                            </div>
                           </SelectContent>
                         </Select>
                       </FormControl>
                       {field.value?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((productId) => {
-                            const product = products?.find(
-                              (p) => p._id === productId
-                            );
-                            if (!product || !product.name) return null;
-
+                            console.log(productId);
+                            const product =
+                              products.find((p) => p._id === productId) ||
+                              voucher?.products?.find(
+                                (p) => p._id === productId
+                              );
+                            if (!product) return null;
                             return (
                               <div
                                 key={productId}
                                 className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md"
                               >
-                                <span className="text-sm">{product?.name}</span>
+                                <span className="text-sm">{product.name}</span>
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -523,9 +657,33 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                           <SelectTrigger>
                             <SelectValue placeholder="Select categories" />
                           </SelectTrigger>
-                          <SelectContent>
-                            {categories?.length > 0 &&
-                              categories.map((category) => (
+                          <SelectContent
+                            onScrollCapture={(e) => {
+                              const target = e.target as HTMLElement;
+                              const isBottom =
+                                target.scrollTop + target.clientHeight >=
+                                target.scrollHeight - 10;
+
+                              if (
+                                isBottom &&
+                                hasMoreCategories &&
+                                !isCategoriesLoading
+                              ) {
+                                setCategoryOffset((prev) => prev + 10);
+                              }
+                            }}
+                            ref={categoryList}
+                            className="max-h-52"
+                          >
+                            <div className="h-full">
+                              <Input
+                                placeholder="Search categories"
+                                onChange={(e) => {
+                                  setSearchCategory(e.target.value);
+                                  setCategoryOffset(0);
+                                }}
+                              />
+                              {categoryDataList.map((category) => (
                                 <SelectItem
                                   key={category._id}
                                   value={category._id}
@@ -533,16 +691,19 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                                   {category.name}
                                 </SelectItem>
                               ))}
+                              {isCategoriesLoading && (
+                                <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                              )}
+                            </div>
                           </SelectContent>
                         </Select>
                       </FormControl>
                       {field.value?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((categoryId) => {
-                            const category = categories?.find(
+                            const category = categoryDataList.find(
                               (c) => c._id === categoryId
                             );
-                            if (!category || !category.name) return null;
                             return (
                               <div
                                 key={categoryId}
