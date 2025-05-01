@@ -480,11 +480,10 @@ const Header = () => {
           <div className="text-sm text-foreground text-start">
             <p className="font-bold">Your Shopping Cart</p>
             <p className="text-sm text-primary font-bold">
-              {formatCurrency(
-                myprofile?.data?.cart?.total
-                  ? myprofile?.data?.cart?.total
-                  : cartData?.data?.total
-              ) || 0}
+              {myprofile?.data?.cart?.total &&
+                formatCurrency(
+                  myprofile?.data?.cart?.total ?? cartData?.data?.total ?? 0
+                )}
             </p>
           </div>
         </div>

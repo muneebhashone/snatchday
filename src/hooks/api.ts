@@ -137,6 +137,7 @@ import {
   getSubscriptionPlan,
   updateSubscriptionPlan,
   deleteSubscriptionPlan,
+  removeVoucherCode,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1246,3 +1247,11 @@ export const useDeleteSubscriptionPlan = () => {
     mutationFn: (packageId: string) => deleteSubscriptionPlan(packageId),
   });
 };
+
+export const useRemoveVoucher = () => {
+  return useMutation({
+    mutationFn: () => removeVoucherCode(),
+  });
+};
+
+
