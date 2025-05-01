@@ -36,10 +36,7 @@ import ChangePasswordModal from "../updatePasswordModal";
 import Withdrawl from "../Withdrawl";
 import { ConfirmationModal } from "../ui/confirmation-modal";
 import { useRouter } from "next/navigation";
-import {
-  useJsApiLoader,
-  Autocomplete,
-} from "@react-google-maps/api";
+import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -238,17 +235,35 @@ const UserProfile = () => {
     if (place && place.formatted_address) {
       console.log(place);
       setValue("location", place.formatted_address);
+
+      // Extract zip code
       const zipComponent = place.address_components?.find((comp) =>
         comp.types.includes("postal_code")
       );
-
       if (zipComponent) {
         setValue("zip", zipComponent.long_name);
       } else {
-        setValue("zip", ""); // fallback or clear if not found
+        setValue("zip", "");
+      }
+
+      // Extract street name and number
+      const streetNumber = place.address_components?.find((comp) =>
+        comp.types.includes("street_number")
+      )?.long_name;
+
+      const route = place.address_components?.find((comp) =>
+        comp.types.includes("route")
+      )?.long_name;
+
+      if (route) {
+        const fullStreet = streetNumber ? `${route} ${streetNumber}` : route;
+        setValue("street", fullStreet);
+      } else {
+        setValue("street", ""); // fallback
       }
     }
   };
+
   return (
     <>
       {isLoading ? (
@@ -344,8 +359,7 @@ const UserProfile = () => {
                       />
                     </svg>
                     <span>
-                      {Profile?.street} {Profile?.zip} {Profile?.location}{" "}
-                      {Profile?.country}
+                      {Profile?.zip} {Profile?.location}{" "}
                     </span>
                   </div>
 
