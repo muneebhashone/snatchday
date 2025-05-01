@@ -37,9 +37,8 @@ import Withdrawl from "../Withdrawl";
 import { ConfirmationModal } from "../ui/confirmation-modal";
 import { useRouter } from "next/navigation";
 import {
-  GoogleMap,
   useJsApiLoader,
-  StandaloneSearchBox,
+  Autocomplete,
 } from "@react-google-maps/api";
 
 const profileSchema = z.object({
@@ -52,9 +51,39 @@ const profileSchema = z.object({
   zip: z.string().optional(),
   location: z.string().optional(),
   country: z.string().optional(),
+  dob: z.preprocess(
+    (val) => (typeof val === "string" ? new Date(val) : val),
+    z
+      .date({
+        required_error: "Date of birth is required",
+      })
+      .refine(
+        (date) => {
+          const today = new Date();
+          const birthDate = new Date(date);
+          let age = today.getFullYear() - birthDate.getFullYear();
+          const monthDiff = today.getMonth() - birthDate.getMonth();
+
+          if (
+            monthDiff < 0 ||
+            (monthDiff === 0 && today.getDate() < birthDate.getDate())
+          ) {
+            age--;
+          }
+
+          return age >= 18;
+        },
+        { message: "You must be at least 18 years old" }
+      )
+  ),
+
   // federalState: z.string().nonempty("Federal state is required"),
   email: z.string().email("Invalid email").nonempty("Email is required"),
   image: createImageSchema("Profile image").optional(),
+  phoneNumber: z
+    .string()
+    .min(5, "Phone number must be at least 5 characters")
+    .max(20, "Phone number cannot exceed 15 characters"),
 });
 
 const UserProfile = () => {
@@ -84,8 +113,6 @@ const UserProfile = () => {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
   });
-
-  console.log(isLoaded, "isLoaded");
 
   const options = {
     componentRestrictions: { country: "de" },
@@ -140,6 +167,7 @@ const UserProfile = () => {
   useEffect(() => {
     if (myProfile?.data?.user) {
       console.log(myProfile.data.user, "myProfile");
+
       reset({
         salutation: myProfile.data.user.salutation,
         title: myProfile.data.user.title,
@@ -149,12 +177,17 @@ const UserProfile = () => {
         street: myProfile.data.user.street,
         zip: myProfile.data.user.zip,
         location: myProfile.data.user.location,
-        country: myProfile.data.user.country,
+        phoneNumber: myProfile.data.user.phoneNumber,
+        dob: myProfile.data.user.dob
+          ? new Date(myProfile.data.user.dob).toISOString().split("T")[0]
+          : "",
         // federalState: myProfile.data.user.federalState,
         email: myProfile.data.user.email,
       });
     }
   }, [myProfile, reset]);
+
+  console.log(errors, "erros");
 
   const handleConfirmDelete = () => {
     deleteUserMutation(undefined, {
@@ -192,6 +225,29 @@ const UserProfile = () => {
         },
       }
     );
+  };
+
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
+  const onLoad = (autocomplete: google.maps.places.Autocomplete) => {
+    autocompleteRef.current = autocomplete;
+  };
+
+  const onPlaceChanged = () => {
+    const place = autocompleteRef.current?.getPlace();
+    if (place && place.formatted_address) {
+      console.log(place);
+      setValue("location", place.formatted_address);
+      const zipComponent = place.address_components?.find((comp) =>
+        comp.types.includes("postal_code")
+      );
+
+      if (zipComponent) {
+        setValue("zip", zipComponent.long_name);
+      } else {
+        setValue("zip", ""); // fallback or clear if not found
+      }
+    }
   };
   return (
     <>
@@ -668,57 +724,61 @@ const UserProfile = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-foreground font-medium text-lg">
-                        Street *
-                      </Label>
-                      <Input {...register("street")} />
-                      {errors.street && (
-                        <span className="text-red-500">
-                          {errors.street.message}
-                        </span>
-                      )}
-                    </div>
-
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label className="text-foreground font-medium text-lg">
                           Zip code *
                         </Label>
                         <Input {...register("zip")} defaultValue="" />
-                        Last
+
                         {errors.zip && (
                           <span className="text-red-500">
                             {errors.zip.message}
                           </span>
                         )}
                       </div>
+
                       <div className="space-y-2">
                         <Label className="text-foreground font-medium text-lg">
                           Location *
                         </Label>
-                        {isLoaded && (
-                          <StandaloneSearchBox
-                            onLoad={(ref) => {
-                              inputRef.current = ref;
-                            }}
-                            options={options}
-                            // onPlacesChanged={() => {
-                            //   const place = inputRef.current?.getPlace();
-                            //   setValue("location", place.formatted_address);
-                            // }}
-                            onPlacesChanged={() => {
-                              const place = inputRef.current?.getPlace();
-                              console.log(place, "place");
-                              // setValue("location", place.formatted_address);
-                            }}
-                          >
-                            <Input
-                              {...register("location")}
-                              defaultValue="Berlin"
-                            />
-                          </StandaloneSearchBox>
-                        )}
+                        {/* {isLoaded && (
+                            <StandaloneSearchBox
+                              onLoad={(ref) => {
+                                inputRef.current = ref;
+                              }}
+                              options={options}
+                              
+                              // onPlacesChanged={() => {
+                              //   const place = inputRef.current?.getPlace();
+                              //   setValue("location", place.formatted_address);
+                              // }}
+                              onPlacesChanged={() => {
+                                const place = inputRef.current?.getPlace();
+                                console.log(place, "place");
+                                // setValue("location", place.formatted_address);
+                              }}
+                            >
+                              <Input
+                                {...register("location")}
+                                defaultValue="Berlin"
+                              />
+                            </StandaloneSearchBox>
+                          )} */}
+
+                        <Autocomplete
+                          onLoad={onLoad}
+                          onPlaceChanged={onPlaceChanged}
+                          options={{
+                            componentRestrictions: { country: "de" }, // Restrict to Germany
+                          }}
+                        >
+                          <input
+                            {...register("location")}
+                            placeholder="Enter address in Germany"
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </Autocomplete>
                         {errors.location && (
                           <span className="text-red-500">
                             {errors.location.message}
@@ -727,7 +787,18 @@ const UserProfile = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-foreground font-medium text-lg">
+                        Date of Birth *
+                      </Label>
+                      <Input {...register("dob")} type="date" />
+                      {errors.dob && (
+                        <span className="text-red-500">
+                          {errors.dob.message}
+                        </span>
+                      )}
+                    </div>
+                    {/* <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label className="text-foreground font-medium text-lg">
                           Country *
@@ -746,8 +817,8 @@ const UserProfile = () => {
                             {errors.country.message}
                           </span>
                         )}
-                      </div>
-                      {/* <div className="space-y-2">
+                      </div> */}
+                    {/* <div className="space-y-2">
                   <Label className="text-foreground font-medium text-lg">Federal State *</Label>
                   <Controller
                     name="federalState"
@@ -766,32 +837,47 @@ const UserProfile = () => {
                   />
                   {errors.federalState && <span className="text-red-500">{errors.federalState.message}</span>}
                 </div> */}
-                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-foreground font-medium text-lg">
+                          E-mail *
+                        </Label>
+                        <Input
+                          {...register("email")}
+                          defaultValue="testen@tester.de"
+                        />
+                        {errors.email && (
+                          <span className="text-red-500">
+                            {errors.email.message}
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-foreground font-medium text-lg">
+                          Phone Number *
+                        </Label>
+                        <Input
+                          {...register("phoneNumber")}
+                          placeholder="ph:no"
+                        />
+                        {errors.email && (
+                          <span className="text-red-500">
+                            {errors.email.message}
+                          </span>
+                        )}
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-foreground font-medium text-lg">
-                        E-mail *
-                      </Label>
-                      <Input
-                        {...register("email")}
-                        defaultValue="testen@tester.de"
-                      />
-                      {errors.email && (
-                        <span className="text-red-500">
-                          {errors.email.message}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="newsletter" />
-                      <label
-                        htmlFor="newsletter"
-                        className="text-card-foreground font-medium"
-                      >
-                        Yes, I would like to be informed about tournaments,
-                        special offers and news and subscribe to the newsletter
-                      </label>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox id="newsletter" />
+                        <label
+                          htmlFor="newsletter"
+                          className="text-card-foreground font-medium"
+                        >
+                          Yes, I would like to be informed about tournaments,
+                          special offers and news and subscribe to the
+                          newsletter
+                        </label>
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-end gap-4 mt-6">

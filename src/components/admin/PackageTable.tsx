@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import AdminLayout from './AdminLayout';
-import { useDeleteSubscriptionPlan, useGetSubscriptionPlan } from '@/hooks/api';
+import React, { useState, useEffect } from "react";
+import AdminLayout from "./AdminLayout";
+import { useDeleteSubscriptionPlan, useGetSubscriptionPlan } from "@/hooks/api";
 import {
   Table,
   TableBody,
@@ -14,11 +14,20 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Loader, PackageOpen, Plus, Search, Trash, X } from "lucide-react";
+import {
+  Edit,
+  Loader,
+  PackageOpen,
+  Plus,
+  Search,
+  Trash,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { formatCurrency } from "@/lib/utils";
 
 interface SubscriptionPackage {
   _id: string;
@@ -36,19 +45,23 @@ interface SubscriptionPackage {
 const PackageTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  
-  const { data: packages, isLoading, refetch } = useGetSubscriptionPlan({
-    search: debouncedSearch
+
+  const {
+    data: packages,
+    isLoading,
+    refetch,
+  } = useGetSubscriptionPlan({
+    search: debouncedSearch,
   });
   const { mutate: deletePackage } = useDeleteSubscriptionPlan();
   const router = useRouter();
-  
+
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
     }, 500);
-    
+
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
@@ -76,12 +89,17 @@ const PackageTable = () => {
 
   // Format price for display
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
+    return new Intl.NumberFormat("de-DE", {
+      style: "currency",
+      currency: "EUR",
+    }).format(price);
   };
 
   const handleStatusToggle = (id: string, currentStatus: boolean) => {
     // Mock function - would be hooked up to a real API call
-    toast.success(`Status ${currentStatus ? "deactivated" : "activated"} successfully`);
+    toast.success(
+      `Status ${currentStatus ? "deactivated" : "activated"} successfully`
+    );
   };
 
   const handleEditPackage = (id: string) => {
@@ -105,16 +123,16 @@ const PackageTable = () => {
           </div>
           Subscription Packages
         </h2>
-        <Button 
-          variant="default" 
-          size="sm" 
-          onClick={() => router.push('/admin/packages/create')}
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => router.push("/admin/packages/create")}
           className="flex items-center gap-1"
         >
           <Plus className="h-4 w-4" /> Add Package
         </Button>
       </div>
-      
+
       {/* Search Bar */}
       <div className="mb-4">
         <div className="relative">
@@ -136,7 +154,7 @@ const PackageTable = () => {
           )}
         </div>
       </div>
-      
+
       <div className="border rounded-md bg-white">
         {isLoading ? (
           <div className="flex justify-center items-center h-40">
@@ -146,38 +164,59 @@ const PackageTable = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
-                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">Name</TableHead>
-                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">Price</TableHead>
-                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">Interval</TableHead>
-                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">Features</TableHead>
-                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3 text-right">Actions</TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">
+                  Name
+                </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">
+                  Price
+                </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">
+                  Interval
+                </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">
+                  Features
+                </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3 text-right">
+                  Actions
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {packages.data?.packages.map((pkg: SubscriptionPackage) => (
                 <TableRow key={pkg._id} className="hover:bg-gray-50">
                   <TableCell className="font-medium">{pkg.name}</TableCell>
-                  <TableCell>{formatPrice(pkg.price)}</TableCell>
+                  <TableCell>{formatCurrency(pkg.price)}</TableCell>
                   <TableCell>{formatInterval(pkg.interval)}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1 max-w-xs">
                       {pkg.features && pkg.features.length > 0 ? (
                         pkg.features.slice(0, 2).map((feature, index) => (
-                          <Badge key={index} variant="outline" className="bg-primary/5 text-xs">
-                            {feature.length > 20 ? `${feature.substring(0, 20)}...` : feature}
+                          <Badge
+                            key={index}
+                            variant="outline"
+                            className="bg-primary/5 text-xs"
+                          >
+                            {feature.length > 20
+                              ? `${feature.substring(0, 20)}...`
+                              : feature}
                           </Badge>
                         ))
                       ) : (
-                        <span className="text-muted-foreground text-sm">No features</span>
+                        <span className="text-muted-foreground text-sm">
+                          No features
+                        </span>
                       )}
                       {pkg.features && pkg.features.length > 2 && (
-                        <Badge variant="outline" className="bg-primary/5 text-xs">
+                        <Badge
+                          variant="outline"
+                          className="bg-primary/5 text-xs"
+                        >
                           +{pkg.features.length - 2} more
                         </Badge>
                       )}
                     </div>
                   </TableCell>
-            
+
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
                       <Button
@@ -204,7 +243,9 @@ const PackageTable = () => {
           </Table>
         ) : searchQuery && packages.data?.total > 0 ? (
           <div className="flex flex-col justify-center items-center h-40 text-muted-foreground">
-            <p className="mb-2">No packages found for &quot;{searchQuery}&quot;</p>
+            <p className="mb-2">
+              No packages found for &quot;{searchQuery}&quot;
+            </p>
             <Button variant="outline" size="sm" onClick={handleClearSearch}>
               Clear search
             </Button>

@@ -6,7 +6,13 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { DeleteIcon, Loader2 } from "lucide-react";
+import { DeleteIcon, Loader2, ShieldCloseIcon } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +32,8 @@ import {
   useGetMyProfile,
   useApplyVoucher,
   useCheckout,
+  useDeleteVoucher,
+  useRemoveVoucher,
 } from "@/hooks/api";
 import Logo from "../../app/images/logo.png";
 import { useUserContext } from "@/context/userContext";
@@ -34,13 +42,13 @@ const checkoutSchema = z.object({
   snapPoints: z
     .string()
     .optional()
-    .refine((val) => !val || Number.parseFloat(val) > 0, {
+    .refine((val) =>  Number.parseFloat(val) > -1 , {
       message: "snapPoints must be a positive number",
     }),
   discountPoints: z
     .string()
     .optional()
-    .refine((val) => !val || Number.parseFloat(val) > 0, {
+    .refine((val) => Number.parseFloat(val) > -1 , {
       message: "discountPoints must be a positive number",
     }),
 });
@@ -68,6 +76,11 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
   const { mutateAsync: checkout, isPending: isCheckoutPending } = useCheckout();
   const { setCartData } = useCart();
   const { data: cartItems } = useGetCart();
+
+
+  const { mutate: DeleteVoucher, isPending: isDeleteVoucher } =
+  useRemoveVoucher();
+
   const { mutate: applyVoucher, isPending: isApplyVoucherPending } =
     useApplyVoucher();
 
@@ -92,7 +105,12 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
       "discountPoints",
       cartItems?.data?.discountPoints.toString() || ""
     );
+  
+   
+    
   }, [cartItems]);
+
+    console.log(cartItems,"cartItems111")
 
   // Form handling for voucher
   const {
@@ -100,6 +118,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
     handleSubmit: handleVoucherSubmit,
     formState: { errors: voucherErrors },
     watch: watchVoucher,
+    reset:voucherReset
   } = useForm({
     resolver: zodResolver(voucherSchema),
     defaultValues: {
@@ -112,7 +131,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
     return (
       (cart?.data?.subTotal || 0) -
       (cart?.data?.appliedDiscount || 0) -
-      (applyvocherResponse?.data?.voucherDiscount || 0) -
+      (cart?.data?.voucherDiscount || 0) -
       Number(watch("snapPoints") || 0) / 100 -
       Number(watch("discountPoints") || 0) / 100
     );
@@ -226,6 +245,8 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
       {
         onSuccess: (response) => {
           setApplyvocherResponse(response);
+          refetch()
+          voucherReset()
           toast.success("Voucher applied successfully", {
             position: "top-right",
             style: { backgroundColor: "green", color: "white" },
@@ -262,6 +283,31 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
         },
       }
     );
+  };
+
+  const handleDeleteVoucher = () => {
+    DeleteVoucher(undefined, {
+      onSuccess: () => {
+        setApplyvocherResponse(null); 
+        voucherReset()
+        // Clear the applied voucher response
+        toast.success("Voucher code removed successfully", {
+          position: "top-right",
+          style: { backgroundColor: "green", color: "white" },
+        });
+        
+        refetch(); // Refetch cart data to update the UI
+      },
+      onError: (error: any) => {
+        toast.error(
+          error?.response?.data?.message || "Failed to remove voucher",
+          {
+            position: "top-right",
+            style: { backgroundColor: "red", color: "white" },
+          }
+        );
+      },
+    });
   };
 
   return (
@@ -398,6 +444,26 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                     </p>
                   )}
                 </div>
+                  {cartItems?.data?.voucherCode && (
+                    <div className="flex my-2 items-center gap-2">
+                      <span>
+                        <strong>Voucher Code:</strong> <span>{cartItems?.data?.voucherCode}</span>
+                      </span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <ShieldCloseIcon 
+                              className="cursor-pointer hover:text-[red]"
+                              onClick={handleDeleteVoucher} 
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Remove Voucher Code</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  )}
               </form>
             </div>
             <div className="md:col-span-2">
@@ -453,8 +519,15 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                       </span>
                     </div>
                   )}
-
-                  {watchVoucher("voucherCode") &&
+ {cart?.data?.voucherDiscount > 0 && (
+                    <div className="flex justify-between text-lg text-green-600">
+                      <span>Voucher Discount:</span>
+                      <span>
+                        -{cart?.data?.voucherDiscount.toFixed(2) || 0}€
+                      </span>
+                    </div>
+                  )}
+                  {/* {watchVoucher("voucherCode") &&
                     applyvocherResponse?.data?.voucherDiscount > 0 && (
                       <div className="flex justify-between text-lg text-green-600">
                         <span>Voucher Discount:</span>
@@ -466,7 +539,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                           €
                         </span>
                       </div>
-                    )}
+                    )} */}
 
                   {watch("snapPoints") && Number(watch("snapPoints")) > 0 && (
                     <div className="flex justify-between text-lg text-green-600">

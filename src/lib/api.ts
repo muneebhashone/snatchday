@@ -1093,3 +1093,9 @@ export const getDuelScore = async (
   const response = await axiosInstance.post(`/duel/score/${id}`, data);
   return response.data;
 };
+
+
+export const removeVoucherCode = async () => {
+  const response = await axiosInstance.get(`/order/remove-voucher`);
+  return response.data;
+};

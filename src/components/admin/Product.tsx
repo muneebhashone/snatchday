@@ -321,7 +321,6 @@ export function Product() {
                 <TableHead>STOCK</TableHead>
                 <TableHead>SKU</TableHead>
                 <TableHead>PRICE</TableHead>
-                <TableHead>QTY</TableHead>
                 <TableHead>TYPE</TableHead>
                 <TableHead>ACTIONS</TableHead>
                 <TableHead>TOURNAMENT</TableHead>
@@ -385,7 +384,6 @@ export function Product() {
                     </TableCell>
                     <TableCell>{product?.sku || "N/A"}</TableCell>
                     <TableCell>{formatCurrency(product?.price)}</TableCell>
-                    <TableCell>{product?.stock}</TableCell>
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${

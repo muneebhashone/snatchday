@@ -190,12 +190,12 @@ const navItems = [
         url: "/admin/tutorial",
         icon: <Book className="h-4 w-4" />,
       },
+      {
+        title: "Points",
+        url: "/admin/points",
+        icon: <Plus className="h-4 w-4" />,
+      },
     ],
-  },
-  {
-    title: "Points",
-    url: "/admin/points",
-    icon: <Plus className="h-4 w-4" />,
   },
   {
     title: "Payouts",
@@ -216,7 +216,7 @@ const navItems = [
 
   {
     title: "Packages",
-    
+
     icon: <Heart className="h-4 w-4" />,
     subItems: [
       {

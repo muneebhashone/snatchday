@@ -36,14 +36,14 @@
 // //   image: string;
 // // }
 
-import ClientLayout from "@/components/landing-page/ClientLayout"
+import ClientLayout from "@/components/landing-page/ClientLayout";
 import AddressStep from "@/components/multistep-checkout/addressstep";
 import { CartStep } from "@/components/multistep-checkout/cart-step";
 import { ConfirmationStep } from "@/components/multistep-checkout/confirmation-step";
 // import { PaymentStep } from "@/components/multistep-checkout/payment-step";
-import { StepIndicator } from "@/components/multistep-checkout/step-indicator"
+import { StepIndicator } from "@/components/multistep-checkout/step-indicator";
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
 // // Define the Zod schema for the checkout payload
 // const checkoutSchema = z
@@ -484,12 +484,12 @@ import { useEffect, useState } from "react"
 
 const MultiStepCheckout = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const searchParms=useSearchParams()
-   const orderIdparams=searchParms.get("orderId")
-   const step=searchParms.get("step")
+  const searchParms = useSearchParams();
+  const orderIdparams = searchParms.get("orderId");
+  const step = searchParms.get("step");
   const nextStep = () => setCurrentStep(currentStep + 1);
   const prevStep = () => setCurrentStep(currentStep - 1);
-  const [orderId,  setOrderId] = useState("");
+  const [orderId, setOrderId] = useState("");
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [addresses, setAddresses] = useState([]);
@@ -497,47 +497,47 @@ const MultiStepCheckout = () => {
   const [checkoutResponse, setCheckoutResponse] = useState(null);
   const [orderSummary, setOrderSummary] = useState({});
 
-
   useEffect(() => {
-    if(step){
-      setCurrentStep(2)
-      setOrderId(orderIdparams)
+    if (step) {
+      setCurrentStep(2);
+      setOrderId(orderIdparams);
     }
-  }, [step])
+  }, [step]);
 
+  return (
+    <ClientLayout>
+      <div className="mx-auto max-w-[1480px] pt-40 pb-60 px-4">
+        <StepIndicator currentStep={currentStep} />
 
-
-  
-    return (
-      <ClientLayout>
-        <div className="mx-auto max-w-[1480px] pt-40 pb-60 px-4">
-          <StepIndicator currentStep={currentStep} />
-    
-          <div className="mt-8">
-            {currentStep === 0 && <CartStep onNextStep={nextStep} setCheckoutResponse={setCheckoutResponse} />}
-            {currentStep === 1 && (
-              <AddressStep
-                onNextStep={nextStep}
-                onPrevStep={prevStep}
-                checkoutResponse={checkoutResponse}
-                setOrderId={setOrderId}
-                selectedAddress={selectedAddress}
-                setSelectedAddress={setSelectedAddress}
-              />
-            )}
-            {currentStep === 2 && (
-                <ConfirmationStep orderId={orderId} selectedAddress={selectedAddress} cart={cart} orderSummary={orderSummary} />
-
-            )}
-            
-          </div>
+        <div className="mt-8">
+          {currentStep === 0 && (
+            <CartStep
+              onNextStep={nextStep}
+              setCheckoutResponse={setCheckoutResponse}
+            />
+          )}
+          {currentStep === 1 && (
+            <AddressStep
+              onNextStep={nextStep}
+              onPrevStep={prevStep}
+              checkoutResponse={checkoutResponse}
+              setOrderId={setOrderId}
+              selectedAddress={selectedAddress}
+              setSelectedAddress={setSelectedAddress}
+            />
+          )}
+          {currentStep === 2 && (
+            <ConfirmationStep
+              orderId={orderId}
+              selectedAddress={selectedAddress}
+              cart={cart}
+              orderSummary={orderSummary}
+            />
+          )}
         </div>
-      </ClientLayout>
-    )
-  
-  
-}
+      </div>
+    </ClientLayout>
+  );
+};
 
 export default MultiStepCheckout;
-
-

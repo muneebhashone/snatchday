@@ -74,6 +74,8 @@ export function CustomeListTable({
   const totalItems = customers?.data?.customers[0]?.total[0]?.total || 0;
   const currentPage = Math.floor(page / skip) + 1;
 
+  console.log(customers, "customers");
+
   const handlePageChange = (newPage: number) => {
     setPage((newPage - 1) * skip);
   };

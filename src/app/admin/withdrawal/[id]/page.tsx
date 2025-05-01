@@ -301,15 +301,15 @@ export default function WithdrawalDetailsPage() {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Shop Commission</span>
-                <span className="font-medium">1.00€</span>
+                <span className="font-medium">€1.00</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-500">Method Fee</span>
                 <span className="font-medium">
-                  {request?.withdrawal?.bankDetails?.paypalEmail
+                €{request?.withdrawal?.bankDetails?.paypalEmail
                     ? "0.35"
                     : "0.00"}
-                  €
+                  
                 </span>
               </div>
               <div className="border-t pt-2 mt-2">
@@ -325,12 +325,17 @@ export default function WithdrawalDetailsPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-500">Current Balance</span>
                   <span className="font-medium">
-                    {formatCurrency(
-                      withdrawalRequest?.data?.customerWallet?.snapPoints /
-                        100 +
-                        (request?.withdrawal?.amount +
-                          request?.withdrawal?.platformFee)
-                    ) || "Not provided"}
+                    {request?.withdrawal?.status === "PENDING"
+                      ? formatCurrency(
+                          withdrawalRequest?.data?.customerWallet?.snapPoints /
+                            100 +
+                            (request?.withdrawal?.amount +
+                              request?.withdrawal?.platformFee)
+                        )
+                      : formatCurrency(
+                          withdrawalRequest?.data?.customerWallet?.snapPoints /
+                            100
+                        )}
                   </span>
                 </div>
               </div>
