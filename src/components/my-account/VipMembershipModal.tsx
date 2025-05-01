@@ -13,14 +13,14 @@ import {
 
 const VipMembershipModal = () => {
   return (
-    <Dialog>
+    <Dialog >
       <DialogTrigger asChild>
         <Button className="w-full bg-red-600 hover:bg-red-700 text-white rounded-full py-3">
           BECOME A VIP MEMBER
         </Button>
       </DialogTrigger>
-      <DialogContent className="rounded-lg max-w-[1000px] p-6">
-        <DialogHeader className="">
+      <DialogContent hideCloseButton={true} className="rounded-lg max-w-[1000px] p-6">
+        <DialogHeader  className="">
           <DialogTitle className="text-4xl font-bold text-center">
             Buy ViP membership now!
           </DialogTitle>
