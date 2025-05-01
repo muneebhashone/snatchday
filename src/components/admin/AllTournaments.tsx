@@ -164,7 +164,9 @@ const AllTournaments = () => {
           setIsCancelling(false);
         },
         onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Failed to cancel tournament");
+          toast.error(
+            error.response?.data?.message || "Failed to cancel tournament"
+          );
           setShowCancelModal(false);
           setSelectedTournamentId(null);
           setIsCancelling(false);
@@ -291,10 +293,11 @@ const AllTournaments = () => {
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50">
+                <TableHead className="text-gray-500">ID</TableHead>
                 <TableHead className="text-gray-500">IMAGE</TableHead>
                 <TableHead className="text-gray-500">TOURNAMENT</TableHead>
                 <TableHead className="text-gray-500">GAME</TableHead>
-                <TableHead className="text-gray-500">STARTING PRICE</TableHead>
+                <TableHead className="text-gray-500">CURRENT PRICE</TableHead>
                 <TableHead className="text-gray-500">
                   CALCULATED AMOUNT
                 </TableHead>
@@ -317,6 +320,7 @@ const AllTournaments = () => {
               ) : tournaments.length > 0 ? (
                 tournaments.map((tournament) => (
                   <TableRow key={tournament._id} className="hover:bg-gray-50">
+                    <TableCell>{tournament?.tournamentId}</TableCell>
                     <TableCell>
                       {tournament.image && (
                         <div className="relative h-12 w-12">
@@ -482,7 +486,7 @@ const AllTournaments = () => {
         }}
         onConfirm={handleConfirmCancel}
         title="Cancel Tournament?"
-        description="Are you sure you want to cancel this tournament? This action cannot be undone."
+        description="Are you sure you want to cancel this tournament? All participants will have their points automatically returned to their accounts. This action cannot be undone."
         confirmText="Cancel Tournament"
         cancelText="Keep Active"
         isLoading={isCancelling}

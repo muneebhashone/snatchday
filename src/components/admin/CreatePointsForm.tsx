@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,34 +11,72 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { useCreatePoints, useGetPoints } from "@/hooks/api"
-import { toast } from "sonner"
-import { useEffect } from "react"
-import { points } from "@/types"
-import { Facebook, Save, ThumbsUp, Users, DollarSign, Percent, CreditCard } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useCreatePoints, useGetPoints } from "@/hooks/api";
+import { toast } from "sonner";
+import { useEffect } from "react";
+import { points } from "@/types";
+import {
+  Facebook,
+  Save,
+  ThumbsUp,
+  Users,
+  DollarSign,
+  Percent,
+  CreditCard,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const formSchema = z.object({
-  facebookLike: z.number().min(0, "Points must be a positive number"),
-  facebookShare: z.number().min(0, "Points must be a positive number"),
-  referral: z.number().min(0, "Points must be a positive number"),
-  facebookAppId: z.string().min(1, "Facebook App ID is required"),
-  maxSnapPoints: z.number().min(0, "Maximum snap points must be a positive number"),
-  maxDiscountPoints: z.number().min(0, "Maximum discount points must be a positive number"),
-  maxWithdrawalAmount: z.number().min(0, "Maximum withdrawal amount must be a positive number"),
-  minWithdrawalAmount: z.number().min(0, "Minimum withdrawal amount must be a positive number"),
-  platformFee: z.number().min(0, "Platform fee must be a positive number"),
-  snapPointsRatio: z.number().min(0, "Snap points ratio must be a positive number"),
-})
+const formSchema = z
+  .object({
+    facebookLike: z.number().min(0, "Points must be a positive number"),
+    facebookShare: z.number().min(0, "Points must be a positive number"),
+    referral: z.number().min(0, "Points must be a positive number"),
+    facebookAppId: z.string().min(1, "Facebook App ID is required"),
+    maxSnapPoints: z
+      .number()
+      .min(0, "Maximum snap points must be a positive number"),
+    maxDiscountPoints: z
+      .number()
+      .min(0, "Maximum discount points must be a positive number"),
+    maxWithdrawalAmount: z
+      .number()
+      .min(0, "Maximum withdrawal amount must be a positive number"),
+    minWithdrawalAmount: z
+      .number()
+      .min(0, "Minimum withdrawal amount must be a positive number"),
+    platformFee: z.number().min(0, "Platform fee must be a positive number"),
+    snapPointsRatio: z
+      .number()
+      .min(0, "Snap points ratio must be a positive number"),
+  })
+  .refine(
+    (data) => {
+      if (data.maxWithdrawalAmount < data.minWithdrawalAmount) {
+        return false;
+      }
+      return true;
+    },
+    {
+      path: ["maxWithdrawalAmount"],
+      message:
+        "Maximum withdrawal amount must be greater than minimum withdrawal amount",
+    }
+  );
 
-type PointsFormValues = z.infer<typeof formSchema>
+type PointsFormValues = z.infer<typeof formSchema>;
 
 export function CreatePointsForm() {
-  const { mutate: createPoints, isPending } = useCreatePoints()
-  const { data: points, isLoading } = useGetPoints()
+  const { mutate: createPoints, isPending } = useCreatePoints();
+  const { data: points, isLoading } = useGetPoints();
 
   const form = useForm<PointsFormValues>({
     resolver: zodResolver(formSchema),
@@ -54,7 +92,7 @@ export function CreatePointsForm() {
       platformFee: 0,
       snapPointsRatio: 0,
     },
-  })
+  });
 
   useEffect(() => {
     if (points?.data) {
@@ -91,12 +129,14 @@ export function CreatePointsForm() {
 
     createPoints(submitData, {
       onSuccess: () => {
-        toast.success("Points settings updated successfully")
+        toast.success("Points settings updated successfully");
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Failed to update points settings")
+        toast.error(
+          error.response?.data?.message || "Failed to update points settings"
+        );
       },
-    })
+    });
   }
 
   if (isLoading) {
@@ -105,7 +145,7 @@ export function CreatePointsForm() {
         <Skeleton className="h-[300px] w-full rounded-lg" />
         <Skeleton className="h-[300px] w-full rounded-lg" />
       </div>
-    )
+    );
   }
 
   return (
@@ -117,7 +157,9 @@ export function CreatePointsForm() {
               <Facebook className="h-5 w-5 text-blue-600" />
               <CardTitle>Social Media Settings</CardTitle>
             </div>
-            <CardDescription>Configure points rewarded for social media interactions</CardDescription>
+            <CardDescription>
+              Configure points rewarded for social media interactions
+            </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -131,7 +173,11 @@ export function CreatePointsForm() {
                       Facebook Like Points
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -148,7 +194,11 @@ export function CreatePointsForm() {
                       Facebook Share Points
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -165,7 +215,11 @@ export function CreatePointsForm() {
                       Referral Points
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -198,7 +252,9 @@ export function CreatePointsForm() {
               <DollarSign className="h-5 w-5 text-green-600" />
               <CardTitle>Platform Limits</CardTitle>
             </div>
-            <CardDescription>Configure maximum and minimum values for the platform</CardDescription>
+            <CardDescription>
+              Configure maximum and minimum values for the platform
+            </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -212,7 +268,11 @@ export function CreatePointsForm() {
                       Max Snap Points
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -229,7 +289,11 @@ export function CreatePointsForm() {
                       Max Discount Points
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -245,7 +309,9 @@ export function CreatePointsForm() {
               <CreditCard className="h-5 w-5 text-purple-600" />
               <CardTitle>Withdrawal Settings</CardTitle>
             </div>
-            <CardDescription>Configure withdrawal limits and fees</CardDescription>
+            <CardDescription>
+              Configure withdrawal limits and fees
+            </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -259,7 +325,11 @@ export function CreatePointsForm() {
                       Max Withdrawal Amount
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -276,7 +346,11 @@ export function CreatePointsForm() {
                       Min Withdrawal Amount
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -292,7 +366,9 @@ export function CreatePointsForm() {
               <Percent className="h-5 w-5 text-orange-600" />
               <CardTitle>Fee Settings</CardTitle>
             </div>
-            <CardDescription>Configure platform fees and conversion ratios</CardDescription>
+            <CardDescription>
+              Configure platform fees and conversion ratios
+            </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -306,7 +382,11 @@ export function CreatePointsForm() {
                       Platform Fee
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -323,7 +403,11 @@ export function CreatePointsForm() {
                       Snap Points Ratio
                     </FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -334,12 +418,16 @@ export function CreatePointsForm() {
         </Card>
 
         <div className="flex justify-end">
-          <Button type="submit" className="flex items-center gap-2" disabled={isPending}>
+          <Button
+            type="submit"
+            className="flex items-center gap-2"
+            disabled={isPending}
+          >
             <Save className="h-4 w-4" />
             {isPending ? "Saving..." : "Save Points Settings"}
           </Button>
         </div>
       </form>
     </Form>
-  )
-} 
+  );
+}

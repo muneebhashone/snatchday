@@ -136,6 +136,7 @@ export function ReturnListTable() {
             <TableHeader>
               <TableRow className="bg-gray-50">
                 <TableHead>ARTICLE</TableHead>
+                <TableHead>CUSTOMER</TableHead>
                 <TableHead>ORDER NO.</TableHead>
                 <TableHead>RETURN NUMBER</TableHead>
                 <TableHead>STATUS</TableHead>
@@ -159,6 +160,9 @@ export function ReturnListTable() {
                           <li>{product?.product?.article || "N/A"}</li>
                         </ul>
                       )) || "N/A"}
+                    </TableCell>
+                    <TableCell className="capitalize">
+                      {returnItem.user?.name || "N/A"}
                     </TableCell>
                     <TableCell>{returnItem.orderNumber || "N/A"}</TableCell>
                     <TableCell>{returnItem.returnNumber || "N/A"}</TableCell>
