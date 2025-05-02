@@ -1,10 +1,11 @@
-'use client';
+"use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import crown from "@/app/images/crown.png";
 import { useGetSubscriptionPlan } from "@/hooks/api";
 import { Loader } from "lucide-react";
+import SubscriptionModal from "./SubscriptionModal";
 
 interface PricingFeature {
   text: string;
@@ -40,12 +41,15 @@ const formatInterval = (interval: string) => {
 };
 
 const ExclusiveCards = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [packageId, setPackageId] = useState("");
   const { data: subscriptionPlan, isLoading } = useGetSubscriptionPlan();
   const packages = subscriptionPlan?.data?.packages || [];
+  console.log(packages);
 
   // Background colors for cards
   const bgColors = ["bg-gray-200", "bg-white", "bg-[#F6E9E1]"];
-  
+
   // If there are no packages, show loading or fallback
   if (isLoading) {
     return (
@@ -56,15 +60,18 @@ const ExclusiveCards = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1440px] mx-auto">
+    <div
+      id="scroll-to-packages"
+      className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1440px] mx-auto"
+    >
       {packages.map((pkg, index) => {
         // Determine if this card should be highlighted as popular (middle card)
-        const isPopular = index === 1;
-        
+        const isPopular = pkg.popular;
+
         return (
           <div
             key={pkg._id}
-            className={`relative rounded-xl p-10 md:p-10 lg:p-8 lg:pt-16 xl:p-16 w-full md:w-auto ${
+            className={`relative rounded-xl p-10 md:p-10 lg:p-8 lg:pt-16 xl:p-16 w-full md:w-auto flex flex-col justify-between ${
               isPopular ? "bg-[#8D4CC4]" : "bg-white"
             } ${isPopular ? "mt-0" : "lg:mt-20"} ${
               isPopular ? "lg:mb-20" : "mb-0"
@@ -81,38 +88,66 @@ const ExclusiveCards = () => {
 
             {/* Card Header */}
             <div className="flex items-center gap-3">
-              <div className={`flex items-center gap-3 p-5 rounded-xl ${bgColors[index % bgColors.length]}`}>
+              <div
+                className={`flex items-center gap-3 p-5 rounded-xl ${
+                  bgColors[index % bgColors.length]
+                }`}
+              >
                 <Image
                   src={crown.src}
                   alt={pkg.name}
                   width={24}
                   height={24}
-                  className={`w-6 h-6 ${index !== 0 ? "grayscale-0" : "grayscale"}`}
+                  className={`w-6 h-6 ${
+                    index !== 0 ? "grayscale-0" : "grayscale"
+                  }`}
                 />
               </div>
               <div>
-                <p className={`text-lg ${isPopular ? "text-white" : "text-foreground"}`}>
-                  {pkg.interval === "month" ? "For individuals" : 
-                   pkg.interval === "6months" ? "For startups" : 
-                   pkg.interval === "year" ? "For businesses" : "For customers"}
+                <p
+                  className={`text-lg ${
+                    isPopular ? "text-white" : "text-foreground"
+                  }`}
+                >
+                  {pkg.interval === "month"
+                    ? "For individuals"
+                    : pkg.interval === "6months"
+                    ? "For startups"
+                    : pkg.interval === "year"
+                    ? "For businesses"
+                    : "For customers"}
                 </p>
-                <h3 className={`text-xl font-extrabold ${isPopular ? "text-white" : "text-gray-900"}`}>
+                <h3
+                  className={`text-xl font-extrabold ${
+                    isPopular ? "text-white" : "text-gray-900"
+                  }`}
+                >
                   {pkg.name}
                 </h3>
               </div>
             </div>
 
-            <p className={`mt-5 ${isPopular ? "text-white" : "text-foreground"}`}>
+            <p
+              className={`mt-5 ${isPopular ? "text-white" : "text-foreground"}`}
+            >
               {pkg.description}
             </p>
 
             {/* Pricing */}
             <div className="lg:mt-4">
               <div className="flex items-baseline">
-                <span className={`text-[50px] xl:text-[68px] font-extrabold ${isPopular ? "text-white" : "text-[#1C1B1D]"}`}>
+                <span
+                  className={`text-[50px] xl:text-[68px] font-extrabold ${
+                    isPopular ? "text-white" : "text-[#1C1B1D]"
+                  }`}
+                >
                   ${pkg.price}
                 </span>
-                <span className={`ml-1 text-md xl:text-lg ${isPopular ? "text-white/80" : "text-foreground"}`}>
+                <span
+                  className={`ml-1 text-md xl:text-lg ${
+                    isPopular ? "text-white/80" : "text-foreground"
+                  }`}
+                >
                   {formatInterval(pkg.interval)}
                 </span>
               </div>
@@ -120,28 +155,39 @@ const ExclusiveCards = () => {
 
             {/* Features */}
             <div className="mt-3 space-y-2 lg:space-y-4">
-              <h4 className={`text-lg font-extrabold ${isPopular ? "text-white" : "text-[#1C1B1D]"}`}>
+              <h4
+                className={`text-lg font-extrabold ${
+                  isPopular ? "text-white" : "text-[#1C1B1D]"
+                }`}
+              >
                 Whats Included
               </h4>
               <ul className="space-y-1 lg:space-y-3">
-                {pkg.features && pkg.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center gap-3">
-                    <svg
-                      className={`w-6 h-6 ${isPopular ? "text-white" : "text-[#8D4CC4]"}`}
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span className={`text-sm sm:text-lg ${isPopular ? "text-white/80" : "text-[#1C1B1D]"}`}>
-                      {feature}
-                    </span>
-                  </li>
-                ))}
+                {pkg.features &&
+                  pkg.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-center gap-3">
+                      <svg
+                        className={`w-6 h-6 ${
+                          isPopular ? "text-white" : "text-[#8D4CC4]"
+                        }`}
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <span
+                        className={`text-sm sm:text-lg ${
+                          isPopular ? "text-white/80" : "text-[#1C1B1D]"
+                        }`}
+                      >
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
               </ul>
             </div>
 
@@ -155,6 +201,10 @@ const ExclusiveCards = () => {
                       : "gradient-primary text-white hover:opacity-90"
                   }
                 `}
+                onClick={() => {
+                  setIsOpen(true);
+                  setPackageId(pkg._id);
+                }}
               >
                 Get started
               </button>
@@ -162,6 +212,7 @@ const ExclusiveCards = () => {
           </div>
         );
       })}
+      <SubscriptionModal isOpen={isOpen} setIsOpen={setIsOpen} packageId={packageId} />
     </div>
   );
 };

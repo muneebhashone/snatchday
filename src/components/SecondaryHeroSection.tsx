@@ -1,3 +1,4 @@
+"use client";
 import Image, { StaticImageData } from "next/image";
 import PrimaryHeading from "./PrimaryHeading";
 import { Button } from "./ui/button";
@@ -5,6 +6,7 @@ import crown from "@/app/images/crown.png";
 
 import { Input } from "./ui/input";
 import { SearchIcon } from "lucide-react";
+import Link from "next/link";
 
 const SecondaryHeroSection = ({
   title,
@@ -50,26 +52,31 @@ const SecondaryHeroSection = ({
                   <p className="text-white mt-3 text-[18px] lg:text-2xl font-normal">
                     Take your chance to get a very special bargain.
                   </p>
-                  <Button
-                    style={{
-                      background: `
+                  <Link href='#scroll-to-packages' scroll={false} onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('scroll-to-packages')?.scrollIntoView({ behavior: 'smooth' });
+                  }}>
+                    <Button
+                      style={{
+                        background: `
                         linear-gradient(#330542, #330542) padding-box,
                         linear-gradient(116.76deg, #E4BD83 13.91%, #9C6727 28.84%, #FDF6AE 32.04%, #A06B2A 50.53%, #FDF6AE 53.15%, #BD8D42 71.14%) border-box
                       `,
-                      border: "5px solid transparent",
-                      borderRadius: "9999px",
-                    }}
-                    className="mt-4 lg:mt-7 w-[180px] sm:w-[220px] lg:w-[312px] h-[50px] sm:h-[70px] lg:h-[83px] text-xl lg:text-2xl font-bold flex items-center justify-center"
-                  >
-                    <Image
-                      src={crown}
-                      width={36}
-                      height={36}
-                      alt="crown"
-                      className="w-[22px] sm:w-[28px] h-[22px] sm:h-[28px]"
-                    />
-                    Register
-                  </Button>
+                        border: "5px solid transparent",
+                        borderRadius: "9999px",
+                      }}
+                      className="mt-4 lg:mt-7 w-[180px] sm:w-[220px] lg:w-[312px] h-[50px] sm:h-[70px] lg:h-[83px] text-xl lg:text-2xl font-bold flex items-center justify-center"
+                    >
+                      <Image
+                        src={crown}
+                        width={36}
+                        height={36}
+                        alt="crown"
+                        className="w-[22px] sm:w-[28px] h-[22px] sm:h-[28px]"
+                      />
+                      Register
+                    </Button>
+                  </Link>
                   <p className="text-white text-lg lg:text-xl lg:mt-4">
                     Complete your{" "}
                     <span className="text-primary">ViP membership</span> now!
@@ -110,7 +117,11 @@ const SecondaryHeroSection = ({
                 <Image
                   src={rightimage}
                   alt="tournament"
-                  className={`w-full object-contain ${title === "VIP Shop" ? 'max-h-[120px] sm:max-h-[200px] lg:max-h-[260px] xl:max-h-[500px]' : 'max-h-[180px] sm:max-h-[200px] lg:max-h-[260px] xl:max-h-[500px]'}`}
+                  className={`w-full object-contain ${
+                    title === "VIP Shop"
+                      ? "max-h-[120px] sm:max-h-[200px] lg:max-h-[260px] xl:max-h-[500px]"
+                      : "max-h-[180px] sm:max-h-[200px] lg:max-h-[260px] xl:max-h-[500px]"
+                  }`}
                 />
               )}
             </div>
