@@ -1,5 +1,7 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import Image from "next/image";
+import user from "@/app/images/avatarimage.svg";
 
 const specifications = {
   para: [
@@ -71,8 +73,83 @@ const ProductDescription = [
   "Acer Aspire 3 A315-35 - Intel Pentium Silver N6000 / 1.1 GHz - Win 11 Home - UHD Graphics - 8 GB RAM - 512 GB SSD QLC - 39.62 cm (15.6`) IPS 1920 x 1080 (Full HD) - Wi-Fi 5 - Pure Silver - kbd: German",
 ];
 
-const ProductDetailTheorySec = (description: string) => {
+const dummyParticipants = [
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+    {
+      name: "John Doe",
+      image: user,
+    },
+];
 
+const ProductDetailTheorySec = ({
+  description,
+  participants,
+}: {
+  description: string;
+  participants: {
+    name: string;
+    image: string;
+  }[];
+}) => {
   return (
     <div className="bg-white mt-8 max-w-[1440px] mx-auto">
       <Tabs defaultValue="description1" className="w-full">
@@ -100,6 +177,12 @@ const ProductDetailTheorySec = (description: string) => {
             className="text-[16px] shadow-[-1px_-1px_5px_#e9f0ff] text-[#444444] capitalize font-medium px-6 py-2 rounded-none rounded-t-sm  data-[state=active]:bg-[#FF6B3D] data-[state=active]:text-white data-[state=active]:shadow-none"
           >
             product description
+          </TabsTrigger>
+          <TabsTrigger
+            value="participants"
+            className="text-[16px] shadow-[-1px_-1px_5px_#e9f0ff] text-[#444444] capitalize font-medium px-6 py-2 rounded-none rounded-t-sm  data-[state=active]:bg-[#FF6B3D] data-[state=active]:text-white data-[state=active]:shadow-none"
+          >
+            participants
           </TabsTrigger>
         </TabsList>
 
@@ -143,7 +226,29 @@ const ProductDetailTheorySec = (description: string) => {
           <div className="grid grid-cols-1 px-10 space-y-4">
             {ProductDescription.map((spec, index) => (
               <p key={index} className="space-y-4 text-lg">
-                {spec}
+                {description}
+              </p>
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent
+          value="participants"
+          className="py-8 mt-0 max-h-[300px] overflow-y-auto "
+        >
+          <div className="flex flex-wrap gap-10 px-10 space-y-4 w-full items-center justify-start ">
+            {dummyParticipants.map((participant, index) => (
+              <p
+                key={index}
+                className="space-y-4 text-lg flex items-center gap-2 "
+              >
+                <Image
+                  src={participant.image || user}
+                  alt={participant.name}
+                  width={50}
+                  height={50}
+                  className="rounded-full object-fill object-center"
+                />
+                {participant.name}
               </p>
             ))}
           </div>
