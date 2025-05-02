@@ -21,20 +21,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useCreateSubscriptionPlan, useGetSubscriptionPlan, useUpdateSubscriptionPlan } from "@/hooks/api";
+import {
+  useCreateSubscriptionPlan,
+  useGetSubscriptionPlan,
+  useUpdateSubscriptionPlan,
+} from "@/hooks/api";
 import { toast } from "sonner";
 import { Loader, Plus, Save, X } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Switch } from "../ui/switch";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  description: z.string().min(1, "Description must be at least 1 characters"),
+  description: z
+    .string()
+    .min(1, "Description must be at least 1 characters")
+    .max(100, "Description must be less than 300 characters"),
   price: z.coerce.number().min(0, "Price must be a positive number"),
   interval: z.string().min(1, "Interval is required"),
   times: z.coerce.number().int().min(1, "Times must be a positive integer"),
-  features: z.array(z.object({ value: z.string().min(1, "Feature cannot be empty") })),
+  features: z.array(
+    z.object({ value: z.string().min(1, "Feature cannot be empty") })
+  ),
+  popular: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -58,6 +69,7 @@ interface SubscriptionPlan {
   interval: string;
   times: number;
   features?: string[];
+  popular?: boolean;
 }
 
 const PackagesForm = () => {
@@ -66,11 +78,14 @@ const PackagesForm = () => {
   const isEditMode = Boolean(params.id);
   const packageId = params.id as string;
 
-  const { mutate: createPackage, isPending: isCreatePending } = useCreateSubscriptionPlan();
-  const { mutate: updatePackage, isPending: isUpdatePending } = useUpdateSubscriptionPlan();
+  const { mutate: createPackage, isPending: isCreatePending } =
+    useCreateSubscriptionPlan();
+  const { mutate: updatePackage, isPending: isUpdatePending } =
+    useUpdateSubscriptionPlan();
   const { data: packagesData, isLoading } = useGetSubscriptionPlan();
-  
-  const [currentPackage, setCurrentPackage] = useState<SubscriptionPackage | null>(null);
+
+  const [currentPackage, setCurrentPackage] =
+    useState<SubscriptionPackage | null>(null);
 
   const isPending = isCreatePending || isUpdatePending;
 
@@ -80,9 +95,10 @@ const PackagesForm = () => {
       name: "",
       description: "",
       price: 0,
-      interval: "month",
+      interval: "30days",
       times: 1,
       features: [{ value: "" }],
+      popular: false,
     },
   });
 
@@ -99,9 +115,9 @@ const PackagesForm = () => {
 
       if (foundPackage) {
         setCurrentPackage(foundPackage);
-        
-        const featuresArray = foundPackage.features?.length 
-          ? foundPackage.features.map(feature => ({ value: feature }))
+
+        const featuresArray = foundPackage.features?.length
+          ? foundPackage.features.map((feature) => ({ value: feature }))
           : [{ value: "" }];
 
         form.reset({
@@ -111,6 +127,7 @@ const PackagesForm = () => {
           interval: foundPackage.interval,
           times: foundPackage.times,
           features: featuresArray,
+          popular: foundPackage.popular,
         });
       }
     }
@@ -118,20 +135,23 @@ const PackagesForm = () => {
 
   const onSubmit = (values: FormValues) => {
     const subscriptionData: SubscriptionPlan = {
+      popular: values.popular,
       name: values.name,
       description: values.description,
       price: values.price,
       interval: values.interval,
       times: values.times,
-      features: values.features.map(feature => feature.value).filter(value => value.trim() !== ""),
+      features: values.features
+        .map((feature) => feature.value)
+        .filter((value) => value.trim() !== ""),
     };
 
     if (isEditMode && packageId) {
       updatePackage(
-        { 
-          packageId, 
-          data: subscriptionData 
-        }, 
+        {
+          packageId,
+          data: subscriptionData,
+        },
         {
           onSuccess: () => {
             toast.success("Subscription package updated successfully");
@@ -139,7 +159,8 @@ const PackagesForm = () => {
           },
           onError: (error: any) => {
             toast.error(
-              error.response?.data?.message || "Failed to update subscription package"
+              error.response?.data?.message ||
+                "Failed to update subscription package"
             );
             console.error("Error updating subscription package:", error);
           },
@@ -153,7 +174,8 @@ const PackagesForm = () => {
         },
         onError: (error: any) => {
           toast.error(
-            error.response?.data?.message || "Failed to create subscription package"
+            error.response?.data?.message ||
+              "Failed to create subscription package"
           );
           console.error("Error creating subscription package:", error);
         },
@@ -173,7 +195,9 @@ const PackagesForm = () => {
     <div className="py-6 max-w-full mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">
-          {isEditMode ? "Edit Subscription Package" : "Create Subscription Package"}
+          {isEditMode
+            ? "Edit Subscription Package"
+            : "Create Subscription Package"}
         </h1>
         <div className="flex gap-2">
           <Button
@@ -201,7 +225,7 @@ const PackagesForm = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg border p-6 col-span-2">
           <h2 className="text-lg font-semibold mb-6">Package Information</h2>
-          
+
           <Form {...form}>
             <form
               id="package-form"
@@ -229,7 +253,7 @@ const PackagesForm = () => {
                   <FormItem>
                     <FormLabel>Description *</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Enter package description"
                         className="min-h-[100px]"
                         {...field}
@@ -289,7 +313,7 @@ const PackagesForm = () => {
 
         <div className="bg-white rounded-lg border p-6">
           <h2 className="text-lg font-semibold mb-6">Pricing & Settings</h2>
-          
+
           <Form {...form}>
             <div className="space-y-6">
               <FormField
@@ -337,10 +361,10 @@ const PackagesForm = () => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="3months">3 Months</SelectItem>
-                        <SelectItem value="6months">6 Months</SelectItem>
-                        <SelectItem value="month">Monthly</SelectItem>
-                        <SelectItem value="year">Yearly</SelectItem>
+                        <SelectItem value="30 days">30 Days</SelectItem>
+                        <SelectItem value="3 months">3 Months</SelectItem>
+                        <SelectItem value="6 months">6 Months</SelectItem>
+                        <SelectItem value="12 months">12 Months</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -374,8 +398,25 @@ const PackagesForm = () => {
                   </FormItem>
                 )}
               />
-
-          
+              <FormField
+                control={form.control}
+                name="popular"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2">
+                    <FormLabel>Popular</FormLabel>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      If the package is popular, it will be highlighted on the
+                      homepage.
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
             </div>
           </Form>
         </div>

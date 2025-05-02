@@ -176,6 +176,9 @@ const PackageTable = () => {
                 <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">
                   Features
                 </TableHead>
+                <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3">
+                  No Of Users
+                </TableHead>
                 <TableHead className="text-xs uppercase tracking-wider font-semibold text-gray-600 py-3 text-right">
                   Actions
                 </TableHead>
@@ -216,6 +219,7 @@ const PackageTable = () => {
                       )}
                     </div>
                   </TableCell>
+                  <TableCell className="">{pkg?.numberOfUsers || 0}</TableCell>
 
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">

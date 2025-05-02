@@ -1,6 +1,13 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Loader, Loader2, User, X } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronsRight,
+  Loader,
+  Loader2,
+  User,
+  X,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -37,6 +44,7 @@ import Withdrawl from "../Withdrawl";
 import { ConfirmationModal } from "../ui/confirmation-modal";
 import { useRouter } from "next/navigation";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import Link from "next/link";
 
 const profileSchema = z.object({
   salutation: z.string().nonempty("Salutation is required"),
@@ -426,8 +434,27 @@ const UserProfile = () => {
                   </div>
 
                   <div className="flex items-center gap-4 pt-4">
-                    <VipMembershipModal />
-                    <CollectPointsModal />
+                    <>
+                      {myProfile?.data?.user?.group !== "VIP" ? (
+                        // <VipMembershipModal />
+                        <Link className="w-full" href="/vip-shop">
+                          <Button className="rounded-full w-full bg-red-600 hover:bg-red-600/80 text-white">
+                            View VIP Shop
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link
+                          className="w-full"
+                          href="/my-account/subscription"
+                        >
+                          <Button className="rounded-full w-full bg-primary text-white">
+                            View Subscription
+                            <ChevronsRight className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                      )}
+                      <CollectPointsModal />
+                    </>
                   </div>
                 </div>
               </div>
