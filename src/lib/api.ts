@@ -1057,14 +1057,17 @@ interface params {
   search?: string;
 }
 
-export const getSubscriptionPlan = async ( params?: params) => {
-  const response = await axiosInstance.get(
-    "/subscriptions/packages" , {params}
-  );
+export const getSubscriptionPlan = async (params?: params) => {
+  const response = await axiosInstance.get("/subscriptions/packages", {
+    params,
+  });
   return response.data;
 };
 
-export const updateSubscriptionPlan = async (packageId: string, data: SubscriptionPlan) => {
+export const updateSubscriptionPlan = async (
+  packageId: string,
+  data: SubscriptionPlan
+) => {
   const response = await axiosInstance.put<SubscriptionPlan>(
     `/subscriptions/packages/${packageId}`,
     data
@@ -1079,8 +1082,6 @@ export const deleteSubscriptionPlan = async (packageId: string) => {
   return response.data;
 };
 
-
-
 export const getDuelGameById = async (id: string) => {
   const response = await axiosInstance.get(`/duel/${id}`);
   return response.data;
@@ -1094,8 +1095,58 @@ export const getDuelScore = async (
   return response.data;
 };
 
-
 export const removeVoucherCode = async () => {
   const response = await axiosInstance.get(`/order/remove-voucher`);
+  return response.data;
+};
+
+export const GetMandate = async () => {
+  const response = await axiosInstance.get(`/mandates`);
+  return response.data;
+};
+
+export const CreateMandate = async (data) => {
+  const response = await axiosInstance.post(`/mandates`, data);
+  return response.data;
+};
+
+export const SubscribePackage = async (
+  packageId: string,
+  mandateId: string
+) => {
+  const response = await axiosInstance.post(
+    `/subscriptions/packages/${packageId}/subscribe/${mandateId}`
+  );
+  return response.data;
+};
+
+export const DeleteMandate = async (mandateId: string) => {
+  const response = await axiosInstance.delete(`/mandates/${mandateId}`);
+  return response.data;
+};
+
+export const getAllSubscription = async () => {
+  const response = await axiosInstance.get("/subscriptions/user/subscriptions");
+  return response.data;
+};
+
+export const getSubscriptionById = async (subscriptionId: string) => {
+  const response = await axiosInstance.get(
+    `/subscriptions/user/subscriptions/${subscriptionId}`
+  );
+  return response.data;
+};
+
+export const cancelSubscription = async (subscriptionId: string) => {
+  const response = await axiosInstance.delete(
+    `/subscriptions/user/subscriptions/${subscriptionId}`
+  );
+  return response.data;
+};
+
+export const getCustomerSubscription = async (customerId: string) => {
+  const response = await axiosInstance.get(
+    `/customers/subscription/${customerId}`
+  );
   return response.data;
 };

@@ -7,6 +7,9 @@ import {
   Swords,
   TrendingUp,
   ArrowLeftRight,
+  ChevronRight,
+  ChevronsRight,
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -37,6 +40,11 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
       icon: <Trophy className="w-5 h-5" />,
       text: "Tournaments",
       href: "/my-account/my-tournaments",
+    },
+    {
+      icon: <Bell className="w-5 h-5" />,
+      text: "Subscription",
+      href: "/my-account/subscription",
     },
     {
       icon: <Swords className="w-5 h-5" />,

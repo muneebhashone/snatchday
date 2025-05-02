@@ -1628,3 +1628,199 @@ export const SupportIcon = () => {
     </svg>
   );
 };
+export const CreditCardIcon = () => {
+  return (
+    <svg
+      width="400"
+      height="250"
+      viewBox="0 0 400 250"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="cardGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#4e54c8" />
+          <stop offset="100%" stop-color="#8f94fb" />
+        </linearGradient>
+      </defs>
+      <rect
+        rx="20"
+        ry="20"
+        width="400"
+        height="250"
+        fill="url(#cardGradient)"
+      />
+      <circle cx="320" cy="50" r="25" fill="white" opacity="0.2" />
+      <text
+        x="30"
+        y="60"
+        font-family="Arial, sans-serif"
+        font-size="24"
+        fill="white"
+        font-weight="bold"
+      >
+        CREDIT CARD
+      </text>
+      <rect
+        x="30"
+        y="90"
+        width="340"
+        height="40"
+        rx="5"
+        fill="white"
+        opacity="0.3"
+      />
+      <text
+        x="40"
+        y="117"
+        font-family="Courier New, monospace"
+        font-size="20"
+        fill="white"
+      >
+        1234 5678 9012 3456
+      </text>
+      <text
+        x="30"
+        y="170"
+        font-family="Arial, sans-serif"
+        font-size="16"
+        fill="white"
+      >
+        CARD HOLDER
+      </text>
+      <text
+        x="30"
+        y="195"
+        font-family="Arial, sans-serif"
+        font-size="18"
+        fill="white"
+        font-weight="bold"
+      >
+        JOHN DOE
+      </text>
+      <text
+        x="280"
+        y="170"
+        font-family="Arial, sans-serif"
+        font-size="16"
+        fill="white"
+      >
+        VALID THRU
+      </text>
+      <text
+        x="280"
+        y="195"
+        font-family="Arial, sans-serif"
+        font-size="18"
+        fill="white"
+        font-weight="bold"
+      >
+        12/27
+      </text>
+    </svg>
+  );
+};
+export const PaypalCardIcon = () => {
+  return (
+    <svg
+      width="400"
+      height="250"
+      viewBox="0 0 400 250"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="paypalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#003087" />
+          <stop offset="100%" stop-color="#009cde" />
+        </linearGradient>
+      </defs>
+      <rect
+        rx="20"
+        ry="20"
+        width="400"
+        height="250"
+        fill="url(#paypalGradient)"
+      />
+
+      <g transform="translate(300, 30)">
+        <circle cx="0" cy="0" r="25" fill="white" />
+        <text
+          x="-12"
+          y="8"
+          font-family="Arial, sans-serif"
+          font-size="24"
+          font-weight="bold"
+          fill="#003087"
+        >
+          P
+        </text>
+      </g>
+
+      <text
+        x="30"
+        y="60"
+        font-family="Arial, sans-serif"
+        font-size="24"
+        fill="white"
+        font-weight="bold"
+      >
+        PayPal CARD
+      </text>
+      <rect
+        x="30"
+        y="90"
+        width="340"
+        height="40"
+        rx="5"
+        fill="white"
+        opacity="0.25"
+      />
+      <text
+        x="40"
+        y="117"
+        font-family="Courier New, monospace"
+        font-size="20"
+        fill="white"
+      >
+        9876 5432 1098 7654
+      </text>
+      <text
+        x="30"
+        y="170"
+        font-family="Arial, sans-serif"
+        font-size="16"
+        fill="white"
+      >
+        ACCOUNT HOLDER
+      </text>
+      <text
+        x="30"
+        y="195"
+        font-family="Arial, sans-serif"
+        font-size="18"
+        fill="white"
+        font-weight="bold"
+      >
+        JANE SMITH
+      </text>
+      <text
+        x="280"
+        y="170"
+        font-family="Arial, sans-serif"
+        font-size="16"
+        fill="white"
+      >
+        VALID THRU
+      </text>
+      <text
+        x="280"
+        y="195"
+        font-family="Arial, sans-serif"
+        font-size="18"
+        fill="white"
+        font-weight="bold"
+      >
+        09/26
+      </text>
+    </svg>
+  );
+};

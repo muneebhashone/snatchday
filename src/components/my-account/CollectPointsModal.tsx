@@ -43,7 +43,7 @@ const CollectPointsModal = () => {
           Would you like to collect additional points?
         </Button>
       </DialogTrigger>
-      <DialogContent className="p-0 ">
+      <DialogContent hideCloseButton={true} className="p-0 ">
         <DialogHeader className="bg-green-700 text-white p-8 rounded-t-3xl relative">
           <DialogTitle className="text-2xl font-bold text-center">
             Collect additional points!

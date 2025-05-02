@@ -138,6 +138,14 @@ import {
   updateSubscriptionPlan,
   deleteSubscriptionPlan,
   removeVoucherCode,
+  GetMandate,
+  CreateMandate,
+  SubscribePackage,
+  DeleteMandate,
+  getAllSubscription,
+  getSubscriptionById,
+  cancelSubscription,
+  getCustomerSubscription,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1228,7 +1236,7 @@ export const useCreateSubscriptionPlan = () => {
   });
 };
 
-export const useGetSubscriptionPlan = (params?: {search?: string}) => {
+export const useGetSubscriptionPlan = (params?: { search?: string }) => {
   return useQuery({
     queryKey: ["subscriptionPlan", params],
     queryFn: () => getSubscriptionPlan(params),
@@ -1254,4 +1262,61 @@ export const useRemoveVoucher = () => {
   });
 };
 
+export const useGetMandate = () => {
+  return useQuery({
+    queryKey: ["mandate"],
+    queryFn: () => GetMandate(),
+  });
+};
 
+export const useCreateMandate = () => {
+  return useMutation({
+    mutationFn: (data: any) => CreateMandate(data),
+  });
+};
+
+export const useSubscribePackage = () => {
+  return useMutation({
+    mutationFn: ({
+      packageId,
+      mandateId,
+    }: {
+      packageId: string;
+      mandateId: string;
+    }) => SubscribePackage(packageId, mandateId),
+  });
+};
+
+export const useDeleteMandate = () => {
+  return useMutation({
+    mutationFn: (mandateId: string) => DeleteMandate(mandateId),
+  });
+};
+
+export const useGetAllSubscription = () => {
+  return useQuery({
+    queryKey: ["allSubscription"],
+    queryFn: () => getAllSubscription(),
+  });
+};
+
+export const useGetSubscriptionById = (subscriptionId: string) => {
+  return useQuery({
+    queryKey: ["subscriptionById", subscriptionId],
+    queryFn: () => getSubscriptionById(subscriptionId),
+  });
+};
+
+export const useCancelSubscription = () => {
+  return useMutation({
+    mutationFn: (subscriptionId: string) => cancelSubscription(subscriptionId),
+  });
+};
+  
+export const useGetCustomerSubscription = (customerId: string) => {
+  return useQuery({
+    queryKey: ["customerSubscription", customerId],
+    queryFn: () => getCustomerSubscription(customerId),
+  });
+};
+  
