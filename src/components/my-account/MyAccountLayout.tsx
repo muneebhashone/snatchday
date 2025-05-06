@@ -12,7 +12,7 @@ const MyAccountLayout = ({ children }: { children: React.ReactNode }) => {
   const {data:myProfile}=useGetMyProfile()
   return (
     <ClientLayout>
-      <div className="container max-w-[1920px] mx-auto px-4 py-28">
+      <div className="container max-w-[1920px] mx-auto px-4 pt-28 pb-36">
         {/* <AccountBreadcrumb /> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative pt-40 px-24">

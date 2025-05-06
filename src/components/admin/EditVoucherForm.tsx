@@ -193,6 +193,8 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
   const [categoryDataList, setCategoryDataList] = useState(categories);
+  const [categoryDataList2, setCategoryDataList2] = useState(categories);
+  const [productDataList, setProductDataList] = useState(products);
   const [hasMoreProducts, setHasMoreProducts] = useState(true);
   const [hasMoreCategories, setHasMoreCategories] = useState(true);
 
@@ -256,6 +258,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   useEffect(() => {
     if (products.length > 0) {
       setHasMoreProducts(products.length === 10);
+      setProductDataList((prev) => [...prev, ...products]);
     } else if (!search) {
       setHasMoreProducts(false);
     }
@@ -577,11 +580,12 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                               <Input
                                 placeholder="Search products"
                                 onChange={(e) => {
+                                  setProductDataList([]);
                                   setSearch(e.target.value);
                                   setProductOffset(0);
                                 }}
                               />
-                              {products.map((product) => (
+                              {productDataList.map((product) => (
                                 <SelectItem
                                   key={product._id}
                                   value={product._id}
@@ -600,11 +604,9 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((productId) => {
                             console.log(productId);
-                            const product =
-                              products.find((p) => p._id === productId) ||
-                              voucher?.products?.find(
-                                (p) => p._id === productId
-                              );
+                            const product = productDataList.find(
+                              (p) => p._id === productId
+                            );
                             if (!product) return null;
                             return (
                               <div
@@ -679,6 +681,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                               <Input
                                 placeholder="Search categories"
                                 onChange={(e) => {
+                                  setCategoryDataList([]);
                                   setSearchCategory(e.target.value);
                                   setCategoryOffset(0);
                                 }}

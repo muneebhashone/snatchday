@@ -51,6 +51,13 @@ import {
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
 import { formatCurrency } from "@/lib/utils";
 import { useLoadScript } from "@react-google-maps/api";
+import CustomerSubscription from "./CustomerSubscription";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function CustomerdEdit() {
   const params = useParams();
@@ -68,7 +75,6 @@ export function CustomerdEdit() {
       offset: paymentPage * 10,
       userId: paramsId as string,
     });
-  console.log(paymentHistory);
   const payments = paymentHistory?.data.payments;
   const totalPayments = paymentHistory?.data.total;
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -78,7 +84,6 @@ export function CustomerdEdit() {
     isLoading,
     refetch,
   } = useGetCustomerOrdersData(page, status, user, date);
-  
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleString();
@@ -356,6 +361,33 @@ export function CustomerdEdit() {
                   >
                     <Network size={16} className="mr-2" /> IP Addresses
                   </TabsTrigger>
+                  {customerData?.group === "BASIC" ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="inline-block">
+                            <TabsTrigger
+                              disabled
+                              value="subscription"
+                              className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3 opacity-50"
+                            >
+                              <Bell size={16} className="mr-2" /> Subscription
+                            </TabsTrigger>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>User don't have a subscription</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ) : (
+                    <TabsTrigger
+                      value="subscription"
+                      className="data-[state=active]:border-primary data-[state=active]:text-white border-b-2 border-transparent px-6 py-3"
+                    >
+                      <Bell size={16} className="mr-2" /> Subscription
+                    </TabsTrigger>
+                  )}
                 </TabsList>
 
                 <TabsContent value="orders" className="mt-2">
@@ -569,6 +601,19 @@ export function CustomerdEdit() {
                       <div className="rounded-lg border border-gray-200">
                         <CustomerIPAdresses />
                       </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="subscription">
+                  <Card>
+                    <CardContent className="p-6">
+                      <div className="flex items-center gap-2 mb-6">
+                        <Bell size={20} className="text-primary" />
+                        <h3 className="font-semibold text-lg">
+                          Customer Subscription
+                        </h3>
+                      </div>
+                      <CustomerSubscription customerId={paramsId as string} />
                     </CardContent>
                   </Card>
                 </TabsContent>

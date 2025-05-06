@@ -7,6 +7,9 @@ import {
   Swords,
   TrendingUp,
   ArrowLeftRight,
+  ChevronRight,
+  ChevronsRight,
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -39,6 +42,11 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
       href: "/my-account/my-tournaments",
     },
     {
+      icon: <Bell className="w-5 h-5" />,
+      text: "Subscription",
+      href: "/my-account/subscription",
+    },
+    {
       icon: <Swords className="w-5 h-5" />,
       text: "Duels",
       href: "/my-account/my-duels",
@@ -55,7 +63,7 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
     },
   ];
 
-  const disbaleTabs = ["Duels", "Points Trends"];
+  const disbaleTabs = ["Points Trends"];
 
   return (
     <div className="lg:col-span-3 rounded-3xl relative">

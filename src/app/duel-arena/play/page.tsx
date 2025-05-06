@@ -81,16 +81,22 @@ const Page = () => {
                   <h3 className="text-lg font-semibold text-gray-600 mb-2">
                     Score
                   </h3>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {player1Score?.score || 0}
+                  <p className="text-xl font-bold text-gray-900">
+                    <div className="flex items-center gap-5 justify-between">
+                      <p>Player 1: {player1Score?.score || 0}</p>
+                      {player2 && <p>Player 2: {player2Score?.score || 0}</p>}
+                    </div>
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-6 transform hover:scale-105 transition-transform duration-300">
                   <h3 className="text-lg font-semibold text-gray-600 mb-2">
                     Time
                   </h3>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {player1Score?.time || 0}s
+                  <p className="text-xl font-bold text-gray-900">
+                    <div className="flex items-center gap-5 justify-between">
+                      <p>Player 1: {player1Score?.time || 0}sec</p>
+                      {player2 && <p>Player 2: {player2Score?.time || 0}sec</p>}
+                    </div>
                   </p>
                 </div>
               </div>

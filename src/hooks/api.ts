@@ -138,6 +138,17 @@ import {
   updateSubscriptionPlan,
   deleteSubscriptionPlan,
   removeVoucherCode,
+  GetMandate,
+  CreateMandate,
+  SubscribePackage,
+  DeleteMandate,
+  getAllSubscription,
+  getSubscriptionById,
+  cancelSubscription,
+  getCustomerSubscription,
+  getCurrentDuels,
+  joinDuel,
+  markAsRead,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -159,6 +170,7 @@ import {
 } from "@/types";
 import { useUserContext } from "@/context/userContext";
 import { get } from "http";
+import { toast } from "sonner";
 
 // Fetch all items
 export const useGetMyProfile = () => {
@@ -1228,7 +1240,7 @@ export const useCreateSubscriptionPlan = () => {
   });
 };
 
-export const useGetSubscriptionPlan = (params?: {search?: string}) => {
+export const useGetSubscriptionPlan = (params?: { search?: string }) => {
   return useQuery({
     queryKey: ["subscriptionPlan", params],
     queryFn: () => getSubscriptionPlan(params),
@@ -1254,4 +1266,84 @@ export const useRemoveVoucher = () => {
   });
 };
 
+export const useGetMandate = () => {
+  return useQuery({
+    queryKey: ["mandate"],
+    queryFn: () => GetMandate(),
+  });
+};
 
+export const useCreateMandate = () => {
+  return useMutation({
+    mutationFn: (data: any) => CreateMandate(data),
+  });
+};
+
+export const useSubscribePackage = () => {
+  return useMutation({
+    mutationFn: ({
+      packageId,
+      mandateId,
+    }: {
+      packageId: string;
+      mandateId: string;
+    }) => SubscribePackage(packageId, mandateId),
+  });
+};
+
+export const useDeleteMandate = () => {
+  return useMutation({
+    mutationFn: (mandateId: string) => DeleteMandate(mandateId),
+  });
+};
+
+export const useGetAllSubscription = () => {
+  return useQuery({
+    queryKey: ["allSubscription"],
+    queryFn: () => getAllSubscription(),
+  });
+};
+
+export const useGetSubscriptionById = (subscriptionId: string) => {
+  return useQuery({
+    queryKey: ["subscriptionById", subscriptionId],
+    queryFn: () => getSubscriptionById(subscriptionId),
+  });
+};
+
+export const useCancelSubscription = () => {
+  return useMutation({
+    mutationFn: (subscriptionId: string) => cancelSubscription(subscriptionId),
+  });
+};
+
+export const useGetCustomerSubscription = (customerId: string) => {
+  return useQuery({
+    queryKey: ["customerSubscription", customerId],
+    queryFn: () => getCustomerSubscription(customerId),
+  });
+};
+
+export const useGetCurrentDuels = (params?: {
+  limit?: number;
+  offset?: number;
+  search?: string;
+  priceRange?: string;
+}) => {
+  return useQuery({
+    queryKey: ["currentDuels", params],
+    queryFn: () => getCurrentDuels(params),
+  });
+};
+
+export const useJoinDuel = (duelId: string) => {
+  return useMutation({
+    mutationFn: () => joinDuel(duelId),
+  });
+};
+
+export const useMarkAsRead = (id: string) => {
+  return useMutation({
+    mutationFn: () => markAsRead(id),
+  });
+};
