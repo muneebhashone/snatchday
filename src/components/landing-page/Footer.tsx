@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import footerLogo from "@/app/images/footerlogo.png";
@@ -14,6 +16,8 @@ import fot4 from "@/app/images/fot4.svg";
 import fot5 from "@/app/images/fot5.svg";
 import fot6 from "@/app/images/fot6.svg";
 import { FooterSvg1, FooterSvg2, FooterSvg4, FooterSvg3 } from "../icons/icon";
+import CollectPointsModal from "../my-account/CollectPointsModal";
+import { Button } from "../ui/button";
 
 const Footer = () => {
   const footerLinks = {
@@ -37,18 +41,18 @@ const Footer = () => {
       { label: "Payment Methods", href: "/payment" },
     ],
     infoCenter: [
-      { label: "VIP Membership", href: "/vip" },
+      { label: "VIP Membership", href: "/vip-shop" },
       { label: "Game Instructions", href: "/instructions" },
       { label: "Conditions Of Participation", href: "/conditions" },
       { label: "Shipping Costs & Delivery Times", href: "/shipping" },
       { label: "Tournaments", href: "/tournaments" },
-      { label: "Duels", href: "/duels" },
-      { label: "Points System", href: "/points" },
+      { label: "Duels", href: "/duel-arena" },
+      { label: "Points System", href: "#" },
     ],
     socialMedia: [
-      { icon: <Facebook />, label: "Facebook", href: "/facebook" },
-      { icon: <Instagram />, label: "Instagram", href: "/instagram" },
-      { icon: <X />, label: "X", href: "/x" },
+      { icon: <Facebook />, label: "Facebook", href: "https://www.facebook.com/" },
+      { icon: <Instagram />, label: "Instagram", href: "https://www.instagram.com/" },
+      { icon: <X />, label: "X", href: "https://x.com/" },
     ],
     deliveryServices: [
       { image: dhl, alt: "DHL" },
@@ -67,7 +71,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative w-full ">
+    <footer className="relative w-full">
       {/* Main Footer Content */}
       <div className="bg-gradient-to-r from-[#F37835] to-[#3B1678] text-white pb-20 relative">
         {/* SVG Background Layer */}
@@ -158,9 +162,22 @@ const Footer = () => {
                 <ul className="space-y-3">
                   {footerLinks.infoCenter.map((link, index) => (
                     <li key={index} className="text-lg text-white">
-                      <Link href={link.href} className="hover:underline">
-                        {link.label}
-                      </Link>
+                      {link.label === "Points System" ? (
+                        <CollectPointsModal
+                          customTrigger={
+                            <Button
+                              variant="link"
+                              className="text-lg text-white hover:underline p-0 h-auto font-normal"
+                            >
+                              Points System
+                            </Button>
+                          }
+                        />
+                      ) : (
+                        <Link href={link.href} className="hover:underline">
+                          {link.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>

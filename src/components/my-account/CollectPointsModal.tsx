@@ -11,7 +11,11 @@ import { X } from "lucide-react";
 import Image from "next/image";
 import giftIcon from "@/app/images/crown.png";
 
-const CollectPointsModal = () => {
+interface CollectPointsModalProps {
+  customTrigger?: React.ReactNode;
+}
+
+const CollectPointsModal = ({ customTrigger }: CollectPointsModalProps) => {
   const pointOptions = [
     {
       points: 50,
@@ -36,15 +40,22 @@ const CollectPointsModal = () => {
     },
   ];
 
+  const defaultTrigger = (
+    <Button 
+      data-modal-trigger
+      className="w-full bg-green-700 hover:bg-green-800 text-white rounded-full py-3 uppercase"
+    >
+      Would you like to collect additional points?
+    </Button>
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-full bg-green-700 hover:bg-green-800 text-white rounded-full py-3 uppercase">
-          Would you like to collect additional points?
-        </Button>
+        {customTrigger || defaultTrigger}
       </DialogTrigger>
-      <DialogContent hideCloseButton={true} className="p-0 ">
-        <DialogHeader className="bg-green-700 text-white p-8 rounded-t-3xl relative">
+      <DialogContent hideCloseButton={true} className="p-0">
+        <DialogHeader className="bg-green-700 text-white p-8 rounded-t-[10px] relative">
           <DialogTitle className="text-2xl font-bold text-center">
             Collect additional points!
           </DialogTitle>

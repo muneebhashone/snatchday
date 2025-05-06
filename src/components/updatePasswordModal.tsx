@@ -119,7 +119,7 @@ const ChangePasswordModal = ({
                         </button>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage  className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -171,7 +171,7 @@ const ChangePasswordModal = ({
                         </button>
                       </div>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />

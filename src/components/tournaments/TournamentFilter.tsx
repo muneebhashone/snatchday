@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { DualRangeSlider } from "./dualSlider";
 import { useGetCategories, useGetProducts } from "@/hooks/api";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface TournamentFilterProps {
   onPeriodChange: (from: string, until: string) => void;
@@ -26,6 +27,7 @@ interface TournamentFilterProps {
   onFeeChange: (fee: string) => void;
   onVipChange: (vip: string) => void;
   onCategoryChange: (category: string) => void;
+  onLiveChange?: (live: boolean) => void;
   setFilters: (filters: Record<string, string[]>) => void;
 }
 
@@ -37,6 +39,7 @@ const TournamentFilter = ({
   onFeeChange,
   onVipChange,
   onCategoryChange,
+  onLiveChange,
   setFilters,
 }: TournamentFilterProps) => {
   const [priceRange, setPriceRange] = useState([5, 10000]);
@@ -46,6 +49,7 @@ const TournamentFilter = ({
   const [product, setProduct] = useState("");
   const [vip, setVip] = useState("no");
   const [category, setCategory] = useState("");
+  const [live, setLive] = useState(false);
 
   const { data: categories, isLoading: isCategLoding } = useGetCategories({
     limit: "9999999",
@@ -76,6 +80,9 @@ const TournamentFilter = ({
     if (category !== "") {
       onCategoryChange(category);
     }
+    if (live) {
+      onLiveChange(live);
+    }
   };
 
   const handleClearFilters = () => {
@@ -88,11 +95,16 @@ const TournamentFilter = ({
     setProduct("");
     setVip("no");
     setCategory("");
+    setLive(false);
     
     setFilters({
       limit: "10",
       offset: "0",
     });
+  };
+
+  const handleLiveChange = (checked: boolean) => {
+    setLive(checked);
   };
 
   // Helper function to check if any filter is active
@@ -107,7 +119,8 @@ const TournamentFilter = ({
       game !== "" ||
       product !== "" ||
       vip !== "no" ||
-      category.length > 0
+      category.length > 0 ||
+      live
     );
   };
 
@@ -296,8 +309,23 @@ const TournamentFilter = ({
           </Select>
         </div>
 
+        {/* Live Tournament Filter */}
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600 mb-6">Live Tournaments</p>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="live"
+              checked={live}
+              onCheckedChange={handleLiveChange}
+              className="rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <Label htmlFor="live">Show only live tournaments</Label>
+          </div>
+        </div>
+
         {/* Filter Button */}
-        <div className="flex items-center justify-center md:justify-end gap-4">
+        <div className="flex justify-between">
+        <div className="flex items-center my-4  justify-center md:justify-end gap-4">
           {isAnyFilterActive() && (
             <Button
               onClick={handleClearFilters}
@@ -312,6 +340,7 @@ const TournamentFilter = ({
           >
             FILTER
           </Button>
+        </div>
         </div>
       </div>
     </div>

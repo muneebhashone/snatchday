@@ -232,7 +232,7 @@ const Login = ({
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
               <p className="text-lg font-medium text-card-foreground">
-                {myProfile?.data?.user?.username || myProfile?.data?.user?.name}
+                {myProfile?.data?.user?.username || user?.user?.username}
               </p>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-36 mt-6">

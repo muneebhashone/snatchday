@@ -35,7 +35,7 @@ const TournamentDetailHero = ({
   refetchTournament: () => void;
 }) => {
   const { data: product, isLoading: productLoading } = useGetProductById(
-    tournamentData?.data?.article
+    tournamentData?.data?.article?._id || ""
   );
 
   const [selectedImage, setSelectedImage] = useState(0);
