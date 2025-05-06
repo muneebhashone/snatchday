@@ -5,6 +5,8 @@ import { formatDistanceToNow } from "date-fns";
 import { useGetDuels } from "@/hooks/api";
 import { Loader } from "lucide-react";
 import { useUserContext } from "@/context/userContext";
+import Link from "next/link";
+import userImage from "../app/images/avatarimage.svg";
 
 const DuelHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -71,13 +73,13 @@ const DuelHistory = () => {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 relative">
                       <Image
-                        src={duel.player1.image || "/placeholder.png"}
-                        alt={duel.player1.username}
+                        src={duel?.player1?.image || userImage}
+                        alt={duel?.player1?.username}
                         fill
                         className="object-cover rounded-full"
                       />
                     </div>
-                    <span>{duel.player1.username}</span>
+                    <span>{duel?.player1?.username}</span>
                   </div>
                 </td>
                 <td className="py-4 px-2">{duel.rounds}</td>
@@ -89,21 +91,28 @@ const DuelHistory = () => {
                 <td className="py-4 px-2">
                   {userID === duel.player1._id &&
                   (!duel.player1Score.score || !duel.player1Score.time) ? (
-                    <Button className="bg-green-500 hover:bg-green-600 text-white rounded-full px-6">
-                      PLAY
+                    <Button
+                      onClick={() => console.log(duel._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white rounded-full px-6"
+                    >
+                      <Link href={`/duel-arena/play/${duel._id}`}>PLAY</Link>
                     </Button>
                   ) : userID === duel.player1?._id &&
                     (duel.player1Score.score || duel.player1Score.time) ? (
                     <Button className="bg-[#F26E21] hover:bg-[#d85d12] text-white rounded-full px-6">
-                      TO THE DUEL
+                      <Link href={`/duel-arena/duel/${duel._id}`}>
+                        TO THE DUEL
+                      </Link>
                     </Button>
                   ) : !duel.player2 ? (
                     <Button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6">
-                      JOIN
+                      <Link href={`/duel-arena/play/${duel._id}`}>JOIN</Link>
                     </Button>
                   ) : (
                     <Button className="bg-[#F26E21] hover:bg-[#d85d12] text-white rounded-full px-6">
-                      TO THE DUEL
+                      <Link href={`/duel-arena/duel/${duel._id}`}>
+                        TO THE DUEL
+                      </Link>
                     </Button>
                   )}
                 </td>

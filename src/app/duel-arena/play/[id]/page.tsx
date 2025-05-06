@@ -79,14 +79,28 @@ const Page = () => {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="flex gap-4 items-center justify-center">
-          <Image
-            src={duelGame?.data?.game?.logo}
-            alt={duelGame?.data?.game?.game}
-            width={50}
-            height={50}
-          />
-          <h1 className="text-4xl font-bold">{duelGame?.data?.game?.game}</h1>
+        <div className="flex gap-4 items-center justify-end  mx-auto">
+          <div className="flex gap-4 items-center justify-between w-[60%] pr-10">
+            <div className="flex gap-4 items-center justify-center">
+              <Image
+                src={duelGame?.data?.game?.logo}
+                alt={duelGame?.data?.game?.game}
+                width={50}
+                height={50}
+              />
+              <h1 className="text-4xl font-bold">
+                {duelGame?.data?.game?.game}
+              </h1>
+            </div>
+            <div className="border border-black rounded-md p-2">
+              {duelGame?.data?.player2 && (
+                <div>
+                  <p>Player 1: {duelGame?.data?.player1Score?.score || 0}</p>
+                  <p>Player 1: {duelGame?.data?.player1Score?.time || 0}sec</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
         <iframe
           className="mx-auto mt-20"

@@ -146,6 +146,9 @@ import {
   getSubscriptionById,
   cancelSubscription,
   getCustomerSubscription,
+  getCurrentDuels,
+  joinDuel,
+  markAsRead,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -167,6 +170,7 @@ import {
 } from "@/types";
 import { useUserContext } from "@/context/userContext";
 import { get } from "http";
+import { toast } from "sonner";
 
 // Fetch all items
 export const useGetMyProfile = () => {
@@ -1312,11 +1316,34 @@ export const useCancelSubscription = () => {
     mutationFn: (subscriptionId: string) => cancelSubscription(subscriptionId),
   });
 };
-  
+
 export const useGetCustomerSubscription = (customerId: string) => {
   return useQuery({
     queryKey: ["customerSubscription", customerId],
     queryFn: () => getCustomerSubscription(customerId),
   });
 };
-  
+
+export const useGetCurrentDuels = (params?: {
+  limit?: number;
+  offset?: number;
+  search?: string;
+  priceRange?: string;
+}) => {
+  return useQuery({
+    queryKey: ["currentDuels", params],
+    queryFn: () => getCurrentDuels(params),
+  });
+};
+
+export const useJoinDuel = (duelId: string) => {
+  return useMutation({
+    mutationFn: () => joinDuel(duelId),
+  });
+};
+
+export const useMarkAsRead = (id: string) => {
+  return useMutation({
+    mutationFn: () => markAsRead(id),
+  });
+};
