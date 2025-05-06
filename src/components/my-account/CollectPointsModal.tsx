@@ -10,29 +10,32 @@ import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import Image from "next/image";
 import giftIcon from "@/app/images/crown.png";
+import { useGetPoints } from "@/hooks/api";
 
 interface CollectPointsModalProps {
   customTrigger?: React.ReactNode;
 }
 
 const CollectPointsModal = ({ customTrigger }: CollectPointsModalProps) => {
+  const { data: points, isLoading: pointsLoading } = useGetPoints();
+
   const pointOptions = [
     {
-      points: 50,
+      points: points?.data?.facebookLike || 0,
       type: "DISCOUNT POINTS",
       action: "Like",
-      buttonText: "Gefällt mir",
+      buttonText: "Facebook Like",
       buttonClass: "bg-[#1877F2] hover:bg-[#1877F2]/90",
     },
     {
-      points: 100,
+      points: points?.data?.facebookShare || 0,
       type: "DISCOUNT POINTS",
-      action: "Split",
-      buttonText: "Split",
+      action: "Share",
+      buttonText: "Facebook share",
       buttonClass: "bg-[#1877F2] hover:bg-[#1877F2]/90",
     },
     {
-      points: 100,
+      points: points?.data?.referral || 0,
       type: "DISCOUNT POINTS",
       action: "Refer A Friend",
       buttonText: "Refer A Friend",
@@ -60,7 +63,7 @@ const CollectPointsModal = ({ customTrigger }: CollectPointsModalProps) => {
             Collect additional points!
           </DialogTitle>
           <p className="text-center mt-2">
-            Click Like share our page on your profile or invite your friends!
+            Click Like, Share our page on your profile or invite your friends!
           </p>
           <DialogTrigger className="absolute right-4 top-4">
             <X className="h-6 w-6 text-white" />
@@ -87,6 +90,7 @@ const CollectPointsModal = ({ customTrigger }: CollectPointsModalProps) => {
                     <p className="text-orange-500 font-bold">
                       +{option.points} {option.type}
                     </p>
+                    <p className="text-sm text-gray-600">{option.action}</p>
                   </div>
                 </div>
                 <Button className={`px-8 ${option.buttonClass}`}>
