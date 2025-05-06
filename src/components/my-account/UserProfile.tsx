@@ -132,6 +132,12 @@ const UserProfile = () => {
   const { mutateAsync: deleteUserMutation, isPending: isDeleting } =
     useDeleteUser();
 
+  useEffect(() => {
+    if (!user?.user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -154,9 +160,14 @@ const UserProfile = () => {
 
   const onSubmit = async (profileData: z.infer<typeof profileSchema>) => {
     const formData = new FormData();
+    formData.append('name', profileData.username);
+    
     Object.entries(profileData).forEach(([key, value]) =>
       formData.append(key, value || "")
     );
+
+    console.log(formData, "formData11111");
+
     await updateProfile(formData, {
       onSuccess: () => {
         refetch();
@@ -199,6 +210,7 @@ const UserProfile = () => {
       onSuccess: () => {
         setShowDeleteModal(false);
         setUserData(null);
+        localStorage.removeItem("snatchday_user");
         toast.success("Account deactivated successfully");
         router.push("/");
       },
@@ -922,14 +934,7 @@ const UserProfile = () => {
                     </div>
 
                     <div className="flex items-center justify-end gap-4 mt-6">
-                      <Button
-                        type="submit"
-                        disabled={isPending}
-                        className="bg-primary"
-                      >
-                        {" "}
-                        {isPending ? "Saving..." : "SAVE"}
-                      </Button>
+                     
                       <Button
                         variant="outline"
                         type="button"
@@ -945,6 +950,14 @@ const UserProfile = () => {
                       >
                         {" "}
                         DEACTIVATE ACCOUNT
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="bg-primary"
+                      >
+                        {" "}
+                        {isPending ? "Saving..." : "SAVE"}
                       </Button>
                     </div>
                   </form>

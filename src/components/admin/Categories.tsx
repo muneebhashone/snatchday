@@ -130,11 +130,11 @@ const Categories = () => {
             <div className="relative">
               {searchTerm ? (
                 <X
-                  className="absolute right-2 top-3 h-4 w-4 text-muted-foreground cursor-pointer"
+                 className="absolute left-2 top-3.5 h-4 w-4 text-muted-foreground"
                   onClick={() => setSearchTerm("")}
                 />
               ) : (
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2 top-3.5 h-4 w-4 text-muted-foreground" />
               )}
               <Input
                 placeholder="Category name"

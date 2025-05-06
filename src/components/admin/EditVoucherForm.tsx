@@ -132,7 +132,10 @@ interface VoucherData {
   value: number;
   registered: boolean;
   noShipping: boolean;
-  products: string[];
+  products: Array<{
+    _id: string;
+    name: string;
+  }>;
   categories: string[];
   from: string;
   until: string;
@@ -218,13 +221,15 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
       usagePerUser: Number(voucher?.usagePerUser) || 1,
     },
   });
-
+    
   useEffect(() => {
     if (voucher) {
       const selectedCategories = voucher.categories.map((categoryId) => {
         const fullCategory = categories.find((c) => c._id === categoryId);
         return fullCategory || { _id: categoryId, name: "" };
       });
+
+      console.log(selectedCategories, "selectedCategories");
 
       setCategoryDataList((prevList) => {
         const existingIds = new Set(prevList.map((c) => c._id));
@@ -233,6 +238,14 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         );
         return [...prevList, ...newCategories];
       });
+
+      const voucherProducts = voucher.products || [];
+      setProductDataList((prevList) => {
+        const existingIds = new Set(prevList.map((p) => p._id));
+        const newProducts = voucherProducts.filter((p) => !existingIds.has(p._id));
+        return [...prevList, ...newProducts];
+      });
+
 
       form.reset({
         from: voucher.from,
@@ -244,10 +257,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         value: voucher.value,
         registered: voucher.registered,
         noShipping: voucher.noShipping,
-        products: voucher.products.map((p) => {
-          console.log(p);
-          return p;
-        }),
+        products: voucher.products.map((p) => p._id),
         categories: voucher.categories,
         noOfUsage: Number(voucher.noOfUsage) || 1,
         usagePerUser: Number(voucher.usagePerUser) || 1,
