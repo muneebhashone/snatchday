@@ -146,7 +146,7 @@ const CurrentDuels = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Duel game</TableHead>
-                <TableHead>Created</TableHead>
+                <TableHead className="text-center">Created</TableHead>
                 <TableHead>Duel Creator</TableHead>
                 <TableHead>Round</TableHead>
                 <TableHead>Stake</TableHead>

@@ -41,11 +41,13 @@ const DuelHistory = () => {
           <thead>
             <tr className="text-left border-b">
               <th className="py-4 px-2">Duel game</th>
-              <th className="py-4 px-2">countdown</th>
+              {/* <th className="py-4 px-2 text-center">Countdown</th> */}
               <th className="py-4 px-2">Duel Creator</th>
-              <th className="py-4 px-2">Round</th>
-              <th className="py-4 px-2">stake</th>
-              <th className="py-4 px-2">action</th>
+              <th className="py-4 px-2">Opponent</th>
+              <th className="py-4 px-2 text-center">Round</th>
+              <th className="py-4 px-2 text-center">Stake</th>
+              <th className="py-4 px-2 text-center">Result</th>
+              <th className="py-4 px-2 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -64,11 +66,11 @@ const DuelHistory = () => {
                     <span>{duel.game.title}</span>
                   </div>
                 </td>
-                <td className="py-4 px-2">
+                {/* <td className="py-4 px-2">
                   {formatDistanceToNow(new Date(duel.duelEndTime), {
                     addSuffix: true,
                   })}
-                </td>
+                </td> */}
                 <td className="py-4 px-2">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 relative">
@@ -82,11 +84,62 @@ const DuelHistory = () => {
                     <span>{duel?.player1?.username}</span>
                   </div>
                 </td>
+                <td className="py-4 px-2">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-10 h-10 relative ${
+                        !duel.player2 && "hidden"
+                      }`}
+                    >
+                      <Image
+                        src={duel?.player2?.image || userImage}
+                        alt={duel?.player2?.username}
+                        fill
+                        className="object-cover rounded-full"
+                      />
+                    </div>
+                    <span>{duel?.player2?.username || "No Opponenet Yet"}</span>
+                  </div>
+                </td>
                 <td className="py-4 px-2">{duel.rounds}</td>
                 <td className="py-4 px-2">
                   {duel.type === "snap"
                     ? `${duel.value} Snap Points`
                     : `${duel.value} Points`}
+                </td>
+                <td className="py-4 px-2 ">
+                  <div className="flex justify-center items-center">
+                    {duel?.winner && duel?.winner !== userID ? (
+                      <p className="capitalize w-max px-2 bg-red-500 rounded-full text-white font-bold text-sm">
+                        You Lose
+                      </p>
+                    ) : duel?.isDraw ? (
+                      <p className="capitalize w-max px-2 bg-primary rounded-full text-white font-bold text-sm">
+                        Draw
+                      </p>
+                    ) : duel?.winner && duel?.winner === userID ? (
+                      <p className="capitalize w-max px-2 bg-green-500 rounded-full text-white font-bold text-sm">
+                        You Won
+                      </p>
+                    ) : (userID === duel?.player1?._id &&
+                        !duel?.player1Score?.score &&
+                        !duel?.player1Score?.time) ||
+                      (userID === duel?.player2?._id &&
+                        !duel?.player2Score?.score &&
+                        !duel?.player2Score?.time) ? (
+                      <p className="capitalize w-max px-2 bg-gray-300 text-white rounded-full text-sm font-bold">
+                        you haven&apos;t played yet
+                      </p>
+                    ) : duel.status === "cancelled" ? (
+                      <p className="capitalize w-max px-2 bg-amber-500 text-white rounded-full text-sm font-bold">
+                        cancelled
+                      </p>
+                    ) : (
+                      <p className="capitalize w-max px-2 bg-gray-500 text-white rounded-full text-sm font-bold">
+                        waiting for the opponent
+                      </p>
+                    )}
+                  </div>
                 </td>
                 <td className="py-4 px-2">
                   {userID === duel.player1._id &&

@@ -88,6 +88,9 @@ const Header = () => {
   });
   const [categoryImage, setCategoryImage] = useState("");
 
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] =
+    useState(false);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -170,6 +173,9 @@ const Header = () => {
       myprofile?.data?.notifications.map((item) => {
         setShowNotification((prev) => [...prev, item._id]);
       });
+      if (myprofile?.data?.notifications.length > 0) {
+        setIsNotificationDialogOpen(true);
+      }
     }
   }, [myprofile?.data?.notifications]);
 
@@ -181,10 +187,9 @@ const Header = () => {
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
-      {/* {/ Notification Bar /} */}
-      {showNotification &&
-        myprofile?.data?.notifications &&
-        myprofile?.data?.notifications
+      {/* Notification Dialog */}
+      {myprofile?.data?.notifications &&
+        myprofile.data.notifications
           .filter((item: { _id: string }) =>
             showNotification.includes(item._id)
           )
@@ -194,40 +199,42 @@ const Header = () => {
               type: string;
               data: { message: string };
             }) => (
-              <Dialog key={item._id}>
-                <DialogContent>
-                  <Alert
-                    key={item._id}
-                    className="w-full rounded-md p-4 border-t-2 border-primary "
-                  >
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <CheckCheck
-                            onClick={() => {
-                              handleNotificationClick(item._id);
-                            }}
-                            className="absolute top-5 h-7 w-7 border border-black cursor-pointer text-primary hover:bg-primary hover:text-white rounded-full transition-colors p-1 hover:border-none"
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent className="text-xs">
-                          <p>Mark As Read</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    {/* <Terminal className="h-4 w-4" /> */}
-                    <AlertTitle className="capitalize ml-7">
-                      {item?.type} Notification
-                    </AlertTitle>
-                    <AlertDescription className="text-center">
-                      {item?.data?.message || "No message"}
-                    </AlertDescription>
-                  </Alert>
+              <Dialog
+                key={item._id}
+                open={showNotification.includes(item._id)}
+                onOpenChange={(open) => {
+                  if (!open) {
+                    setShowNotification((prev) =>
+                      prev.filter((id) => id !== item._id)
+                    );
+                  }
+                }}
+              >
+                <DialogContent className="max-w-[400px]">
+                  <div className="flex flex-col gap-4">
+                    <h2 className="text-lg font-bold text-primary mb-2">
+                      Notification
+                    </h2>
+                    <div className="relative border rounded-md p-4 bg-background">
+                      <button
+                        onClick={() => handleNotificationClick(item._id)}
+                        className="absolute top-2 right-2 text-primary hover:bg-primary hover:text-white rounded-full p-1 border border-primary transition-colors"
+                        title="Mark as Read"
+                      >
+                        <CheckCheck className="h-5 w-5" />
+                      </button>
+                      <div className="font-semibold capitalize mb-1">
+                        {item?.type} Notification
+                      </div>
+                      <div className="text-sm text-gray-700">
+                        {item?.data?.message || "No message"}
+                      </div>
+                    </div>
+                  </div>
                 </DialogContent>
               </Dialog>
             )
           )}
-
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}

@@ -1023,12 +1023,13 @@ export const getDuelGames = async () => {
 };
 
 export const getDuels = async (params?: {
+  status?: string;
   priceRange?: string;
   limit?: number;
   offset?: number;
   search?: string;
 }) => {
-  const response = await axiosInstance.get("/duel/", { params });
+  const response = await axiosInstance.get("/duel", { params });
   return response.data;
 };
 

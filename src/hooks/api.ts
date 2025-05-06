@@ -1142,6 +1142,7 @@ export const useGetDuelGames = () => {
 };
 
 export const useGetDuels = (params?: {
+  status?: string;
   search?: string;
   limit?: number;
   offset?: number;

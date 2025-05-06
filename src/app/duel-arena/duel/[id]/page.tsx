@@ -116,115 +116,230 @@ const Page = () => {
 
   return (
     <ClientLayout>
-      <div className="container mx-auto px-4 py-8 mt-44 mb-52">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Left side - Game Logo/Title */}
-          <div className="lg:w-1/4">
-            <div className="flex flex-col items-center">
-              <Image
-                src={game?.logo || "/images/fast-typer-logo.png"}
-                alt="Fast Typer"
-                width={200}
-                height={200}
-                className="mb-4"
-                onError={(e) => {
-                  e.currentTarget.src =
-                    "https://via.placeholder.com/200?text=FastTyper";
-                }}
-              />
-              <h1 className="text-3xl font-bold mb-4">
-                {game?.title || "FastTyper"}
-              </h1>
+      <div className="w-full flex flex-col items-center justify-center bg-white mt-44 mb-52">
+        <div className="w-full max-w-[90%] mx-auto px-2">
+          <div className="flex flex-col lg:flex-row gap-6 justify-between items-stretc rounded-2xl p-6 lg:p-10">
+            {/* Left side - Game Logo/Title */}
+            <div className="lg:w-1/4 flex-1 min-w-[280px] max-w-sm flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300 h-full border border-gray-100">
+                <div className="relative w-48 h-48 mb-6 group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                  <Image
+                    src={game?.logo || "/images/fast-typer-logo.png"}
+                    alt="Fast Typer"
+                    fill
+                    className="object-contain rounded-2xl transform group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "https://via.placeholder.com/200?text=FastTyper";
+                    }}
+                  />
+                </div>
+                <h1 className="text-4xl font-bold mb-6 bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 bg-clip-text text-transparent animate-gradient">
+                  {game?.title || "FastTyper"}
+                </h1>
 
-              {/* Timer */}
-              <div className="flex flex-col items-center mt-4">
-                {timeLeft.seconds > 0 ? (
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="bg-orange-500 text-white px-4 py-2 rounded-md text-center">
-                      <div className="font-bold">{timeLeft.hours}</div>
-                      <div className="text-xs">Hours</div>
+                {/* Timer */}
+                <div className="flex flex-col items-center mt-4 w-full flex-grow">
+                  {!data?.data?.player2 && timeLeft.seconds > 0 ? (
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-gradient-to-br from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl text-center transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <div className="font-bold text-3xl animate-pulse">
+                          {timeLeft.hours}
+                        </div>
+                        <div className="text-sm font-medium">Hours</div>
+                      </div>
+                      <div className="bg-gradient-to-br from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl text-center transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <div className="font-bold text-3xl animate-pulse">
+                          {timeLeft.minutes}
+                        </div>
+                        <div className="text-sm font-medium">Min.</div>
+                      </div>
+                      <div className="bg-gradient-to-br from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl text-center transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        <div className="font-bold text-3xl animate-pulse">
+                          {timeLeft.seconds}
+                        </div>
+                        <div className="text-sm font-medium">Sec</div>
+                      </div>
                     </div>
-                    <div className="bg-orange-500 text-white px-4 py-2 rounded-md text-center">
-                      <div className="font-bold">{timeLeft.minutes}</div>
-                      <div className="text-xs">Min.</div>
+                  ) : !data?.data?.player2 ? (
+                    <div className="text-red-500 text-2xl font-bold bg-red-50 px-8 py-4 rounded-2xl border border-red-100 animate-pulse">
+                      Time&apos;s up! No opponent found
                     </div>
-                    <div className="bg-orange-500 text-white px-4 py-2 rounded-md text-center">
-                      <div className="font-bold">{timeLeft.seconds}</div>
-                      <div className="text-xs">Sec</div>
+                  ) : (
+                    <div className="flex justify-center items-center w-full flex-grow">
+                      {data?.data?.player2 &&
+                        userID === data?.data?.player2?._id &&
+                        !data?.data?.player2Score?.score &&
+                        !data?.data?.player2Score?.time && (
+                          <Link
+                            className="w-full"
+                            href={`/duel-arena/play/${id}`}
+                          >
+                            <Button className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 text-white rounded-2xl px-8 py-6 text-xl font-bold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl ">
+                              🎮 PLAY NOW
+                            </Button>
+                          </Link>
+                        )}
                     </div>
-                  </div>
-                ) : !data?.data?.player2 ? (
-                  <div className="text-red-500 text-2xl font-bold">
-                    Time&apos;s up! No opponent found
-                  </div>
-                ) : (
-                  <div className="flex justify-center items-center w-full">
-                    {data?.data?.player2 &&
-                      userID === data?.data?.player2?._id &&
-                      !data?.data?.player2Score?.score &&
-                      !data?.data?.player2Score?.time &&(
-                        <Link className="" href={`/duel-arena/play/${id}`}>
-                          <Button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6">
-                            JOIN
-                          </Button>
-                        </Link>
-                      )}
-                  </div>
-                )}
+                  )}
+                </div>
+                <div className="flex justify-center items-center mt-8">
+                  {data?.data?.player1 &&
+                    data?.data?.player2 &&
+                    data?.data?.player1Score?.score &&
+                    data?.data?.player1Score?.time &&
+                    data?.data?.player2 &&
+                    data?.data?.player2Score?.score &&
+                    data?.data?.player2Score?.time && (
+                      <div className="transform hover:scale-105 transition-all duration-300">
+                        {userID === data?.data?.winner ? (
+                          <p className="bg-gradient-to-r from-green-500 via-green-600 to-green-700 text-white px-10 py-5 rounded-2xl text-3xl font-bold shadow-xl hover:shadow-2xl animate-bounce">
+                            🏆 You Won! 🏆
+                          </p>
+                        ) : !data?.data?.winner && data?.data?.isDraw ? (
+                          <p className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-10 py-5 rounded-2xl text-3xl font-bold shadow-xl hover:shadow-2xl animate-pulse">
+                            🤷‍♂️ Draw 🤷‍♂️
+                          </p>
+                        ) : (
+                          <p className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-10 py-5 rounded-2xl text-3xl font-bold shadow-xl hover:shadow-2xl animate-pulse">
+                            😢 You Lost 😢
+                          </p>
+                        )}
+                      </div>
+                    )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Center - Game Instructions */}
-          <div className="lg:w-2/4">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-2xl font-bold text-orange-500 mb-4">
-                {game?.game}
-              </h2>
+            {/* Center - Game Instructions */}
+            <div className="lg:w-2/4 flex-1 min-w-[320px] max-w-xl flex flex-col">
+              <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 h-full border border-gray-100">
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 bg-clip-text h-20 text-transparent animate-gradient mb-8">
+                  {game?.game}
+                </h2>
 
-              <p className="text-gray-600 mb-6">{game?.content}</p>
+                <p className="text-gray-600 mb-8 leading-relaxed text-sm">
+                  {game?.content}
+                </p>
 
-              <div className="border-t border-gray-200 pt-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="font-semibold">Stakes:</p>
-                    <p>{game?.metaDescription || "100 Snap Points"}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Number of laps:</p>
-                    <p>{game?.levels || 1}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Duel Creator:</p>
-                    <p>{data?.data?.player1?.username}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold">Duel ID:</p>
-                    <p>{id || data?.data?.duelId || "1476"}</p>
+                <div className="border-t border-gray-200 pt-8">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="bg-white p-6 rounded-2xl h-28 flex flex-col justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+                      <p className="font-semibold text-gray-700 mb-2">
+                        Stakes:
+                      </p>
+                      <div className="flex items-center gap-2 text-lg">
+                        <p className="font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                          {data?.data?.value}
+                        </p>
+                        <p className="text-gray-600">
+                          {data?.data?.type === "snap"
+                            ? "Snap Points"
+                            : "Discount"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl h-28 flex flex-col justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+                      <p className="font-semibold text-gray-700 mb-2">
+                        Number of laps:
+                      </p>
+                      <p className="text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                        {data?.data?.rounds || 1}
+                      </p>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl h-28 flex flex-col justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+                      <p className="font-semibold text-gray-700 mb-2">
+                        Duel Creator:
+                      </p>
+                      <p className="text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                        {data?.data?.player1?.username}
+                      </p>
+                    </div>
+                    <div className="bg-white p-6 rounded-2xl h-28 flex flex-col justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+                      <p className="font-semibold text-gray-700 mb-2">
+                        Duel ID:
+                      </p>
+                      <p className="text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                        {data?.data?.duelId || "1476"}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Right side - User Results */}
-          <div className="lg:w-1/4">
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-bold mb-4">Your result</h2>
+            {/* Right side - User Results */}
+            <div className="lg:w-1/4 flex-1 min-w-[280px] max-w-sm flex flex-col">
+              <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 h-full border border-gray-100">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 bg-clip-text text-transparent animate-gradient mb-8">
+                  Duel Results
+                </h2>
 
-              <div className="mb-4">
-                <p className="font-semibold">Round:</p>
-                <p>{round}</p>
-              </div>
+                <div className="space-y-6">
+                  <div className="bg-white px-6 pt-2 rounded-2xl flex justify-between items-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+                    <p className="font-semibold text-gray-700 mb-2">Round:</p>
+                    <p className="text-lg font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                      {round}
+                    </p>
+                  </div>
 
-              <div className="mb-4">
-                <p className="font-semibold">Attempts/Score:</p>
-                <p>{data?.data?.player1Score?.score}</p>
-              </div>
+                  <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+                    <p className="font-semibold text-gray-700 mb-4">Score:</p>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                        <p className="text-sm font-medium">Player 1:</p>
+                        <p className="text-sm font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                          {data?.data?.player1Score?.score &&
+                          data?.data?.player1Score?.time
+                            ? data?.data?.player1Score?.score
+                            : userID === data?.data?.player1?._id
+                            ? "Not Played"
+                            : "Waiting..."}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                        <p className="text-sm font-medium">Player 2:</p>
+                        <p className="text-sm font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                          {data?.data?.player2Score?.score &&
+                          data?.data?.player2Score?.time
+                            ? data?.data?.player2Score?.score
+                            : userID === data?.data?.player2?._id
+                            ? "Not Played"
+                            : "Waiting..."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="mb-4">
-                <p className="font-semibold">Time:</p>
-                <p>{formatTime(data?.data?.player1Score?.time * 1000 || 0)}</p>
+                  <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+                    <p className="font-semibold text-gray-700 mb-4">Time:</p>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                        <p className="text-sm font-medium">Player 1:</p>
+                        <p className="text-sm font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                          {data?.data?.player1Score?.score &&
+                          data?.data?.player1Score?.time
+                            ? formatTime(data?.data?.player1Score?.time * 1000)
+                            : userID === data?.data?.player1?._id
+                            ? "Not Played"
+                            : "Waiting..."}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
+                        <p className="text-sm font-medium">Player 2:</p>
+                        <p className="text-sm font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+                          {data?.data?.player2Score?.score &&
+                          data?.data?.player2Score?.time
+                            ? formatTime(data?.data?.player2Score?.time * 1000)
+                            : userID === data?.data?.player2?._id
+                            ? "Not Played"
+                            : "Waiting..."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

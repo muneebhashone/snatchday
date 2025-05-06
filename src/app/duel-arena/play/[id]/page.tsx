@@ -6,7 +6,7 @@ import Breadcrumb from "antd/es/breadcrumb/Breadcrumb";
 import { Home } from "lucide-react";
 import Link from "next/dist/client/link";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import {
   BreadcrumbList,
@@ -14,21 +14,49 @@ import {
   BreadcrumbLink,
 } from "@/components/ui/breadcrumb";
 import { toast } from "sonner";
+import { useUserContext } from "@/context/userContext";
 
 const Page = () => {
   const { id } = useParams();
   const router = useRouter();
   const { data: duelGame } = useGetDuelGameById(id as string);
   console.log(duelGame);
-  const dummyData = {
+  const dummyDataDraw = {
     score: 110,
     time: 10,
   };
+  const dummyDataWin = {
+    score: 120,
+    time: 10,
+  };
+  const dummyDatalose = {
+    score: 100,
+    time: 10,
+  };
   const { mutate: getDuelScore } = useGetDuelScore(id as string);
+  const user = useUserContext();
+  const userID = user?.user?.user?._id;
 
   useEffect(() => {
+    if (duelGame?.data) {
+      const hasPlayed =
+        (userID === duelGame.data.player1?._id &&
+          (duelGame.data.player1Score?.score ||
+            duelGame.data.player1Score?.time)) ||
+        (userID === duelGame.data.player2?._id &&
+          (duelGame.data.player2Score?.score ||
+            duelGame.data.player2Score?.time));
+
+      if (hasPlayed) {
+        toast.error("You have already played this duel");
+        router.push(`/duel-arena`);
+        return;
+      }
+    }
+  }, [duelGame, id, router]);
+  useEffect(() => {
     const timer = setTimeout(() => {
-      getDuelScore(dummyData, {
+      getDuelScore(dummyDataDraw, {
         onSuccess: () => {
           toast.success("Score submitted successfully");
           router.push(`/duel-arena/play?id=${id}`);
@@ -40,6 +68,15 @@ const Page = () => {
     }, 10000);
     return () => clearTimeout(timer);
   }, [duelGame]);
+
+  const pathName = usePathname();
+
+  useEffect(() => {
+    // if (pathName !== `/duel-arena/play/${id}`) {
+    //   alert("You are about to leave the page");
+    // }
+    console.log(window.location.pathname, `/duel-arena/play/${id}`);
+  }, [router]);
 
   return (
     <ClientLayout>
@@ -92,13 +129,27 @@ const Page = () => {
                 {duelGame?.data?.game?.game}
               </h1>
             </div>
-            <div className="border border-black rounded-md p-2">
-              {duelGame?.data?.player2 && (
-                <div>
-                  <p>Player 1: {duelGame?.data?.player1Score?.score || 0}</p>
-                  <p>Player 1: {duelGame?.data?.player1Score?.time || 0}sec</p>
-                </div>
-              )}
+            <div className="">
+              {duelGame?.data?.player1 &&
+                duelGame?.data?.playe1Score?.score &&
+                duelGame?.data?.playe1Score?.time && (
+                  <div className="border border-black rounded-md p-2">
+                    <p>Player 1: {duelGame?.data?.player1Score?.score || 0}</p>
+                    <p>
+                      Player 1: {duelGame?.data?.player1Score?.time || 0}sec
+                    </p>
+                  </div>
+                )}
+              {duelGame?.data?.player2 &&
+                duelGame?.data?.playe2Score?.score &&
+                duelGame?.data?.playe2Score?.time && (
+                  <div className="border border-black rounded-md p-2">
+                    <p>Player 2: {duelGame?.data?.player2Score?.score || 0}</p>
+                    <p>
+                      Player 2: {duelGame?.data?.player2Score?.time || 0}sec
+                    </p>
+                  </div>
+                )}
             </div>
           </div>
         </div>
