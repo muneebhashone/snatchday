@@ -157,7 +157,7 @@ const DuelHistory = () => {
                         TO THE DUEL
                       </Link>
                     </Button>
-                  ) : !duel.player2 ? (
+                  ) : !duel.player2 && duel.status !== "cancelled" ? (
                     <Button className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-6">
                       <Link href={`/duel-arena/play/${duel._id}`}>JOIN</Link>
                     </Button>

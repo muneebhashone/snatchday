@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useJoinDuel } from "@/hooks/api";
 import { toast } from "sonner";
+import { Loader } from "lucide-react";
 
 const JoinDuelModal = ({
   openModal,
@@ -20,8 +21,8 @@ const JoinDuelModal = ({
   setOpenModal: (open: boolean) => void;
   duelId: string;
 }) => {
-  const [openJoinDuelModal, setOpenJoinDuelModal] = useState(false);
-  const { mutate: joinDuel } = useJoinDuel(duelId);
+  // const [openJoinDuelModal, setOpenJoinDuelModal] = useState(false);
+  const { mutate: joinDuel, isPending } = useJoinDuel(duelId);
 
   return (
     <div>
@@ -37,7 +38,8 @@ const JoinDuelModal = ({
                   onSuccess: () => {
                     toast.success("Duel joined successfully");
                     setOpenModal(false);
-                    setOpenJoinDuelModal(true);
+                    window.location.href = `/duel-arena/play/${duelId}`;
+                    // setOpenJoinDuelModal(true);
                   },
                   onError: (error: any) => {
                     toast.error(
@@ -47,13 +49,13 @@ const JoinDuelModal = ({
                 });
               }}
             >
-              Join
+              {isPending ? <Loader className="animate-spin" /> : "Join"}
             </Button>
             <Button onClick={() => setOpenModal(false)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Dialog open={openJoinDuelModal} onOpenChange={setOpenJoinDuelModal}>
+      {/* <Dialog open={openJoinDuelModal} onOpenChange={setOpenJoinDuelModal}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -72,7 +74,7 @@ const JoinDuelModal = ({
             <Button onClick={() => setOpenJoinDuelModal(false)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

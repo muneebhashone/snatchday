@@ -42,6 +42,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const formSchema = z
   .object({
@@ -180,24 +181,33 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   const [search, setSearch] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
 
+  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearchCategory = useDebounce(searchCategory, 500);
+
   const { data: productsResponse, isLoading } = useGetProducts({
     limit: "10",
     offset: productOffset.toString(),
-    name: search,
+    name: debouncedSearch,
   });
 
   const { data: categoriesResponse, isLoading: isCategoriesLoading } =
     useGetCategories({
       limit: "10",
       offset: categoryOffset.toString(),
-      name: searchCategory,
+      name: debouncedSearchCategory,
     });
 
-  const products = productsResponse?.data?.products || [];
+  console.log(categoriesResponse?.data?.categories, "categoriesResponse");
+  console.log(productsResponse?.data?.products, "productsResponse");
+
   const categories = categoriesResponse?.data?.categories || [];
+  const products = productsResponse?.data?.products || [];
   const [categoryDataList, setCategoryDataList] = useState(categories);
-  const [categoryDataList2, setCategoryDataList2] = useState(categories);
+  const [filteredCategoryDataList, setFilteredCategoryDataList] =
+    useState(categories);
   const [productDataList, setProductDataList] = useState(products);
+  const [filteredProductDataList, setFilteredProductDataList] =
+    useState(products);
   const [hasMoreProducts, setHasMoreProducts] = useState(true);
   const [hasMoreCategories, setHasMoreCategories] = useState(true);
 
@@ -216,22 +226,43 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
       registered: voucher?.registered || false,
       noShipping: voucher?.noShipping || false,
       products: voucher?.products.map((p) => p._id) || [],
-      categories: voucher?.categories || [],
+      categories: voucher?.categories.map((c) => c._id) || [],
       noOfUsage: Number(voucher?.noOfUsage) || 1,
       usagePerUser: Number(voucher?.usagePerUser) || 1,
     },
   });
-    
+
+  useEffect(() => {
+    const selectedProducts = voucher?.products || [];
+    setFilteredProductDataList((prev) => {
+      const existingIds = new Set(prev.map((p) => p._id));
+      const newProducts = selectedProducts.filter(
+        (p) => !existingIds.has(p._id)
+      );
+      return [...prev, ...newProducts];
+    });
+  }, [productsResponse?.data?.products, voucher, debouncedSearch]);
+
+  useEffect(() => {
+    const selectedCategories = voucher?.categories || [];
+    setFilteredCategoryDataList((prevList) => {
+      console.log(prevList, "prevList");
+      const existingIds = new Set(prevList.map((c) => c._id));
+      const newCategories = selectedCategories.filter(
+        (c) => !existingIds.has(c._id)
+      );
+      return [...prevList, ...newCategories];
+    });
+  }, [categoriesResponse?.data?.categories, voucher, debouncedSearchCategory]);
+
   useEffect(() => {
     if (voucher) {
-      const selectedCategories = voucher.categories.map((categoryId) => {
-        const fullCategory = categories.find((c) => c._id === categoryId);
-        return fullCategory || { _id: categoryId, name: "" };
-      });
+      const selectedCategories = voucher.categories || [];
 
       console.log(selectedCategories, "selectedCategories");
 
       setCategoryDataList((prevList) => {
+        console.log(prevList, "prevList");
         const existingIds = new Set(prevList.map((c) => c._id));
         const newCategories = selectedCategories.filter(
           (c) => !existingIds.has(c._id)
@@ -242,10 +273,11 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
       const voucherProducts = voucher.products || [];
       setProductDataList((prevList) => {
         const existingIds = new Set(prevList.map((p) => p._id));
-        const newProducts = voucherProducts.filter((p) => !existingIds.has(p._id));
+        const newProducts = voucherProducts.filter(
+          (p) => !existingIds.has(p._id)
+        );
         return [...prevList, ...newProducts];
       });
-
 
       form.reset({
         from: voucher.from,
@@ -258,7 +290,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         registered: voucher.registered,
         noShipping: voucher.noShipping,
         products: voucher.products.map((p) => p._id),
-        categories: voucher.categories,
+        categories: voucher.categories.map((c) => c._id),
         noOfUsage: Number(voucher.noOfUsage) || 1,
         usagePerUser: Number(voucher.usagePerUser) || 1,
       });
@@ -269,10 +301,11 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
     if (products.length > 0) {
       setHasMoreProducts(products.length === 10);
       setProductDataList((prev) => [...prev, ...products]);
+      setFilteredProductDataList((prev) => [...prev, ...products]);
     } else if (!search) {
       setHasMoreProducts(false);
     }
-  }, [products, search]);
+  }, [products, debouncedSearch]);
 
   useEffect(() => {
     if (categories.length > 0) {
@@ -281,11 +314,12 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         const newCategories = categories.filter((c) => !existingIds.has(c._id));
         return [...prev, ...newCategories];
       });
+      setFilteredCategoryDataList((prev) => [...prev, ...categories]);
       setHasMoreCategories(categories.length === 10);
     } else if (!searchCategory) {
       setHasMoreCategories(false);
     }
-  }, [categories, searchCategory]);
+  }, [categories, debouncedSearchCategory]);
 
   const watchProducts = form.watch("products");
   const watchCategories = form.watch("categories");
@@ -588,6 +622,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                           >
                             <div className="h-full">
                               <Input
+                                value={search}
                                 placeholder="Search products"
                                 onChange={(e) => {
                                   setProductDataList([]);
@@ -614,7 +649,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((productId) => {
                             console.log(productId);
-                            const product = productDataList.find(
+                            const product = filteredProductDataList.find(
                               (p) => p._id === productId
                             );
                             if (!product) return null;
@@ -689,6 +724,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                           >
                             <div className="h-full">
                               <Input
+                                value={searchCategory}
                                 placeholder="Search categories"
                                 onChange={(e) => {
                                   setCategoryDataList([]);
@@ -714,7 +750,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                       {field.value?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((categoryId) => {
-                            const category = categoryDataList.find(
+                            const category = filteredCategoryDataList.find(
                               (c) => c._id === categoryId
                             );
                             return (

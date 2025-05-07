@@ -46,7 +46,7 @@ import {
 } from "@/hooks/api";
 import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
-import { Category, SubCategory } from "@/types";
+import { Category, NotificationItem, SubCategory } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
 import { formatCurrency } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
@@ -57,10 +57,10 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { toast } from "sonner";
-
+import { motion } from "framer-motion";
 const Header = () => {
   const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
-  console.log(myprofile?.data?.notifications, "myprofile");
+  // console.log(myprofile?.data?.notifications, "myprofile");
   const [showNotification, setShowNotification] = useState<string[]>([]);
   const [notificationReadID, setNotificationReadID] = useState<string>("");
   const { mutate: markAsRead } = useMarkAsRead(notificationReadID);
@@ -170,52 +170,69 @@ const Header = () => {
 
   useEffect(() => {
     if (myprofile?.data?.notifications) {
-      myprofile?.data?.notifications.map((item) => {
-        setShowNotification((prev) => [...prev, item._id]);
-      });
-      if (myprofile?.data?.notifications.length > 0) {
+      const duelNotifications = myprofile.data.notifications.filter(
+        (item) => item.type === "duel"
+      );
+      if (duelNotifications.length > 0) {
         setIsNotificationDialogOpen(true);
       }
     }
   }, [myprofile?.data?.notifications]);
 
   const handleNotificationClick = (id: string) => {
-    setShowNotification((prev) => prev.filter((item) => item !== id));
     setNotificationReadID(id);
-    markAsRead();
+    markAsRead(undefined, {
+      onSuccess: () => {
+        setShowNotification((prev) => prev.filter((item) => item !== id));
+        // Also update the notifications in myprofile data
+        if (myprofile?.data?.notifications) {
+          const updatedNotifications = myprofile.data.notifications.filter(
+            (item) => item._id !== id
+          );
+          // Update the myprofile data
+          myprofile.data.notifications = updatedNotifications;
+        }
+      },
+    });
   };
 
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       {/* Notification Dialog */}
-      {myprofile?.data?.notifications &&
-        myprofile.data.notifications
-          .filter((item: { _id: string }) =>
-            showNotification.includes(item._id)
-          )
-          .map(
-            (item: {
-              _id: string;
-              type: string;
-              data: { message: string };
-            }) => (
-              <Dialog
-                key={item._id}
-                open={showNotification.includes(item._id)}
-                onOpenChange={(open) => {
-                  if (!open) {
-                    setShowNotification((prev) =>
-                      prev.filter((id) => id !== item._id)
-                    );
-                  }
-                }}
-              >
-                <DialogContent className="max-w-[400px]">
-                  <div className="flex flex-col gap-4">
-                    <h2 className="text-lg font-bold text-primary mb-2">
-                      Notification
-                    </h2>
-                    <div className="relative border rounded-md p-4 bg-background">
+      <Dialog
+        open={isNotificationDialogOpen}
+        onOpenChange={setIsNotificationDialogOpen}
+      >
+        <DialogContent className="max-w-[600px] left-[50%] top-[30%]">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex flex-col gap-4"
+          >
+            <h2 className="text-lg font-bold text-primary mb-2">
+              Duel Notifications
+            </h2>
+            <div className="max-h-[600px] overflow-y-auto space-y-4">
+              {myprofile?.data?.notifications
+                ?.filter((item) => item.type === "duel")
+                .map((item: NotificationItem) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center gap-4 relative border rounded-md p-4 bg-background"
+                  >
+                    <Image
+                      src={item.data.data.duelGameImage}
+                      alt="Duel Notification"
+                      width={80}
+                      height={80}
+                      className="rounded-md"
+                    />
+                    <div
+                      key={item._id}
+                      className="flex flex-col gap-2 items-start justify-center"
+                    >
                       <button
                         onClick={() => handleNotificationClick(item._id)}
                         className="absolute top-2 right-2 text-primary hover:bg-primary hover:text-white rounded-full p-1 border border-primary transition-colors"
@@ -223,18 +240,68 @@ const Header = () => {
                       >
                         <CheckCheck className="h-5 w-5" />
                       </button>
-                      <div className="font-semibold capitalize mb-1">
-                        {item?.type} Notification
+                      <div className="font-semibold capitalize">
+                        {item?.data?.data?.duelGame}
                       </div>
                       <div className="text-sm text-gray-700">
-                        {item?.data?.message || "No message"}
+                        {item.data.data.duelStatus === "completed" ? (
+                          <>
+                            {item.data.message === "Duel Draw" && (
+                              <p>
+                                The duel ended in a draw. Your points sent to
+                                your Account.
+                              </p>
+                            )}
+                            {item.data.message === "You won the duel" && (
+                              <>
+                                Congratulations! You won the duel and earned{" "}
+                                {item.data.data.duelValue}{" "}
+                                {item.data.data.duelType === "snap"
+                                  ? "Snap Points (SP)"
+                                  : "Discount Points (DP)"}
+                                .
+                              </>
+                            )}
+                            {item.data.message === "You lost the duel" && (
+                              <>
+                                Unfortunately, you lost the duel. Better luck
+                                next time!
+                              </>
+                            )}
+                          </>
+                        ) : item.data.data.duelStatus === "cancelled" ? (
+                          <>
+                            The duel has been cancelled and your{" "}
+                            {item.data.data.duelValue}{" "}
+                            {item.data.data.duelType === "snap"
+                              ? "Snap Points (SP)"
+                              : "Discount Points (DP)"}{" "}
+                            will be refunded to your account.
+                          </>
+                        ) : (
+                          item.data.message || "No message"
+                        )}
                       </div>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(new Date(item.data.data.createdAt))}
+                      </p>
                     </div>
                   </div>
-                </DialogContent>
-              </Dialog>
-            )
-          )}
+                ))}
+              {(!myprofile?.data?.notifications?.filter(
+                (item) => item.type === "duel"
+              ) ||
+                myprofile.data.notifications.filter(
+                  (item) => item.type === "duel"
+                ).length === 0) && (
+                <div className="text-center text-gray-500 py-4">
+                  No duel notifications
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </DialogContent>
+      </Dialog>
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}

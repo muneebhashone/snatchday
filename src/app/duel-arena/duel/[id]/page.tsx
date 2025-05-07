@@ -60,11 +60,14 @@ const Page = () => {
 
   useEffect(() => {
     if (duelEndTime) {
+      const duelEndTimeDate = new Date(duelEndTime);
+      // console.log(duelEndTimeDate.getTime() - new Date().getTime(), "duelEndTime");
+      // console.log(new Date().getTime(), "new Date");
       const timer = setInterval(() => {
         const endDate = new Date(duelEndTime);
         const now = new Date();
         const diff = endDate.getTime() - now.getTime();
-
+        console.log(endDate);
         console.log(now);
         console.log(diff / 60);
 
