@@ -152,6 +152,7 @@ import {
   getSnapSubscriptions,
   cancelSnapSubscription,
   renewSnapSubscription,
+  endDuel,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1372,3 +1373,8 @@ export const useRenewSnapSubscription = () => {
   });
 };
 
+export const useEndDuel = (duelId: string) => {
+  return useMutation({
+    mutationFn: () => endDuel(duelId),
+  });
+};

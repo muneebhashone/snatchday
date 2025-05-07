@@ -1190,3 +1190,7 @@ export const renewSnapSubscription = async (packageId: string) => {
   return response.data;
 };
 
+export const endDuel = async (duelId: string) => {
+  const response = await axiosInstance.post(`/duel/end/${duelId}`);
+  return response.data;
+};
