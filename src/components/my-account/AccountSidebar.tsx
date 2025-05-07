@@ -21,11 +21,13 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
   const { user } = useUserContext();
 
   const navigationLinks = [
-    {
-      icon: <UserCircle className="w-5 h-5" />,
-      text: "My Profile",
-      href: "/my-account/my-profile",
-    },
+    ...(user ? [
+      {
+        icon: <UserCircle className="w-5 h-5" />,
+        text: "My Profile",
+        href: "/my-account/my-profile",
+      }
+    ] : []),
     {
       icon: <ShoppingBag className="w-5 h-5" />,
       text: "Orders",
@@ -63,7 +65,7 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
     },
   ];
 
-  const disbaleTabs = ["Duels", "Points Trends"];
+  const disbaleTabs = ["Points Trends"];
 
   return (
     <div className="lg:col-span-3 rounded-3xl relative">
@@ -85,7 +87,7 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
             )}
           </div>
           <h2 className="text-2xl font-bold text-gray-900">
-            {Userprofile?.username || Userprofile?.data?.user?.name}
+            {Userprofile?.username || Userprofile?.name}
           </h2>
           <p className="text-gray-500">{Userprofile?.email}</p>
         </div>

@@ -222,7 +222,7 @@ export default function WithdrawalDetailsPage() {
               <div className="flex flex-col">
                 <span className="text-sm text-gray-500">Phone</span>
                 <span className="font-medium">
-                  {request?.withdrawal?.user?.phone || "N/A"}
+                  {request?.withdrawal?.user?.phoneNumber || "N/A"}
                 </span>
               </div>
             </div>

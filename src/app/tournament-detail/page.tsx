@@ -111,7 +111,15 @@ const TournamentDetailPage = () => {
           style={{ backgroundImage: `url(${bg.src})` }}
           className="bg-cover bg-center bg-[##f9f9f9] relative py-16 pb-20 h-max border-b"
         >
-          <ProductDetailTheorySec />
+          <ProductDetailTheorySec
+            description={tournament?.data?.article?.description as string}
+            participants={
+              tournament?.data?.participants?.map((participant) => ({
+                name: participant.name,
+                image: participant.image,
+              })) || []
+            }
+          />
         </div>
         {/* <div className="bg-cover bg-center relative h-[900px] w-[100%]">
           <Image

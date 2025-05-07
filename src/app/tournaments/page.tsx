@@ -117,6 +117,13 @@ const Page = () => {
     setFilters((prev) => ({ ...prev, game }));
   };
 
+  const handleLiveChange = (live: boolean) => {
+    setFilters(prev => ({
+      ...prev,
+      status: live.toString()
+    }));
+  };
+
   const { data: nextTournament, isLoading } =useGetTournaments(debouncedFilters) ;
   console.log(nextTournament,"nextTournament")
 
@@ -195,6 +202,7 @@ const Page = () => {
               onFeeChange={handleFeeChange}
               onVipChange={handleVipChange}
               onCategoryChange={handleCategoryChange}
+              onLiveChange={handleLiveChange}
             />
           </div>
 

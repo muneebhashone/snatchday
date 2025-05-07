@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart, ChevronDown, Loader2 } from "lucide-react";
+import {
+  User,
+  Heart,
+  ShoppingCart,
+  ChevronDown,
+  Loader2,
+  Terminal,
+  CheckCheck,
+} from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -34,14 +42,28 @@ import {
   useGetMyProfile,
   useGetProducts,
   useGetWishList,
+  useMarkAsRead,
 } from "@/hooks/api";
 import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
 import { Category, SubCategory } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
 import { formatCurrency } from "@/lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import { toast } from "sonner";
 
 const Header = () => {
+  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
+  console.log(myprofile?.data?.notifications, "myprofile");
+  const [showNotification, setShowNotification] = useState<string[]>([]);
+  const [notificationReadID, setNotificationReadID] = useState<string>("");
+  const { mutate: markAsRead } = useMarkAsRead(notificationReadID);
   const { data: cartData } = useGetCart();
   const { data: wishlist } = useGetWishList();
 
@@ -59,13 +81,15 @@ const Header = () => {
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
 
   const { data: categories, isLoading } = useGetCategories({
     limit: "9999999",
     above: true,
   });
   const [categoryImage, setCategoryImage] = useState("");
+
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] =
+    useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -144,8 +168,73 @@ const Header = () => {
     }
   };
 
+  useEffect(() => {
+    if (myprofile?.data?.notifications) {
+      myprofile?.data?.notifications.map((item) => {
+        setShowNotification((prev) => [...prev, item._id]);
+      });
+      if (myprofile?.data?.notifications.length > 0) {
+        setIsNotificationDialogOpen(true);
+      }
+    }
+  }, [myprofile?.data?.notifications]);
+
+  const handleNotificationClick = (id: string) => {
+    setShowNotification((prev) => prev.filter((item) => item !== id));
+    setNotificationReadID(id);
+    markAsRead();
+  };
+
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
+      {/* Notification Dialog */}
+      {myprofile?.data?.notifications &&
+        myprofile.data.notifications
+          .filter((item: { _id: string }) =>
+            showNotification.includes(item._id)
+          )
+          .map(
+            (item: {
+              _id: string;
+              type: string;
+              data: { message: string };
+            }) => (
+              <Dialog
+                key={item._id}
+                open={showNotification.includes(item._id)}
+                onOpenChange={(open) => {
+                  if (!open) {
+                    setShowNotification((prev) =>
+                      prev.filter((id) => id !== item._id)
+                    );
+                  }
+                }}
+              >
+                <DialogContent className="max-w-[400px]">
+                  <div className="flex flex-col gap-4">
+                    <h2 className="text-lg font-bold text-primary mb-2">
+                      Notification
+                    </h2>
+                    <div className="relative border rounded-md p-4 bg-background">
+                      <button
+                        onClick={() => handleNotificationClick(item._id)}
+                        className="absolute top-2 right-2 text-primary hover:bg-primary hover:text-white rounded-full p-1 border border-primary transition-colors"
+                        title="Mark as Read"
+                      >
+                        <CheckCheck className="h-5 w-5" />
+                      </button>
+                      <div className="font-semibold capitalize mb-1">
+                        {item?.type} Notification
+                      </div>
+                      <div className="text-sm text-gray-700">
+                        {item?.data?.message || "No message"}
+                      </div>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            )
+          )}
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}
@@ -480,7 +569,9 @@ const Header = () => {
           <div className="text-sm text-foreground text-start">
             <p className="font-bold">Your Shopping Cart</p>
             <p className="text-sm text-primary font-bold">
-              {formatCurrency(myprofile?.data?.cart?.total ?? cartData?.data?.total ?? 0)}
+              {formatCurrency(
+                myprofile?.data?.cart?.total ?? cartData?.data?.total ?? 0
+              )}
             </p>
           </div>
         </div>

@@ -1007,7 +1007,6 @@ export const getOrdersStats = async () => {
 };
 interface DuelData {
   game: string;
-  amount: number;
   rounds: number;
   value: number;
   type: "snap" | "discount";
@@ -1024,6 +1023,7 @@ export const getDuelGames = async () => {
 };
 
 export const getDuels = async (params?: {
+  status?: string;
   priceRange?: string;
   limit?: number;
   offset?: number;
@@ -1150,3 +1150,23 @@ export const getCustomerSubscription = async (customerId: string) => {
   );
   return response.data;
 };
+
+export const getCurrentDuels = async (params?: {
+  limit?: number;
+  offset?: number;
+  search?: string;
+  priceRange?: string;
+}) => {
+  const response = await axiosInstance.get("/duel/get/current", { params });
+  return response.data;
+};
+
+export const joinDuel = async (duelId: string) => {
+  const response = await axiosInstance.post(`/duel/join/${duelId}`);
+  return response.data;
+};
+
+export const markAsRead = async (id: string) => {
+  const response = await axiosInstance.patch(`/auth/notifications/read/${id}`);
+  return response.data;
+}

@@ -33,6 +33,7 @@ import {
   ArrowRight,
   Plus,
   Trash2,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -162,6 +163,7 @@ const SubscriptionModal = ({
       onSuccess: () => {
         toast.success("Payment method created successfully");
         refetch();
+        setShowForm(false);
       },
       onError: (error: any) => {
         toast.error(
@@ -169,7 +171,6 @@ const SubscriptionModal = ({
         );
       },
     });
-    setShowForm(false);
     // setIsOpen(false);
   };
 
@@ -232,7 +233,17 @@ const SubscriptionModal = ({
         {/* <DialogTrigger asChild>
           <Button>Open</Button>
         </DialogTrigger> */}
-        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-lg shadow-lg">
+        <DialogContent
+          hideCloseButton={true}
+          className="sm:max-w-[500px] p-0  rounded-lg shadow-lg"
+        >
+          <Button
+            onClick={() => setIsOpen(false)}
+            variant="ghost"
+            className="h-12 w-12 shadow-xl rounded-full bg-white p-0 hover:bg-gray-100 absolute -right-5 -top-5 "
+          >
+            <X className="h-6 w-6" />
+          </Button>
           <div className="p-6 border-b bg-gray-50">
             <h3 className="text-lg font-semibold text-gray-800">
               Payment Method

@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { format, getDate, setDate } from "date-fns";
+import { format, getDate, set, setDate } from "date-fns";
 import { toast } from "sonner";
 import { useCreateVoucher } from "@/hooks/api";
 import { useRouter } from "next/navigation";
@@ -40,6 +40,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon, Loader } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useEffect, useRef, useState } from "react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const formSchema = z
   .object({
@@ -116,14 +117,14 @@ const formSchema = z
 const VoucherForm = () => {
   const productList = useRef(null);
   const categoryList = useRef(null);
-  const showProductList = () => {
-    console.log("ok");
-    console.log(productList.current.scrollTop, "productList");
-    console.log(productList.current.scrollHeight);
-    console.log(productList.current.clientHeight);
-    console.log(
-      productList.current.scrollHeight - productList.current.scrollTop
-    );
+  const showProductList = (e) => {
+    const target = e.target as HTMLElement;
+    const isBottom =
+      target.scrollTop + target.clientHeight >= target.scrollHeight - 10;
+
+    if (isBottom && productDataList.length < totalProductCount) {
+      setProductOffset((prev) => prev + 10);
+    }
   };
   const router = useRouter();
   const { mutate: createVoucher, isPending } = useCreateVoucher();
@@ -131,22 +132,28 @@ const VoucherForm = () => {
   const [categoryOffset, setCategoryOffset] = useState(0);
   const [search, setSearch] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const debouncedSearchCategory = useDebounce(searchCategory, 500);
   const { data: productsResponse, isLoading } = useGetProducts({
     limit: "10",
     offset: productOffset.toString(),
-    name: search,
+    name: debouncedSearch,
   });
   const { data: categoriesResponse, isLoading: isCategoriesLoading } =
     useGetCategories({
       limit: "10",
       offset: categoryOffset.toString(),
-      name: searchCategory,
+      name: debouncedSearchCategory,
     });
 
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
   const [productDataList, setProductDataList] = useState(products);
+  const [productsDataListForFilter, setProductsDataListForFilter] =
+    useState(products);
   const [categoryDataList, setCategoryDataList] = useState(categories);
+  const [categoriesDataListForFilter, setCategoriesDataListForFilter] =
+    useState(categories);
   const totalProductCount = productsResponse?.data?.total || 0;
   const totalCategoryCount = categoriesResponse?.data?.total || 0;
 
@@ -157,12 +164,22 @@ const VoucherForm = () => {
         const newProducts = products.filter((p) => !existingIds.has(p._id));
         return [...prev, ...newProducts];
       });
+      setProductsDataListForFilter((prev) => {
+        const existingIds = new Set(prev.map((p) => p._id));
+        const newProducts = products.filter((p) => !existingIds.has(p._id));
+        return [...prev, ...newProducts];
+      });
     }
   }, [productsResponse?.data?.products]);
 
   useEffect(() => {
     if (categories.length > 0) {
       setCategoryDataList((prev) => {
+        const existingIds = new Set(prev.map((c) => c._id));
+        const newCategories = categories.filter((c) => !existingIds.has(c._id));
+        return [...prev, ...newCategories];
+      });
+      setCategoriesDataListForFilter((prev) => {
         const existingIds = new Set(prev.map((c) => c._id));
         const newCategories = categories.filter((c) => !existingIds.has(c._id));
         return [...prev, ...newCategories];
@@ -463,6 +480,7 @@ const VoucherForm = () => {
                             if (!currentValues.includes(value)) {
                               field.onChange([...currentValues, value]);
                             }
+                            setSearch("");
                           }}
                           disabled={isCategoriesSelected}
                         >
@@ -470,27 +488,14 @@ const VoucherForm = () => {
                             <SelectValue placeholder="Select products" />
                           </SelectTrigger>
                           <SelectContent
-                            onScrollCapture={(e) => {
-                              const target = e.target as HTMLElement;
-                              const isBottom =
-                                target.scrollTop + target.clientHeight >=
-                                target.scrollHeight - 10;
-
-                              if (
-                                isBottom &&
-                                productDataList.length < totalProductCount &&
-                                !isLoading
-                              ) {
-                                setProductOffset((prev) => prev + 10);
-                              }
-                            }}
+                            onScrollCapture={(e) => showProductList(e)}
                             ref={productList}
                             className="max-h-52"
                           >
                             <div className="h-full">
                               <div>
                                 <Input
-                                className="mb-2"
+                                  className="mb-2"
                                   placeholder="Search products"
                                   onChange={(e) => {
                                     setProductDataList([]);
@@ -517,7 +522,7 @@ const VoucherForm = () => {
                       {field.value?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((productId) => {
-                            const product = productDataList.find(
+                            const product = productsDataListForFilter.find(
                               (p) => p._id === productId
                             );
                             return (
@@ -565,6 +570,9 @@ const VoucherForm = () => {
                             if (!currentValues.includes(value)) {
                               field.onChange([...currentValues, value]);
                             }
+                            setSearchCategory("");
+                            // setCategoryDataList([]);
+                            // setCategoryOffset(0);
                           }}
                           disabled={isProductsSelected}
                         >
@@ -616,7 +624,7 @@ const VoucherForm = () => {
                       {field.value?.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((categoryId) => {
-                            const category = categories.find(
+                            const category = categoriesDataListForFilter.find(
                               (c) => c._id === categoryId
                             );
                             return (

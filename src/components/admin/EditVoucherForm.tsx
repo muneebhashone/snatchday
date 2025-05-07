@@ -132,7 +132,10 @@ interface VoucherData {
   value: number;
   registered: boolean;
   noShipping: boolean;
-  products: string[];
+  products: Array<{
+    _id: string;
+    name: string;
+  }>;
   categories: string[];
   from: string;
   until: string;
@@ -193,6 +196,8 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   const products = productsResponse?.data?.products || [];
   const categories = categoriesResponse?.data?.categories || [];
   const [categoryDataList, setCategoryDataList] = useState(categories);
+  const [categoryDataList2, setCategoryDataList2] = useState(categories);
+  const [productDataList, setProductDataList] = useState(products);
   const [hasMoreProducts, setHasMoreProducts] = useState(true);
   const [hasMoreCategories, setHasMoreCategories] = useState(true);
 
@@ -216,13 +221,15 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
       usagePerUser: Number(voucher?.usagePerUser) || 1,
     },
   });
-
+    
   useEffect(() => {
     if (voucher) {
       const selectedCategories = voucher.categories.map((categoryId) => {
         const fullCategory = categories.find((c) => c._id === categoryId);
         return fullCategory || { _id: categoryId, name: "" };
       });
+
+      console.log(selectedCategories, "selectedCategories");
 
       setCategoryDataList((prevList) => {
         const existingIds = new Set(prevList.map((c) => c._id));
@@ -231,6 +238,14 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         );
         return [...prevList, ...newCategories];
       });
+
+      const voucherProducts = voucher.products || [];
+      setProductDataList((prevList) => {
+        const existingIds = new Set(prevList.map((p) => p._id));
+        const newProducts = voucherProducts.filter((p) => !existingIds.has(p._id));
+        return [...prevList, ...newProducts];
+      });
+
 
       form.reset({
         from: voucher.from,
@@ -242,10 +257,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
         value: voucher.value,
         registered: voucher.registered,
         noShipping: voucher.noShipping,
-        products: voucher.products.map((p) => {
-          console.log(p);
-          return p;
-        }),
+        products: voucher.products.map((p) => p._id),
         categories: voucher.categories,
         noOfUsage: Number(voucher.noOfUsage) || 1,
         usagePerUser: Number(voucher.usagePerUser) || 1,
@@ -256,6 +268,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
   useEffect(() => {
     if (products.length > 0) {
       setHasMoreProducts(products.length === 10);
+      setProductDataList((prev) => [...prev, ...products]);
     } else if (!search) {
       setHasMoreProducts(false);
     }
@@ -577,11 +590,12 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                               <Input
                                 placeholder="Search products"
                                 onChange={(e) => {
+                                  setProductDataList([]);
                                   setSearch(e.target.value);
                                   setProductOffset(0);
                                 }}
                               />
-                              {products.map((product) => (
+                              {productDataList.map((product) => (
                                 <SelectItem
                                   key={product._id}
                                   value={product._id}
@@ -600,11 +614,9 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                         <div className="flex flex-wrap gap-2 mt-2">
                           {field.value.map((productId) => {
                             console.log(productId);
-                            const product =
-                              products.find((p) => p._id === productId) ||
-                              voucher?.products?.find(
-                                (p) => p._id === productId
-                              );
+                            const product = productDataList.find(
+                              (p) => p._id === productId
+                            );
                             if (!product) return null;
                             return (
                               <div
@@ -679,6 +691,7 @@ export function EditVoucherForm({ voucherId }: EditVoucherFormProps) {
                               <Input
                                 placeholder="Search categories"
                                 onChange={(e) => {
+                                  setCategoryDataList([]);
                                   setSearchCategory(e.target.value);
                                   setCategoryOffset(0);
                                 }}

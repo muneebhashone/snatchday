@@ -37,6 +37,7 @@ import {
 } from "@/hooks/api";
 import Logo from "../../app/images/logo.png";
 import { useUserContext } from "@/context/userContext";
+import { useQueryClient } from "@tanstack/react-query";
 // Define the Zod schema for the checkout payload
 const checkoutSchema = z.object({
   snapPoints: z
@@ -67,6 +68,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
   const { setIsCheckout } = useCheckoutContext();
   const { data: cart, isLoading, refetch } = useGetCart();
   const { user } = useUserContext();
+  const queryClient = useQueryClient();
 
   const [applyvocherResponse, setApplyvocherResponse] = useState(null);
 
@@ -246,6 +248,8 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
         onSuccess: (response) => {
           setApplyvocherResponse(response);
           refetch()
+          queryClient.invalidateQueries({ queryKey: ["myprofile"] });
+
           voucherReset()
           toast.success("Voucher applied successfully", {
             position: "top-right",
@@ -290,6 +294,9 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
       onSuccess: () => {
         setApplyvocherResponse(null); 
         voucherReset()
+        refetch()
+   
+          queryClient.invalidateQueries({ queryKey: ["myprofile"] });
         // Clear the applied voucher response
         toast.success("Voucher code removed successfully", {
           position: "top-right",
