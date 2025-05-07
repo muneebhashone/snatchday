@@ -151,6 +151,7 @@ import {
   markAsRead,
   getSnapSubscriptions,
   cancelSnapSubscription,
+  renewSnapSubscription,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1361,6 +1362,13 @@ export const useGetSnapSubscriptions = () => {
 export const useCancelSnapSubscription = () => {
   return useMutation({
     mutationFn: () => cancelSnapSubscription(),
+  });
+};
+
+export const useRenewSnapSubscription = () => {
+  return useMutation({
+    mutationFn: ({ packageId }: { packageId: string }) =>
+      renewSnapSubscription(packageId),
   });
 };
 

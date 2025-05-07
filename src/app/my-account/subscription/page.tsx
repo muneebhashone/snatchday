@@ -8,6 +8,9 @@ import {
   useCancelSubscription,
   useGetSnapSubscriptions,
   useCancelSnapSubscription,
+  useRenewSnapSubscription,
+  useGetMyProfile,
+  useGetPoints,
 } from "@/hooks/api";
 import {
   Loader,
@@ -30,10 +33,21 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { IError } from "@/app/admin/games/create/page";
 
 const Page = () => {
+  const [showCancelDialog, setShowCancelDialog] = React.useState(false);
+  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
+  const { data: points } = useGetPoints();
+  console.log(points, "points");
+  console.log(myprofile, "myprofile");
   const { data: snapSubscriptions, isLoading } = useGetSnapSubscriptions();
-  const { mutate: cancelSnapSubscription, isPending } = useCancelSnapSubscription();
+  const { mutate: renewSnapSubscription } = useRenewSnapSubscription();
+  const { mutate: cancelSnapSubscription } = useCancelSnapSubscription();
+  const [showRetryDialog, setShowRetryDialog] = React.useState(false);
+  const [renewError, setRenewError] = React.useState("");
+  const compareSnapPoints = myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >= snapSubscriptions?.data?.subscription?.package?.price;
+  console.log(myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >= snapSubscriptions?.data?.subscription?.package?.price, "");
 
   if (isLoading) {
     return (
@@ -55,11 +69,22 @@ const Page = () => {
           <h2 className="text-3xl font-bold text-primary">Subscription Overview</h2>
           {/* Example admin-style action button */}
           {snapSubscriptions?.data?.hasSubscription && (
-            <Button variant="destructive" size="sm" onClick={() => {
-              cancelSnapSubscription();
-            }}>
-              Cancel Subscription
-            </Button>
+            sub.status === "expired" ? (
+              <Button
+                size="sm"
+                onClick={() => setShowRetryDialog(true)}
+              >
+                Retry
+              </Button>
+            ) : (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setShowCancelDialog(true)}
+              >
+                Cancel Subscription
+              </Button>
+            )
           )}
         </div>
         {!snapSubscriptions?.data?.hasSubscription ? (
@@ -131,6 +156,93 @@ const Page = () => {
               </ul>
             </div>
           </div>
+        )}
+        {showRetryDialog && (
+          <AlertDialog open={showRetryDialog} onOpenChange={setShowRetryDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle onClick={() => {
+                  if (myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >= snapSubscriptions?.data?.subscription?.package?.price) {
+                    renewSnapSubscription({ packageId: pkg._id }, {
+                      onSuccess: () => {
+                        toast.success("Subscription renewed!");
+                        setShowRetryDialog(false);
+                      },
+                      onError: (error) => {
+                        toast.error("Error renewing subscription.");
+                      }
+                    });
+                  } else {
+                    toast.error("You do not have enough snap points to renew this package.");
+                  }
+                }}>Renew Subscription</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {renewError
+                    ? <span className="text-red-500">{renewError}</span>
+                    : "Do you want to renew your subscription for this package?"}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setShowRetryDialog(false)}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    setRenewError("");
+                    // Check user points
+
+                    if (myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio < snapSubscriptions?.data?.subscription?.package?.price) {
+                      setRenewError("You do not have enough snap points to renew this package.");
+                      return;
+                    }
+                    renewSnapSubscription({ packageId: pkg._id }, {
+                      onSuccess: () => {
+                        toast.success("Subscription renewed!");
+                        setShowRetryDialog(false);
+                      },
+                      onError: (error) => {
+                        toast.error("Error renewing subscription.");
+                      }
+                    });
+                  }}
+                >
+                  Renew
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+        {showCancelDialog && (
+          <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to cancel your subscription? This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setShowCancelDialog(false)}>
+                  No, Keep Subscription
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    cancelSnapSubscription(undefined, {
+                      onSuccess: () => {
+                        toast.success("Subscription cancelled!");
+                        setShowCancelDialog(false);
+                      },
+                      onError: (error) => {
+                        toast.error((error as unknown as IError)?.response?.data?.message || "Error cancelling subscription.");
+                      }
+                    });
+                  }}
+                >
+                  Yes, Cancel Subscription
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </div>
     </MyAccountLayout>

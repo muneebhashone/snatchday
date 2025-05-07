@@ -1182,3 +1182,11 @@ export const cancelSnapSubscription = async () => {
   );
   return response.data;
 };
+
+export const renewSnapSubscription = async (packageId: string) => {
+  const response = await axiosInstance.post(
+    `/snap-subscriptions/`, { packageId }
+  );
+  return response.data;
+};
+

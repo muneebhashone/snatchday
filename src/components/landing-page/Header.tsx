@@ -58,8 +58,9 @@ import {
 } from "../ui/tooltip";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import SubscriptionNotificationDialog from "../SubscriptionNotificationDialog";
 const Header = () => {
-  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
+  const { data: myprofile, isLoading: isMyProfileLoading, refetch } = useGetMyProfile();
   // console.log(myprofile?.data?.notifications, "myprofile");
   const [showNotification, setShowNotification] = useState<string[]>([]);
   const [notificationReadID, setNotificationReadID] = useState<string>("");
@@ -70,6 +71,9 @@ const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [isSubscriptionDialogOpen, setIsSubscriptionDialogOpen] = useState(false);
+
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 1000);
@@ -175,6 +179,14 @@ const Header = () => {
       );
       if (duelNotifications.length > 0) {
         setIsNotificationDialogOpen(true);
+      }
+    }
+    if (myprofile?.data?.notifications?.length > 0) {
+      const subscriptionNotifications = myprofile.data.notifications.filter(
+        (item) => item.type === "subscription"
+      );
+      if (subscriptionNotifications.length > 0) {
+        setIsSubscriptionDialogOpen(true);
       }
     }
   }, [myprofile?.data?.notifications]);
@@ -302,6 +314,7 @@ const Header = () => {
           </motion.div>
         </DialogContent>
       </Dialog>
+      <SubscriptionNotificationDialog isNotificationDialogOpen={isSubscriptionDialogOpen} setIsNotificationDialogOpen={setIsSubscriptionDialogOpen} myprofile={myprofile} refetch={refetch} />
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}
