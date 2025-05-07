@@ -86,7 +86,7 @@ const Page = () => {
   }, [duelGame, id, router]);
   useEffect(() => {
     const timer = setTimeout(() => {
-      getDuelScore(dummyDataDraw, {
+      getDuelScore(dummyDataWin, {
         onSuccess: () => {
           toast.success("Score submitted successfully");
           router.push(`/duel-arena/duel/${id}`);

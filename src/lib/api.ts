@@ -1170,3 +1170,8 @@ export const markAsRead = async (id: string) => {
   const response = await axiosInstance.patch(`/auth/notifications/read/${id}`);
   return response.data;
 }
+
+export const endDuel = async (duelId: string) => {
+  const response = await axiosInstance.post(`/duel/end/${duelId}`);
+  return response.data;
+};

@@ -149,6 +149,7 @@ import {
   getCurrentDuels,
   joinDuel,
   markAsRead,
+  endDuel,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1346,5 +1347,11 @@ export const useJoinDuel = (duelId: string) => {
 export const useMarkAsRead = (id: string) => {
   return useMutation({
     mutationFn: () => markAsRead(id),
+  });
+};
+
+export const useEndDuel = (duelId: string) => {
+  return useMutation({
+    mutationFn: () => endDuel(duelId),
   });
 };

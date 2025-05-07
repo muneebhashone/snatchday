@@ -1,18 +1,30 @@
 "use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
-import { useGetDuelGameById } from "@/hooks/api";
-import { useParams } from "next/navigation";
+import { useEndDuel, useGetDuelGameById } from "@/hooks/api";
+import { useParams, useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useUserContext } from "@/context/userContext";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Loader } from "lucide-react";
 
 const Page = () => {
+  const [showEndModal, setShowEndModal] = useState(false);
   const { id } = useParams();
-  const { data } = useGetDuelGameById(id as string);
+  const { data, refetch } = useGetDuelGameById(id as string);
   const duelEndTime = data?.data?.duelEndTime;
   const game = data?.data?.game;
+  const { mutate: endDuel, isPending: isEndingDuel } = useEndDuel(id as string);
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
     minutes: 0,
@@ -117,6 +129,22 @@ const Page = () => {
       .padStart(2, "0")}:${ms.toString().padStart(3, "0")}`;
   };
 
+  const router = useRouter();
+
+  const handleEndDuel = () => {
+    endDuel(undefined, {
+      onSuccess: () => {
+        toast.success("Duel ended successfully your points have been updated");
+        setShowEndModal(false);
+        refetch();
+        // router.push("/duel-arena");
+      },
+      onError: () => {
+        toast.error("Failed to end duel");
+      },
+    });
+  };
+
   return (
     <ClientLayout>
       <div className="w-full flex flex-col items-center justify-center bg-white mt-44 mb-52">
@@ -144,7 +172,9 @@ const Page = () => {
 
                 {/* Timer */}
                 <div className="flex flex-col items-center mt-4 w-full flex-grow">
-                  {!data?.data?.player2 && timeLeft.seconds > 0 ? (
+                  {!data?.data?.player2 &&
+                  timeLeft.seconds > 0 &&
+                  data?.data?.status !== "cancelled" ? (
                     <div className="flex items-center gap-4 mb-4">
                       <div className="bg-gradient-to-br from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl text-center transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
                         <div className="font-bold text-3xl animate-pulse">
@@ -165,9 +195,14 @@ const Page = () => {
                         <div className="text-sm font-medium">Sec</div>
                       </div>
                     </div>
-                  ) : !data?.data?.player2 ? (
+                  ) : !data?.data?.player2 &&
+                    data?.data?.status !== "cancelled" ? (
                     <div className="text-red-500 text-2xl font-bold bg-red-50 px-8 py-4 rounded-2xl border border-red-100 animate-pulse">
                       Time&apos;s up! No opponent found
+                    </div>
+                  ) : data?.data?.status === "cancelled" ? (
+                    <div className="text-red-500 text-2xl font-bold text-center bg-red-50 px-8 py-4 rounded-2xl border border-red-100 animate-pulse">
+                      Duel has been cancelled
                     </div>
                   ) : (
                     <div className="flex justify-center items-center w-full flex-grow">
@@ -186,6 +221,15 @@ const Page = () => {
                         )}
                     </div>
                   )}
+                  {data?.data?.status === "pending" ||
+                    (data?.data?.status === "waiting-for-opponent" && (
+                      <Button
+                        onClick={() => setShowEndModal(true)}
+                        className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:from-blue-600 hover:via-blue-700 hover:to-blue-800 text-white rounded-2xl px-8 py-6 text-xl font-bold transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl "
+                      >
+                        ⏹️ End Duel
+                      </Button>
+                    ))}
                 </div>
                 <div className="flex justify-center items-center mt-8">
                   {data?.data?.player1 &&
@@ -348,6 +392,26 @@ const Page = () => {
           </div>
         </div>
       </div>
+      <Dialog open={showEndModal} onOpenChange={setShowEndModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>End Duel</DialogTitle>
+          </DialogHeader>
+          <DialogDescription>
+            Are you sure you want to end the duel?
+          </DialogDescription>
+          <DialogFooter>
+            <Button onClick={handleEndDuel} disabled={isEndingDuel}>
+              {isEndingDuel ? (
+                <Loader className="animate-spin w-4 h-4" />
+              ) : (
+                "End Duel"
+              )}
+            </Button>
+            <Button onClick={() => setShowEndModal(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </ClientLayout>
   );
 };
