@@ -43,6 +43,7 @@ const formatInterval = (interval: string) => {
 const ExclusiveCards = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [packageId, setPackageId] = useState("");
+  const [packagePoints, setPackagePoints] = useState(0);
   const { data: subscriptionPlan, isLoading } = useGetSubscriptionPlan();
   const packages = subscriptionPlan?.data?.packages || [];
   console.log(packages);
@@ -204,6 +205,7 @@ const ExclusiveCards = () => {
                 onClick={() => {
                   setIsOpen(true);
                   setPackageId(pkg._id);
+                  setPackagePoints(pkg.price * 100);
                 }}
               >
                 Get started
@@ -212,7 +214,12 @@ const ExclusiveCards = () => {
           </div>
         );
       })}
-      <SubscriptionModal isOpen={isOpen} setIsOpen={setIsOpen} packageId={packageId} />
+      <SubscriptionModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        packageId={packageId}
+        packagePoints={packagePoints}
+      />
     </div>
   );
 };

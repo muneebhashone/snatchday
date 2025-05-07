@@ -149,6 +149,8 @@ import {
   getCurrentDuels,
   joinDuel,
   markAsRead,
+  getSnapSubscriptions,
+  cancelSnapSubscription,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1348,3 +1350,17 @@ export const useMarkAsRead = (id: string) => {
     mutationFn: () => markAsRead(id),
   });
 };
+
+export const useGetSnapSubscriptions = () => {
+  return useQuery({
+    queryKey: ["snapSubscriptions"],
+    queryFn: () => getSnapSubscriptions(),
+  });
+};
+
+export const useCancelSnapSubscription = () => {
+  return useMutation({
+    mutationFn: () => cancelSnapSubscription(),
+  });
+};
+

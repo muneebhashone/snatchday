@@ -661,7 +661,7 @@ const Header = () => {
             </span>
             <span className="text-primary font-bold text-sm">
               {myprofile?.data?.wallet?.snapPoints
-                ? myprofile?.data?.wallet?.snapPoints
+                ? formatCurrency(myprofile?.data?.wallet?.snapPoints)
                 : 0}{" "}
               /{" "}
               {myprofile?.data?.wallet?.snapPoints

@@ -1170,3 +1170,15 @@ export const markAsRead = async (id: string) => {
   const response = await axiosInstance.patch(`/auth/notifications/read/${id}`);
   return response.data;
 }
+
+export const getSnapSubscriptions = async () => {
+  const response = await axiosInstance.get("/snap-subscriptions");
+  return response.data;
+};
+
+export const cancelSnapSubscription = async () => {
+  const response = await axiosInstance.post(
+    `/snap-subscriptions/cancel/` 
+  );
+  return response.data;
+};

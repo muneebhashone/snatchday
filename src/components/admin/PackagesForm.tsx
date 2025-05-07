@@ -39,9 +39,9 @@ const formSchema = z.object({
     .string()
     .min(1, "Description must be at least 1 characters")
     .max(100, "Description must be less than 300 characters"),
-  price: z.coerce.number().min(0, "Price must be a positive number"),
-  interval: z.string().min(1, "Interval is required"),
-  times: z.coerce.number().int().min(1, "Times must be a positive integer"),
+  price: z.coerce.number().min(0.01, "Price must be greater than 0.00"),
+  interval: z.string().min(1, "Interval is required").refine(value => ["30 days", "3 months", "6 months", "12 months"].includes(value), "Interval must be either 30 days, 3 months, 6 months, or 12 months"),
+  times: z.coerce.number().int().min(1, "Times must be a positive integer").optional(),
   features: z.array(
     z.object({ value: z.string().min(1, "Feature cannot be empty") })
   ),
@@ -95,7 +95,7 @@ const PackagesForm = () => {
       name: "",
       description: "",
       price: 0,
-      interval: "30days",
+      interval: "30 days",
       times: 1,
       features: [{ value: "" }],
       popular: false,

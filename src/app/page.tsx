@@ -11,10 +11,12 @@ import RatingsSection from "@/components/landing-page/RatingsSection";
 import RegisterSection from "@/components/landing-page/RegisterSection";
 import Testimonials from "@/components/landing-page/Testimonials";
 import TournamentWinner from "@/components/landing-page/TournamentWinner";
+import { useGetReviews } from "@/hooks/api";
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+
 
   // Hide scroll indicator after user has scrolled a bit
   useEffect(() => {

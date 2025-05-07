@@ -376,7 +376,7 @@ export function CustomerdEdit() {
                           </div>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>User don't have a subscription</p>
+                          <p>User don&apos;t have a subscription</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
