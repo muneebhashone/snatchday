@@ -91,7 +91,7 @@ const CurrentDuels = () => {
   return (
     <div className="space-y-6 max-w-[80%] mx-auto">
       {/* Filters Section */}
-      <div className="bg-white p-6 rounded-lg shadow-sm">
+      <div className="p-6 rounded-lg shadow-sm ">
         <div className="flex items-center justify-between gap-4 mt-10">
           {/* Search */}
           <div className="flex items-center gap-5 flex-1">
@@ -141,7 +141,7 @@ const CurrentDuels = () => {
           <Loader className="animate-spin text-primary w-12 h-12" />
         </div>
       ) : duels.length ? (
-        <div className="rounded-md border">
+        <div className="rounded-md border bg-white">
           <Table>
             <TableHeader>
               <TableRow>

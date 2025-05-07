@@ -15,10 +15,40 @@ import {
 } from "@/components/ui/breadcrumb";
 import { toast } from "sonner";
 import { useUserContext } from "@/context/userContext";
-
+import { useLeaveConfirmation } from "@/hooks/UseLeaveConfirmation";
 const Page = () => {
-  const { id } = useParams();
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a");
+      if (!anchor) return;
+
+      const href = anchor.getAttribute("href");
+      if (!href || href === pathname) return;
+
+      // Only intercept if we're on /dashboard
+      if (pathname.startsWith(`/duel-arena/play/${id}`)) {
+        const confirmed = window.confirm(
+          "Are you sure you want to leave the dashboard?"
+        );
+        if (!confirmed) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, [pathname]);
+
+  useLeaveConfirmation(true);
+  const { id } = useParams();
   const { data: duelGame } = useGetDuelGameById(id as string);
   console.log(duelGame);
   const dummyDataDraw = {
@@ -59,7 +89,7 @@ const Page = () => {
       getDuelScore(dummyDataDraw, {
         onSuccess: () => {
           toast.success("Score submitted successfully");
-          router.push(`/duel-arena/play?id=${id}`);
+          router.push(`/duel-arena/duel/${id}`);
         },
         onError: (error) => {
           console.log(error, "error");

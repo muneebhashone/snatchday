@@ -113,7 +113,9 @@ export interface Product {
   categoryIds: string[];
   type: "NEW" | "SALE";
   data?: any;
-  discounts?: [{ price: number, customerGroup: string, away: Date, until: Date }];
+  discounts?: [
+    { price: number; customerGroup: string; away: Date; until: Date }
+  ];
   calculatedPrice?: number;
 }
 
@@ -367,7 +369,6 @@ export interface WebSetting {
   order: number;
 }
 
-
 export interface MainProduct {
   name: string;
   description: string;
@@ -413,18 +414,17 @@ export interface TutorialFormData {
   order?: number;
 }
 
-
 export interface points {
-  facebookLike: number,
-  facebookShare: number,
-  referral: number,
-  facebookAppId: string,
-  maxSnapPoints: number,
-  maxDiscountPoints: number,
-  maxWithdrawalAmount: number,
-  minWithdrawalAmount: number
-  platformFee: number,
-  snapPointsRatio: number
+  facebookLike: number;
+  facebookShare: number;
+  referral: number;
+  facebookAppId: string;
+  maxSnapPoints: number;
+  maxDiscountPoints: number;
+  maxWithdrawalAmount: number;
+  minWithdrawalAmount: number;
+  platformFee: number;
+  snapPointsRatio: number;
 }
 
 export interface BankDetails {
@@ -458,4 +458,26 @@ export interface WithdrawalRequest {
 export interface WithdrawalRequestResponse {
   success: boolean;
   data: WithdrawalRequest | WithdrawalRequest[];
+}
+
+// For the notification data object
+export interface NotificationData {
+  duelStatus?: string;
+  duelType?: string;
+  type?: string;
+  duelValue?: number;
+  image?: string;
+  duelGame?: string;
+  duelGameImage?: string;
+  createdAt?: string;
+}
+
+// For the notification item
+export interface NotificationItem {
+  _id: string;
+  type: string;
+  data: {
+    message: string;
+    data: NotificationData;
+  };
 }
