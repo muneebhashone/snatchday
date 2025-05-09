@@ -705,9 +705,9 @@ const VoucherForm = () => {
                               }
                               disabled={(date) => {
                                 const untilDate = form.getValues("until");
-                                if (!untilDate) return date < new Date();
+                                if (!untilDate) return date <= new Date();
                                 const until = new Date(untilDate);
-                                return date >= until || date < new Date();
+                                return date >= until || date <= new Date();
                               }}
                               initialFocus
                             />

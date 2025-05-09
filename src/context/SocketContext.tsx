@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { useUserContext } from "./userContext";
 
 interface SocketContextType {
   socket: Socket | null;
@@ -11,16 +12,21 @@ const SocketContext = createContext<SocketContextType | undefined>(undefined);
 export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  const { user } = useUserContext();
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(process.env.NEXT_PUBLIC_API_BASE_URL);
-    setSocket(newSocket);
-
+    const newSocket = io("https://test-node-vercel-production.up.railway.app");
+    newSocket.on("connect", () => {
+      setSocket(newSocket);
+      if (user) {
+        newSocket.emit("join", user.user._id);
+      }
+    });
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [user]);
 
   return (
     <SocketContext.Provider value={{ socket }}>

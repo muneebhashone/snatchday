@@ -20,7 +20,7 @@ import { useGetReviews } from "@/hooks/api";
 
 const RatingSlider = () => {
   const {data: review} = useGetReviews();
-  console.log("review", review);
+  // console.log("review", review);
   const reviews = review?.data.reviews || [];
 
   return (

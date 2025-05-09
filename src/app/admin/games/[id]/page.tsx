@@ -133,8 +133,10 @@ const Page = () => {
     Object.entries(data).forEach(([key, value]) => {
       if (key === "winnerDetermination") {
         formData.append(key, JSON.stringify(value));
-      } else if (value !== undefined && value !== null) {
+      } else if (value !== undefined && value !== null && value !== "") {
         formData.append(key, value instanceof File ? value : value.toString());
+      } else if (value === null || value === undefined || value === "") {
+        formData.delete(key);
       }
     });
 

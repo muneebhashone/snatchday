@@ -79,9 +79,9 @@ const Page = () => {
         const endDate = new Date(duelEndTime);
         const now = new Date();
         const diff = endDate.getTime() - now.getTime();
-        console.log(endDate);
-        console.log(now);
-        console.log(diff / 60);
+        // console.log(endDate);
+        // console.log(now);
+        // console.log(diff / 60);
 
         if (diff <= 0) {
           clearInterval(timer);

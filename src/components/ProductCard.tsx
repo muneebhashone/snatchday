@@ -43,6 +43,7 @@ const ProductCard = ({
   type,
   _id,
   calculatedPrice,
+  ratings,
 }: Product) => {
   const { data: addToCartData, refetch } = useGetCart();
   const { mutate: addToCart, isPending: isAddToCartPending } = useAddToCart();
@@ -191,11 +192,11 @@ const ProductCard = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <div className="flex text-orange-400 text-2xl">
-              {"★".repeat(3)}
-              {"☆".repeat(5 - 3)}
+              {"★".repeat(Math.round(ratings || 0))}
+              {"☆".repeat(5 - Math.round(ratings || 0))}
             </div>
             {/* <span className="text-sm text-gray-500">({rating || 4})</span> */}
-            <span className="text-sm text-gray-500">({4})</span>
+            <span className="text-sm text-gray-500">({ratings || 0})</span>
           </div>
           <div className="flex items-center gap-2">
             {discount > 0 ? (

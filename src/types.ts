@@ -117,6 +117,7 @@ export interface Product {
     { price: number; customerGroup: string; away: Date; until: Date }
   ];
   calculatedPrice?: number;
+  ratings?: number;
 }
 
 export interface ProductsData {

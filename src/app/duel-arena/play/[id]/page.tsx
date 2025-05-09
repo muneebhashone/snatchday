@@ -76,7 +76,6 @@ const Page = () => {
         (userID === duelGame.data.player2?._id &&
           (duelGame.data.player2Score?.score ||
             duelGame.data.player2Score?.time));
-
       if (hasPlayed) {
         toast.error("You have already played this duel");
         router.push(`/duel-arena`);

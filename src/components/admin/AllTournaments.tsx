@@ -320,7 +320,9 @@ const AllTournaments = () => {
               ) : tournaments.length > 0 ? (
                 tournaments.map((tournament) => (
                   <TableRow key={tournament._id} className="hover:bg-gray-50">
-                    <TableCell>{tournament?.tournamentId}</TableCell>
+                    <TableCell>
+                      <p className="w-max">{tournament?.tournamentId}</p>
+                    </TableCell>
                     <TableCell>
                       {tournament.image && (
                         <div className="relative h-12 w-12">

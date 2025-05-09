@@ -33,15 +33,19 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Loader from "@/components/Loader";
-import { useGetProductById, useUpComingTournament } from "@/hooks/api";
+import {
+  useGetProductById,
+  useGetSingleProduct,
+  useUpComingTournament,
+} from "@/hooks/api";
 import { useParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 const ProductContent = () => {
-  const params = useParams();
-  const id = params.id;
+  const { id } = useParams();
+  const { data: singleProductData } = useGetSingleProduct(id as string);
   const { data: productData, isLoading } = useGetProductById(id as string);
-  console.log(productData)
+  console.log(productData);
   const { data: tournaments, isLoading: isUpComingTournamentLoading } =
     useUpComingTournament();
 

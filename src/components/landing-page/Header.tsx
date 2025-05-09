@@ -59,21 +59,29 @@ import {
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import SubscriptionNotificationDialog from "../SubscriptionNotificationDialog";
+import { useSocket } from "@/context/SocketContext";
+import { useUserContext } from "@/context/userContext";
 const Header = () => {
-  const { data: myprofile, isLoading: isMyProfileLoading, refetch } = useGetMyProfile();
+  const {
+    data: myprofile,
+    isLoading: isMyProfileLoading,
+    refetch,
+  } = useGetMyProfile();
   // console.log(myprofile?.data?.notifications, "myprofile");
+  const { user } = useUserContext();
   const [showNotification, setShowNotification] = useState<string[]>([]);
   const [notificationReadID, setNotificationReadID] = useState<string>("");
-  const { mutate: markAsRead } = useMarkAsRead(notificationReadID);
+  const { mutate: markAsRead, isPending: isMarkAsReadPending } =
+    useMarkAsRead(notificationReadID);
   const { data: cartData } = useGetCart();
   const { data: wishlist } = useGetWishList();
-
+  const { socket } = useSocket();
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const [isSubscriptionDialogOpen, setIsSubscriptionDialogOpen] = useState(false);
-
+  const [isSubscriptionDialogOpen, setIsSubscriptionDialogOpen] =
+    useState(false);
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 1000);
@@ -94,6 +102,16 @@ const Header = () => {
 
   const [isNotificationDialogOpen, setIsNotificationDialogOpen] =
     useState(false);
+
+  useEffect(() => {
+    console.log(socket, "socket");
+    socket?.on("duel", (data) => {
+      console.log(data, "socket data");
+    });
+    socket?.on("reconnect", (data) => {
+      console.log(user, "user");
+    });
+  }, [socket]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -249,6 +267,7 @@ const Header = () => {
                         onClick={() => handleNotificationClick(item._id)}
                         className="absolute top-2 right-2 text-primary hover:bg-primary hover:text-white rounded-full p-1 border border-primary transition-colors"
                         title="Mark as Read"
+                        disabled={isMarkAsReadPending}
                       >
                         <CheckCheck className="h-5 w-5" />
                       </button>
@@ -314,7 +333,12 @@ const Header = () => {
           </motion.div>
         </DialogContent>
       </Dialog>
-      <SubscriptionNotificationDialog isNotificationDialogOpen={isSubscriptionDialogOpen} setIsNotificationDialogOpen={setIsSubscriptionDialogOpen} myprofile={myprofile} refetch={refetch} />
+      <SubscriptionNotificationDialog
+        isNotificationDialogOpen={isSubscriptionDialogOpen}
+        setIsNotificationDialogOpen={setIsSubscriptionDialogOpen}
+        myprofile={myprofile}
+        refetch={refetch}
+      />
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}
@@ -741,7 +765,7 @@ const Header = () => {
             </span>
             <span className="text-primary font-bold text-sm">
               {myprofile?.data?.wallet?.snapPoints
-                ? formatCurrency(myprofile?.data?.wallet?.snapPoints)
+                ? myprofile?.data?.wallet?.snapPoints.toFixed(2)
                 : 0}{" "}
               /{" "}
               {myprofile?.data?.wallet?.snapPoints
@@ -755,7 +779,7 @@ const Header = () => {
             </span>
             <span className="text-primary font-bold text-sm">
               {myprofile?.data?.wallet?.discountPoints
-                ? myprofile?.data?.wallet?.discountPoints
+                ? myprofile?.data?.wallet?.discountPoints.toFixed(2)
                 : 0}{" "}
               /{" "}
               {myprofile?.data?.wallet?.discountPoints

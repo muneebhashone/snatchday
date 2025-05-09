@@ -134,7 +134,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (!user?.user) {
-      router.push('/');
+      router.push("/");
     }
   }, [user, router]);
 
@@ -160,8 +160,8 @@ const UserProfile = () => {
 
   const onSubmit = async (profileData: z.infer<typeof profileSchema>) => {
     const formData = new FormData();
-    formData.append('name', profileData.username);
-    
+    formData.append("name", profileData.username);
+
     Object.entries(profileData).forEach(([key, value]) =>
       formData.append(key, value || "")
     );
@@ -592,6 +592,9 @@ const UserProfile = () => {
                               <SelectItem value="30.00">€30.00</SelectItem>
                               <SelectItem value="40.00">€40.00</SelectItem>
                               <SelectItem value="50.00">€50.00</SelectItem>
+                              <SelectItem value="100.00">€100.00</SelectItem>
+                              <SelectItem value="200.00">€200.00</SelectItem>
+                              <SelectItem value="500.00">€500.00</SelectItem>
                             </SelectContent>
                             <div>
                               {amountError && (
@@ -934,7 +937,6 @@ const UserProfile = () => {
                     </div>
 
                     <div className="flex items-center justify-end gap-4 mt-6">
-                     
                       <Button
                         variant="outline"
                         type="button"

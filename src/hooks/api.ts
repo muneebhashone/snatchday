@@ -153,6 +153,8 @@ import {
   cancelSnapSubscription,
   renewSnapSubscription,
   endDuel,
+  PostTournamentScore,
+  getSingleProduct,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1376,5 +1378,19 @@ export const useRenewSnapSubscription = () => {
 export const useEndDuel = (duelId: string) => {
   return useMutation({
     mutationFn: () => endDuel(duelId),
+  });
+};
+
+export const usePostTournamentScore = (id: string) => {
+  return useMutation({
+    mutationFn: ({ score, time }: { score: number; time: number }) =>
+      PostTournamentScore({ score, time }, id),
+  });
+};
+
+export const useGetSingleProduct = (productId: string) => {
+  return useQuery({
+    queryKey: ["singleProduct", productId],
+    queryFn: () => getSingleProduct(productId),
   });
 };

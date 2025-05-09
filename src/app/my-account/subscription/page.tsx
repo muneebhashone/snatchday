@@ -41,13 +41,19 @@ const Page = () => {
   const { data: points } = useGetPoints();
   console.log(points, "points");
   console.log(myprofile, "myprofile");
-  const { data: snapSubscriptions, isLoading } = useGetSnapSubscriptions();
+  const { data: snapSubscriptions, isLoading,refetch } = useGetSnapSubscriptions();
   const { mutate: renewSnapSubscription } = useRenewSnapSubscription();
   const { mutate: cancelSnapSubscription } = useCancelSnapSubscription();
   const [showRetryDialog, setShowRetryDialog] = React.useState(false);
   const [renewError, setRenewError] = React.useState("");
-  const compareSnapPoints = myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >= snapSubscriptions?.data?.subscription?.package?.price;
-  console.log(myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >= snapSubscriptions?.data?.subscription?.package?.price, "");
+  const compareSnapPoints =
+    myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >=
+    snapSubscriptions?.data?.subscription?.package?.price;
+  console.log(
+    myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >=
+      snapSubscriptions?.data?.subscription?.package?.price,
+    ""
+  );
 
   if (isLoading) {
     return (
@@ -64,33 +70,35 @@ const Page = () => {
 
   return (
     <MyAccountLayout>
-      <div className="max-w-4xl mx-auto mt-8">
+      <div className="max-w-4xl mx-auto mt-8 mb-8">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-3xl font-bold text-primary">Subscription Overview</h2>
+          <h2 className="text-3xl font-bold text-primary">
+            Subscription Overview
+          </h2>
           {/* Example admin-style action button */}
-          {snapSubscriptions?.data?.hasSubscription && (
-            sub.status === "expired" ? (
-              <Button
-                size="sm"
-                onClick={() => setShowRetryDialog(true)}
-              >
+          {snapSubscriptions?.data?.hasSubscription &&
+            (sub.status === "expired" ? (
+              <Button size="sm" onClick={() => setShowRetryDialog(true)}>
                 Retry
               </Button>
             ) : (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => setShowCancelDialog(true)}
-              >
-                Cancel Subscription
-              </Button>
-            )
-          )}
+              sub.autoRenew && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowCancelDialog(true)}
+                >
+                  Cancel Subscription
+                </Button>
+              )
+            ))}
         </div>
         {!snapSubscriptions?.data?.hasSubscription ? (
           <div className="bg-white rounded-lg shadow p-10 flex flex-col items-center border border-gray-200">
             <XCircle className="h-14 w-14 text-gray-300 mb-4" />
-            <p className="text-gray-500 text-lg">No active subscription found.</p>
+            <p className="text-gray-500 text-lg">
+              No active subscription found.
+            </p>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow p-10 border border-gray-200">
@@ -108,7 +116,9 @@ const Page = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
                 <div className="text-xs text-gray-500 mb-1">Package</div>
-                <div className="font-bold text-lg text-primary">{pkg?.name}</div>
+                <div className="font-bold text-lg text-primary">
+                  {pkg?.name}
+                </div>
               </div>
               <div>
                 <div className="text-xs text-gray-500 mb-1">Interval</div>
@@ -125,21 +135,27 @@ const Page = () => {
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-500 mb-1">Snap Points Deducted</div>
+                <div className="text-xs text-gray-500 mb-1">
+                  Snap Points Deducted
+                </div>
                 <div className="font-medium">{sub.snapPointsDeducted}</div>
               </div>
               <div>
                 <div className="text-xs text-gray-500 mb-1">Start Date</div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  {sub.startDate ? new Date(sub.startDate).toLocaleDateString() : "-"}
+                  {sub.startDate
+                    ? new Date(sub.startDate).toLocaleDateString()
+                    : "-"}
                 </div>
               </div>
               <div>
                 <div className="text-xs text-gray-500 mb-1">End Date</div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
-                  {sub.endDate ? new Date(sub.endDate).toLocaleDateString() : "-"}
+                  {sub.endDate
+                    ? new Date(sub.endDate).toLocaleDateString()
+                    : "-"}
                 </div>
               </div>
             </div>
@@ -161,25 +177,40 @@ const Page = () => {
           <AlertDialog open={showRetryDialog} onOpenChange={setShowRetryDialog}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle onClick={() => {
-                  if (myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >= snapSubscriptions?.data?.subscription?.package?.price) {
-                    renewSnapSubscription({ packageId: pkg._id }, {
-                      onSuccess: () => {
-                        toast.success("Subscription renewed!");
-                        setShowRetryDialog(false);
-                      },
-                      onError: (error) => {
-                        toast.error("Error renewing subscription.");
-                      }
-                    });
-                  } else {
-                    toast.error("You do not have enough snap points to renew this package.");
-                  }
-                }}>Renew Subscription</AlertDialogTitle>
+                <AlertDialogTitle
+                  onClick={() => {
+                    if (
+                      myprofile?.data?.wallet?.snapPoints /
+                        points?.data?.snapPointsRatio >=
+                      snapSubscriptions?.data?.subscription?.package?.price
+                    ) {
+                      renewSnapSubscription(
+                        { packageId: pkg._id },
+                        {
+                          onSuccess: () => {
+                            toast.success("Subscription renewed!");
+                            setShowRetryDialog(false);
+                          },
+                          onError: (error) => {
+                            toast.error("Error renewing subscription.");
+                          },
+                        }
+                      );
+                    } else {
+                      toast.error(
+                        "You do not have enough snap points to renew this package."
+                      );
+                    }
+                  }}
+                >
+                  Renew Subscription
+                </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {renewError
-                    ? <span className="text-red-500">{renewError}</span>
-                    : "Do you want to renew your subscription for this package?"}
+                  {renewError ? (
+                    <span className="text-red-500">{renewError}</span>
+                  ) : (
+                    "Do you want to renew your subscription for this package?"
+                  )}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -191,19 +222,28 @@ const Page = () => {
                     setRenewError("");
                     // Check user points
 
-                    if (myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio < snapSubscriptions?.data?.subscription?.package?.price) {
-                      setRenewError("You do not have enough snap points to renew this package.");
+                    if (
+                      myprofile?.data?.wallet?.snapPoints /
+                        points?.data?.snapPointsRatio <
+                      snapSubscriptions?.data?.subscription?.package?.price
+                    ) {
+                      setRenewError(
+                        "You do not have enough snap points to renew this package."
+                      );
                       return;
                     }
-                    renewSnapSubscription({ packageId: pkg._id }, {
-                      onSuccess: () => {
-                        toast.success("Subscription renewed!");
-                        setShowRetryDialog(false);
-                      },
-                      onError: (error) => {
-                        toast.error("Error renewing subscription.");
+                    renewSnapSubscription(
+                      { packageId: pkg._id },
+                      {
+                        onSuccess: () => {
+                          toast.success("Subscription renewed!");
+                          setShowRetryDialog(false);
+                        },
+                        onError: (error) => {
+                          toast.error("Error renewing subscription.");
+                        },
                       }
-                    });
+                    );
                   }}
                 >
                   Renew
@@ -212,13 +252,17 @@ const Page = () => {
             </AlertDialogContent>
           </AlertDialog>
         )}
-        {showCancelDialog && (
-          <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        {showCancelDialog && sub?.autoRenew && (
+          <AlertDialog
+            open={showCancelDialog}
+            onOpenChange={setShowCancelDialog}
+          >
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to cancel your subscription? This action cannot be undone.
+                  Are you sure you want to cancel your subscription? This action
+                  cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -231,10 +275,14 @@ const Page = () => {
                       onSuccess: () => {
                         toast.success("Subscription cancelled!");
                         setShowCancelDialog(false);
+                        refetch();
                       },
                       onError: (error) => {
-                        toast.error((error as unknown as IError)?.response?.data?.message || "Error cancelling subscription.");
-                      }
+                        toast.error(
+                          (error as unknown as IError)?.response?.data
+                            ?.message || "Error cancelling subscription."
+                        );
+                      },
                     });
                   }}
                 >

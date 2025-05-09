@@ -29,6 +29,7 @@ import {
 } from "../ui/select";
 import { Category } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -108,7 +109,9 @@ export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
           onSuccess?.();
         },
         onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Failed to create category");
+          toast.error(
+            error.response?.data?.message || "Failed to create category"
+          );
           console.error(error);
         },
       });
@@ -249,7 +252,11 @@ export default function CategoriesForm({ onSuccess }: CategoriesFormProps) {
               type="submit"
               disabled={isPending}
             >
-              {isPending ? "Creating..." : "Create Category"}
+              {isPending ? (
+                <Loader className="h-4 w-4 animate-spin" />
+              ) : (
+                "Create Category"
+              )}
             </Button>
           </div>
         </form>

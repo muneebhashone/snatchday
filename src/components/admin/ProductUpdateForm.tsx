@@ -33,7 +33,13 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarIcon, X, PlusCircle, ChevronsUpDown, AlertCircle } from "lucide-react";
+import {
+  CalendarIcon,
+  X,
+  PlusCircle,
+  ChevronsUpDown,
+  AlertCircle,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
@@ -63,110 +69,110 @@ const discountSchema = z.object({
   until: z.coerce.date().optional(),
 });
 
-const formSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    description: z.string().optional(),
-    company: z.string().optional(),
-    images: z.any(),
-    colors: z.string().min(1, "Colors cannot be empty"),
-    stock: z.number().min(0, "Stock must be 0 or greater"),
-    price: z.number().min(1, "Price must be 0 or greater"),
-    attributes: z.any(),
-    categoryIds: z
-      .array(z.string())
-      .min(1, "At least one category is required"),
-    type: z.enum(["NEW", "SALE"]),
-    isFeatured: z.boolean(),
-    metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
-    metaDescription: z.string().optional(),
-    metaKeywords: z.string().optional(),
-    article: z.string().min(1, "Article cannot be empty"),
-    currentOffer: z.boolean(),
-    sku: z.string().optional(),
-    barcodeEAN: z.string().optional(),
-    noStockMessage: z.string().optional(),
-    relatedProducts: z.array(z.string()).default([]),
-    requireShipping: z.boolean(),
-    liscenseKey: z.string().optional(),
-    discounts: z.array(discountSchema).optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.requireShipping && data.liscenseKey) {
-      ctx.addIssue({
-        path: ["liscenseKey"],
-        code: z.ZodIssueCode.custom,
-        message: "License key is not required when shipping is enable",
-      });
-    } else if (!data.requireShipping && !data.liscenseKey) {
-      ctx.addIssue({
-        path: ["liscenseKey"],
-        code: z.ZodIssueCode.custom,
-        message: "License key is required when shipping is not enable",
-      });
-    }
+// const formSchema = z
+//   .object({
+//     name: z.string().min(2, "Name must be at least 2 characters"),
+//     description: z.string().optional(),
+//     company: z.string().optional(),
+//     images: z.any(),
+//     colors: z.string().optional(),
+//     stock: z.number().min(0, "Stock must be 0 or greater"),
+//     price: z.number().min(1, "Price must be 0 or greater"),
+//     attributes: z.any(),
+//     categoryIds: z
+//       .array(z.string())
+//       .min(1, "At least one category is required"),
+//     type: z.enum(["NEW", "SALE"]),
+//     isFeatured: z.boolean(),
+//     metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
+//     metaDescription: z.string().optional(),
+//     metaKeywords: z.string().optional(),
+//     article: z.string().min(1, "Article cannot be empty"),
+//     currentOffer: z.boolean(),
+//     sku: z.string().optional(),
+//     barcodeEAN: z.string().optional(),
+//     noStockMessage: z.string().optional(),
+//     relatedProducts: z.array(z.string()).default([]),
+//     requireShipping: z.boolean(),
+//     liscenseKey: z.string().optional(),
+//     discounts: z.array(discountSchema).optional(),
+//   })
+//   .superRefine((data, ctx) => {
+//     if (data.requireShipping && data.liscenseKey) {
+//       ctx.addIssue({
+//         path: ["liscenseKey"],
+//         code: z.ZodIssueCode.custom,
+//         message: "License key is not required when shipping is enable",
+//       });
+//     } else if (!data.requireShipping && !data.liscenseKey) {
+//       ctx.addIssue({
+//         path: ["liscenseKey"],
+//         code: z.ZodIssueCode.custom,
+//         message: "License key is required when shipping is not enable",
+//       });
+//     }
 
-    if (data.discounts && data.discounts.length > 0) {
-      data.discounts.forEach((discount, index) => {
-        const startDate = new Date(discount.away);
-        const endDate = new Date(discount.until);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset time to start of day
+//     if (data.discounts && data.discounts.length > 0) {
+//       data.discounts.forEach((discount, index) => {
+//         const startDate = new Date(discount.away);
+//         const endDate = new Date(discount.until);
+//         const today = new Date();
+//         today.setHours(0, 0, 0, 0); // Reset time to start of day
 
-        if (startDate < today) {
-          ctx.addIssue({
-            path: [`discounts.${index}.away`],
-            code: z.ZodIssueCode.custom,
-            message: "Start Date cannot be in the past",
-          });
-        }
+//         if (startDate < today) {
+//           ctx.addIssue({
+//             path: [`discounts.${index}.away`],
+//             code: z.ZodIssueCode.custom,
+//             message: "Start Date cannot be in the past",
+//           });
+//         }
 
-        if (endDate <= startDate) {
-          ctx.addIssue({
-            path: [`discounts.${index}.until`],
-            code: z.ZodIssueCode.custom,
-            message: "End Date must be greater than Start Date",
-          });
-        }
-        
-        // Check if discount price is greater than product price
-        if (discount.price > data.price) {
-          ctx.addIssue({
-            path: [`discounts.${index}.price`],
-            code: z.ZodIssueCode.custom,
-            message: `Discount price cannot be greater than product price (${data.price})`,
-          });
-        }
-      });
-    }
-  })
-  .refine(
-    (data) => {
-      if (data.images && data.images.length === 0) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: "At least one image is required",
-      path: ["images"],
-    }
-  )
-  .refine(
-    (data) => {
-      if (!data.images || data.images.length === 0) {
-        return true;
-      }
+//         if (endDate <= startDate) {
+//           ctx.addIssue({
+//             path: [`discounts.${index}.until`],
+//             code: z.ZodIssueCode.custom,
+//             message: "End Date must be greater than Start Date",
+//           });
+//         }
 
-      return data.images.every(
-        (file) => file instanceof File && file.type.startsWith("image/")
-      );
-    },
-    {
-      message: "Only image files are allowed",
-      path: ["images"],
-    }
-  );
+//         // Check if discount price is greater than product price
+//         if (discount.price > data.price) {
+//           ctx.addIssue({
+//             path: [`discounts.${index}.price`],
+//             code: z.ZodIssueCode.custom,
+//             message: `Discount price cannot be greater than product price (${data.price})`,
+//           });
+//         }
+//       });
+//     }
+//   })
+//   .refine(
+//     (data) => {
+//       if (data.images && data.images.length === 0) {
+//         return false;
+//       }
+//       return true;
+//     },
+//     {
+//       message: "At least one image is required",
+//       path: ["images"],
+//     }
+//   )
+//   .refine(
+//     (data) => {
+//       if (!data.images && previewUrls.length === 0) {
+//         return true;
+//       }
+
+//       return data.images.every(
+//         (file) => file instanceof File && file.type.startsWith("image/")
+//       );
+//     },
+//     {
+//       message: "Only image files are allowed",
+//       path: ["images"],
+//     }
+//   );
 
 interface Category {
   _id: string;
@@ -289,15 +295,110 @@ interface ProductFormValues {
 }
 
 export default function ProductUpdateForm({ product }: { product: Product }) {
-  const [emptyCategory, setEmptyCategory] = useState(false);
-  const [disableLicenseKey, setDisableLicenseKey] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [removedImages, setRemovedImages] = useState<string[]>([]);
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const [previewUrls, setPreviewUrls] = useState<string[]>(
     product?.images || []
   );
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
+  const [lengthOfImages, setLengthOfImages] = useState(0);
+  const formSchema = z
+    .object({
+      name: z.string().min(2, "Name must be at least 2 characters"),
+      description: z.string().optional(),
+      company: z.string().optional(),
+      images: z.any(),
+      colors: z.string().optional(),
+      stock: z.number().min(0, "Stock must be 0 or greater"),
+      price: z.number().min(1, "Price must be 0 or greater"),
+      attributes: z.any(),
+      categoryIds: z
+        .array(z.string())
+        .min(1, "At least one category is required"),
+      type: z.enum(["NEW", "SALE"]),
+      isFeatured: z.boolean(),
+      metaTitle: z.string().min(2, "Meta title must be at least 2 characters"),
+      metaDescription: z.string().optional(),
+      metaKeywords: z.string().optional(),
+      article: z.string().min(1, "Article cannot be empty"),
+      currentOffer: z.boolean(),
+      sku: z.string().optional(),
+      barcodeEAN: z.string().optional(),
+      noStockMessage: z.string().optional(),
+      relatedProducts: z.array(z.string()).default([]),
+      requireShipping: z.boolean(),
+      liscenseKey: z.string().optional(),
+      discounts: z.array(discountSchema).optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (data.requireShipping && data.liscenseKey) {
+        ctx.addIssue({
+          path: ["liscenseKey"],
+          code: z.ZodIssueCode.custom,
+          message: "License key is not required when shipping is enable",
+        });
+      } else if (!data.requireShipping && !data.liscenseKey) {
+        ctx.addIssue({
+          path: ["liscenseKey"],
+          code: z.ZodIssueCode.custom,
+          message: "License key is required when shipping is not enable",
+        });
+      }
+
+      if (data.discounts && data.discounts.length > 0) {
+        data.discounts.forEach((discount, index) => {
+          const startDate = new Date(discount.away);
+          const endDate = new Date(discount.until);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0); // Reset time to start of day
+
+          if (startDate < today) {
+            ctx.addIssue({
+              path: [`discounts.${index}.away`],
+              code: z.ZodIssueCode.custom,
+              message: "Start Date cannot be in the past",
+            });
+          }
+
+          if (endDate <= startDate) {
+            ctx.addIssue({
+              path: [`discounts.${index}.until`],
+              code: z.ZodIssueCode.custom,
+              message: "End Date must be greater than Start Date",
+            });
+          }
+
+          // Check if discount price is greater than product price
+          if (discount.price > data.price) {
+            ctx.addIssue({
+              path: [`discounts.${index}.price`],
+              code: z.ZodIssueCode.custom,
+              message: `Discount price cannot be greater than product price (${data.price})`,
+            });
+          }
+        });
+      }
+    })
+    .refine(
+      (data) => {
+        if (removedImages.length === lengthOfImages && !data.images) {
+          console.log(previewUrls, "previewUrls");
+          return true;
+        }
+
+        return data.images.every(
+          (file) => file instanceof File && file.type.startsWith("image/")
+        );
+      },
+      {
+        message: "Only image files are allowed",
+        path: ["images"],
+      }
+    );
+
+  const [emptyCategory, setEmptyCategory] = useState(false);
+  const [disableLicenseKey, setDisableLicenseKey] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const { mutate: updateProduct, isPending } = useUpdateProduct();
   const { data: categoriesData } = useGetCategories({
     limit: "99999",
@@ -320,14 +421,14 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       return acc;
     }, {} as Record<string, string[]>)
   );
-  console.log(product?.categoryIds);
+  // console.log(product?.categoryIds);
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       name: "",
       description: "",
       company: "",
-      images: null,
+      images: [],
       colors: "",
       stock: 0,
       price: 0,
@@ -360,7 +461,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
         name: product.name,
         description: product.description,
         company: product.company,
-        images: null,
+        images: [],
         colors: product.colors?.join(", "),
         stock: product.stock,
         price: product.price,
@@ -383,6 +484,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       });
 
       setPreviewUrls(product.images || []);
+      setLengthOfImages(product.images?.length || 0);
       if (product.categoryIds) {
         setCategories(product.categoryIds);
       }
@@ -446,19 +548,19 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
     }
 
     // Check if all images are removed and no new images are added
-    if (removedImages.length === product.images.length && !values.images) {
+    if (previewUrls.length === removedImages.length && !values.images) {
       form.setError("images", {
         type: "custom",
         message: "At least one image is required",
       });
       return;
     }
-    
+
     // Check for invalid discounts
     const invalidDiscounts = values.discounts?.filter(
-      discount => discount.price > values.price
+      (discount) => discount.price > values.price
     );
-    
+
     if (invalidDiscounts && invalidDiscounts.length > 0) {
       toast.error("Discount prices cannot be greater than product price");
       return;
@@ -478,8 +580,13 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
       for (const [key, value] of Object.entries(data)) {
         if (value === "" || value === null || value === undefined) {
           delete data[key];
-        } else if (key === "images" && value instanceof FileList) {
-          Array.from(value).forEach((file) => {
+        } else if (
+          key === "images" &&
+          (Array.isArray(value) || value instanceof FileList)
+        ) {
+          // Support both array of File and FileList
+          const files = Array.isArray(value) ? value : Array.from(value);
+          files.forEach((file) => {
             formData.append("images", file);
           });
         } else if (key === "categoryIds") {
@@ -624,49 +731,147 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                 <FormField
                   control={form.control}
                   name="images"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Images *</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          onChange={handleImageChange}
-                        />
-                      </FormControl>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
-                        {previewUrls.map((url, index) => (
-                          <div
-                            key={index}
-                            className="relative group cursor-pointer rounded-md overflow-hidden border"
-                          >
-                            <div className="aspect-square w-full overflow-hidden bg-white">
-                              <Image
-                                src={url}
-                                alt={`Preview ${index + 1}`}
-                                width={200}
-                                height={200}
-                                className="object-contain w-full h-full"
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <FormItem className="space-y-4">
+                      <FormLabel>Product Images *</FormLabel>
+                      <div
+                        className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-primary transition-colors cursor-pointer relative"
+                        onClick={() =>
+                          document.getElementById("image-upload")?.click()
+                        }
+                        onDragOver={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.add("border-primary");
+                        }}
+                        onDragLeave={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.remove("border-primary");
+                        }}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          e.currentTarget.classList.remove("border-primary");
+
+                          if (
+                            e.dataTransfer.files &&
+                            e.dataTransfer.files.length > 0
+                          ) {
+                            const files = Array.from(
+                              e.dataTransfer.files
+                            ).filter((file) => file.type.startsWith("image/"));
+
+                            if (files.length > 0) {
+                              const existingFiles = Array.isArray(value)
+                                ? [...value]
+                                : [];
+                              const updatedFiles = [...existingFiles, ...files];
+                              onChange(updatedFiles);
+
+                              const newUrls = files.map((file) =>
+                                URL.createObjectURL(file)
+                              );
+                              setPreviewUrls((prev) => [...prev, ...newUrls]);
+                            }
+                          }
+                        }}
+                      >
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="bg-gray-100 p-3 rounded-full">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="h-6 w-6 text-gray-500"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                               />
-                            </div>
-                            <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <X
-                                className="h-6 w-6 text-white"
-                                onClick={() => {
-                                  if (url.startsWith("blob:")) {
-                                    URL.revokeObjectURL(url);
-                                  }
-                                  setRemovedImages((prev) => [...prev, url]);
-                                  setPreviewUrls((prev) =>
-                                    prev.filter((_, i) => i !== index)
-                                  );
-                                }}
-                              />
-                            </div>
+                            </svg>
                           </div>
-                        ))}
+                          <div className="text-gray-600 font-medium">
+                            {previewUrls.length > 0
+                              ? `Add more images (${previewUrls.length} selected)`
+                              : "Drag & drop images here"}
+                          </div>
+                          <div className="text-gray-500 text-sm">
+                            or click to browse
+                          </div>
+                          <input
+                            id="image-upload"
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => {
+                              const files = e.target.files;
+                              if (files && files.length > 0) {
+                                const existingFiles = Array.isArray(value)
+                                  ? [...value]
+                                  : [];
+                                const newFiles = Array.from(files);
+                                const updatedFiles = [
+                                  ...existingFiles,
+                                  ...newFiles,
+                                ];
+                                onChange(updatedFiles);
+
+                                const newUrls = newFiles.map((file) =>
+                                  URL.createObjectURL(file)
+                                );
+                                setPreviewUrls((prev) => [...prev, ...newUrls]);
+
+                                e.target.value = "";
+                              }
+                            }}
+                            {...field}
+                          />
+                        </div>
                       </div>
+
+                      {previewUrls.length > 0 && (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                          {previewUrls.map((url, index) => (
+                            <div
+                              key={index}
+                              className="relative group cursor-pointer rounded-md overflow-hidden border"
+                              onClick={() => {
+                                if (url.startsWith("blob:")) {
+                                  URL.revokeObjectURL(url);
+                                }
+                                const newPreviews = [...previewUrls];
+                                newPreviews.splice(index, 1);
+                                setPreviewUrls(newPreviews);
+                                setRemovedImages((prev) => [...prev, url]);
+
+                                if (Array.isArray(value)) {
+                                  const newFiles = [...value];
+                                  newFiles.splice(index, 1);
+                                  onChange(newFiles);
+                                }
+                              }}
+                            >
+                              <div className="aspect-square w-full overflow-hidden bg-white">
+                                <Image
+                                  src={url}
+                                  alt={`Preview ${index + 1}`}
+                                  width={200}
+                                  height={200}
+                                  className="object-contain w-full h-full"
+                                />
+                              </div>
+                              <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <X className="h-6 w-6 text-white" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -1066,7 +1271,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                             control={form.control}
                             name={`discounts.${index}.price`}
                             render={({ field }) => {
-                              const productPrice = form.watch('price');
+                              const productPrice = form.watch("price");
                               return (
                                 <FormItem>
                                   <FormLabel>Price</FormLabel>
@@ -1082,17 +1287,24 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                                       }}
                                       {...field}
                                       onChange={(e) => {
-                                        const value = parseFloat(e.target.value);
+                                        const value = parseFloat(
+                                          e.target.value
+                                        );
                                         field.onChange(value);
                                       }}
-                                      className={field.value > productPrice ? "border-destructive" : ""}
+                                      className={
+                                        field.value > productPrice
+                                          ? "border-destructive"
+                                          : ""
+                                      }
                                     />
                                   </FormControl>
                                   <FormMessage />
                                   {field.value > productPrice && (
                                     <p className="text-destructive text-sm mt-1 flex items-center gap-1">
                                       <AlertCircle className="h-3 w-3" />
-                                      Discount price cannot be greater than product price ({productPrice})
+                                      Discount price cannot be greater than
+                                      product price ({productPrice})
                                     </p>
                                   )}
                                 </FormItem>
@@ -1266,7 +1478,7 @@ export default function ProductUpdateForm({ product }: { product: Product }) {
                   name="colors"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Colors *</FormLabel>
+                      <FormLabel>Colors</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Colors (comma separated: Red, Blue, Green)"

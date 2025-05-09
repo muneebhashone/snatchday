@@ -26,12 +26,13 @@ import {
 import { Grid3x3, ListIcon, LoaderIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import VisitTournament from "@/components/VisitTournament";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import {
   useGetCategoryById,
   useGetProducts,
   useGetFilterById,
   useGetCategories,
+  useGetSingleProduct,
 } from "@/hooks/api";
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -63,10 +64,6 @@ const ProductListingPage = () => {
   const [priceRange, setPriceRange] = useState<number[]>([]);
   const debouncedPriceRange = useDebounce(priceRange, 500);
 
-
-
-
-
   const handleFilterChange = (filterName: string, value: string) => {
     setSelectedFilters((prev) => {
       const newFilters = { ...prev };
@@ -89,16 +86,18 @@ const ProductListingPage = () => {
   };
 
   useEffect(() => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      category: category as string, 
-      offset: "0", 
+      category: category as string,
+      offset: "0",
     }));
   }, [category]);
 
   const handlePriceChange = (range: number[]) => {
     setPriceRange(range);
   };
+  const { id } = useParams();
+  const { data: singleProductData } = useGetSingleProduct(id as string);
 
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500); // 500ms delay
@@ -107,12 +106,12 @@ const ProductListingPage = () => {
     setSearchTerm(value);
   };
 
-  const {data:allcategories} = useGetCategories({
-    limit: '9999999',
-    above: true
-  })
+  const { data: allcategories } = useGetCategories({
+    limit: "9999999",
+    above: true,
+  });
 
-  console.log(allcategories,"allcategories")
+  console.log(allcategories, "allcategories");
 
   const attributesArray = Object.entries(selectedFilters).flatMap(
     ([key, values]) => values.map((value) => ({ [key]: value }))
@@ -131,8 +130,6 @@ const ProductListingPage = () => {
 
   const { data: categoryData } = useGetCategoryById(category as string);
 
- 
-
   // const availableFilters =
   //   categoryData?.data?.filters?.map((filter) => ({
   //     name: filter.name,
@@ -140,34 +137,36 @@ const ProductListingPage = () => {
   //     id: filter._id,
   //   })) || [];
 
-
-
-
-
-    const availableFilters = useMemo(() => {
-      if (category) {
-        const selectedCategory = allcategories?.data?.categories?.find(cat => cat._id === category);
-        return selectedCategory?.filters?.map(filter => ({
+  const availableFilters = useMemo(() => {
+    if (category) {
+      const selectedCategory = allcategories?.data?.categories?.find(
+        (cat) => cat._id === category
+      );
+      return (
+        selectedCategory?.filters?.map((filter) => ({
           name: filter.name,
           values: filter.value || [],
           id: filter._id,
-        })) || [];
+        })) || []
+      );
+    }
+
+    // Combine all filters when no category ID is selected
+    const allFilters = allcategories?.data?.categories?.flatMap(
+      (cat) => cat?.filters || []
+    );
+    const uniqueFiltersMap = new Map();
+    allFilters?.forEach((filter) => {
+      if (!uniqueFiltersMap?.has(filter._id)) {
+        uniqueFiltersMap?.set(filter._id, {
+          name: filter.name,
+          values: filter.value || [],
+          id: filter._id,
+        });
       }
-    
-      // Combine all filters when no category ID is selected
-      const allFilters = allcategories?.data?.categories?.flatMap(cat => cat?.filters || []);
-      const uniqueFiltersMap = new Map();
-      allFilters?.forEach(filter => {
-        if (!uniqueFiltersMap?.has(filter._id)) {
-          uniqueFiltersMap?.set(filter._id, {
-            name: filter.name,
-            values: filter.value || [],
-            id: filter._id,
-          });
-        }
-      });
-      return Array.from(uniqueFiltersMap.values());
-    }, [category, allcategories]);
+    });
+    return Array.from(uniqueFiltersMap.values());
+  }, [category, allcategories]);
 
   return (
     <ClientLayout>

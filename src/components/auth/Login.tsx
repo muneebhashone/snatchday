@@ -102,6 +102,7 @@ const Login = ({
         setIsEmailVerified(true);
         toast.success("Logout successful");
         window.location.href = "/";
+        socket.emit("logout");
       } else {
         toast.error(response.message || "Logout failed");
       }

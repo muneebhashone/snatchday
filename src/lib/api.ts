@@ -1169,7 +1169,7 @@ export const joinDuel = async (duelId: string) => {
 export const markAsRead = async (id: string) => {
   const response = await axiosInstance.patch(`/auth/notifications/read/${id}`);
   return response.data;
-}
+};
 
 export const getSnapSubscriptions = async () => {
   const response = await axiosInstance.get("/snap-subscriptions");
@@ -1177,20 +1177,31 @@ export const getSnapSubscriptions = async () => {
 };
 
 export const cancelSnapSubscription = async () => {
-  const response = await axiosInstance.post(
-    `/snap-subscriptions/cancel/` 
-  );
+  const response = await axiosInstance.post(`/snap-subscriptions/cancel/`);
   return response.data;
 };
 
 export const renewSnapSubscription = async (packageId: string) => {
-  const response = await axiosInstance.post(
-    `/snap-subscriptions/`, { packageId }
-  );
+  const response = await axiosInstance.post(`/snap-subscriptions/`, {
+    packageId,
+  });
   return response.data;
 };
 
 export const endDuel = async (duelId: string) => {
   const response = await axiosInstance.post(`/duel/end/${duelId}`);
+  return response.data;
+};
+
+export const PostTournamentScore = async (
+  data: { score: number; time: number },
+  id: string
+) => {
+  const response = await axiosInstance.post(`/tournament/${id}/score`, data);
+  return response.data;
+};
+
+export const getSingleProduct = async (productId: string) => {
+  const response = await axiosInstance.get(`/product/view/${productId}`);
   return response.data;
 };

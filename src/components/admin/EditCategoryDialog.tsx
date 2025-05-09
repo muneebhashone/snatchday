@@ -283,11 +283,13 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
                         <SelectValue placeholder="Select parent category" />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories?.map((category: Category) => (
-                          <SelectItem key={category._id} value={category._id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
+                        {categories
+                          ?.filter((category: Category) => category._id !== categoryId)
+                          .map((category: Category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -321,9 +323,9 @@ export function EditCategoryDialog({ categoryId }: EditCategoryDialogProps) {
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel>Make child Category</FormLabel>
+                    <FormLabel>Show In Mega Menu</FormLabel>
                     <FormDescription>
-                      Is this an child category?
+                      Is this an above category?
                     </FormDescription>
                   </div>
                   <FormControl>

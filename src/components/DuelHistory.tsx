@@ -7,6 +7,7 @@ import { Loader } from "lucide-react";
 import { useUserContext } from "@/context/userContext";
 import Link from "next/link";
 import userImage from "../app/images/avatarimage.svg";
+import { DynamicPagination } from "./ui/dynamic-pagination";
 
 const DuelHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -171,12 +172,18 @@ const DuelHistory = () => {
                 </td>
               </tr>
             ))}
+            {duelHistory?.data?.total < 1 && (
+              <tr>
+                <td colSpan={8} className="text-center">
+                  No duels found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-
       {/* Pagination Controls */}
-      <div className="flex justify-center items-center gap-2 mt-4">
+      {/* <div className="flex justify-center items-center gap-2 mt-4">
         <Button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1 || isLoading}
@@ -196,7 +203,15 @@ const DuelHistory = () => {
         >
           Next
         </Button>
-      </div>
+      </div> */}
+      {duelHistory?.data?.total > 0 && (
+        <DynamicPagination
+          totalItems={duelHistory?.data?.total || 0}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+      )}{" "}
     </div>
   );
 };

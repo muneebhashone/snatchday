@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UseITScope } from "@/hooks/api";
+import { useGetProducts, UseITScope } from "@/hooks/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { Loader } from "lucide-react";
@@ -50,6 +50,7 @@ type IForm = z.infer<typeof formSchema>;
 export default function ProductsPage() {
   const { mutate: ITScope, isPending } = UseITScope();
   const [open, setOpen] = useState(false);
+  const { refetch } = useGetProducts();
   // const [progress, setProgress] = useState(13);
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
@@ -79,6 +80,7 @@ export default function ProductsPage() {
       onSuccess: () => {
         toast.success("products uploaded successfully");
         setOpen(false);
+        refetch();
       },
       onError: (error) => {
         toast.error((error as unknown as IError)?.response.data.message);

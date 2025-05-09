@@ -39,6 +39,7 @@ import { Loader2 } from "lucide-react";
 const TournamentDetailPage = () => {
   const id = useSearchParams().get("id");
   const { user } = useUserContext();
+  console.log(user, "user");
   const {
     data: tournament,
     isLoading,
@@ -53,8 +54,8 @@ const TournamentDetailPage = () => {
   const { data: tournaments, isLoading: isUpComingTournamentLoading } =
     useUpComingTournament();
 
-  const hasParticipated = tournament?.data?.participants?.includes(
-    user?.user?._id
+  const hasParticipated = tournament?.data?.participants?.some(
+    (participant) => participant._id === user?.user?._id
   );
 
   const howToEnterSteps = [
@@ -101,6 +102,7 @@ const TournamentDetailPage = () => {
       <main className="mb-56 overflow-hidden">
         <div className="mt-[115px]">
           <TournamentDetailHero
+            tournamentStatus={tournament?.data?.status}
             isLoading={isLoading}
             tournamentData={tournament}
             hasParticipated={hasParticipated}

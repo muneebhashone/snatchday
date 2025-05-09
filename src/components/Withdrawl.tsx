@@ -103,7 +103,7 @@ const Withdrawl = () => {
 
   // Calculate fees
   const paypalFee = withdrawalMethod === "paypal" ? 0.35 : 0;
-  const totalFee = getPoints?.data.platformFee + paypalFee;
+  const totalFee = getPoints?.data?.platformFee + paypalFee;
   const finalAmount = amount + totalFee;
 
   const { mutate: withdrawl, isPending } = useWithdrawl();
@@ -189,9 +189,9 @@ const Withdrawl = () => {
               )}
             />
             <p className="text-sm text-muted-foreground flex justify-start items-center gap-2">
-              <div>Min: €{getPoints?.data.minWithdrawalAmount}</div>
+              <div>Min: €{getPoints?.data?.minWithdrawalAmount}</div>
               <ArrowRight className="w-4 h-4" />
-              <div>Max: €{getPoints?.data.maxWithdrawalAmount}</div>
+              <div>Max: €{getPoints?.data?.maxWithdrawalAmount}</div>
             </p>
           </div>
 
@@ -408,7 +408,7 @@ const Withdrawl = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <span className="text-gray-600">Payment fee:</span>
-                  <span className="text-right">{getPoints?.data.platformFee.toFixed(2)}€</span>
+                  <span className="text-right">{getPoints?.data?.platformFee.toFixed(2)}€</span>
                 </div>
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t mt-2 font-medium">
                   <span>Total:</span>

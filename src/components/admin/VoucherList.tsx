@@ -442,6 +442,13 @@ export function VoucherList() {
                   </TableRow>
                 ))
               )}
+              {(vouchers?.total) === 0 && (
+                <TableRow>
+                  <TableCell colSpan={8} className="text-center">
+                    No vouchers found
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>

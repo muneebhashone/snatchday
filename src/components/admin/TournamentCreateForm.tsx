@@ -285,7 +285,9 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                               />
                             </div>
                           )}
-                          <span>{product.name}</span>
+                          <span className="w-full line-clamp-3 text-xs">
+                            {product.name}
+                          </span>
                         </div>
                         <Check
                           className={cn(
@@ -448,7 +450,7 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                   control={form.control}
                   name="priceReduction"
                   render={({ field }) => {
-                    const startingPrice = form.watch('startingPrice');
+                    const startingPrice = form.watch("startingPrice");
                     return (
                       <FormItem>
                         <FormLabel className="flex items-center gap-1">
@@ -465,14 +467,19 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                                 e.preventDefault();
                               }
                             }}
-                            className={field.value > startingPrice ? "border-destructive" : ""}
+                            className={
+                              field.value > startingPrice
+                                ? "border-destructive"
+                                : ""
+                            }
                           />
                         </FormControl>
                         <FormMessage />
                         {field.value > startingPrice && (
                           <p className="text-destructive text-sm mt-1 flex items-center gap-1">
                             <AlertCircle className="h-3 w-3" />
-                            Price reduction cannot be greater than starting price ({startingPrice})
+                            Price reduction cannot be greater than starting
+                            price ({startingPrice})
                           </p>
                         )}
                       </FormItem>
@@ -807,7 +814,6 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
 
           {/* VIP & SEO Section */}
           <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-
             <div className="bg-white rounded-lg border p-6">
               <h2 className="text-lg font-semibold mb-6">SEO Information</h2>
 
