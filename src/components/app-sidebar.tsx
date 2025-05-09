@@ -35,6 +35,7 @@ import {
   Star,
   Book,
   DollarSign,
+  BarChart,
 } from "lucide-react";
 import {
   Collapsible,
@@ -72,6 +73,11 @@ const navItems = [
     title: "Products",
     icon: <Package className="h-4 w-4" />,
     subItems: [
+      {
+        title: "Product Performance",
+        url: "/admin/product-performance",
+        icon: <BarChart className="h-4 w-4" />,
+      },
       {
         title: "All Products",
         url: "/admin/products",
@@ -212,6 +218,22 @@ const navItems = [
     title: "Duel",
     url: "/admin/duel",
     icon: <Gamepad className="h-4 w-4" />,
+  },
+  {
+    title: "Competitions",
+    icon: <Trophy className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "All Competitions",
+        url: "/admin/competitions",
+        icon: <List className="h-4 w-4" />,
+      },
+      {
+        title: "Create Competition",
+        url: "/admin/competitions/create",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
   },
 
   {

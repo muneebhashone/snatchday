@@ -1,4 +1,5 @@
 import {
+  CompetitionFormData,
   ReturnOrderTypes,
   TournamentFormData,
   UpdateReturnTypes,
@@ -1205,3 +1206,42 @@ export const getSingleProduct = async (productId: string) => {
   const response = await axiosInstance.get(`/product/view/${productId}`);
   return response.data;
 };
+//competitions api start
+
+export const createCompetition = async (data: CompetitionFormData) => {
+  const response = await axiosInstance.post("/competitions", data);
+  return response.data;
+};
+
+export const updateCompetition = async (id: string, data: CompetitionFormData) => {
+  const response = await axiosInstance.put(`/competitions/${id}`, data);
+  return response.data;
+};
+
+export const getCompetitions = async (params?: {
+ month?: string;
+  status?: string;
+}) => {
+  const response = await axiosInstance.get("/competitions", { params });
+  return response.data;
+};
+
+export const getCompetitionById = async (id: string) => {
+  const response = await axiosInstance.get(`/competitions/${id}`);
+  return response.data;
+};
+
+export const productAnalytics = async (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+  const response = await axiosInstance.get("/product/analytics/product", {
+    params,
+  });
+  return response.data;
+};
+
+
+
+
+
+
+
+

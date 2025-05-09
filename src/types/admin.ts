@@ -50,3 +50,14 @@ export interface UpdateReturnTypes {
   
 }
 
+export interface CompetitionFormData {
+  
+  product: string;
+  price: string;
+  fee: string;
+  month: string;
+  question: string;
+  rightAnswer: string;
+  wrongAnswer: string;
+  status: string;
+}
