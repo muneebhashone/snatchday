@@ -1,43 +1,82 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import AdminLayout from '@/components/admin/AdminLayout'
-import DuelTable from '@/components/admin/DuelTable';
-import { useGetDuels } from '@/hooks/api'
-import AdminBreadcrumb from '@/components/admin/AdminBreadcrumb';
-import { Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from "react";
+import AdminLayout from "@/components/admin/AdminLayout";
+import DuelTable from "@/components/admin/DuelTable";
+import { useGetDuels } from "@/hooks/api";
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
+import { Loader2, Filter, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { formatCurrency } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { DualRangeSlider } from "@/components/tournaments/dualSlider";
+import { useDebounce } from "@/hooks/useDebounce";
 
-import { Input } from '@/components/ui/input';
+const DUEL_STATUSES = [
+  { value: "pending", label: "Pending" },
+  { value: "waiting-for-opponent", label: "Waiting for Opponent" },
+  { value: "in-progress", label: "In Progress" },
+  { value: "completed", label: "Completed" },
+  { value: "cancelled", label: "Cancelled" },
+];
 
 const DuelPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(7);
   const [offset, setOffset] = useState(0);
+  const [status, setStatus] = useState<string>("");
+  const [priceRange, setPriceRange] = useState([10, 100000]);
+  const [minPrice, setMinPrice] = useState<string>("");
+  const [maxPrice, setMaxPrice] = useState<string>("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
   const { data, isLoading, isError, refetch } = useGetDuels({
-    search: searchQuery || undefined,
+    search: debouncedSearchQuery || undefined,
     limit,
     offset,
-    priceRange: undefined,
-   
+    status: status || undefined,
+    priceRange:
+      minPrice || maxPrice
+        ? `[${minPrice || 10},${maxPrice || 100000}]`
+        : undefined,
   });
 
   const duels = data?.data?.duels || [];
   const total = data?.data?.total || 0;
-  console.log(duels);
 
-  const handleNextPage = () => {
-    if (total > offset + limit) {
-      setOffset(offset + limit);
-    }
+  const handlePageChange = (page: number) => {
+    setOffset((page - 1) * limit);
   };
 
-  const handlePrevPage = () => {
-    if (offset >= limit) {
-      setOffset(offset - limit);
-    }
+  const resetFilters = () => {
+    setSearchQuery("");
+    setStatus("");
+    setMinPrice("");
+    setMaxPrice("");
+    setPriceRange([10, 100000]);
+    setOffset(0);
   };
+
+  const hasActiveFilters = searchQuery || status || minPrice || maxPrice;
+
+  const currentPage = Math.floor(offset / limit) + 1;
+  const itemsPerPage = limit;
 
   return (
     <AdminLayout>
@@ -47,67 +86,115 @@ const DuelPage = () => {
           items={[{ title: "Dashboard", href: "/admin" }]}
         />
 
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 className="text-2xl font-bold">Manage Duels</h1>
-            
-            <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-              <div className="flex gap-2 w-full md:w-auto">
-                <Input
-                  placeholder="Search duels..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="max-w-sm"
-                />
-             
-              </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-3 gap-4">
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={undefined}>All Statuses</SelectItem>
+                {DUEL_STATUSES.map((status) => (
+                  <SelectItem key={status.value} value={status.value}>
+                    {status.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
+            <div>
+              <label className="text-sm font-medium mb-2 block">
+                Price Range
+              </label>
+              <DualRangeSlider
+                label={(value) => value}
+                value={priceRange}
+                onValueChange={(value) => {
+                  setPriceRange(value);
+                  setMinPrice(value[0].toString());
+                  setMaxPrice(value[1].toString());
+                }}
+                min={10}
+                max={100000}
+                step={50}
+              />
+              {priceRange && (
+                <div className="flex items-center justify-between mt-1 text-sm text-gray-500">
+                  <span>{priceRange[0].toFixed(2)}€</span>
+                  <span>{priceRange[1].toFixed(2)}€</span>
+                </div>
+              )}
+            </div>
+
+            <Input
+              placeholder="Search duels..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+                className="border border-primary text-primary"
+              >
+                Clear Filters
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Select
+                value={limit.toString()}
+                onValueChange={(value) => setLimit(parseInt(value))}
+              >
+                <SelectTrigger className="w-[100px]">
+                  <SelectValue placeholder="7" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7</SelectItem>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          ) : isError ? (
+          {isError ? (
             <div className="text-center p-8 text-red-500">
               Error loading duels. Please try again.
             </div>
-          ) : duels.length > 0 ? (
-            <>
-              <DuelTable duels={duels} />
-              
-              <div className="flex justify-between items-center mt-4">
-                <div className="text-sm text-gray-500">
-                  Showing {offset + 1} to {Math.min(offset + limit, total)} of {total} duels
-                </div>
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={handlePrevPage}
-                    disabled={offset === 0}
-                  >
-                    Previous
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleNextPage}
-                    disabled={offset + limit >= total}
-                  >
-                    Next
-                  </Button>
-                </div>
-              </div>
-            </>
           ) : (
-            <div className="text-center p-8 text-gray-500">
-              No duels found.
-            </div>
+            !duels.length && (
+              <div className="border rounded-md p-8 text-center text-gray-500">
+                No duels found.
+              </div>
+            )
           )}
+          <>
+            <div className="border rounded-md">
+              <DuelTable duels={duels} isLoading={isLoading} />
+            </div>
+
+            <div className="flex items-center justify-between py-4">
+              <p className="text-sm text-gray-500">
+                Displaying {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                {Math.min(currentPage * itemsPerPage, total)} of {total} entries
+              </p>
+              <DynamicPagination
+                totalItems={total}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </>
         </div>
       </div>
     </AdminLayout>
-  )
-}
+  );
+};
 
 export default DuelPage;

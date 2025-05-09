@@ -2,7 +2,6 @@
 import React from "react";
 import { useParams } from "next/navigation";
 import { useGetReturnById } from "@/hooks/api";
-import { formatDate } from "date-fns";
 import {
   Package,
   ArrowLeft,
@@ -17,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ClientLayout from "@/components/landing-page/ClientLayout";
 import { Product } from "@/components/admin/Product";
+import { formatDate } from "@/lib/utils";
 // import { Badge } from '@/components/ui/badge';
 
 const ReturnDetailsPage = () => {
@@ -173,11 +173,15 @@ const ReturnDetailsPage = () => {
               {returnData?.history && returnData.history.length > 0 ? (
                 returnData?.history.map((item) => (
                     <tr key={item.id}>
-                      <td className="border p-2">
+                      <td className="border p-2 text-center">
                         {formatDate(item?.date || "", "dd/MM/yyyy")}
                       </td>
-                      <td className="border p-2 capitalize">{item?.status}</td>
-                      <td className="border truncate p-2">{item?.remarks}</td>
+                      <td className="border p-2 capitalize text-center">
+                        {item?.status}
+                      </td>
+                      <td className="border truncate p-2 text-center">
+                        {item?.remarks}
+                      </td>
                     </tr>
                   )
                 )

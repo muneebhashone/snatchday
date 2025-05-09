@@ -6,7 +6,7 @@ import Breadcrumb from "antd/es/breadcrumb/Breadcrumb";
 import { Home } from "lucide-react";
 import Link from "next/dist/client/link";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import {
   BreadcrumbList,
@@ -14,24 +14,81 @@ import {
   BreadcrumbLink,
 } from "@/components/ui/breadcrumb";
 import { toast } from "sonner";
-
+import { useUserContext } from "@/context/userContext";
+import { useLeaveConfirmation } from "@/hooks/UseLeaveConfirmation";
 const Page = () => {
-  const { id } = useParams();
   const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a");
+      if (!anchor) return;
+
+      const href = anchor.getAttribute("href");
+      if (!href || href === pathname) return;
+
+      // Only intercept if we're on /dashboard
+      if (pathname.startsWith(`/duel-arena/play/${id}`)) {
+        const confirmed = window.confirm(
+          "Are you sure you want to leave the dashboard?"
+        );
+        if (!confirmed) {
+          e.preventDefault();
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      document.removeEventListener("click", handleClick);
+    };
+  }, [pathname]);
+
+  useLeaveConfirmation(true);
+  const { id } = useParams();
   const { data: duelGame } = useGetDuelGameById(id as string);
   console.log(duelGame);
-  const dummyData = {
+  const dummyDataDraw = {
     score: 110,
     time: 10,
   };
+  const dummyDataWin = {
+    score: 120,
+    time: 10,
+  };
+  const dummyDatalose = {
+    score: 100,
+    time: 10,
+  };
   const { mutate: getDuelScore } = useGetDuelScore(id as string);
+  const user = useUserContext();
+  const userID = user?.user?.user?._id;
 
   useEffect(() => {
+    if (duelGame?.data) {
+      const hasPlayed =
+        (userID === duelGame.data.player1?._id &&
+          (duelGame.data.player1Score?.score ||
+            duelGame.data.player1Score?.time)) ||
+        (userID === duelGame.data.player2?._id &&
+          (duelGame.data.player2Score?.score ||
+            duelGame.data.player2Score?.time));
+      if (hasPlayed) {
+        toast.error("You have already played this duel");
+        router.push(`/duel-arena`);
+        return;
+      }
+    }
+  }, [duelGame, id, router]);
+  useEffect(() => {
     const timer = setTimeout(() => {
-      getDuelScore(dummyData, {
+      getDuelScore(dummyDataWin, {
         onSuccess: () => {
           toast.success("Score submitted successfully");
-          router.push(`/duel-arena/play?id=${id}`);
+          router.push(`/duel-arena/duel/${id}`);
         },
         onError: (error) => {
           console.log(error, "error");
@@ -40,6 +97,15 @@ const Page = () => {
     }, 10000);
     return () => clearTimeout(timer);
   }, [duelGame]);
+
+  const pathName = usePathname();
+
+  useEffect(() => {
+    // if (pathName !== `/duel-arena/play/${id}`) {
+    //   alert("You are about to leave the page");
+    // }
+    console.log(window.location.pathname, `/duel-arena/play/${id}`);
+  }, [router]);
 
   return (
     <ClientLayout>
@@ -79,14 +145,42 @@ const Page = () => {
             </BreadcrumbList>
           </Breadcrumb>
         </div>
-        <div className="flex gap-4 items-center justify-center">
-          <Image
-            src={duelGame?.data?.game?.logo}
-            alt={duelGame?.data?.game?.game}
-            width={50}
-            height={50}
-          />
-          <h1 className="text-4xl font-bold">{duelGame?.data?.game?.game}</h1>
+        <div className="flex gap-4 items-center justify-end  mx-auto">
+          <div className="flex gap-4 items-center justify-between w-[60%] pr-10">
+            <div className="flex gap-4 items-center justify-center">
+              <Image
+                src={duelGame?.data?.game?.logo}
+                alt={duelGame?.data?.game?.game}
+                width={50}
+                height={50}
+              />
+              <h1 className="text-4xl font-bold">
+                {duelGame?.data?.game?.game}
+              </h1>
+            </div>
+            <div className="">
+              {duelGame?.data?.player1 &&
+                duelGame?.data?.playe1Score?.score &&
+                duelGame?.data?.playe1Score?.time && (
+                  <div className="border border-black rounded-md p-2">
+                    <p>Player 1: {duelGame?.data?.player1Score?.score || 0}</p>
+                    <p>
+                      Player 1: {duelGame?.data?.player1Score?.time || 0}sec
+                    </p>
+                  </div>
+                )}
+              {duelGame?.data?.player2 &&
+                duelGame?.data?.playe2Score?.score &&
+                duelGame?.data?.playe2Score?.time && (
+                  <div className="border border-black rounded-md p-2">
+                    <p>Player 2: {duelGame?.data?.player2Score?.score || 0}</p>
+                    <p>
+                      Player 2: {duelGame?.data?.player2Score?.time || 0}sec
+                    </p>
+                  </div>
+                )}
+            </div>
+          </div>
         </div>
         <iframe
           className="mx-auto mt-20"

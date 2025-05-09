@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -13,10 +15,13 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { ProvenExpertIcon } from "./icons/icon";
+import { useGetReviews } from "@/hooks/api";
 
 
 const RatingSlider = () => {
- 
+  const {data: review} = useGetReviews();
+  // console.log("review", review);
+  const reviews = review?.data.reviews || [];
 
   return (
     <Carousel
@@ -45,7 +50,7 @@ const RatingSlider = () => {
                   <div>
                     {/* <h3 className="text-lg xl:text-xl font-semibold"> */}
                     <h3 className="text-sm sm:text-md md:text-2xl lg:text-xl xl:text-2xl font-bold">
-                      {review.name}
+                      {review.userName}
                     </h3>
                     <div className="flex text-sm sm:text-md md:text-2xl lg:text-xl xl:text-2xl text-[#FF6B3D]">
                       {"★".repeat(review.rating)}
@@ -67,10 +72,10 @@ const RatingSlider = () => {
               {/* Review Text */}
 
               {/* <div className="flex flex-col-reverse lg:flex-row items-center lg:items-start justify-between gap-10 text-center"> */}
-              <div className="flex flex-col-reverse xl:flex-row items-center justify-center gap-10">
+              <div className="flex flex-col-reverse xl:flex-row items-center justify-between gap-10">
                 <div className="flex flex-col items-center justify-center md:mt-0 mt-5 px-2 lg:text-start text-center">
                   <p className="text-sm sm:text-lg md:text-xl xl:text-xl mb-6">
-                    {review.review}
+                    {review.comment}
                   </p>
                   {/* <div className="flex justify-between mt-14 md:mt-16 lg:mt-20 px-20 md:mb-10 lg:mb-16 mb-10"> */}
 
@@ -81,10 +86,13 @@ const RatingSlider = () => {
                 <Image
                   // className="lg:w-auto lg:h-auto w-40 md:w-32 h-44 md:h-32"
                   className="xl:w-64 xl:h-72 lg:w-96 object-contain lg:h-48 w-36 md:w-48 h-40 md:h-56"
-                  src={review.product.image}
+                  src={review.product.images[0]}
                   alt={review.product.name}
                   width={200}
                   height={200}
+                  objectFit="cover"
+                 
+                  
                 />
               </div>
             </div>

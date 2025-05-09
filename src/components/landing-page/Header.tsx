@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { User, Heart, ShoppingCart, ChevronDown, Loader2 } from "lucide-react";
+import {
+  User,
+  Heart,
+  ShoppingCart,
+  ChevronDown,
+  Loader2,
+  Terminal,
+  CheckCheck,
+} from "lucide-react";
 import logo from "@/app/images/logo.png";
 import Image from "next/image";
 import { Hamburger } from "@/components/icons/icon";
@@ -34,20 +42,46 @@ import {
   useGetMyProfile,
   useGetProducts,
   useGetWishList,
+  useMarkAsRead,
 } from "@/hooks/api";
 import { useRouter } from "next/navigation";
 import { menu } from "@/dummydata";
-import { Category, SubCategory } from "@/types";
+import { Category, NotificationItem, SubCategory } from "@/types";
 import { useDebounce } from "@/hooks/useDebounce";
 import { formatCurrency } from "@/lib/utils";
-
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
+import SubscriptionNotificationDialog from "../SubscriptionNotificationDialog";
+import { useSocket } from "@/context/SocketContext";
+import { useUserContext } from "@/context/userContext";
 const Header = () => {
+  const {
+    data: myprofile,
+    isLoading: isMyProfileLoading,
+    refetch,
+  } = useGetMyProfile();
+  // console.log(myprofile?.data?.notifications, "myprofile");
+  const { user } = useUserContext();
+  const [showNotification, setShowNotification] = useState<string[]>([]);
+  const [notificationReadID, setNotificationReadID] = useState<string>("");
+  const { mutate: markAsRead, isPending: isMarkAsReadPending } =
+    useMarkAsRead(notificationReadID);
   const { data: cartData } = useGetCart();
   const { data: wishlist } = useGetWishList();
-
+  const { socket } = useSocket();
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [isSubscriptionDialogOpen, setIsSubscriptionDialogOpen] =
+    useState(false);
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 1000);
@@ -59,13 +93,25 @@ const Header = () => {
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
 
   const { data: categories, isLoading } = useGetCategories({
     limit: "9999999",
     above: true,
   });
   const [categoryImage, setCategoryImage] = useState("");
+
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] =
+    useState(false);
+
+  useEffect(() => {
+    console.log(socket, "socket");
+    socket?.on("duel", (data) => {
+      console.log(data, "socket data");
+    });
+    socket?.on("reconnect", (data) => {
+      console.log(user, "user");
+    });
+  }, [socket]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -144,8 +190,155 @@ const Header = () => {
     }
   };
 
+  useEffect(() => {
+    if (myprofile?.data?.notifications) {
+      const duelNotifications = myprofile.data.notifications.filter(
+        (item) => item.type === "duel"
+      );
+      if (duelNotifications.length > 0) {
+        setIsNotificationDialogOpen(true);
+      }
+    }
+    if (myprofile?.data?.notifications?.length > 0) {
+      const subscriptionNotifications = myprofile.data.notifications.filter(
+        (item) => item.type === "subscription"
+      );
+      if (subscriptionNotifications.length > 0) {
+        setIsSubscriptionDialogOpen(true);
+      }
+    }
+  }, [myprofile?.data?.notifications]);
+
+  const handleNotificationClick = (id: string) => {
+    setNotificationReadID(id);
+    markAsRead(undefined, {
+      onSuccess: () => {
+        setShowNotification((prev) => prev.filter((item) => item !== id));
+        // Also update the notifications in myprofile data
+        if (myprofile?.data?.notifications) {
+          const updatedNotifications = myprofile.data.notifications.filter(
+            (item) => item._id !== id
+          );
+          // Update the myprofile data
+          myprofile.data.notifications = updatedNotifications;
+        }
+      },
+    });
+  };
+
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
+      {/* Notification Dialog */}
+      <Dialog
+        open={isNotificationDialogOpen}
+        onOpenChange={setIsNotificationDialogOpen}
+      >
+        <DialogContent className="max-w-[600px] left-[50%] top-[30%]">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="flex flex-col gap-4"
+          >
+            <h2 className="text-lg font-bold text-primary mb-2">
+              Duel Notifications
+            </h2>
+            <div className="max-h-[600px] overflow-y-auto space-y-4">
+              {myprofile?.data?.notifications
+                ?.filter((item) => item.type === "duel")
+                .map((item: NotificationItem) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center gap-4 relative border rounded-md p-4 bg-background"
+                  >
+                    <Image
+                      src={item.data.data.duelGameImage}
+                      alt="Duel Notification"
+                      width={80}
+                      height={80}
+                      className="rounded-md"
+                    />
+                    <div
+                      key={item._id}
+                      className="flex flex-col gap-2 items-start justify-center"
+                    >
+                      <button
+                        onClick={() => handleNotificationClick(item._id)}
+                        className="absolute top-2 right-2 text-primary hover:bg-primary hover:text-white rounded-full p-1 border border-primary transition-colors"
+                        title="Mark as Read"
+                        disabled={isMarkAsReadPending}
+                      >
+                        <CheckCheck className="h-5 w-5" />
+                      </button>
+                      <div className="font-semibold capitalize">
+                        {item?.data?.data?.duelGame}
+                      </div>
+                      <div className="text-sm text-gray-700">
+                        {item.data.data.duelStatus === "completed" ? (
+                          <>
+                            {item.data.message === "Duel Draw" && (
+                              <p>
+                                The duel ended in a draw. Your points sent to
+                                your Account.
+                              </p>
+                            )}
+                            {item.data.message === "You won the duel" && (
+                              <>
+                                Congratulations! You won the duel and earned{" "}
+                                {item.data.data.duelValue}{" "}
+                                {item.data.data.duelType === "snap"
+                                  ? "Snap Points (SP)"
+                                  : "Discount Points (DP)"}
+                                .
+                              </>
+                            )}
+                            {item.data.message === "You lost the duel" && (
+                              <>
+                                Unfortunately, you lost the duel. Better luck
+                                next time!
+                              </>
+                            )}
+                          </>
+                        ) : item.data.data.duelStatus === "cancelled" ? (
+                          <>
+                            The duel has been cancelled and your{" "}
+                            {item.data.data.duelValue}{" "}
+                            {item.data.data.duelType === "snap"
+                              ? "Snap Points (SP)"
+                              : "Discount Points (DP)"}{" "}
+                            will be refunded to your account.
+                          </>
+                        ) : (
+                          item.data.message || "No message"
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(new Date(item.data.data.createdAt))}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              {(!myprofile?.data?.notifications?.filter(
+                (item) => item.type === "duel"
+              ) ||
+                myprofile.data.notifications.filter(
+                  (item) => item.type === "duel"
+                ).length === 0) && (
+                <div className="text-center text-gray-500 py-4">
+                  No duel notifications
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </DialogContent>
+      </Dialog>
+      <SubscriptionNotificationDialog
+        isNotificationDialogOpen={isSubscriptionDialogOpen}
+        setIsNotificationDialogOpen={setIsSubscriptionDialogOpen}
+        myprofile={myprofile}
+        refetch={refetch}
+      />
       <div className="container max-w-[1920px] mx-auto px-12 py-6 flex items-center justify-between">
         <div className="border-r border-gray-200 ">
           {/* Logo Section */}
@@ -572,7 +765,7 @@ const Header = () => {
             </span>
             <span className="text-primary font-bold text-sm">
               {myprofile?.data?.wallet?.snapPoints
-                ? myprofile?.data?.wallet?.snapPoints
+                ? myprofile?.data?.wallet?.snapPoints.toFixed(2)
                 : 0}{" "}
               /{" "}
               {myprofile?.data?.wallet?.snapPoints
@@ -586,7 +779,7 @@ const Header = () => {
             </span>
             <span className="text-primary font-bold text-sm">
               {myprofile?.data?.wallet?.discountPoints
-                ? myprofile?.data?.wallet?.discountPoints
+                ? myprofile?.data?.wallet?.discountPoints.toFixed(2)
                 : 0}{" "}
               /{" "}
               {myprofile?.data?.wallet?.discountPoints

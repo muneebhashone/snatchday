@@ -33,7 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -120,6 +120,16 @@ const formSchema = z
     {
       message: "End date must be greater than start date",
       path: ["end"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (!data.startingPrice || !data.priceReduction) return true;
+      return data.priceReduction <= data.startingPrice;
+    },
+    {
+      message: "Price reduction cannot be greater than starting price",
+      path: ["priceReduction"],
     }
   );
 
@@ -275,7 +285,9 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                               />
                             </div>
                           )}
-                          <span>{product.name}</span>
+                          <span className="w-full line-clamp-3 text-xs">
+                            {product.name}
+                          </span>
                         </div>
                         <Check
                           className={cn(
@@ -437,27 +449,42 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                 <FormField
                   control={form.control}
                   name="priceReduction"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1">
-                        Price Reduction
-                        <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="0.00"
-                          {...field}
-                          onKeyDown={(e) => {
-                            if (e.key === "-") {
-                              e.preventDefault();
+                  render={({ field }) => {
+                    const startingPrice = form.watch("startingPrice");
+                    return (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-1">
+                          Price Reduction
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="0.00"
+                            {...field}
+                            onKeyDown={(e) => {
+                              if (e.key === "-") {
+                                e.preventDefault();
+                              }
+                            }}
+                            className={
+                              field.value > startingPrice
+                                ? "border-destructive"
+                                : ""
                             }
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                        {field.value > startingPrice && (
+                          <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            Price reduction cannot be greater than starting
+                            price ({startingPrice})
+                          </p>
+                        )}
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <FormField
@@ -787,7 +814,6 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
 
           {/* VIP & SEO Section */}
           <div className="grid grid-cols-1 lg:grid-cols-1 gap-6">
-
             <div className="bg-white rounded-lg border p-6">
               <h2 className="text-lg font-semibold mb-6">SEO Information</h2>
 

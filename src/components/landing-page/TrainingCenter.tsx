@@ -51,7 +51,8 @@ const TrainingCenter = () => {
                 <div className="relative group cursor-pointer">
                   <div className="rounded-full my-6 shadow-lg border h-[150px] md:h-[190px] w-[150px] xl:h-[278px] md:w-[190px] xl:w-[278px] border-gray-200 hover:border-primary flex  items-center justify-center transition-transform transform group-hover:scale-105">
                     <Image
-                      className="w-[67px] sm:w-[60px] h-[67px] sm:h-[60px] md:w-[100px] md:h-[100px] xl:w-[200px] xl:h-[200px] object-contain"
+                      // className="w-[67px] sm:w-[60px] h-[67px] sm:h-[60px] md:w-[100px] md:h-[100px] xl:w-[200px] xl:h-[200px] object-contain"
+                      className="object-contain"
                       src={card.logo}
                       alt={card.title}
                       width={122}

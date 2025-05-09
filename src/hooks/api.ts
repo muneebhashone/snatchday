@@ -146,11 +146,26 @@ import {
   getSubscriptionById,
   cancelSubscription,
   getCustomerSubscription,
+  getCurrentDuels,
+  joinDuel,
+  markAsRead,
+  getSnapSubscriptions,
+  cancelSnapSubscription,
+  renewSnapSubscription,
+  endDuel,
+  PostTournamentScore,
+  getSingleProduct,
+  createCompetition,
+  getCompetitionById,
+  getCompetitions,
+  updateCompetition,
+  productAnalytics,
 } from "../lib/api";
 import {
   TournamentFormData,
   ReturnOrderTypes,
   UpdateReturnTypes,
+  CompetitionFormData,
 } from "@/types/admin";
 
 import {
@@ -167,6 +182,7 @@ import {
 } from "@/types";
 import { useUserContext } from "@/context/userContext";
 import { get } from "http";
+import { toast } from "sonner";
 
 // Fetch all items
 export const useGetMyProfile = () => {
@@ -1138,6 +1154,7 @@ export const useGetDuelGames = () => {
 };
 
 export const useGetDuels = (params?: {
+  status?: string;
   search?: string;
   limit?: number;
   offset?: number;
@@ -1312,11 +1329,113 @@ export const useCancelSubscription = () => {
     mutationFn: (subscriptionId: string) => cancelSubscription(subscriptionId),
   });
 };
-  
+
 export const useGetCustomerSubscription = (customerId: string) => {
   return useQuery({
     queryKey: ["customerSubscription", customerId],
     queryFn: () => getCustomerSubscription(customerId),
   });
 };
-  
+
+export const useGetCurrentDuels = (params?: {
+  limit?: number;
+  offset?: number;
+  search?: string;
+  priceRange?: string;
+}) => {
+  return useQuery({
+    queryKey: ["currentDuels", params],
+    queryFn: () => getCurrentDuels(params),
+  });
+};
+
+export const useJoinDuel = (duelId: string) => {
+  return useMutation({
+    mutationFn: () => joinDuel(duelId),
+  });
+};
+
+export const useMarkAsRead = (id: string) => {
+  return useMutation({
+    mutationFn: () => markAsRead(id),
+  });
+};
+
+export const useGetSnapSubscriptions = () => {
+  return useQuery({
+    queryKey: ["snapSubscriptions"],
+    queryFn: () => getSnapSubscriptions(),
+  });
+};
+
+export const useCancelSnapSubscription = () => {
+  return useMutation({
+    mutationFn: () => cancelSnapSubscription(),
+  });
+};
+
+export const useRenewSnapSubscription = () => {
+  return useMutation({
+    mutationFn: ({ packageId }: { packageId: string }) =>
+      renewSnapSubscription(packageId),
+  });
+};
+
+export const useEndDuel = (duelId: string) => {
+  return useMutation({
+    mutationFn: () => endDuel(duelId),
+  });
+};
+
+export const usePostTournamentScore = (id: string) => {
+  return useMutation({
+    mutationFn: ({ score, time }: { score: number; time: number }) =>
+      PostTournamentScore({ score, time }, id),
+  });
+};
+
+export const useGetSingleProduct = (productId: string) => {
+  return useQuery({
+    queryKey: ["singleProduct", productId],
+    queryFn: () => getSingleProduct(productId),
+  });
+};
+
+export const useCreateCompetition = () => {
+  return useMutation({
+    mutationFn: (data: CompetitionFormData) => createCompetition(data),
+  });
+};
+
+export const useUpdateCompetition = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: CompetitionFormData }) =>
+      updateCompetition(id, data),
+  });
+};
+
+export const useGetCompetitions = (params?: {
+  month?: string;
+  status?: string;
+}) => {
+  return useQuery({
+    queryKey: ["competitions", params],
+    queryFn: () => getCompetitions(params),
+  });
+};
+
+export const useGetCompetitionById = (id: string) => {
+  return useQuery({
+    queryKey: ["competitionById", id],
+    queryFn: () => getCompetitionById(id),
+    enabled: !!id,
+  });
+};
+
+export const useProductAnalytics = (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+  return useQuery({
+    queryKey: ["productAnalytics", params],
+    queryFn: () => productAnalytics(params),
+  });
+};
+

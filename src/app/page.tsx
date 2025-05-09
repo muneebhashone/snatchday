@@ -11,11 +11,26 @@ import RatingsSection from "@/components/landing-page/RatingsSection";
 import RegisterSection from "@/components/landing-page/RegisterSection";
 import Testimonials from "@/components/landing-page/Testimonials";
 import TournamentWinner from "@/components/landing-page/TournamentWinner";
+import { useGetReviews } from "@/hooks/api";
+import { useUserContext } from "@/context/userContext";
+import { useSocket } from "@/context/SocketContext";
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+  const { user } = useUserContext();
+  const { socket } = useSocket();
 
+  useEffect(() => {
+    // if (socket) {
+    //   socket.on("reconnect", (data) => {
+    //     console.log(user,'user');
+    //     if (user) {
+    //       socket.emit("join", user.user._id);
+    //     }
+    //   });
+    // }
+  }, [socket]);
   // Hide scroll indicator after user has scrolled a bit
   useEffect(() => {
     const handleScroll = () => {

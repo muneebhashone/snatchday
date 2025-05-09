@@ -47,6 +47,7 @@ import {
   ChevronsUpDown,
   Edit,
   Loader,
+  AlertCircle,
 } from "lucide-react";
 import { useGetGames, useGetProducts, useManageTournament } from "@/hooks/api";
 import { useQueryClient } from "@tanstack/react-query";
@@ -113,7 +114,16 @@ const formSchema = z.object({
     .min(1, "Number of participants must be at least 1"),
   vip: z.boolean(),
   resubmissions: z.coerce.number().min(1, "Resubmissions must be positive"),
-});
+}).refine(
+  (data) => {
+    if (!data.startingPrice || !data.priceReduction) return true;
+    return data.priceReduction <= data.startingPrice;
+  },
+  {
+    message: "Price reduction cannot be greater than starting price",
+    path: ["priceReduction"],
+  }
+);
 
 interface Tournament {
   _id: string;
@@ -396,23 +406,33 @@ export function EditTournamentDialog({
                   <FormField
                     control={form.control}
                     name="priceReduction"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Price Reduction *</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onKeyDown={(e) => {
-                              if (e.key === "-") {
-                                e.preventDefault();
-                              }
-                            }}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const startingPrice = form.watch('startingPrice');
+                      return (
+                        <FormItem>
+                          <FormLabel>Price Reduction *</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              {...field}
+                              onKeyDown={(e) => {
+                                if (e.key === "-") {
+                                  e.preventDefault();
+                                }
+                              }}
+                              className={field.value > startingPrice ? "border-destructive" : ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                          {field.value > startingPrice && (
+                            <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Price reduction cannot be greater than starting price ({startingPrice})
+                            </p>
+                          )}
+                        </FormItem>
+                      );
+                    }}
                   />
 
                   <FormField

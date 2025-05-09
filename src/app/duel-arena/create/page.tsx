@@ -68,7 +68,7 @@ const CreateDuelPage = () => {
                   stiffness: 100,
                   damping: 15,
                 }}
-                className={`bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 flex items-center gap-4 w-full h-max ${
+                className={`border border-gray-200 bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 flex items-center gap-4 w-full h-max ${
                   selectedGame === game._id &&
                   "flex-col justify-center gap-0 items-center p-0"
                 }`}

@@ -46,6 +46,9 @@ axiosInstance.interceptors.response.use(
       if (window.location.pathname.startsWith('/admin')) {
         localStorage.removeItem("snatchday_user")
         window.location.href = '/admin/login';
+      }else{
+        localStorage.removeItem("snatchday_user")
+        window.location.href = '/';
       }
     }
     return Promise.reject(error);

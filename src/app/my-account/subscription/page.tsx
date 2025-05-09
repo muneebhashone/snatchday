@@ -6,9 +6,22 @@ import {
   useGetAllSubscription,
   useGetMandate,
   useCancelSubscription,
+  useGetSnapSubscriptions,
+  useCancelSnapSubscription,
+  useRenewSnapSubscription,
+  useGetMyProfile,
+  useGetPoints,
 } from "@/hooks/api";
-import { Loader, TrashIcon, CreditCard, Calendar, DollarSign, Clock, CheckCircle } from "lucide-react";
-import React, { useState } from "react";
+import {
+  Loader,
+  CheckCircle,
+  Calendar,
+  DollarSign,
+  Clock,
+  RefreshCcw,
+  XCircle,
+} from "lucide-react";
+import React from "react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -20,429 +33,265 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { IError } from "@/app/admin/games/create/page";
 
 const Page = () => {
-  const { mutate: deleteMandate } = useDeleteMandate();
-  const { refetch } = useGetMandate();
-  const { mutate: cancelSubscription, isPending: isCancelling } =
-    useCancelSubscription();
-  const { data: getmandates } = useGetMandate();
-  const mandates = getmandates?.data?.mandates;
-  const { data: allSubscription, refetch: refetchAllSubscription } =
-    useGetAllSubscription();
-  const subscription = allSubscription?.data?.subscriptions;
-  const [subscriptionToCancel, setSubscriptionToCancel] = useState(null);
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
-  console.log(subscription);
-  console.log(mandates);
+  const [showCancelDialog, setShowCancelDialog] = React.useState(false);
+  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
+  const { data: points } = useGetPoints();
+  console.log(points, "points");
+  console.log(myprofile, "myprofile");
+  const { data: snapSubscriptions, isLoading,refetch } = useGetSnapSubscriptions();
+  const { mutate: renewSnapSubscription } = useRenewSnapSubscription();
+  const { mutate: cancelSnapSubscription } = useCancelSnapSubscription();
+  const [showRetryDialog, setShowRetryDialog] = React.useState(false);
+  const [renewError, setRenewError] = React.useState("");
+  const compareSnapPoints =
+    myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >=
+    snapSubscriptions?.data?.subscription?.package?.price;
+  console.log(
+    myprofile?.data?.wallet?.snapPoints / points?.data?.snapPointsRatio >=
+      snapSubscriptions?.data?.subscription?.package?.price,
+    ""
+  );
 
-  // Format card number with spaces (for display purposes)
-  const formatCardNumber = (number) => {
-    if (!number) return "•••• •••• •••• ••••";
-    // Extract the last 4 digits from account number
-    const lastFour = number.replace(/[^0-9]/g, "").slice(-4);
-    // Display masked numbers with last 4 digits visible
-    return `•••• •••• •••• ${lastFour}`;
-  };
+  if (isLoading) {
+    return (
+      <MyAccountLayout>
+        <div className="flex justify-center items-center h-40">
+          <Loader className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </MyAccountLayout>
+    );
+  }
 
-  // Format currency value
-  const formatCurrency = (amount, currency) => {
-    if (!amount || !currency) return "-";
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency,
-    }).format(parseFloat(amount));
-  };
-
-  const handleDelete = (mandateId: string) => {
-    deleteMandate(mandateId, {
-      onSuccess: () => {
-        toast.success("Payment method deleted successfully");
-        refetch();
-      },
-      onError: (error: any) => {
-        toast.error(
-          error.response?.data?.message || "Failed to delete payment method"
-        );
-      },
-    });
-  };
-
-  const handleCancelSubscription = () => {
-    if (!subscriptionToCancel) return;
-    
-    cancelSubscription(subscriptionToCancel, {
-      onSuccess: () => {
-        toast.success("Subscription cancelled successfully");
-        refetchAllSubscription();
-        setShowCancelDialog(false);
-        setSubscriptionToCancel(null);
-      },
-      onError: (error: any) => {
-        toast.error(
-          error.response?.data?.message ||
-            "Failed to cancel subscription"
-        );
-        setShowCancelDialog(false);
-        setSubscriptionToCancel(null);
-      },
-    });
-  };
+  const sub = snapSubscriptions?.data?.subscription;
+  const pkg = sub?.package;
 
   return (
     <MyAccountLayout>
-      <div className="p-4 md:p-6 max-w-7xl mx-auto">
-        {/* Page header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-800">My Subscriptions</h1>
-          <p className="text-gray-500 mt-1">Manage your subscriptions and payment methods</p>
-        </div>
-
-        {/* Subscription section */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-gray-800">Active Subscriptions</h2>
-          </div>
-          <div className="space-y-6">
-            {subscription && subscription.length > 0 ? (
-              subscription.map((sub, index) => (
-                <div
-                  key={sub.id || index}
-                  className={`rounded-xl overflow-hidden shadow-md bg-white transition-all duration-200 hover:shadow-lg border ${
-                    sub.status === "active"
-                      ? "border-l-4 border-green-500"
-                      : "border border-gray-200"
-                  }`}
-                >
-                  <div className="p-6">
-                    <div className="flex justify-between items-start mb-5">
-                      <div>
-                        <h3 className="font-semibold text-xl text-gray-800">
-                          {sub.description || "Subscription Package"}
-                        </h3>
-                        <p className="text-gray-600 mt-1">
-                          {sub.interval || "Monthly"} subscription
-                        </p>
-                      </div>
-                      <div
-                        className={`px-3 py-1 rounded-full text-xs font-medium flex items-center ${
-                          sub.status === "active"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-600"
-                        }`}
-                      >
-                        {sub.status === "active" && <CheckCircle className="w-3.5 h-3.5 mr-1" />}
-                        {sub.status}
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-5">
-                      <div className="flex items-start">
-                        <div className="p-2 bg-blue-50 rounded-lg mr-3">
-                          <DollarSign className="w-5 h-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 uppercase font-medium">AMOUNT</p>
-                          <p className="font-semibold text-gray-900 text-lg">
-                            {formatCurrency(
-                              sub?.amount?.value,
-                              sub?.amount?.currency
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start">
-                        <div className="p-2 bg-green-50 rounded-lg mr-3">
-                          <Calendar className="w-5 h-5 text-green-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 uppercase font-medium">NEXT PAYMENT</p>
-                          <p className="font-semibold text-gray-900">
-                            {sub.nextPaymentDate
-                              ? new Date(sub.nextPaymentDate).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric'
-                                })
-                              : "Not scheduled"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start">
-                        <div className="p-2 bg-purple-50 rounded-lg mr-3">
-                          <Calendar className="w-5 h-5 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 uppercase font-medium">START DATE</p>
-                          <p className="font-semibold text-gray-900">
-                            {sub.startDate
-                              ? new Date(sub.startDate).toLocaleDateString('en-US', {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric'
-                                })
-                              : "-"}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-start">
-                        <div className="p-2 bg-amber-50 rounded-lg mr-3">
-                          <Clock className="w-5 h-5 text-amber-600" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 uppercase font-medium">
-                            PAYMENTS REMAINING
-                          </p>
-                          <p className="font-semibold text-gray-900">
-                            {sub.timesRemaining || "∞"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-t border-gray-100 pt-5 mt-5 gap-5">
-                      {sub.mandateId && mandates && (
-                        <div className="flex-grow">
-                          <p className="text-xs text-gray-500 uppercase font-medium mb-2">
-                            PAYMENT METHOD
-                          </p>
-                          {mandates.map(
-                            (mandate) =>
-                              mandate.id === sub.mandateId && (
-                                <div
-                                  key={mandate.id}
-                                  className="flex items-center p-3 bg-gray-50 rounded-lg max-w-md"
-                                >
-                                  <div className="w-10 h-10 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mr-3 shadow-sm">
-                                    <span className="text-sm font-medium text-gray-700">
-                                      {mandate.method === "directdebit"
-                                        ? "DD"
-                                        : mandate.method === "paypal"
-                                        ? "PP"
-                                        : "CC"}
-                                    </span>
-                                  </div>
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-900">
-                                      {mandate.method === "directdebit"
-                                        ? "Direct Debit"
-                                        : mandate.method === "paypal"
-                                        ? "PayPal"
-                                        : "Credit Card"}
-                                    </p>
-                                    {mandate?.details?.consumerAccount && (
-                                      <p className="text-xs text-gray-500">
-                                        {formatCardNumber(
-                                          mandate?.details?.consumerAccount
-                                        )}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              )
-                          )}
-                        </div>
-                      )}
-                      <div className="flex gap-3 mt-2 md:mt-0">
-                        <Button
-                          variant="outline"
-                          className="rounded-lg border-gray-300 text-gray-700 hover:bg-gray-50 transition-all"
-                          onClick={() => {
-                            setSubscriptionToCancel(sub.id);
-                            setShowCancelDialog(true);
-                          }}
-                        >
-                          {isCancelling && subscriptionToCancel === sub.id ? (
-                            <Loader className="w-4 h-4 animate-spin mr-2" />
-                          ) : null}
-                          {isCancelling && subscriptionToCancel === sub.id ? "Cancelling..." : "Cancel Subscription"}
-                        </Button>
-                        {sub.status !== "active" && (
-                          <Button className="rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all">
-                            Complete Subscription
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="bg-gray-50 rounded-xl p-8 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CreditCard className="w-8 h-8 text-gray-400" />
-                </div>
-                <p className="text-gray-500 font-medium">No subscriptions found</p>
-                <p className="text-gray-400 text-sm mt-1">You currently don't have any active subscriptions</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Payment methods section */}
-        <div className="my-12">
-          <h2 className="text-xl font-semibold mb-6 text-gray-800">
-            Your Payment Methods
+      <div className="max-w-4xl mx-auto mt-8 mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-3xl font-bold text-primary">
+            Subscription Overview
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-            {mandates && mandates.length > 0 ? (
-              mandates.map((mandate, index) => (
-                <div
-                  key={mandate.id || index}
-                  className={`rounded-xl p-5 shadow-md relative overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1`}
-                  style={{
-                    background:
-                      mandate.method !== "paypal"
-                        ? "linear-gradient(135deg, #3b82f6, #2563eb)"
-                        : "linear-gradient(135deg, #f97316, #ea580c)",
-                    maxWidth: "360px",
+          {/* Example admin-style action button */}
+          {snapSubscriptions?.data?.hasSubscription &&
+            (sub.status === "expired" ? (
+              <Button size="sm" onClick={() => setShowRetryDialog(true)}>
+                Retry
+              </Button>
+            ) : (
+              sub.autoRenew && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setShowCancelDialog(true)}
+                >
+                  Cancel Subscription
+                </Button>
+              )
+            ))}
+        </div>
+        {!snapSubscriptions?.data?.hasSubscription ? (
+          <div className="bg-white rounded-lg shadow p-10 flex flex-col items-center border border-gray-200">
+            <XCircle className="h-14 w-14 text-gray-300 mb-4" />
+            <p className="text-gray-500 text-lg">
+              No active subscription found.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-lg shadow p-10 border border-gray-200">
+            <div className="flex items-center gap-4 mb-6">
+              <CheckCircle className="h-7 w-7 text-green-500" />
+              <span className="font-semibold text-xl text-green-700">
+                {sub.status.charAt(0).toUpperCase() + sub.status.slice(1)}
+              </span>
+              {sub.autoRenew && (
+                <span className="ml-2 flex items-center gap-1 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                  <RefreshCcw className="h-4 w-4" /> Auto Renew
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <div className="text-xs text-gray-500 mb-1">Package</div>
+                <div className="font-bold text-lg text-primary">
+                  {pkg?.name}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-1">Interval</div>
+                <div className="font-medium flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-gray-400" />
+                  {pkg?.interval}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-1">Price</div>
+                <div className="font-medium flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-gray-400" />
+                  {pkg?.price} €
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-1">
+                  Snap Points Deducted
+                </div>
+                <div className="font-medium">{sub.snapPointsDeducted}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-1">Start Date</div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  {sub.startDate
+                    ? new Date(sub.startDate).toLocaleDateString()
+                    : "-"}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 mb-1">End Date</div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  {sub.endDate
+                    ? new Date(sub.endDate).toLocaleDateString()
+                    : "-"}
+                </div>
+              </div>
+            </div>
+            <div className="mb-2">
+              <div className="text-xs text-gray-500 mb-1">Description</div>
+              <div className="text-gray-700">{pkg?.description}</div>
+            </div>
+            <div>
+              <div className="text-xs text-gray-500 mb-1">Features</div>
+              <ul className="list-disc ml-6 text-gray-700">
+                {pkg?.features?.map((f: string, i: number) => (
+                  <li key={i}>{f}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+        {showRetryDialog && (
+          <AlertDialog open={showRetryDialog} onOpenChange={setShowRetryDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle
+                  onClick={() => {
+                    if (
+                      myprofile?.data?.wallet?.snapPoints /
+                        points?.data?.snapPointsRatio >=
+                      snapSubscriptions?.data?.subscription?.package?.price
+                    ) {
+                      renewSnapSubscription(
+                        { packageId: pkg._id },
+                        {
+                          onSuccess: () => {
+                            toast.success("Subscription renewed!");
+                            setShowRetryDialog(false);
+                          },
+                          onError: (error) => {
+                            toast.error("Error renewing subscription.");
+                          },
+                        }
+                      );
+                    } else {
+                      toast.error(
+                        "You do not have enough snap points to renew this package."
+                      );
+                    }
                   }}
                 >
-                  {/* Background pattern - subtle waves */}
-                  <div className="absolute inset-0 opacity-5">
-                    <svg
-                      width="100%"
-                      height="100%"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <defs>
-                        <pattern
-                          id={`wave-${index}`}
-                          patternUnits="userSpaceOnUse"
-                          width="100"
-                          height="100"
-                        >
-                          <path
-                            d="M0 20 Q 20 40 40 20 T 80 20 T 120 20"
-                            fill="none"
-                            stroke="white"
-                            strokeWidth="2"
-                          />
-                        </pattern>
-                      </defs>
-                      <rect
-                        width="100%"
-                        height="100%"
-                        fill={`url(#wave-${index})`}
-                      />
-                    </svg>
-                  </div>
-                  
-                  {/* Card logo */}
-                  <div className="absolute top-5 right-5 z-10">
-                    {mandate.method !== "paypal" ? (
-                      <span className="text-white font-bold text-lg">Direct Debit</span>
-                    ) : (
-                      <span className="text-white font-bold text-lg">
-                        Paypal
-                      </span>
-                    )}
-                  </div>
-                  
-                  {/* Chip */}
-                  <div className="mb-6 mt-1 relative z-10">
-                    <div
-                      className="h-10 w-14 bg-yellow-200 rounded-md inline-block"
-                      style={{
-                        background: "linear-gradient(145deg, #e6c200, #ffd700)",
-                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-                      }}
-                    ></div>
-                  </div>
-                  
-                  {/* Card number */}
-                  <div className="text-xl font-medium mb-6 tracking-wider text-white relative z-10">
-                    {formatCardNumber(mandate?.details?.consumerAccount)}
-                  </div>
-                  
-                  {/* Card details - in a more compact layout */}
-                  <div className="grid grid-cols-2 gap-4 relative z-10">
-                    <div>
-                      <p className="text-xs text-white/70 uppercase">MEMBER</p>
-                      <p
-                        className="font-semibold text-sm uppercase truncate max-w-full text-white"
-                        title={mandate?.details?.consumerName || ""}
-                      >
-                        {mandate?.details?.consumerName || "----"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-white/70 uppercase">METHOD</p>
-                      <p className="font-semibold text-sm capitalize text-white">
-                        {mandate.method || "----"}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Status indicator as a badge */}
-                  <div className="mt-4 flex justify-between items-center relative z-10">
-                    <div className="flex items-center bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                      <span
-                        className={`inline-block h-2.5 w-2.5 rounded-full mr-2 ${
-                          mandate.status === "valid"
-                            ? "bg-green-400"
-                            : "bg-yellow-400"
-                        }`}
-                      ></span>
-                      <p className="font-medium text-xs capitalize text-white">
-                        {mandate.status || "----"}
-                      </p>
-                    </div>
-                    <div className="relative z-20">
-                      {allSubscription?.data?.subscriptions[0]?.mandateId !==
-                        mandate.id && (
-                        <Button
-                          onClick={() => {
-                            handleDelete(mandate.id);
-                          }}
-                          variant="ghost"
-                          size="icon"
-                          className="cursor-pointer text-white hover:text-white hover:bg-white/20 rounded-full relative z-20"
-                        >
-                          <TrashIcon fill="white" className="w-4 h-4 text-white" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="col-span-full p-8 bg-gray-50 rounded-xl text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CreditCard className="w-8 h-8 text-gray-400" />
-                </div>
-                <p className="text-gray-500 font-medium">No payment methods found</p>
-                <p className="text-gray-400 text-sm mt-1">Add a payment method to start a subscription</p>
-              </div>
-            )}
-          </div>
-        </div>
-        
-        {/* Cancel Subscription Confirmation Dialog */}
-        <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to cancel your subscription? This action cannot be undone and you'll lose access to subscription benefits immediately.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => setSubscriptionToCancel(null)}>
-                No, Keep Subscription
-              </AlertDialogCancel>
-              <AlertDialogAction 
-                onClick={handleCancelSubscription}
-                className="bg-red-500 hover:bg-red-600 text-white"
-              >
-                {isCancelling ? (
-                  <Loader className="w-4 h-4 animate-spin mr-2" />
-                ) : null}
-                {isCancelling ? "Cancelling..." : "Yes, Cancel Subscription"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                  Renew Subscription
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {renewError ? (
+                    <span className="text-red-500">{renewError}</span>
+                  ) : (
+                    "Do you want to renew your subscription for this package?"
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setShowRetryDialog(false)}>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    setRenewError("");
+                    // Check user points
+
+                    if (
+                      myprofile?.data?.wallet?.snapPoints /
+                        points?.data?.snapPointsRatio <
+                      snapSubscriptions?.data?.subscription?.package?.price
+                    ) {
+                      setRenewError(
+                        "You do not have enough snap points to renew this package."
+                      );
+                      return;
+                    }
+                    renewSnapSubscription(
+                      { packageId: pkg._id },
+                      {
+                        onSuccess: () => {
+                          toast.success("Subscription renewed!");
+                          setShowRetryDialog(false);
+                        },
+                        onError: (error) => {
+                          toast.error("Error renewing subscription.");
+                        },
+                      }
+                    );
+                  }}
+                >
+                  Renew
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+        {showCancelDialog && sub?.autoRenew && (
+          <AlertDialog
+            open={showCancelDialog}
+            onOpenChange={setShowCancelDialog}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to cancel your subscription? This action
+                  cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setShowCancelDialog(false)}>
+                  No, Keep Subscription
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    cancelSnapSubscription(undefined, {
+                      onSuccess: () => {
+                        toast.success("Subscription cancelled!");
+                        setShowCancelDialog(false);
+                        refetch();
+                      },
+                      onError: (error) => {
+                        toast.error(
+                          (error as unknown as IError)?.response?.data
+                            ?.message || "Error cancelling subscription."
+                        );
+                      },
+                    });
+                  }}
+                >
+                  Yes, Cancel Subscription
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
       </div>
     </MyAccountLayout>
   );

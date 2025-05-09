@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { Trophy, Gamepad2 } from "lucide-react";
+import { useUserContext } from "@/context/userContext";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -16,6 +17,8 @@ const Page = () => {
   const player2 = data?.data?.player2;
   const player2Score = data?.data?.player2Score;
   const duelEndTime = data?.data?.duelEndTime;
+  const user = useUserContext();
+  const userID = user?.user?.user?._id;
 
   return (
     <ClientLayout>
@@ -55,10 +58,29 @@ const Page = () => {
                       About the Game
                     </h3>
                     <p className="text-gray-600 leading-relaxed">
-                      {data?.data?.game?.metaDescription}
+                      {data?.data?.game?.content}
                     </p>
                   </div>
                 </div>
+              </div>
+              <div className="flex justify-center items-center mt-8">
+                {data?.data?.winner && userID === data?.data?.winner ? (
+                  <p className="bg-gradient-to-r from-green-500 via-green-600 to-green-700 text-white px-10 py-5 rounded-2xl text-3xl font-bold shadow-xl hover:shadow-2xl animate-bounce">
+                    🏆 You Won! 🏆
+                  </p>
+                ) : data?.data?.isDraw ? (
+                  <p className="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-700 text-white px-10 py-5 rounded-2xl text-3xl font-bold shadow-xl hover:shadow-2xl animate-bounce">
+                    🤷‍♂️ Draw 🤷‍♂️
+                  </p>
+                ) : data?.data?.winner && userID !== data?.data?.winner ? (
+                  <p className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white px-10 py-5 rounded-2xl text-3xl font-bold shadow-xl hover:shadow-2xl animate-bounce">
+                    😢 You Lost 😢
+                  </p>
+                ) : (
+                  <p className="text-gray-600 leading-relaxed text-xl font-bold ">
+                    Waiting for the opponent score...
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -81,16 +103,42 @@ const Page = () => {
                   <h3 className="text-lg font-semibold text-gray-600 mb-2">
                     Score
                   </h3>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {player1Score?.score || 0}
+                  <p className="text-xl font-bold text-gray-900">
+                    <div className="flex items-center gap-5 justify-between">
+                      <p>
+                        {player1Score?.score && player1Score?.time ? (
+                          `Player 1: ${player1Score?.score || 0}`
+                        ) : (
+                          <p className="text-sm">Player 1 not played yet</p>
+                        )}
+                      </p>
+                      {player2 && player2Score?.score && player2Score?.time ? (
+                        <p>Player 2: {player2Score?.score || 0}</p>
+                      ) : (
+                        <p className="text-sm">player 2 not played yet</p>
+                      )}
+                    </div>
                   </p>
                 </div>
                 <div className="bg-gray-50 rounded-xl p-6 transform hover:scale-105 transition-transform duration-300">
                   <h3 className="text-lg font-semibold text-gray-600 mb-2">
                     Time
                   </h3>
-                  <p className="text-3xl font-bold text-gray-900">
-                    {player1Score?.time || 0}s
+                  <p className="text-xl font-bold text-gray-900">
+                    <div className="flex items-center gap-5 justify-between">
+                      <p>
+                        {player1Score?.score && player1Score?.time ? (
+                          `Player 1: ${player1Score?.time || 0} sec`
+                        ) : (
+                          <p className="text-sm">Player 1 is not played yet</p>
+                        )}
+                      </p>
+                      {player2 && player2Score.score && player2Score.time ? (
+                        <p>Player 2: {player2Score?.time || 0}sec</p>
+                      ) : (
+                        <p className="text-sm">Player 2 is not played yet</p>
+                      )}
+                    </div>
                   </p>
                 </div>
               </div>

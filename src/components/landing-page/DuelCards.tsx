@@ -94,9 +94,8 @@ const DuelCards = ({
     createDuel(
       {
         game: gameId,
-        amount: Number(formValues.stake),
         rounds: Number(formValues.rounds),
-        value: formValues.points_type === "snap" ? 1 : 2,
+        value: Number(formValues.stake),
         type: formValues.points_type === "snap" ? "snap" : "discount",
       },
       {

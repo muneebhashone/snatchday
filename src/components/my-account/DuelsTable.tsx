@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,6 +10,20 @@ import {
 } from "@/components/ui/table";
 import Image, { StaticImageData } from "next/image";
 import defaultAvatar from "@/app/images/avatarimage.svg";
+import { useGetDuels } from "@/hooks/api";
+import { UserRoundIcon } from "lucide-react";
+import { useUserContext } from "@/context/userContext";
+import { DynamicPagination } from "../ui/dynamic-pagination";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DualRangeSlider } from "@/components/tournaments/dualSlider";
+import { Button } from "@/components/ui/button";
 
 interface Duel {
   id: string;
@@ -30,51 +45,90 @@ interface Duel {
   status: "Won" | "No opponent";
 }
 
-const duels: Duel[] = [
-  {
-    id: "1465",
-    gameIcon: "fill",
-    gameTitle: "Fill",
-    date: "2024-07-10 20:06:10",
-    opponent: {
-      avatar: defaultAvatar,
-      round: 1,
-      attempts: 1,
-      time: "00:00:20.983",
-    },
-    yourResult: {
-      round: 1,
-      attempts: 1,
-      time: "00:00:17.196",
-    },
-    stakeAmount: "+100 SP",
-    status: "Won",
-  },
-  {
-    id: "1464",
-    gameIcon: "memorized",
-    gameTitle: "Memorized",
-    date: "2024-07-03 20:12:08",
-    opponent: {
-      avatar: defaultAvatar,
-      round: 0,
-      attempts: 0,
-      time: "00:00:00.000",
-    },
-    yourResult: {
-      round: 0,
-      attempts: 0,
-      time: "00:00:00.000",
-    },
-    stakeAmount: "0 SP",
-    status: "No opponent",
-  },
-];
-
 const DuelsTable = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [status, setStatus] = useState<string | undefined>(undefined);
+  const [search, setSearch] = useState<string | undefined>(undefined);
+  const [priceRange, setPriceRange] = useState<number[]>([0, 1000000]);
+  const itemsPerPage = 10;
+
+  const { data } = useGetDuels({
+    status: status,
+    search: search,
+    priceRange: priceRange ? `[${priceRange.join(",")}]` : undefined,
+    limit: itemsPerPage,
+    offset: (currentPage - 1) * itemsPerPage,
+  });
+  const duel = data?.data?.duels;
+  const totalPages = Math.ceil((data?.data?.total || 0) / itemsPerPage);
+  const user = useUserContext();
+  const userID = user?.user?._id;
+
+  const handlePriceRangeChange = (value: number[]) => {
+    setPriceRange(value);
+    setCurrentPage(1); // Reset to first page on filter change
+  };
+
+  const handleClearFilters = () => {
+    setSearch(undefined);
+    setStatus(undefined);
+    setPriceRange([0, 1000000]);
+    setCurrentPage(1);
+  };
+
+  console.log(duel);
+
   return (
     <div className="p-20">
       <h2 className="text-2xl font-bold mb-10">My Duels</h2>
+
+      {/* Filter Controls */}
+      <div className="flex gap-4 mb-6 items-end">
+        <div className="flex-1">
+          <Input
+            placeholder="Search duels..."
+            value={search || ""}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="flex-1">
+            <SelectValue placeholder="Select status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={undefined}>All</SelectItem>
+            <SelectItem value="won">Won</SelectItem>
+            <SelectItem value="lost">Lost</SelectItem>
+            <SelectItem value="draw">Draw</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="flex items-center gap-5 flex-1">
+          {/* <label className="text-sm font-medium">Price Range</label> */}
+          <div className="flex flex-col gap-2">
+            <DualRangeSlider
+              className="w-[400px]"
+              value={priceRange}
+              onValueChange={handlePriceRangeChange}
+              min={0}
+              max={1000000}
+              step={50}
+            />
+            <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
+              <span>{priceRange[0]}€</span>
+              <span>{priceRange[1]}€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-end mb-5">
+        <Button onClick={handleClearFilters} variant="outline" className="h-10">
+          Clear Filters
+        </Button>
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -90,64 +144,107 @@ const DuelsTable = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {duels.map((duel) => (
-              <TableRow key={duel.id}>
-                <TableCell>{duel.id}</TableCell>
+            {duel?.map((duel) => (
+              <TableRow key={duel?._id}>
                 <TableCell>
-                  <div
-                    className={`w-16 h-16 rounded-lg ${
-                      duel.gameIcon === "fill" ? "bg-blue-200" : "bg-gray-200"
-                    } flex items-center justify-center`}
-                  >
-                    {duel.gameIcon === "fill" ? (
-                      <div className="w-8 h-8 bg-blue-500 rounded" />
-                    ) : (
-                      <div className="w-8 h-8">🧠</div>
-                    )}
-                  </div>
+                  <p className="text-sm text-foreground w-max">
+                    {duel?.duelId}
+                  </p>
+                </TableCell>
+                <TableCell>
+                  <Image
+                    src={duel?.game?.logo}
+                    alt={duel?.game?.title}
+                    width={48}
+                    height={48}
+                    className="object-cover"
+                  />
                 </TableCell>
                 <TableCell>
                   <div className="font-medium text-primary">
-                    {duel.gameTitle}
+                    {duel?.game?.title}
                   </div>
                   <div className="text-sm text-foreground">
-                    {new Date(duel.date).toLocaleString()}
+                    <p>{new Date(duel?.createdAt).toLocaleString()}</p>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                    <Image
-                      src={duel.opponent.avatar}
-                      alt="Opponent"
-                      width={48}
-                      height={48}
-                      className="object-cover"
-                    />
+                  {duel?.player2 && duel?.player2?.image ? (
+                    <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
+                      <Image
+                        src={duel?.player2?.image}
+                        alt="Opponent"
+                        width={48}
+                        height={48}
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : duel?.player2 && !duel?.player2?.image ? (
+                    <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                      <UserRoundIcon className="w-6 h-6 text-gray-400" />
+                    </div>
+                  ) : (
+                    <p>No opponent</p>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div>Score: {duel?.player2Score?.score}</div>
+                  <div>Time: {duel?.player2Score?.time}</div>
+                  <div>
+                    Round:{" "}
+                    {duel?.player2Score?.time && duel?.player2Score?.score
+                      ? duel?.rounds
+                      : 0}
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div>Round: {duel.opponent.round}</div>
-                  <div>Attempts: {duel.opponent.attempts}</div>
-                  <div>Time: {duel.opponent.time}</div>
+                  <div>Score: {duel?.player1Score?.score}</div>
+                  <div>Time: {duel?.player1Score?.time}</div>
+                  <div>
+                    Round:{" "}
+                    {duel?.player1Score?.time && duel?.player1Score?.score
+                      ? duel?.rounds
+                      : 0}
+                  </div>
+                </TableCell>
+                <TableCell className="text-center font-medium text-primary">
+                  <div>
+                    <p>{duel?.value}</p>{" "}
+                    <p>{duel?.type === "snap" ? "SP" : "DP"}</p>
+                  </div>
                 </TableCell>
                 <TableCell>
-                  <div>Round: {duel.yourResult.round}</div>
-                  <div>Attempts: {duel.yourResult.attempts}</div>
-                  <div>Time: {duel.yourResult.time}</div>
-                </TableCell>
-                <TableCell className="text-right font-medium text-primary">
-                  {duel.stakeAmount}
-                </TableCell>
-                <TableCell>
-                  <div
-                    className={`text-center rounded-md py-1 px-4 
-                    ${
-                      duel.status === "Won"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {duel.status}
+                  <div className="flex justify-center items-center">
+                    {duel?.winner && duel?.winner !== userID ? (
+                      <p className="capitalize w-max px-2 bg-red-500 rounded-full text-white font-bold text-sm">
+                        You Lose
+                      </p>
+                    ) : duel?.isDraw ? (
+                      <p className="capitalize w-max px-2 bg-primary rounded-full text-white font-bold text-sm">
+                        Draw
+                      </p>
+                    ) : duel?.winner && duel?.winner === userID ? (
+                      <p className="capitalize w-max px-2 bg-green-500 rounded-full text-white font-bold text-sm">
+                        You Won
+                      </p>
+                    ) : (userID === duel?.player1?._id &&
+                        !duel?.player1Score?.score &&
+                        !duel?.player1Score?.time) ||
+                      (userID === duel?.player2?._id &&
+                        !duel?.player2Score?.score &&
+                        !duel?.player2Score?.time) ? (
+                      <p className="capitalize w-max px-2 bg-gray-300 text-white rounded-full text-sm font-bold">
+                        you haven&apos;t played yet
+                      </p>
+                    ) : duel.status === "cancelled" ? (
+                      <p className="capitalize w-max px-2 bg-amber-500 text-white rounded-full text-sm font-bold">
+                        cancelled
+                      </p>
+                    ) : (
+                      <p className="capitalize w-max px-2 bg-gray-500 text-white rounded-full text-sm font-bold">
+                        waiting for the opponent
+                      </p>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
@@ -155,9 +252,12 @@ const DuelsTable = () => {
           </TableBody>
         </Table>
         <div className="p-4 border-t">
-          <p className="text-sm text-foreground">
-            Showing 1 to 2 of 2 (1 page(s))
-          </p>
+          <DynamicPagination
+            totalItems={data?.data?.total || 0}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </div>

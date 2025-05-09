@@ -39,14 +39,14 @@ const HeroSection = () => {
   const { data: upComingTournament, isLoading: isUpComingTournamentLoading } =
     useUpComingTournament();
 
-  console.log(upComingTournament, "upComingTournament");
+  // console.log(upComingTournament, "upComingTournament");
 
   useEffect(() => {
     setIsLoaded(true);
   }, []);
 
   upComingTournament?.data?.map((tournament) => {
-    console.log(new Date(tournament?.start) < new Date(), "tournament");
+    // console.log(new Date(tournament?.start) < new Date(), "tournament");
   });
 
   // console.log(upComingTournament,"upComingTournament")

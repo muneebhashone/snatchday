@@ -41,8 +41,10 @@ const formatInterval = (interval: string) => {
 };
 
 const ExclusiveCards = () => {
+  const [pkg, setPkg] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [packageId, setPackageId] = useState("");
+  const [packagePoints, setPackagePoints] = useState(0);
   const { data: subscriptionPlan, isLoading } = useGetSubscriptionPlan();
   const packages = subscriptionPlan?.data?.packages || [];
   console.log(packages);
@@ -180,7 +182,7 @@ const ExclusiveCards = () => {
                         />
                       </svg>
                       <span
-                        className={`text-sm sm:text-lg ${
+                        className={`text-sm ${
                           isPopular ? "text-white/80" : "text-[#1C1B1D]"
                         }`}
                       >
@@ -204,6 +206,8 @@ const ExclusiveCards = () => {
                 onClick={() => {
                   setIsOpen(true);
                   setPackageId(pkg._id);
+                  setPackagePoints(pkg.price * 100);
+                  setPkg(pkg);
                 }}
               >
                 Get started
@@ -212,7 +216,13 @@ const ExclusiveCards = () => {
           </div>
         );
       })}
-      <SubscriptionModal isOpen={isOpen} setIsOpen={setIsOpen} packageId={packageId} />
+      <SubscriptionModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        packageId={packageId}
+        packagePoints={packagePoints}
+        pkg={pkg}
+      />
     </div>
   );
 };

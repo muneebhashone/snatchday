@@ -1,4 +1,5 @@
 import {
+  CompetitionFormData,
   ReturnOrderTypes,
   TournamentFormData,
   UpdateReturnTypes,
@@ -1007,7 +1008,6 @@ export const getOrdersStats = async () => {
 };
 interface DuelData {
   game: string;
-  amount: number;
   rounds: number;
   value: number;
   type: "snap" | "discount";
@@ -1024,6 +1024,7 @@ export const getDuelGames = async () => {
 };
 
 export const getDuels = async (params?: {
+  status?: string;
   priceRange?: string;
   limit?: number;
   offset?: number;
@@ -1150,3 +1151,97 @@ export const getCustomerSubscription = async (customerId: string) => {
   );
   return response.data;
 };
+
+export const getCurrentDuels = async (params?: {
+  limit?: number;
+  offset?: number;
+  search?: string;
+  priceRange?: string;
+}) => {
+  const response = await axiosInstance.get("/duel/get/current", { params });
+  return response.data;
+};
+
+export const joinDuel = async (duelId: string) => {
+  const response = await axiosInstance.post(`/duel/join/${duelId}`);
+  return response.data;
+};
+
+export const markAsRead = async (id: string) => {
+  const response = await axiosInstance.patch(`/auth/notifications/read/${id}`);
+  return response.data;
+};
+
+export const getSnapSubscriptions = async () => {
+  const response = await axiosInstance.get("/snap-subscriptions");
+  return response.data;
+};
+
+export const cancelSnapSubscription = async () => {
+  const response = await axiosInstance.post(`/snap-subscriptions/cancel/`);
+  return response.data;
+};
+
+export const renewSnapSubscription = async (packageId: string) => {
+  const response = await axiosInstance.post(`/snap-subscriptions/`, {
+    packageId,
+  });
+  return response.data;
+};
+
+export const endDuel = async (duelId: string) => {
+  const response = await axiosInstance.post(`/duel/end/${duelId}`);
+  return response.data;
+};
+
+export const PostTournamentScore = async (
+  data: { score: number; time: number },
+  id: string
+) => {
+  const response = await axiosInstance.post(`/tournament/${id}/score`, data);
+  return response.data;
+};
+
+export const getSingleProduct = async (productId: string) => {
+  const response = await axiosInstance.get(`/product/view/${productId}`);
+  return response.data;
+};
+//competitions api start
+
+export const createCompetition = async (data: CompetitionFormData) => {
+  const response = await axiosInstance.post("/competitions", data);
+  return response.data;
+};
+
+export const updateCompetition = async (id: string, data: CompetitionFormData) => {
+  const response = await axiosInstance.put(`/competitions/${id}`, data);
+  return response.data;
+};
+
+export const getCompetitions = async (params?: {
+ month?: string;
+  status?: string;
+}) => {
+  const response = await axiosInstance.get("/competitions", { params });
+  return response.data;
+};
+
+export const getCompetitionById = async (id: string) => {
+  const response = await axiosInstance.get(`/competitions/${id}`);
+  return response.data;
+};
+
+export const productAnalytics = async (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+  const response = await axiosInstance.get("/product/analytics/product", {
+    params,
+  });
+  return response.data;
+};
+
+
+
+
+
+
+
+

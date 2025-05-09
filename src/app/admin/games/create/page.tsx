@@ -128,8 +128,10 @@ const Page = () => {
     Object.entries(data).forEach(([key, value]) => {
       if (key === "winnerDetermination") {
         formData.append(key, JSON.stringify(value));
-      } else if (value !== undefined && value !== null) {
+      } else if (value !== undefined && value !== null && value !== "") {
         formData.append(key, value instanceof File ? value : value.toString());
+      } else {
+        formData.delete(key);
       }
     });
     createGame(formData, {
@@ -152,9 +154,7 @@ const Page = () => {
   return (
     <AdminLayout>
       <AdminBreadcrumb
-        items={[
-          { title: "Games", href: "/admin/games" },
-        ]}
+        items={[{ title: "Games", href: "/admin/games" }]}
         title="Create New Game"
       />
       <div className="py-6 max-w-full mx-auto">

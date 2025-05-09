@@ -19,6 +19,7 @@ import {
 import { useCurrentOffers, useGetDuels } from "@/hooks/api";
 import Link from "next/link";
 import DuelHistory from "@/components/DuelHistory";
+import CurrentDuels from "@/components/CurrentDuels";
 
 const DuelArenaPage = () => {
   const { data: duelHistory } = useGetDuels({
@@ -48,14 +49,23 @@ const DuelArenaPage = () => {
             </Button>
           </div>
         </div>
-        <div className="pt-20 text-center">
+        <div className="pt-20 text-center shadow-lg pb-10">
           <h2 className="text-4xl font-bold">
-            Your
+            Your{" "}
             <span className="bg-primary text-white px-6 py-1 rounded-lg">
               Duel History
             </span>
           </h2>
           <DuelHistory />
+        </div>
+        <div className="pt-20 text-center bg-gray-100 pb-10">
+          <h2 className="text-4xl font-bold">
+            Current{" "}
+            <span className="bg-primary text-white px-6 py-1 rounded-lg">
+              Duels
+            </span>
+          </h2>
+          <CurrentDuels />
         </div>
         <div className="pt-20">
           <TrainingCenter />

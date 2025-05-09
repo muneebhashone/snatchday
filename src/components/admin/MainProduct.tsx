@@ -54,7 +54,7 @@ const productFormSchema = z
     images: z
       .array(z.instanceof(File))
       .min(1, "At least one image is required"),
-    colors: z.string().min(1, "Colors are required"),
+    colors: z.string().optional(),
     stock: z.coerce.number().min(0, "Stock must be 0 or greater"),
     price: z.coerce.number().min(0, "Price must be 0 or greater"),
     categoryIds: z
@@ -710,7 +710,7 @@ const MainProduct = () => {
                   name="colors"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Colors *</FormLabel>
+                      <FormLabel>Colors</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Colors (comma separated)"

@@ -141,9 +141,6 @@ export default function ReturnHistory() {
                   ))}
                 </TableBody>
               </Table>
-              <div className="text-right text-sm text-muted-foreground mt-2">
-                Showing 1 to 1 of 1 (1 page(s))
-              </div>
             </>
           )}
         </div>

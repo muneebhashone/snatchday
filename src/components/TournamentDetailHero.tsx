@@ -9,7 +9,7 @@ import questionmark from "@/app/images/qustionmark.png";
 import { ShareArrowIcon, TaxIcon } from "./icons/icon";
 import { TournamentDetailResponse } from "@/types";
 import Loading from "@/app/loading";
-import { Loader2 } from "lucide-react";
+import { Loader2, PlayCircle } from "lucide-react";
 import {
   useGetProductById,
   useParticipateTournament,
@@ -22,25 +22,28 @@ import { useUserContext } from "@/context/userContext";
 import Login from "@/components/auth/Login";
 import { ShareTournamentModal } from "@/components/ShareTournamentModal";
 import heroImage from "@/app/images/updateTournamentimage.jpg";
+import Link from "next/link";
 
 const TournamentDetailHero = ({
   tournamentData,
   isLoading,
   hasParticipated,
   refetchTournament,
+  tournamentStatus,
 }: {
   tournamentData: TournamentDetailResponse;
   isLoading: boolean;
   hasParticipated: boolean;
   refetchTournament: () => void;
+  tournamentStatus: string;
 }) => {
   const { data: product, isLoading: productLoading } = useGetProductById(
-    tournamentData?.data?.article
+    tournamentData?.data?.article?._id || ""
   );
 
   const [selectedImage, setSelectedImage] = useState(0);
   const { user } = useUserContext();
-  console.log(user, "user");
+  console.log(hasParticipated, "hasParticipated");
   const { mutate: participateTournament, isPending } =
     useParticipateTournament();
 
@@ -229,7 +232,7 @@ const TournamentDetailHero = ({
                     <div className=" flex flex-col border-r border-r-gray-300 px-5 ">
                       <p>Participants:</p>
                       <p className="text-[21px]">
-                        {tournamentData?.data?.participants.length} of{" "}
+                        {tournamentData?.data?.participants?.length} of{" "}
                         <span className="text-primary">
                           {tournamentData?.data?.numberOfParticipants || "N/A"}
                         </span>
@@ -272,15 +275,24 @@ const TournamentDetailHero = ({
                 >
                   <div
                     onClick={hasParticipated ? null : handleParticipate}
-                    className="ml-8 flex items-center gap-4"
+                    className="flex items-center justify-center text-center w-full gap-4"
                   >
                     <>
                       {isPending ? (
                         "Registering..."
                       ) : (
                         <>
-                          {hasParticipated ? (
+                          {hasParticipated &&
+                          tournamentStatus !== "live" &&
+                          tournamentStatus !== "inactive" ? (
                             <span>Participated</span>
+                          ) : hasParticipated && tournamentStatus === "live" ? (
+                            <Link
+                              href={`/tournament/${tournamentData?.data?._id}`}
+                              className="flex items-center justify-center gap-2"
+                            >
+                              <p>To The Tournament</p>
+                            </Link>
                           ) : (
                             <>
                               <Image

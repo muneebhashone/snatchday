@@ -31,7 +31,7 @@ const FeaturedProducts = () => {
       (cat: any) => cat.parentCategory === null
     );
     setparentCategories(filtered);
-    console.log(filtered, "filtered");
+    // console.log(filtered, "filtered");
     if (filtered?.length) {
       setActiveTab(filtered[0].name);
       getCategoryId(filtered[0]._id);
