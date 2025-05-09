@@ -13,7 +13,7 @@ const nextConfig = {
     ];
   },
   images: {
-    unoptimized: false,
+    unoptimized: true,
     domains: [
       "res.cloudinary.com",
       "encrypted-tbn0.gstatic.com,",
