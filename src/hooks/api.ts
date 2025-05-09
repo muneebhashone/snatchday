@@ -153,11 +153,17 @@ import {
   cancelSnapSubscription,
   renewSnapSubscription,
   endDuel,
+  createCompetition,
+  getCompetitionById,
+  getCompetitions,
+  updateCompetition,
+  productAnalytics,
 } from "../lib/api";
 import {
   TournamentFormData,
   ReturnOrderTypes,
   UpdateReturnTypes,
+  CompetitionFormData,
 } from "@/types/admin";
 
 import {
@@ -1378,3 +1384,43 @@ export const useEndDuel = (duelId: string) => {
     mutationFn: () => endDuel(duelId),
   });
 };
+
+
+export const useCreateCompetition = () => {
+  return useMutation({
+    mutationFn: (data: CompetitionFormData) => createCompetition(data),
+  });
+};
+
+export const useUpdateCompetition = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: CompetitionFormData }) =>
+      updateCompetition(id, data),
+  });
+};
+
+export const useGetCompetitions = (params?: {
+  month?: string;
+  status?: string;
+}) => {
+  return useQuery({
+    queryKey: ["competitions", params],
+    queryFn: () => getCompetitions(params),
+  });
+};
+
+export const useGetCompetitionById = (id: string) => {
+  return useQuery({
+    queryKey: ["competitionById", id],
+    queryFn: () => getCompetitionById(id),
+    enabled: !!id,
+  });
+};
+
+export const useProductAnalytics = (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+  return useQuery({
+    queryKey: ["productAnalytics", params],
+    queryFn: () => productAnalytics(params),
+  });
+};
+
