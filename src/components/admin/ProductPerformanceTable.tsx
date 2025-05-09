@@ -59,7 +59,7 @@ const ProductPerformanceTable = () => {
   // }, [timeFilter]);
 
   return (
-    <div className="mt-8">
+    <div className="mt-8 mb-10">
       <AdminBreadcrumb title="Product Performance" items={[]} />
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">Product Performance</h2>
@@ -239,12 +239,19 @@ const ProductPerformanceTable = () => {
               Next
             </Button>
           </div> */}
-          <DynamicPagination
-            totalItems={totalItems}
-            itemsPerPage={limit}
+          <div className="py-6 border-t border-gray-200 flex justify-between mx-10">
+            <div>
+              <span className="text-sm text-muted-foreground">
+                Showing {offset + 1} to {offset + limit} of {totalItems}
+              </span>
+            </div>
+            <DynamicPagination
+              totalItems={totalItems}
+              itemsPerPage={limit}
             currentPage={page}
             onPageChange={setPage}
           />
+          </div>
         </CardContent>
       </Card>
     </div>
