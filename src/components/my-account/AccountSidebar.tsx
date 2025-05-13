@@ -80,7 +80,8 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
                 width={100}
                 height={100}
                 unoptimized
-                objectFit="contain"
+                // objectFit="contain"
+                className="object-cover object-center h-24 w-24 rounded-full"
               />
             ) : (
               <UserCircle className="w-16 h-16 text-gray-400" />

@@ -53,8 +53,8 @@ const profileSchema = z.object({
   lastName: z.string().nonempty("Last name is required"),
   firstName: z.string().nonempty("First name is required"),
   street: z.string().optional(),
-  zip: z.string().optional(),
-  location: z.string().optional(),
+  zip: z.string().min(5, "Zip code is required"),
+  location: z.string().min(1, "location must be required"),
   country: z.string().optional(),
   dob: z.preprocess(
     (val) => (typeof val === "string" ? new Date(val) : val),
@@ -764,7 +764,9 @@ const UserProfile = () => {
                         </Label>
                         <Input {...register("firstName")} />
                         {errors.firstName && (
-                          <span>{errors.firstName.message}</span>
+                          <span className="text-red-500">
+                            {errors.firstName.message}
+                          </span>
                         )}
                       </div>
                       <div className="space-y-2">

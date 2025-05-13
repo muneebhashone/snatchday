@@ -1213,13 +1213,16 @@ export const createCompetition = async (data: CompetitionFormData) => {
   return response.data;
 };
 
-export const updateCompetition = async (id: string, data: CompetitionFormData) => {
+export const updateCompetition = async (
+  id: string,
+  data: CompetitionFormData
+) => {
   const response = await axiosInstance.put(`/competitions/${id}`, data);
   return response.data;
 };
 
 export const getCompetitions = async (params?: {
- month?: string;
+  month?: string;
   status?: string;
 }) => {
   const response = await axiosInstance.get("/competitions", { params });
@@ -1231,17 +1234,28 @@ export const getCompetitionById = async (id: string) => {
   return response.data;
 };
 
-export const productAnalytics = async (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+export const productAnalytics = async (params?: {
+  timeFilter?: string;
+  limit?: number;
+  offset?: number;
+}) => {
   const response = await axiosInstance.get("/product/analytics/product", {
     params,
   });
   return response.data;
 };
 
+//competitions api paticipation start
 
+export const participantInCompetition = async (
+  id: string,
+  data: { answer: string }
+) => {
+  const response = await axiosInstance.post(
+    `/competitions/${id}/participate`,
+    data
+  );
+  return response.data;
+};
 
-
-
-
-
-
+//competitions api paticipation end

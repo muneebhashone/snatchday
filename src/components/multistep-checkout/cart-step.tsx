@@ -43,13 +43,13 @@ const checkoutSchema = z.object({
   snapPoints: z
     .string()
     .optional()
-    .refine((val) =>  Number.parseFloat(val) > -1 , {
+    .refine((val) => Number.parseFloat(val) > -1, {
       message: "snapPoints must be a positive number",
     }),
   discountPoints: z
     .string()
     .optional()
-    .refine((val) => Number.parseFloat(val) > -1 , {
+    .refine((val) => Number.parseFloat(val) > -1, {
       message: "discountPoints must be a positive number",
     }),
 });
@@ -79,9 +79,8 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
   const { setCartData } = useCart();
   const { data: cartItems } = useGetCart();
 
-
   const { mutate: DeleteVoucher, isPending: isDeleteVoucher } =
-  useRemoveVoucher();
+    useRemoveVoucher();
 
   const { mutate: applyVoucher, isPending: isApplyVoucherPending } =
     useApplyVoucher();
@@ -107,12 +106,9 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
       "discountPoints",
       cartItems?.data?.discountPoints.toString() || ""
     );
-  
-   
-    
   }, [cartItems]);
 
-    console.log(cartItems,"cartItems111")
+  console.log(cartItems, "cartItems111");
 
   // Form handling for voucher
   const {
@@ -120,7 +116,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
     handleSubmit: handleVoucherSubmit,
     formState: { errors: voucherErrors },
     watch: watchVoucher,
-    reset:voucherReset
+    reset: voucherReset,
   } = useForm({
     resolver: zodResolver(voucherSchema),
     defaultValues: {
@@ -168,6 +164,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
       }
     );
   };
+  const [voucherCode, setVoucherCode] = useState(cart?.data?.voucherCode || "");
 
   // Handle checkout submission
   const onSubmit = async (data: any) => {
@@ -211,11 +208,13 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
 
     const voucherCodeValue = watchVoucher("voucherCode");
 
+    console.log(watchVoucher("voucherCode"), "voucherCodeValue");
+
     const payload = {
       cartId: cart?.data?._id,
       snapPoints: snapPoints,
       discountPoints: discountPoints,
-      voucherCode: voucherCodeValue || "",
+      voucherCode: voucherCode || "",
     };
 
     checkout(payload, {
@@ -247,10 +246,10 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
       {
         onSuccess: (response) => {
           setApplyvocherResponse(response);
-          refetch()
+          refetch();
           queryClient.invalidateQueries({ queryKey: ["myprofile"] });
-
-          voucherReset()
+          setVoucherCode(data.voucherCode);
+          voucherReset();
           toast.success("Voucher applied successfully", {
             position: "top-right",
             style: { backgroundColor: "green", color: "white" },
@@ -292,17 +291,17 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
   const handleDeleteVoucher = () => {
     DeleteVoucher(undefined, {
       onSuccess: () => {
-        setApplyvocherResponse(null); 
-        voucherReset()
-        refetch()
-   
-          queryClient.invalidateQueries({ queryKey: ["myprofile"] });
+        setApplyvocherResponse(null);
+        voucherReset();
+        refetch();
+        setVoucherCode("");
+        queryClient.invalidateQueries({ queryKey: ["myprofile"] });
         // Clear the applied voucher response
         toast.success("Voucher code removed successfully", {
           position: "top-right",
           style: { backgroundColor: "green", color: "white" },
         });
-        
+
         refetch(); // Refetch cart data to update the UI
       },
       onError: (error: any) => {
@@ -451,26 +450,27 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                     </p>
                   )}
                 </div>
-                  {cartItems?.data?.voucherCode && (
-                    <div className="flex my-2 items-center gap-2">
-                      <span>
-                        <strong>Voucher Code:</strong> <span>{cartItems?.data?.voucherCode}</span>
-                      </span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <ShieldCloseIcon 
-                              className="cursor-pointer hover:text-[red]"
-                              onClick={handleDeleteVoucher} 
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Remove Voucher Code</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                  )}
+                {cartItems?.data?.voucherCode && (
+                  <div className="flex my-2 items-center gap-2">
+                    <span>
+                      <strong>Voucher Code:</strong>{" "}
+                      <span>{cartItems?.data?.voucherCode}</span>
+                    </span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <ShieldCloseIcon
+                            className="cursor-pointer hover:text-[red]"
+                            onClick={handleDeleteVoucher}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Remove Voucher Code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                )}
               </form>
             </div>
             <div className="md:col-span-2">
@@ -526,7 +526,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                       </span>
                     </div>
                   )}
- {cart?.data?.voucherDiscount > 0 && (
+                  {cart?.data?.voucherDiscount > 0 && (
                     <div className="flex justify-between text-lg text-green-600">
                       <span>Voucher Discount:</span>
                       <span>

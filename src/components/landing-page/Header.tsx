@@ -226,6 +226,12 @@ const Header = () => {
     });
   };
 
+  const currentMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  ).toLocaleString("default", { month: "long" });
+
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       {/* Notification Dialog */}
@@ -474,7 +480,7 @@ const Header = () => {
               className="hidden lg:flex items-center justify-between"
               key={items.id}
             >
-              {items.name === "Gewinnspiel im Januar" ? (
+              {items.name === `Gewinnspiel in ${currentMonth}` ? (
                 <Dialog>
                   <DialogTrigger asChild>
                     <button

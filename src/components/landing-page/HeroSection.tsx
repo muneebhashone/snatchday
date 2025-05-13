@@ -367,7 +367,7 @@ const HeroSection = () => {
                           <div className="flex items-center justify-start gap-2 w-max">
                             <div className="w-12 xl:w-24 h-12 xl:h-24 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
                               <Image
-                                className=""
+                                className="object-contain w-14 h-14"
                                 src={tournament?.game?.image}
                                 alt="Game Icon"
                                 width={70}

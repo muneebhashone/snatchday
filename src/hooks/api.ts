@@ -160,6 +160,7 @@ import {
   getCompetitions,
   updateCompetition,
   productAnalytics,
+  participantInCompetition,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -940,9 +941,11 @@ export const UseITScope = () => {
 // IT Scope hook end
 
 export const useGetAddresses = () => {
+  const { user } = useUserContext();
   return useQuery({
     queryKey: ["addresses"],
     queryFn: getAddresses,
+    enabled: !!user,
   });
 };
 export const useCreateAddress = () => {
@@ -1432,10 +1435,20 @@ export const useGetCompetitionById = (id: string) => {
   });
 };
 
-export const useProductAnalytics = (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+export const useProductAnalytics = (params?: {
+  timeFilter?: string;
+  limit?: number;
+  offset?: number;
+}) => {
   return useQuery({
     queryKey: ["productAnalytics", params],
     queryFn: () => productAnalytics(params),
   });
 };
 
+export const useParticipantInCompetition = (id: string) => {
+  return useMutation({
+    mutationFn: (data: { answer: string }) =>
+      participantInCompetition(id, data),
+  });
+};
