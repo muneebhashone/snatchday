@@ -99,7 +99,7 @@ const DuelHistory = () => {
                         className="object-cover rounded-full"
                       />
                     </div>
-                    <span>{duel?.player2?.username || "No Opponenet Yet"}</span>
+                    <span>{duel?.player2?.username || "No Opponent Yet"}</span>
                   </div>
                 </td>
                 <td className="py-4 px-2">{duel.rounds}</td>

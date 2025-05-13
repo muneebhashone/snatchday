@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -61,6 +61,8 @@ import {
   CommandList,
 } from "../ui/command";
 import { TimePickerDemo } from "../ui/TimePicker1";
+// Ant Design imports
+import { Select as AntdSelect, Spin, SelectProps } from "antd";
 // const formSchema = z.object({
 //   id: z.string().min(1, "ID is required"),
 //   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -125,6 +127,23 @@ const formSchema = z.object({
   }
 );
 
+// Define product interface
+interface Product {
+  _id: string;
+  name: string;
+  title: string;
+  price: number;
+  images: string[];
+  [key: string]: any; // Allow other properties
+}
+
+// Define Game interface
+interface Game {
+  _id: string;
+  game: string;
+  [key: string]: any;
+}
+
 interface Tournament {
   _id: string;
   name: string;
@@ -137,7 +156,7 @@ interface Tournament {
   startingPrice: number;
   priceReduction: number;
   numberOfPieces: number;
-  game: object;
+  game: Game;
   start: string;
   end: string;
   length: number;
@@ -153,51 +172,166 @@ export function EditTournamentDialog({
   products,
 }: {
   tournament: Tournament;
-  products: any[];
+  products: Product[];
 }) {
   console.log(tournament);
   const { data: games } = useGetGames(0, 100);
   const { mutate: manageTournament, isPending } = useManageTournament();
-  const [value, setValue] = useState();
+  const [value, setValue] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState(false);
-  const [openPop, setOpenPop] = useState(false);
   const queryClient = useQueryClient();
   const findItem = products?.find(
     (pro) => pro._id === tournament.article
   )?.name;
 
+  // For Ant Design Product Select
+  const [productOptions, setProductOptions] = useState<{ value: string; label: string }[]>([]);
+  const [productSearch, setProductSearch] = useState("");
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
+  // Map products to options for Ant Design Select
   useEffect(() => {
-    console.log(tournament);
+    if (products) {
+      const uniqueProducts = Array.from(
+        new Map(products.map((p: Product) => [p._id, p])).values()
+      );
+      
+      let newOptions = uniqueProducts.map((p: Product) => ({ value: p._id, label: p.name }));
+      
+      // If we have a tournament with article ID, ensure it's in the options
+      if (tournament && tournament.article) {
+        const selectedProduct = products.find(pro => pro._id === tournament.article);
+        if (selectedProduct && !newOptions.some(opt => opt.value === tournament.article)) {
+          newOptions = [
+            { value: selectedProduct._id, label: selectedProduct.name },
+            ...newOptions
+          ];
+        }
+      }
+      
+      setProductOptions(newOptions);
+    }
+  }, [products, tournament]);
+
+  // Handle product selection with a focus on fixing title validation
+  const handleProductSelect = (productId: string | undefined) => {
+    if (!productId) {
+      // Handle clearing the selection
+      form.setValue("name", "");
+      form.setValue("title", "");
+      form.setValue("startingPrice", 0);
+      setValue(undefined);
+      form.setValue("article", "");
+      return;
+    }
+    
+    const selectedProduct = products.find((p: Product) => p._id === productId);
+    if (selectedProduct) {
+      // Force reset validation state completely
+      form.reset(form.getValues());
+      
+      // First set the article field and the component state
+      form.setValue("article", productId);
+      setValue(productId);
+      
+      // Then set all other fields that come from the product
+      if (selectedProduct.name) {
+        form.setValue("name", selectedProduct.name);
+      }
+      
+      if (selectedProduct.title) {
+        form.setValue("title", selectedProduct.title);
+        
+        // Explicitly tell form this field has been touched and is valid
+        form.clearErrors("title");
+        
+        // Directly update the form state internals to consider title "touched" and valid
+        const titleField = form.getFieldState("title");
+        if (titleField) {
+          // Force update the form state to consider title as valid
+          form.formState.dirtyFields.title = true;
+          form.formState.touchedFields.title = true;
+        }
+      }
+      
+      if (selectedProduct.price) {
+        form.setValue("startingPrice", selectedProduct.price);
+      }
+      
+      // Force re-validation of the entire form if needed
+      setTimeout(() => {
+        form.trigger();
+      }, 100);
+    }
+  };
+
+  // Product search handler
+  const handleProductSearch = (value: string) => {
+    setProductSearch(value);
+  };
+
+  // Form reset when tournament data changes
+  useEffect(() => {
     if (tournament) {
-      form.reset({
-        id: tournament._id,
-        name: tournament?.name,
-        title: tournament?.title,
-        textForBanner: tournament?.textForBanner,
-        metaTitle: tournament?.metaTitle,
-        metaDescription: tournament?.metaDescription,
-        metaKeywords: tournament?.metaKeywords,
-        article: tournament?.article,
-        startingPrice: tournament?.startingPrice,
-        priceReduction: tournament?.priceReduction,
-        numberOfPieces: tournament?.numberOfPieces,
-        game: tournament?.game?._id,
-        start: tournament?.start,
-        end: tournament?.end,
-        length: tournament?.length,
-        fee: tournament?.fee,
-        numberOfParticipants: tournament?.numberOfParticipants,
-        vip: tournament?.vip,
-        resubmissions: tournament?.resubmissions,
-      });
+      // First clear all form state
+      form.reset();
+      form.clearErrors();
+      
+      // Then set the values from tournament
+      setTimeout(() => {
+        form.reset({
+          id: tournament._id,
+          name: tournament?.name,
+          title: tournament?.title,
+          textForBanner: tournament?.textForBanner,
+          metaTitle: tournament?.metaTitle,
+          metaDescription: tournament?.metaDescription,
+          metaKeywords: tournament?.metaKeywords,
+          article: tournament?.article,
+          startingPrice: tournament?.startingPrice,
+          priceReduction: tournament?.priceReduction,
+          numberOfPieces: tournament?.numberOfPieces,
+          game: tournament?.game?._id,
+          start: tournament?.start,
+          end: tournament?.end,
+          length: tournament?.length,
+          fee: tournament?.fee,
+          numberOfParticipants: tournament?.numberOfParticipants,
+          vip: tournament?.vip,
+          resubmissions: tournament?.resubmissions,
+        }, {
+          keepDefaultValues: false,
+        });
+        
+        // Set the initial value for Ant Design select
+        setValue(tournament?.article);
+      }, 100);
     }
   }, [form, tournament]);
 
-  async function onSubmit(values) {
+  async function onSubmit(values: any) {
+    // Check title field
+    const titleValue = form.getValues("title");
+    
+    if (!titleValue || titleValue.trim() === "") {
+      form.setError("title", { 
+        type: "manual", 
+        message: "Title is required" 
+      });
+      toast.error("Title is required. Please enter a title.");
+      
+      // Try to focus the title field
+      const titleInput = document.querySelector('input[name="title"]') as HTMLInputElement;
+      if (titleInput) {
+        titleInput.focus();
+      }
+      
+      return;
+    }
+    
     try {
       manageTournament(
         { data: { ...values, article: value } },
@@ -207,7 +341,7 @@ export function EditTournamentDialog({
             queryClient.invalidateQueries({ queryKey: ["tournaments"] });
             setOpen(false);
           },
-          onError: (error) => {
+          onError: (error: any) => {
             toast.error(error.response?.data?.message || "Failed to update tournament");
             console.error(error);
           },
@@ -231,7 +365,17 @@ export function EditTournamentDialog({
           <DialogTitle>Edit Tournament</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form 
+            onSubmit={form.handleSubmit(onSubmit, (errors) => {
+              console.error("Form errors:", errors);
+              if(errors.title) {
+                toast.error("Title is required. Please select an article or enter a title manually.");
+              } else {
+                toast.error("Please fix form errors before submitting.");
+              }
+            })} 
+            className="space-y-8"
+          >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Tournament Information Section */}
               <div className="bg-white rounded-lg border p-6 col-span-2">
@@ -240,69 +384,31 @@ export function EditTournamentDialog({
                   <FormField
                     control={form.control}
                     name="article"
-                    render={({ field }) => (
+                    render={({ field, fieldState }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-1">Article *</FormLabel>
-                        <Popover open={openPop} onOpenChange={setOpenPop}>
-                          <PopoverTrigger asChild>
-                            <Button className="w-[200px] justify-between hover:bg-primary">
-                              {findItem}
-                              <ChevronsUpDown className="opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[200px] p-0">
-                            <Command>
-                              <CommandInput placeholder="Search product..." className="h-9" />
-                              <CommandList>
-                                <CommandEmpty>No product found.</CommandEmpty>
-                                <CommandGroup className="overflow-y-scroll max-h-60">
-                                  {products?.map((product: any) => (
-                                    <CommandItem
-                                      key={product._id}
-                                      value={product.title}
-                                      onSelect={(currentValue) => {
-                                        field.onChange(currentValue);
-                                        const selectedProduct = products.find(
-                                          (p: any) => p.name === currentValue
-                                        );
-                                        if (selectedProduct) {
-                                          form.setValue("name", selectedProduct.name);
-                                          form.setValue("title", selectedProduct.title);
-                                          form.setValue("startingPrice", selectedProduct.price);
-                                          setValue(selectedProduct._id);
-                                        }
-                                        setOpenPop(false);
-                                      }}
-                                    >
-                                      <div className="flex items-center gap-2">
-                                        {product.images[0] && (
-                                          <div className="relative w-8 h-8 rounded overflow-hidden">
-                                            <Image
-                                              src={product.images[0]}
-                                              alt={product.name}
-                                              fill
-                                              className="object-cover"
-                                            />
-                                          </div>
-                                        )}
-                                        <span>{product.name}</span>
-                                      </div>
-                                      <Check
-                                        className={cn(
-                                          "ml-auto",
-                                          field.value === product._id
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
+                        <FormControl>
+                          <div className="w-full">
+                            <AntdSelect
+                              showSearch
+                              placeholder="Select a product"
+                              value={value || undefined}
+                              onChange={handleProductSelect}
+                              onSearch={handleProductSearch}
+                              filterOption={false}
+                              options={productOptions}
+                              style={{ width: "100%", height: "40px" }}
+                              allowClear
+                              dropdownStyle={{ zIndex: 9999 }}
+                              status={fieldState.error ? "error" : ""}
+                            />
+                          </div>
+                        </FormControl>
+                        {fieldState.error && (
+                          <div className="text-red-500 text-sm mt-1">
+                            {fieldState.error.message}
+                          </div>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -328,9 +434,23 @@ export function EditTournamentDialog({
                       <FormItem>
                         <FormLabel>Title *</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input 
+                            {...field} 
+                            className={(form.formState.errors.title ? "border-red-500" : "")}
+                            onChange={(e) => {
+                              field.onChange(e);
+                              // Clear error if value is not empty
+                              if (e.target.value && e.target.value.trim() !== "") {
+                                form.clearErrors("title");
+                              }
+                            }}
+                          />
                         </FormControl>
-                        <FormMessage />
+                        {form.formState.errors.title && (
+                          <div className="text-red-500 text-sm mt-1">
+                            {form.formState.errors.title.message}
+                          </div>
+                        )}
                       </FormItem>
                     )}
                   />
