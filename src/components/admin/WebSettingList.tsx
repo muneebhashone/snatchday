@@ -104,7 +104,7 @@ const WebSettingsList = () => {
     <div className="p-6 bg-white rounded-lg shadow-md">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Web Settings</h2>
+          <h2 className="text-2xl font-bold">Content Settings</h2>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

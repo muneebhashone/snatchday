@@ -21,6 +21,13 @@ import { useUserContext } from "@/context/userContext";
 import { toast } from "sonner";
 import { IError } from "@/app/admin/games/create/page";
 
+interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
 export function PromotionModal() {
   const currentMonth = (new Date().getMonth() + 1).toString();
   const { data: competition, isLoading } = useGetCompetitions({
@@ -31,10 +38,16 @@ export function PromotionModal() {
   const [answer, setAnswer] = useState("");
   const [acceptTerms, setAcceptTerms] = useState("");
   const { data: getPoints } = useGetPoints();
-  const { mutate: participate,isPending } = useParticipantInCompetition(
+  const { mutate: participate, isPending } = useParticipantInCompetition(
     competitionData?._id
   );
   const snapPointsRatio = getPoints?.data?.snapPointsRatio;
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
   const currentMonthName = new Date(
     new Date().getFullYear(),
@@ -42,26 +55,69 @@ export function PromotionModal() {
     1
   ).toLocaleString("default", { month: "long" });
 
+  const calculateTimeLeft = () => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    // Set target date to last day of current month at 17:55 (5:55 PM)
+    const targetDate = new Date(currentYear, currentMonth + 1, 0, 17, 55, 0);
+
+    const difference = targetDate.getTime() - now.getTime();
+    // const endOfMonth = new Date(
+    //   new Date().getFullYear(),
+    //   new Date().getMonth() + 1,
+    //   0
+    // );
+    // const diff2 = endOfMonth - now.getTime() ;
+    // console.log(diff2, "difference");
+
+    if (difference > 0) {
+      setTimeLeft({
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      });
+    } else {
+      // If we're past the deadline, show all zeros
+      setTimeLeft({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      });
+    }
+  };
+
+  useEffect(() => {
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   useEffect(() => {
     console.log(currentMonth);
     console.log(competition);
     console.log(getPoints);
   }, [competition, getPoints]);
+
   const time = [
     {
-      timer: "24",
+      timer: timeLeft.days,
       timerText: "Days",
     },
     {
-      timer: "48",
+      timer: timeLeft.hours,
       timerText: "Hours",
     },
     {
-      timer: "37",
+      timer: timeLeft.minutes.toString().padStart(2, "0"),
       timerText: "Minutes",
     },
     {
-      timer: "19",
+      timer: timeLeft.seconds.toString().padStart(2, "0"),
       timerText: "Seconds",
     },
   ];
@@ -71,7 +127,9 @@ export function PromotionModal() {
         { answer: answer },
         {
           onSuccess: (data) => {
-            toast.success(data?.message || "Participated successfully");
+            toast.success(
+              "you have been participated successfully result will be announced at the end of the month"
+            );
           },
           onError: (error) => {
             toast.error(
@@ -99,7 +157,7 @@ export function PromotionModal() {
         >
           <DialogTitle className="flex flex-col gap-3 lg:gap-7 items-center">
             <h1 className="text-white text-xl md:text-3xl lg:text-[48px] font-extrabold">
-              Competiton In{" "}
+              Competition In{" "}
               <span className="bg-[#FF6B3D] py-1 px-2 rounded-lg">
                 &quot;{currentMonthName}&quot;
               </span>
@@ -107,8 +165,10 @@ export function PromotionModal() {
             <p className="text-white text-xs sm:text-sm lg:text-[24px] font-normal bg-[#D9AEE7] bg-opacity-10  py-4 px-14 rounded-full">
               Participation costs{" "}
               <span className="text-primary font-bold">{`${
-                competitionData?.price
-              }€ / ${competitionData?.price * snapPointsRatio}`}</span>{" "}
+                competitionData?.fee / snapPointsRatio
+              }€ / ${competitionData?.fee}`}</span>{" "}
+              {/* competitionData?.fee
+              }€ / ${competitionData?.fee * snapPointsRatio}`}</span>{" "} */}
               snap points
             </p>
           </DialogTitle>
@@ -216,11 +276,13 @@ export function PromotionModal() {
                 <p className="text-lg">
                   Participation fee{" "}
                   <span className="font-semibold">
-                    {competitionData?.price * snapPointsRatio}
+                    {/* {competitionData?.fee * snapPointsRatio} */}
+                    {competitionData?.fee}
                   </span>{" "}
                   snap points /{" "}
                   <span className="font-semibold">
-                    {competitionData?.price}€
+                    {/* {competitionData?.fee}€ */}
+                    {competitionData?.fee / snapPointsRatio}€
                   </span>
                 </p>
               </div>

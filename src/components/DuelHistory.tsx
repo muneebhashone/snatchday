@@ -125,13 +125,15 @@ const DuelHistory = () => {
                     ) : (userID === duel?.player1?._id &&
                         !duel?.player1Score?.score &&
                         !duel?.player1Score?.time) ||
-                      (userID === duel?.player2?._id &&
+                      (duel?.player2 &&
+                        duel?.status !== "cancelled" &&
+                        userID === duel?.player2?._id &&
                         !duel?.player2Score?.score &&
                         !duel?.player2Score?.time) ? (
                       <p className="capitalize w-max px-2 bg-gray-300 text-white rounded-full text-sm font-bold">
                         you haven&apos;t played yet
                       </p>
-                    ) : duel.status === "cancelled" ? (
+                    ) : duel?.status === "cancelled" ? (
                       <p className="capitalize w-max px-2 bg-amber-500 text-white rounded-full text-sm font-bold">
                         cancelled
                       </p>
@@ -172,10 +174,21 @@ const DuelHistory = () => {
                 </td>
               </tr>
             ))}
-            {duelHistory?.data?.total < 1 && (
+            {duelHistory?.data?.total < 1 ? (
               <tr>
                 <td colSpan={8} className="text-center">
                   No duels found
+                </td>
+              </tr>
+            ) : (
+              <tr>
+                <td colSpan={8} className="text-center py-4">
+                  <DynamicPagination
+                    totalItems={duelHistory?.data?.total || 0}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                  />
                 </td>
               </tr>
             )}
@@ -204,14 +217,14 @@ const DuelHistory = () => {
           Next
         </Button>
       </div> */}
-      {duelHistory?.data?.total > 0 && (
+      {/* {duelHistory?.data?.total > 0 && (
         <DynamicPagination
           totalItems={duelHistory?.data?.total || 0}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
         />
-      )}{" "}
+      )}{" "} */}
     </div>
   );
 };

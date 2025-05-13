@@ -482,3 +482,11 @@ export interface NotificationItem {
     data: NotificationData;
   };
 }
+
+export interface BannerFormData {
+  image: File;
+  title: string;
+  content: string;
+  date?: string;
+  productId?: string;
+}

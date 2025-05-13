@@ -161,6 +161,11 @@ import {
   updateCompetition,
   productAnalytics,
   participantInCompetition,
+  CreateBanner,
+  getBanners,
+  UpdateBanner,
+  DeleteBanner,
+  getBannerById,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -170,6 +175,7 @@ import {
 } from "@/types/admin";
 
 import {
+  BannerFormData,
   CategoryFormData,
   CheckoutTypes,
   FaqFormData,
@@ -1452,3 +1458,41 @@ export const useParticipantInCompetition = (id: string) => {
       participantInCompetition(id, data),
   });
 };
+
+//banner api start
+
+export const useGetBanners = () => {
+  return useQuery({
+    queryKey: ["banners"],
+    queryFn: () => getBanners(),
+  });
+};
+
+export const useGetBannerById = (id: string) => {
+  return useQuery({
+    queryKey: ["banner", id],
+    queryFn: () => getBannerById(id),
+    enabled: Boolean(id),
+  });
+};
+
+export const useCreateBanner = () => {
+  return useMutation({
+    mutationFn: (data: BannerFormData) => CreateBanner(data),
+  });
+};
+
+export const useUpdateBanner = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: BannerFormData }) =>
+      UpdateBanner(id, data),
+  });
+};
+
+export const useDeleteBanner = () => {
+  return useMutation({
+    mutationFn: (id: string) => DeleteBanner(id),
+  });
+};
+
+//banner api end

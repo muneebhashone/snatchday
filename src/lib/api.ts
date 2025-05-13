@@ -23,6 +23,7 @@ import {
   FaqFormData,
   TutorialFormData,
   points,
+  BannerFormData,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -1259,3 +1260,36 @@ export const participantInCompetition = async (
 };
 
 //competitions api paticipation end
+
+//banner api start
+
+export const getBanners = async () => {
+  const response = await axiosInstance.get("/web-settings/banner");
+  return response.data;
+};
+
+export const getBannerById = async (id: string) => {
+  const response = await axiosInstance.get(`/web-settings/banner/${id}`);
+  return response.data;
+};
+
+export const CreateBanner = async (data: BannerFormData) => {
+  const response = await axiosInstance.post("/web-settings/banner", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const UpdateBanner = async (id: string, data: BannerFormData) => {
+  const response = await axiosInstance.put(`/web-settings/banner/${id}`, data);
+  return response.data;
+};
+
+export const DeleteBanner = async (id: string) => {
+  const response = await axiosInstance.delete(`/web-settings/banner/${id}`);
+  return response.data;
+};
+
+//banner api end

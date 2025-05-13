@@ -4,6 +4,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -227,12 +228,18 @@ const DuelsTable = () => {
                       <p className="capitalize w-max px-2 bg-green-500 rounded-full text-white font-bold text-sm">
                         You Won
                       </p>
-                    ) : (userID === duel?.player1?._id &&
-                        !duel?.player1Score?.score &&
-                        !duel?.player1Score?.time) ||
-                      (userID === duel?.player2?._id &&
-                        !duel?.player2Score?.score &&
-                        !duel?.player2Score?.time) ? (
+                    ) : userID === duel?.player1?._id &&
+                      !duel?.player1Score?.score &&
+                      !duel?.player1Score?.time &&
+                      duel?.status !== "cancelled" ? (
+                      <p className="capitalize w-max px-2 bg-gray-300 text-white rounded-full text-sm font-bold">
+                        you haven&apos;t played yet
+                      </p>
+                    ) : duel?.player2 &&
+                      duel?.status !== "cancelled" &&
+                      userID === duel?.player2?._id &&
+                      !duel?.player2Score?.score &&
+                      !duel?.player2Score?.time ? (
                       <p className="capitalize w-max px-2 bg-gray-300 text-white rounded-full text-sm font-bold">
                         you haven&apos;t played yet
                       </p>
@@ -250,15 +257,29 @@ const DuelsTable = () => {
               </TableRow>
             ))}
           </TableBody>
+          {!data?.data?.total ? (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">
+                  <p>No Duels Found</p>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          ) : (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">
+                    <DynamicPagination
+                      totalItems={data?.data?.total || 0}
+                      itemsPerPage={itemsPerPage}
+                      currentPage={currentPage}
+                      onPageChange={setCurrentPage}
+                    />
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          )}
         </Table>
-        <div className="p-4 border-t">
-          <DynamicPagination
-            totalItems={data?.data?.total || 0}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
-        </div>
       </div>
     </div>
   );
