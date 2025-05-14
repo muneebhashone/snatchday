@@ -60,17 +60,9 @@ export function PromotionModal() {
     const currentYear = now.getFullYear();
     const currentMonth = now.getMonth();
 
-    // Set target date to last day of current month at 17:55 (5:55 PM)
-    const targetDate = new Date(currentYear, currentMonth + 1, 0, 17, 55, 0);
+    const targetDate = new Date(currentYear, currentMonth + 1, 0, 0, 0, 0);
 
     const difference = targetDate.getTime() - now.getTime();
-    // const endOfMonth = new Date(
-    //   new Date().getFullYear(),
-    //   new Date().getMonth() + 1,
-    //   0
-    // );
-    // const diff2 = endOfMonth - now.getTime() ;
-    // console.log(diff2, "difference");
 
     if (difference > 0) {
       setTimeLeft({

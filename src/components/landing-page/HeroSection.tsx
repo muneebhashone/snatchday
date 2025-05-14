@@ -354,7 +354,7 @@ const HeroSection = () => {
                         {/* Product Title */}
                         <motion.p
                           variants={staggerItemVariants}
-                          className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6"
+                          className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6 line-clamp-2"
                         >
                           {tournament?.name}
                         </motion.p>

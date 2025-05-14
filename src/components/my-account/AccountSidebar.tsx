@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronsRight,
   Bell,
+  Award,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,13 +22,15 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
   const { user } = useUserContext();
 
   const navigationLinks = [
-    ...(user ? [
-      {
-        icon: <UserCircle className="w-5 h-5" />,
-        text: "My Profile",
-        href: "/my-account/my-profile",
-      }
-    ] : []),
+    ...(user
+      ? [
+          {
+            icon: <UserCircle className="w-5 h-5" />,
+            text: "My Profile",
+            href: "/my-account/my-profile",
+          },
+        ]
+      : []),
     {
       icon: <ShoppingBag className="w-5 h-5" />,
       text: "Orders",
@@ -52,6 +55,11 @@ const AccountSidebar = ({ Userprofile }: { Userprofile: User }) => {
       icon: <Swords className="w-5 h-5" />,
       text: "Duels",
       href: "/my-account/my-duels",
+    },
+    {
+      icon: <Award className="w-5 h-5" />,
+      text: "Rewards",
+      href: "/my-account/rewards",
     },
     {
       icon: <TrendingUp className="w-5 h-5" />,

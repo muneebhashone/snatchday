@@ -66,6 +66,7 @@ const Page = () => {
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="w-[100px]">Image</TableHead>
+                <TableHead>Title</TableHead>
                 <TableHead>Product</TableHead>
                 <TableHead>Price</TableHead>
                 <TableHead>Status</TableHead>
@@ -85,28 +86,30 @@ const Page = () => {
                 banners?.data?.map((banner: any) => (
                   <TableRow key={banner._id} className="hover:bg-muted/50">
                     <TableCell>
-                      <div className="w-16 h-16 relative rounded-lg overflow-hidden">
+                      <div className="w-20 h-20 relative rounded-lg overflow-hidden">
                         <Image
                           src={banner.image}
                           alt="banner"
-                          fill
-                          className="object-cover object-center"
+                          width={100}
+                          height={100}
+                          className="object-contain w-full h-full"
                         />
                       </div>
                     </TableCell>
+                    <TableCell>{banner?.title || "N/A"}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 relative rounded-lg overflow-hidden bg-muted">
-                          <Image
+                          {/* <Image
                             src={banner?.productId?.images[0] || noProductImage}
                             alt={banner?.productId?.name || "Product"}
-                            className="object-contain"
+                            className="object-contain w-full h-full"
                             width={48}
                             height={48}
-                          />
+                          /> */}
                         </div>
-                        <div className="flex flex-col">
-                          <span className="font-medium">
+                        <div className="flex flex-col w-full md:w-[300px]">
+                          <span className="font-medium truncate">
                             {banner?.productId?.name || "N/A"}
                           </span>
                           <span className="text-sm text-muted-foreground">

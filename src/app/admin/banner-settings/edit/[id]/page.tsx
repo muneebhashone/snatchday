@@ -2,10 +2,9 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
   useUpdateBanner,
-  useGetInfiniteProducts,
   useGetBannerById,
 } from "@/hooks/api";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,9 +19,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
-import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon, ImageIcon, Loader, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import {
   Popover,
@@ -33,23 +31,52 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { BannerFormData } from "@/types";
 import { toast } from "sonner";
-import { Select as AntdSelect, Spin } from "antd";
-import { useDebounce } from "@/hooks/useDebounce";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import ReactQuill from "react-quill";
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
+  title: z.string().optional(),
+  content: z.string().optional(),
   image: z
     .instanceof(File)
-    .refine((file) => {
-      if (!file) return true;
-      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-      return validTypes.includes(file.type);
-    }, "Only .jpg, .jpeg, .png, .gif and .webp formats are supported.")
+    .refine(
+      (file) => {
+        const acceptedImageTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/webp",
+          "image/gif",
+        ];
+        return acceptedImageTypes.includes(file.type);
+      },
+      {
+        message:
+          "Only .jpg, .jpeg, .png, .webp and .gif formats are supported.",
+      }
+    )
     .optional(),
-  productId: z.string().optional(),
+  logoImage: z
+    .instanceof(File)
+    .refine(
+      (file) => {
+        const acceptedImageTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/webp",
+          "image/gif",
+        ];
+        return acceptedImageTypes.includes(file.type);
+      },
+      {
+        message:
+          "Only .jpg, .jpeg, .png, .webp and .gif formats are supported.",
+      }
+    )
+    .optional(),
+  link: z.string().optional(),
   date: z.string().optional(),
 });
 
@@ -59,43 +86,13 @@ const Page = () => {
   const params = useParams();
   const { mutate: updateBanner, isPending } = useUpdateBanner();
   const { data: bannerData, isLoading } = useGetBannerById(params.id as string);
-  const [search, setSearch] = useState("");
-  const debounceSearch = useDebounce(search, 500);
-
-  const {
-    data: productsData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useGetInfiniteProducts({
-    limit: "10",
-    name: debounceSearch,
-  });
-
-  const [productOptions, setProductOptions] = useState<
-    { value: string; label: string }[]
-  >([]);
-
-  useEffect(() => {
-    if (productsData?.pages) {
-      const allProducts = productsData.pages.flatMap(
-        (page) => page.data.products
-      );
-      const uniqueProducts = Array.from(
-        new Map(allProducts.map((p) => [p._id, p])).values()
-      );
-      setProductOptions(
-        uniqueProducts.map((p) => ({ value: p._id, label: p.name }))
-      );
-    }
-  }, [productsData]);
 
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       content: "",
-      productId: "",
+      link: "",
       date: "",
     },
   });
@@ -106,7 +103,7 @@ const Page = () => {
       form.reset({
         title: banner.title,
         content: banner.content,
-        productId: banner.productId,
+        link: banner.link,
         date: banner.date,
       });
     }
@@ -114,45 +111,25 @@ const Page = () => {
 
   const onSubmit = (data: IForm) => {
     const formData = new FormData();
-    formData.append("title", data.title);
-    formData.append("content", data.content);
-    if (data.image) {
-      formData.append("image", data.image);
-    }
-    if (data.productId) {
-      formData.append("productId", data.productId);
-    }
-    if (data.date) {
-      formData.append("date", data.date);
-    }
+    if (data.title) formData.append("title", data.title);
+    if (data.content) formData.append("content", data.content);
+    if (data.image) formData.append("image", data.image);
+    if (data.logoImage) formData.append("logoImage", data.logoImage);
+    if (data.link) formData.append("link", data.link);
+    if (data.date) formData.append("date", data.date);
 
     updateBanner(
       { id: params.id as string, data: formData as unknown as BannerFormData },
       {
         onSuccess: () => {
           toast.success("Banner updated successfully");
-          //   window.location.href = "/admin/banner-settings";
+          window.location.href = "/admin/banner-settings";
         },
         onError: () => {
-          toast.error("Failed to u// pdate banner");
+          toast.error("Failed to update banner");
         },
       }
     );
-  };
-
-  const handleProductSearch = (value: string) => {
-    setSearch(value);
-  };
-
-  const handleProductScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLDivElement;
-    if (
-      target.scrollHeight - target.scrollTop === target.clientHeight &&
-      hasNextPage &&
-      !isFetchingNextPage
-    ) {
-      fetchNextPage();
-    }
   };
 
   if (isLoading) {
@@ -194,9 +171,7 @@ const Page = () => {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Title <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
                           <Input placeholder="Enter banner title" {...field} />
                         </FormControl>
@@ -205,52 +180,33 @@ const Page = () => {
                     )}
                   />
 
-                  {bannerData?.data?.productId && (
-                    <FormField
-                      control={form.control}
-                      name="productId"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Product ID</FormLabel>
-                          <FormControl>
-                            <AntdSelect
-                              showSearch
-                              placeholder="Select a product"
-                              value={field.value || undefined}
-                              onChange={(value) => field.onChange(value)}
-                              onSearch={handleProductSearch}
-                              filterOption={false}
-                              notFoundContent={
-                                isFetchingNextPage
-                                  ? "Loading..."
-                                  : "No products found"
-                              }
-                              options={productOptions}
-                              onPopupScroll={handleProductScroll}
-                              style={{ width: "100%", height: "40px" }}
-                              allowClear
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                  <FormField
+                    control={form.control}
+                    name="link"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Link</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter banner link" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
                 <FormField
                   control={form.control}
                   name="content"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Content <span className="text-red-500">*</span>
-                      </FormLabel>
+                    <FormItem className="mb-10 h-[190px]">
+                      <FormLabel>Content</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Enter banner content"
-                          className="min-h-[120px]"
-                          {...field}
+                        <ReactQuill
+                          className="h-[120px] mb-10"
+                          theme="snow"
+                          value={field.value}
+                          onChange={field.onChange}
                         />
                       </FormControl>
                       <FormMessage />
@@ -259,54 +215,98 @@ const Page = () => {
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {bannerData?.data?.date && (
-                    <FormField
-                      control={form.control}
-                      name="image"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            Image <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <div className="space-y-4">
-                              <Input
-                                type="file"
-                                placeholder="Enter image URL"
-                                className="flex-1"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) {
-                                    field.onChange(file);
-                                  }
-                                }}
-                              />
-                              {field.value ? (
-                                <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
-                                  <Image
-                                    src={URL.createObjectURL(field.value)}
-                                    alt="Selected Banner Image"
-                                    className="w-full h-full object-cover"
-                                    fill
-                                  />
-                                </div>
-                              ) : bannerData?.data?.image ? (
-                                <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
-                                  <Image
-                                    src={bannerData.data.image}
-                                    alt="Current Banner Image"
-                                    className="w-full h-full object-cover"
-                                    fill
-                                  />
-                                </div>
-                              ) : null}
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image</FormLabel>
+                        <FormControl>
+                          <div className="">
+                            <Input
+                              type="file"
+                              placeholder="Enter image URL"
+                              className="flex-1"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  field.onChange(file);
+                                }
+                              }}
+                            />
+                            {field.value ? (
+                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                <Image
+                                  src={URL.createObjectURL(field.value)}
+                                  alt="Selected Banner Image"
+                                  className="w-full h-full object-cover"
+                                  fill
+                                />
+                              </div>
+                            ) : bannerData?.data?.image ? (
+                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                <Image
+                                  src={bannerData.data.image}
+                                  alt="Current Banner Image"
+                                  className="w-full h-full object-cover"
+                                  fill
+                                />
+                              </div>
+                            ) : null}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="logoImage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Logo Image</FormLabel>
+                        <FormControl>
+                          <div className="">
+                            <Input
+                              type="file"
+                              placeholder="Enter logo image"
+                              className="flex-1"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  field.onChange(file);
+                                }
+                              }}
+                            />
+                            {field.value ? (
+                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                <Image
+                                  src={URL.createObjectURL(field.value)}
+                                  alt="Selected Logo Image"
+                                  className="w-full h-full object-cover"
+                                  fill
+                                />
+                              </div>
+                            ) : bannerData?.data?.logoImage ? (
+                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                <Image
+                                  src={bannerData.data.logoImage}
+                                  alt="Current Logo Image"
+                                  className="w-full h-full object-cover"
+                                  fill
+                                />
+                              </div>
+                            ) : null}
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {bannerData?.data?.date && (
                     <FormField
                       control={form.control}

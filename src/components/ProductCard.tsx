@@ -158,7 +158,7 @@ const ProductCard = ({
       <div className="space-y-4">
         {/* Title */}
         <div className="flex justify-between items-start gap-10">
-          <p className="text-xl text-card-foreground font-light line-clamp-1 overflow-hidden text-ellipsis">
+          <p className="text-xl text-card-foreground font-light line-clamp-2 overflow-hidden text-ellipsis">
             {name}
           </p>
           <TooltipProvider>

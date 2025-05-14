@@ -488,5 +488,6 @@ export interface BannerFormData {
   title: string;
   content: string;
   date?: string;
-  productId?: string;
+  link?: string;
+  logoImage?: File;
 }
