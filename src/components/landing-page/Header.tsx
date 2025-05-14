@@ -673,7 +673,7 @@ const Header = () => {
           >
             <ShoppingCart className="h-6 w-6" />
             <span className="absolute -top-4 left-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {cartData?.data ? cartData?.data?.cart?.length : 0}
+              {cartData?.data ? cartData?.data?.cart?.length + cartData?.data?.rewardCart?.length : 0}
             </span>
           </button>
           <div className="text-sm text-foreground text-start">

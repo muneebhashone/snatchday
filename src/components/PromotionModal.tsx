@@ -16,7 +16,7 @@ import {
   useGetPoints,
   useParticipantInCompetition,
 } from "@/hooks/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUserContext } from "@/context/userContext";
 import { toast } from "sonner";
 import { IError } from "@/app/admin/games/create/page";
@@ -113,6 +113,7 @@ export function PromotionModal() {
       timerText: "Seconds",
     },
   ];
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const handleParticipate = () => {
     if (acceptTerms === "accept" && answer !== "") {
       participate(
@@ -122,12 +123,17 @@ export function PromotionModal() {
             toast.success(
               "you have been participated successfully result will be announced at the end of the month"
             );
+            setAnswer("");
+            setAcceptTerms("");
+            closeButtonRef.current?.click();
           },
           onError: (error) => {
             toast.error(
               `${(error as unknown as IError)?.response?.data?.message}` ||
                 "Something went wrong"
             );
+            setAnswer("");
+            setAcceptTerms("");
           },
         }
       );
@@ -140,7 +146,7 @@ export function PromotionModal() {
   return (
     <div className="">
       <DialogContent className="max-w-[1504px] max-h-[90vh] p-0 border-none flex flex-col items-center gap-0">
-        <DialogClose className="p-5 absolute z-50 bg-white rounded-full -right-5 -top-5">
+        <DialogClose ref={closeButtonRef} className="p-5 absolute z-50 bg-white rounded-full -right-5 -top-5">
           <X />
         </DialogClose>
         <DialogHeader

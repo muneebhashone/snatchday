@@ -25,6 +25,12 @@ const Page = () => {
   console.log(userPreviousResults, "previousResults");
   //   console.log(user?.user?._id, "user");
   //   console.log(userResubmissions, "tournament");
+  // const hasParticipated =
+  //   tournament?.data?.results?.filter(
+  //     (participant) => participant._id === user?.user?._id
+  //   ) < tournament?.data?.resubmissions;
+  // console.log(hasParticipated, "hasParticipated");
+
   return (
     <ClientLayout>
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">

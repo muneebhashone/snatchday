@@ -1259,6 +1259,11 @@ export const participantInCompetition = async (
   return response.data;
 };
 
+export const getCompetitionParticipants = async (id: string) => {
+  const response = await axiosInstance.get(`/competitions/${id}/participants`);
+  return response.data;
+};
+
 //competitions api paticipation end
 
 //banner api start
@@ -1293,3 +1298,21 @@ export const DeleteBanner = async (id: string) => {
 };
 
 //banner api end
+
+//rewards api start
+
+export const addToCartReward = async (productRewardId: string) => {
+  const response = await axiosInstance.post("/order/cart/reward", {
+    productRewardId,
+  });
+  return response.data;
+};
+
+export const removeFromCartReward = async (productRewardId: string) => {
+  const response = await axiosInstance.delete(`/order/cart/reward`, {
+    data: { productRewardId }
+  });
+  return response.data;
+};
+
+//rewards api end

@@ -34,6 +34,7 @@ import {
   useCheckout,
   useDeleteVoucher,
   useRemoveVoucher,
+  useRemoveFromCartReward,
 } from "@/hooks/api";
 import Logo from "../../app/images/logo.png";
 import { useUserContext } from "@/context/userContext";
@@ -74,10 +75,15 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
 
   const { mutateAsync: updateCart, isPending } = useUpdateCart();
   const { data: points, isLoading: isPointsLoading } = useGetPoints();
-  const { data: myprofile, isLoading: isMyProfileLoading } = useGetMyProfile();
+  const { data: myprofile, isLoading: isMyProfileLoading, refetch: refetchMyProfile } = useGetMyProfile();
   const { mutateAsync: checkout, isPending: isCheckoutPending } = useCheckout();
   const { setCartData } = useCart();
   const { data: cartItems } = useGetCart();
+  const rewardCart = cartItems?.data?.rewardCart;
+  const {
+    mutateAsync: removeRewardItem,
+    isPending: isRemoveRewardItemPending,
+  } = useRemoveFromCartReward();
 
   const { mutate: DeleteVoucher, isPending: isDeleteVoucher } =
     useRemoveVoucher();
@@ -151,6 +157,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
             style: { backgroundColor: "green", color: "white" },
           });
           refetch();
+          refetchMyProfile();
         },
         onError: (error: any) => {
           toast.error(
@@ -268,6 +275,23 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
     );
   };
 
+  const handleRemoveRewardItem = async (item) => {
+    console.log(item, "item");
+    await removeRewardItem(item.productReward._id, {
+      onSuccess: () => {
+        toast.success(`${item?.product?.name} removed from cart`);
+        refetch();
+        refetchMyProfile();
+      },
+      onError: (error: any) => {
+        console.log(error);
+        toast.error(
+          error.response?.data?.message || "Error occurred while removing item"
+        );
+      },
+    });
+  };
+
   // Handle cart item removal
   const removeItem = async (item) => {
     await updateCart(
@@ -276,6 +300,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
         onSuccess: () => {
           toast.success(`${item?.product?.name} removed from cart`);
           refetch();
+          refetchMyProfile();
         },
         onError: (error: any) => {
           console.log(error);
@@ -296,6 +321,7 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
         refetch();
         setVoucherCode("");
         queryClient.invalidateQueries({ queryKey: ["myprofile"] });
+        refetchMyProfile();
         // Clear the applied voucher response
         toast.success("Voucher code removed successfully", {
           position: "top-right",
@@ -335,11 +361,53 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
             <h2 className="text-3xl font-bold">Shopping Cart</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+            {/* {rewardCart?.length > 0 && (
+              <div className="md:col-span-4">
+                <h3 className="text-lg font-semibold mb-4">Rewards</h3>
+                <div className="overflow-x-auto">
+                  <Table className="w-full text-lg">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Picture</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Quantity</TableHead>
+                        <TableHead>Unit Price</TableHead>
+                        <TableHead>Sum</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {rewardCart?.map((item) => (
+                        <TableRow key={item._id}>
+                          <TableCell>
+                            <Image
+                              src={item?.product?.images[0]}
+                              alt={item?.product?.name}
+                              width={30}
+                              height={30}
+                            />
+                          </TableCell>
+                          <TableCell><p className="line-clamp-2 text-xs">{item?.product?.name}</p></TableCell>
+                          <TableCell>{item?.quantity}</TableCell>
+                          <TableCell>
+                            {item?.unitPrice?.toFixed(2) || 0}€
+                          </TableCell>
+                          <TableCell>
+                            {item?.totalPrice?.toFixed(2) || 0}€
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )} */}
+
             <div className="md:col-span-4">
-              {!cart ||
-              !cart.data ||
-              !cart.data.cart ||
-              cart.data.cart.length === 0 ? (
+              {(!cart ||
+                !cart.data ||
+                !cart.data.cart ||
+                cart.data.cart.length === 0) &&
+              rewardCart?.length === 0 ? (
                 <p className="text-center my-5 text-gray-500">
                   Your cart is empty
                 </p>
@@ -357,6 +425,39 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
+                      {rewardCart?.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell>
+                            <Image
+                              src={
+                                item?.product?.images[0] || "/placeholder.svg"
+                              }
+                              alt={item.product.name}
+                              width={30}
+                              height={30}
+                            />
+                          </TableCell>
+                          <TableCell className="max-w-[150px] truncate">
+                            {item?.product?.name}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <span className="mx-2">{item.quantity}</span>
+                          </TableCell>
+                          <TableCell>
+                            {item?.unitPrice?.toFixed(2) || 0}€
+                          </TableCell>
+                          <TableCell className="text-right font-semibold">
+                            {item?.totalPrice?.toFixed(2) || 0}€
+                          </TableCell>
+                          <TableCell>
+                            <DeleteIcon
+                              size={30}
+                              onClick={() => handleRemoveRewardItem(item)}
+                              className="cursor-pointer text-red-600 hover:bg-red-600 hover:text-white p-1 rounded"
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
                       {cart?.data?.cart?.map((item) => (
                         <TableRow key={item.id}>
                           <TableCell>

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/tooltip";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader, Edit } from "lucide-react";
+import { Loader, Edit, Users } from "lucide-react";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb";
 import { Button } from "@/components/ui/button";
 
@@ -125,6 +125,20 @@ const Page = () => {
                             </TooltipTrigger>
                             <TooltipContent>
                               <p>Edit</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Link
+                                href={`/admin/competitions/participants/${item._id}`}
+                              >
+                                <Users className="h-4 w-4" />
+                              </Link>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>See Participants</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>

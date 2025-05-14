@@ -166,6 +166,9 @@ import {
   UpdateBanner,
   DeleteBanner,
   getBannerById,
+  getCompetitionParticipants,
+  addToCartReward,
+  removeFromCartReward,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1441,6 +1444,12 @@ export const useGetCompetitionById = (id: string) => {
   });
 };
 
+export const useGetCompetitionParticipants = (id: string) => {
+  return useQuery({
+    queryKey: ["competitionParticipants", id],
+    queryFn: () => getCompetitionParticipants(id),
+  });
+};
 export const useProductAnalytics = (params?: {
   timeFilter?: string;
   limit?: number;
@@ -1496,3 +1505,20 @@ export const useDeleteBanner = () => {
 };
 
 //banner api end
+
+//rewards api start
+export const useAddToCartReward = () => {
+  return useMutation({
+    mutationFn: (productRewardId: string) => addToCartReward(productRewardId),
+  });
+};
+
+export const useRemoveFromCartReward = () => {
+  return useMutation({
+    mutationFn: (productRewardId: string) => removeFromCartReward(productRewardId),
+  });
+};
+
+//rewards api end
+
+
