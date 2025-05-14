@@ -2,17 +2,18 @@ import React from "react";
 
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
+import Image from "next/image";
 
 interface PromotionalBannersProps {
-  icon: React.ReactNode;
+  icon: string;
   iconbg: string;
   iconText: string;
   title: string;
   discount: boolean;
   mainbg: string;
-  boldText: string;
   children: React.ReactNode;
   time?: { timer: string; timerText: string }[];
+  links: string;
 }
 
 const PromotionalBanners = ({
@@ -21,13 +22,13 @@ const PromotionalBanners = ({
   iconText,
   title,
   mainbg,
-  boldText,
   children,
   time,
+  links
 }: PromotionalBannersProps) => {
   return (
     <div
-      className={`${mainbg} w-[400px] sm:w-[550px] 2xl:w-[585px] h-[500px] flex sm:items-center sm:text-start text-center items-end justify-center rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-16 pl-2 sm:pl-0 lg:pl-10`}
+      className={`${mainbg} w-[500px] grid rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-16 pl-2 sm:pl-0 lg:pl-10`}
     >
       <div className="">
         <div className="w-[90%] sm:max-w-[45%] lg:max-w-[35%] relative z-10">
@@ -35,7 +36,7 @@ const PromotionalBanners = ({
             <div
               className={`h-16 sm:h-20 w-16 sm:w-20 ${iconbg} rounded-full flex items-center justify-center`}
             >
-              {icon}
+              <Image src={icon} alt="icon" width={24} height={24} />
             </div>
 
             <span
@@ -48,12 +49,12 @@ const PromotionalBanners = ({
           </div>
           <div className="mt-4">
             <h3 className="text-lg text-[#1C1B1D] md:text-2xl bg-opacity-20 px-1 rounded-md">
-              {title} <span className="font-bold">{boldText}</span>
+              {title}
             </h3>
           </div>
 
           <Link
-            href="/deals"
+            href={links || "/deals"}
             className={`inline-flex items-center text-card-foreground text-md md:text-xl mt-4`}
           >
             Explore More

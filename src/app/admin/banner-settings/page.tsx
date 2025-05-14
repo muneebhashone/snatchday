@@ -23,6 +23,7 @@ import { IError } from "../games/create/page";
 
 const Page = () => {
   const { data: banners, isLoading, refetch } = useGetBanners();
+  console.log(banners);
   const { mutate: deleteBanner, isPending } = useDeleteBanner();
 
   const handleDelete = (id: string) => {
@@ -53,116 +54,43 @@ const Page = () => {
               Manage your promotional banners and featured products
             </p>
           </div>
-          <Link href="/admin/banner-settings/create">
-            <Button className="flex items-center gap-2">
-              <Plus className="w-4 h-4" />
-              Create Banner
-            </Button>
-          </Link>
         </div>
 
-        <div className="rounded-lg border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="w-[100px]">Image</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center">
-                    <div className="flex justify-center items-center h-full">
-                      <Loader size={32} className="animate-spin text-primary" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                banners?.data?.map((banner: any) => (
-                  <TableRow key={banner._id} className="hover:bg-muted/50">
-                    <TableCell>
-                      <div className="w-20 h-20 relative rounded-lg overflow-hidden">
-                        <Image
-                          src={banner.image}
-                          alt="banner"
-                          width={100}
-                          height={100}
-                          className="object-contain w-full h-full"
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell>{banner?.title || "N/A"}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 relative rounded-lg overflow-hidden bg-muted">
-                          {/* <Image
-                            src={banner?.productId?.images[0] || noProductImage}
-                            alt={banner?.productId?.name || "Product"}
-                            className="object-contain w-full h-full"
-                            width={48}
-                            height={48}
-                          /> */}
-                        </div>
-                        <div className="flex flex-col w-full md:w-[300px]">
-                          <span className="font-medium truncate">
-                            {banner?.productId?.name || "N/A"}
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            Product ID:{" "}
-                            {banner?.productId?._id?.slice(-8) || "N/A"}
-                          </span>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {formatCurrency(banner?.productId?.price) || "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          banner?.status === "active" ? "success" : "secondary"
-                        }
-                      >
-                        {banner?.status || "N/A"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/admin/banner-settings/edit/${banner._id}`}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                        </Link>
-                        <Button
-                          onClick={() => handleDelete(banner._id)}
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive"
-                        >
-                          {isPending ? (
-                            <Loader className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash className="w-4 h-4" />
-                          )}
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {isLoading ? (
+            <div className="col-span-full flex justify-center items-center h-40">
+              <Loader size={32} className="animate-spin text-primary" />
+            </div>
+          ) : (
+            banners?.data?.map((banner: any) => (
+              <div key={banner._id} className="bg-card rounded-xl shadow p-6 flex flex-col gap-4 relative">
+                <div className="w-full h-48 relative rounded-lg overflow-hidden mb-2">
+                  <Image
+                    src={banner.image}
+                    alt="banner"
+                    fill
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <div className="font-bold text-lg truncate">{banner?.title || "N/A"}</div>
+                  {banner?.content && (
+                    <div className="prose prose-sm max-w-full" dangerouslySetInnerHTML={{ __html: banner.content }} />
+                  )}
+                </div>
+                {banner?.link && (
+                  <a href={banner.link} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="w-full mt-2">Visit Link</Button>
+                  </a>
+                )}
+                <Link href={`/admin/banner-settings/edit/${banner._id}`} className="absolute top-4 right-4">
+                  <Button variant="secondary" size="icon" className="h-8 w-8">
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                </Link>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </AdminLayout>

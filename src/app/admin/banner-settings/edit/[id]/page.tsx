@@ -76,7 +76,7 @@ const formSchema = z.object({
       }
     )
     .optional(),
-  link: z.string().optional(),
+  link: z.string().url("Please enter a valid URL").optional(),
   date: z.string().optional(),
 });
 
@@ -166,144 +166,154 @@ const Page = () => {
                 className="space-y-6"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter banner title" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {bannerData?.data?.title && (
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Title</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter banner title" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
-                  <FormField
-                    control={form.control}
-                    name="link"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Link</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter banner link" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {/* {bannerData?.data?.link && ( */}
+                    <FormField
+                      control={form.control}
+                      name="link"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Link</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter banner link" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  {/* )} */}
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem className="mb-10 h-[190px]">
-                      <FormLabel>Content</FormLabel>
-                      <FormControl>
-                        <ReactQuill
-                          className="h-[120px] mb-10"
-                          theme="snow"
-                          value={field.value}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {bannerData?.data?.content && (
+                  <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                      <FormItem className="mb-10 h-[190px]">
+                        <FormLabel>Content</FormLabel>
+                        <FormControl>
+                          <ReactQuill
+                            className="h-[120px] mb-10"
+                            theme="snow"
+                            value={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="image"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Image</FormLabel>
-                        <FormControl>
-                          <div className="">
-                            <Input
-                              type="file"
-                              placeholder="Enter image URL"
-                              className="flex-1"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  field.onChange(file);
-                                }
-                              }}
-                            />
-                            {field.value ? (
-                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
-                                <Image
-                                  src={URL.createObjectURL(field.value)}
-                                  alt="Selected Banner Image"
-                                  className="w-full h-full object-cover"
-                                  fill
-                                />
-                              </div>
-                            ) : bannerData?.data?.image ? (
-                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
-                                <Image
-                                  src={bannerData.data.image}
-                                  alt="Current Banner Image"
-                                  className="w-full h-full object-cover"
-                                  fill
-                                />
-                              </div>
-                            ) : null}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {bannerData?.data?.image && (
+                    <FormField
+                      control={form.control}
+                      name="image"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Image</FormLabel>
+                          <FormControl>
+                            <div className="">
+                              <Input
+                                type="file"
+                                placeholder="Enter image URL"
+                                className="flex-1"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    field.onChange(file);
+                                  }
+                                }}
+                              />
+                              {field.value ? (
+                                <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                  <Image
+                                    src={URL.createObjectURL(field.value)}
+                                    alt="Selected Banner Image"
+                                    className="w-full h-full object-cover"
+                                    fill
+                                  />
+                                </div>
+                              ) : bannerData?.data?.image ? (
+                                <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                  <Image
+                                    src={bannerData.data.image}
+                                    alt="Current Banner Image"
+                                    className="w-full h-full object-cover"
+                                    fill
+                                  />
+                                </div>
+                              ) : null}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
-                  <FormField
-                    control={form.control}
-                    name="logoImage"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Logo Image</FormLabel>
-                        <FormControl>
-                          <div className="">
-                            <Input
-                              type="file"
-                              placeholder="Enter logo image"
-                              className="flex-1"
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  field.onChange(file);
-                                }
-                              }}
-                            />
-                            {field.value ? (
-                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
-                                <Image
-                                  src={URL.createObjectURL(field.value)}
-                                  alt="Selected Logo Image"
-                                  className="w-full h-full object-cover"
-                                  fill
-                                />
-                              </div>
-                            ) : bannerData?.data?.logoImage ? (
-                              <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
-                                <Image
-                                  src={bannerData.data.logoImage}
-                                  alt="Current Logo Image"
-                                  className="w-full h-full object-cover"
-                                  fill
-                                />
-                              </div>
-                            ) : null}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {bannerData?.data?.logoImage && (
+                    <FormField
+                      control={form.control}
+                      name="logoImage"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Logo Image</FormLabel>
+                          <FormControl>
+                            <div className="">
+                              <Input
+                                type="file"
+                                placeholder="Enter logo image"
+                                className="flex-1"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    field.onChange(file);
+                                  }
+                                }}
+                              />
+                              {field.value ? (
+                                <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                  <Image
+                                    src={URL.createObjectURL(field.value)}
+                                    alt="Selected Logo Image"
+                                    className="w-full h-full object-cover"
+                                    fill
+                                  />
+                                </div>
+                              ) : bannerData?.data?.logoImage ? (
+                                <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden border">
+                                  <Image
+                                    src={bannerData.data.logoImage}
+                                    alt="Current Logo Image"
+                                    className="w-full h-full object-cover"
+                                    fill
+                                  />
+                                </div>
+                              ) : null}
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

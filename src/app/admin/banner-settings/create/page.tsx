@@ -73,7 +73,7 @@ const formSchema = z.object({
       }
     )
     .optional(),
-  link: z.string().optional(),
+  link: z.string().url("Please enter a valid URL").optional(),
   date: z.string().optional(),
 });
 
