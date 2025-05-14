@@ -9,8 +9,14 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectCreative, Navigation, Pagination } from "swiper/modules";
 import 'swiper/css/effect-creative';
 import { duelArenaSlides, howToEnterSteps, floatingImages } from "@/dummydata";
-
+import { useGetBanners } from "@/hooks/api";
+import Link from "next/link";
 const DuelArena = () => {
+
+  const { data: duelArena } = useGetBanners();
+  const { data: banners } = useGetBanners();
+  const bannerList = banners?.data || [];
+  console.log(duelArena);
   return (
     <section className="relative ">
       {/* Background Elements */}
@@ -102,23 +108,31 @@ const DuelArena = () => {
         <div className="mt-20">
           <TrainingCenter />
         </div>
-        <div className="flex md:flex-row flex-col justify-center items-center gap-8 my-20">
-          <Image
-            className="w-[100%] md:w-[50%]"
-            src={supersale}
-            alt="supersale"
-            width={894}
-            height={462}
-            unoptimized={true}
-          />
-          <Image
-            className="w-[100%] md:w-[50%]"
-            src={supersale1}
-            alt="supersale"
-            width={894}
-            height={462}
-            unoptimized={true}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-8 my-20">
+       
+              <Link href={bannerList[5]?.link || ""}>
+                <Image
+                  // className="w-[100%] md:w-[50%]"
+                  src={bannerList[5]?.image}
+                  alt="supersale"
+                  width={894}
+                  height={462}
+                  unoptimized={true}
+                />
+              </Link>
+           
+         
+              <Link href={bannerList[6]?.link || ""}>
+                <Image
+                  // className="w-[100%] md:w-[50%]"
+                  src={bannerList[6]?.image}
+                  alt="supersale"
+                  width={894}
+                  height={462}
+                  unoptimized={true}
+                />
+              </Link>
+         
         </div>
       </div>
     </section>

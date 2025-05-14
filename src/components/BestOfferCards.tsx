@@ -1,5 +1,6 @@
 import React from "react";
 import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
 
 interface BestOfferCardProps {
   // tag: string;
@@ -11,6 +12,7 @@ interface BestOfferCardProps {
   buttonTextcolor: string;
   price?: string;
   children?: React.ReactNode
+  links?: string
 }
 
 const BestOfferCard = ({
@@ -22,9 +24,11 @@ const BestOfferCard = ({
   bgimage,
   buttonTextcolor,
   price,
-  children
+  children,
+  links
 }: BestOfferCardProps) => {
   return (
+    <Link href={links}>
     <div style={{ backgroundImage: `url(${bgimage.src})` }} className="bg-cover bg-center rounded-3xl overflow-hidden group hover:shadow-lg transition-all duration-300 lg:w-[880px] w-[500px] md:min-w-[600px] min-h-[320px] h-[450px] md:h-[420px] flex items-center justify-center">
       {/* Content */}
       <div className="inset-0 p-4 md:p-6 lg:p-10 flex flex-col md:flex-row items-center md:items-center justify-between">
@@ -46,12 +50,14 @@ const BestOfferCard = ({
             </div>
             <div className="text-white text-sm w-max">{children}</div>
             {/* Button */}
+            <Link href={links}>
             <button
               className={`w-max bg-white px-4 md:px-6 py-2 rounded-full text-sm md:text-base font-medium hover:bg-white/90 transition-all`}
               style={{ color: buttonTextcolor }}
             >
               {buttonText}
             </button>
+            </Link>
           </div>
           {price && <div className="text-white font-bold text-xl">Price: <span>{price}</span></div>}
         </div>
@@ -70,6 +76,7 @@ const BestOfferCard = ({
         </div>
       </div>
     </div>
+    </Link>
   );
 };
 
