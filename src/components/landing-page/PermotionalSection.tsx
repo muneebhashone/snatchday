@@ -33,14 +33,14 @@ const PermotionalSection = () => {
           links={iphoneBanner?.link}
         >
           <div className="absolute top-8 sm:top-20 lg:top-8 right-[25%] sm:right-10">
-            <div className="flex items-center justify-center text-center bg-white text-foreground w-20 md:w-28 h-20 md:h-28 rounded-full text-sm absolute bottom-0 -left-10">
+            {/* <div className="flex items-center justify-center text-center bg-white text-foreground w-20 md:w-28 h-20 md:h-28 rounded-full text-sm absolute bottom-0 -left-10">
               <h3 className="text-center text-md md:text-lg">
                 UP TO <h1 className="text-primary font-semibold text-[22px] md:text-[28px]">20%</h1>{" "}
                 Off
               </h3>
-            </div>
+            </div> */}
             <Image
-              className="sm:h-[320px] lg:w-[220px] sm:w-[180px] lg:h-[400px] w-[120px] h-[220px]"
+              className="sm:h-[320px] lg:w-[300px] sm:w-[180px] lg:h-[470px] w-[120px] h-[220px]"
               src={iphoneBanner?.image}
               alt="banner"
               width={213}

@@ -37,7 +37,7 @@ import { formatCurrency } from "@/lib/utils";
 const Page = () => {
   const params = useParams();
   const paramsId = params.id;
-  const { data: order } = useGetOrderById(paramsId);
+  const { data: order } = useGetOrderById(paramsId as string);
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -87,7 +87,9 @@ const Page = () => {
                   <div className="flex flex-col items-end gap-2">
                     <Badge
                       variant="outline"
-                      className={`capitalize ${getStatusColor(order?.data.status)}`}
+                      className={`capitalize ${getStatusColor(
+                        order?.data.status
+                      )}`}
                     >
                       {order?.data.status}
                     </Badge>
@@ -107,6 +109,47 @@ const Page = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+                {order?.data?.cartObject?.rewardCart.map((item) => (
+                    <TableRow
+                      key={item.product._id}
+                      className="hover:bg-transparent"
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-4">
+                          <div className="relative h-20 w-20 rounded-md overflow-hidden">
+                            <Image
+                              src={item.product.images[0] || "/placeholder.png"}
+                              alt={item.product.name}
+                              fill
+                              className="object-contain"
+                            />
+                          </div>
+                          <div>
+                            <p className="font-medium line-clamp-2">{item.product.name}</p>
+                            {/* {item.product.attributes?.material && (
+                              <p className="text-sm text-gray-500">
+                                Material: {item.product.attributes.material}
+                              </p>
+                            )}
+                            {item.product.attributes?.storage && (
+                              <p className="text-sm text-gray-500">
+                                Storage: {item.product.attributes.storage}
+                              </p>
+                            )} */}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(item.unitPrice)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {item.quantity}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {formatCurrency(item.totalPrice)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                   {order?.data.cartObject.cart.map((item) => (
                     <TableRow
                       key={item.product._id}
@@ -119,7 +162,7 @@ const Page = () => {
                               src={item.product.images[0] || "/placeholder.png"}
                               alt={item.product.name}
                               fill
-                              className="object-cover"
+                              className="object-contain"
                             />
                           </div>
                           <div>
@@ -138,7 +181,7 @@ const Page = () => {
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
-                        ${item.unitPrice}
+                        {formatCurrency(item.unitPrice)}
                       </TableCell>
                       <TableCell className="text-center">
                         {item.quantity}
@@ -163,7 +206,6 @@ const Page = () => {
                       Discount:
                     </TableCell>
                     <TableCell className="text-right">
-                      $
                       {formatCurrency(order?.data.cartObject.voucherDiscount) ||
                         "00.00"}
                     </TableCell>

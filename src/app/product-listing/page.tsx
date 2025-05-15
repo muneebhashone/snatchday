@@ -200,10 +200,7 @@ const ProductListingPage = () => {
               onPriceChange={handlePriceChange}
               isLoading={isLoading}
             />
-            <VisitTournament
-              title="January Tournament"
-              date="January 30, 2025 at 3:00 p.m."
-            />
+            <VisitTournament />
           </div>
           <div className="col-span-3">
             <div className="flex items-center justify-between">
@@ -276,7 +273,12 @@ const ProductListingPage = () => {
                     <div className="mt-10 col-span-3 flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         {Array.from(
-                          { length: Math.ceil(productsData.data.total / 10) },
+                          {
+                            length: Math.ceil(
+                              productsData.data.total / Number(filters.limit) ||
+                                10
+                            ),
+                          },
                           (_, i) => i + 1
                         )
                           .slice(0, 5)
@@ -284,7 +286,9 @@ const ProductListingPage = () => {
                             <button
                               key={pageNum}
                               className={`w-9 h-9 flex items-center justify-center rounded-sm ${
-                                pageNum === Number(filters.offset) / 10 + 1
+                                pageNum ===
+                                  Number(filters.offset) /
+                                    Number(filters.limit) || 10 + 1
                                   ? "bg-primary text-white"
                                   : "text-gray-400 hover:text-gray-700"
                               }`}

@@ -117,7 +117,7 @@ const Page = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Failed</p>
+                <p className="text-sm text-muted-foreground mb-1">Cancelled</p>
                 <h3 className="text-2xl font-semibold">
                   {ordersStats?.data?.cancelled}
                 </h3>

@@ -198,7 +198,7 @@ const ProductCard = ({
             {/* <span className="text-sm text-gray-500">({rating || 4})</span> */}
             <span className="text-sm text-gray-500">({ratings || 0})</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex lg:flex-row flex-wrap items-center gap-2 justify-between overflow-hidden w-full ml-5">
             {discount > 0 ? (
               <span className="text-2xl  text-gray-400 font-semibold line-through">
                 {formatCurrency(calculatedPrice)}

@@ -41,6 +41,7 @@ import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { IFormData } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
+import { formatDate } from "@/lib/utils";
 
 // Define form schema
 const formSchema = z.object({
@@ -103,7 +104,9 @@ export default function OrderHistory() {
               <h2 className="text-lg font-semibold">Order History</h2>
             </div>
             {!order?.data.history.length ? (
-              <div className="text-center py-4 text-gray-500">No order history available</div>
+              <div className="text-center py-4 text-gray-500">
+                No order history available
+              </div>
             ) : (
               <Table>
                 <TableHeader>
@@ -111,21 +114,25 @@ export default function OrderHistory() {
                     <TableHead>Created</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Remarks</TableHead>
-                    <TableHead className="text-center">Customer Informed</TableHead>
+                    <TableHead className="text-center">
+                      Customer Informed
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {order?.data.history.map((odr, index) => (
                     <TableRow key={index} className="hover:bg-transparent">
-                      <TableCell>{new Date(odr.date).toLocaleDateString()}</TableCell>
+                      <TableCell>{formatDate(odr.date)}</TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          odr.status === "completed" 
-                            ? "bg-green-50 text-green-700"
-                            : odr.status === "pending"
-                            ? "bg-yellow-50 text-yellow-700"
-                            : "bg-blue-50 text-blue-700"
-                        }`}>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            odr.status === "completed"
+                              ? "bg-green-50 text-green-700"
+                              : odr.status === "pending"
+                              ? "bg-yellow-50 text-yellow-700"
+                              : "bg-blue-50 text-blue-700"
+                          }`}
+                        >
                           {odr.status}
                         </span>
                       </TableCell>
@@ -148,14 +155,22 @@ export default function OrderHistory() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Update Order Status</h3>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-4"
+              >
                 <FormField
                   control={form.control}
                   name="status"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-medium">Order Status</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <FormLabel className="font-medium">
+                        Order Status
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select status" />
@@ -167,7 +182,6 @@ export default function OrderHistory() {
                           <SelectItem value="dispatch">Dispatch</SelectItem>
                           <SelectItem value="cancelled">Cancelled</SelectItem>
                           <SelectItem value="returned">Returned</SelectItem>
-
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -186,7 +200,9 @@ export default function OrderHistory() {
                           onCheckedChange={field.onChange}
                         />
                       </FormControl>
-                      <FormLabel className="font-medium !mt-0">Inform Customer</FormLabel>
+                      <FormLabel className="font-medium !mt-0">
+                        Inform Customer
+                      </FormLabel>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -199,8 +215,8 @@ export default function OrderHistory() {
                     <FormItem>
                       <FormLabel className="font-medium">Comments</FormLabel>
                       <FormControl>
-                        <Textarea 
-                          {...field} 
+                        <Textarea
+                          {...field}
                           placeholder="Add any comments or notes..."
                           className="min-h-[100px] resize-none"
                         />
@@ -211,8 +227,8 @@ export default function OrderHistory() {
                 />
 
                 <div className="flex justify-end">
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     disabled={isPending}
                     className="bg-blue-600 hover:bg-blue-700 text-white"
                   >

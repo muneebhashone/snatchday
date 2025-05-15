@@ -320,12 +320,12 @@ const UserProfile = () => {
                           width={128}
                           height={128}
                         />
-                        <button
+                        {/* <button
                           className="absolute z-10 top-0 bg-orange-500 right-4 rounded-full p-1 shadow-md"
                           onClick={() => setSelectedImage(null)}
                         >
                           <X className="size-4 text-white" />
-                        </button>
+                        </button> */}
                       </>
                     ) : (
                       <User className="w-16 h-16 text-gray-400" />

@@ -162,6 +162,47 @@ export function ConfirmationStep({
                   </h3>
 
                   <div className="space-y-4">
+                    {order?.data?.cartObject?.rewardCart.map((item: any) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center border-b pb-4 hover:bg-gray-50 p-2 rounded"
+                      >
+                        <div className="bg-gray-100 p-2 rounded">
+                          <Image
+                            src={item?.product?.images[0] || "/placeholder.svg"}
+                            alt={item?.product?.name}
+                            width={60}
+                            height={60}
+                            className="rounded-md object-cover"
+                          />
+                        </div>
+                        <div className="ml-4 flex-1">
+                          <div className="flex justify-between">
+                            <div>
+                              <p className="font-medium text-gray-800 line-clamp-2">
+                                {item?.product?.name || "N/A"}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                Quantity: {item?.quantity}
+                              </p>
+                              <p className="text-xs text-green-600 mt-1 font-medium">
+                                In Stock
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-medium text-gray-800">
+                                {formatCurrency(item?.product?.price)}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {formatCurrency(
+                                  item?.product?.price * item?.quantity
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                     {order?.data?.cartObject?.cart?.map((item: any) => (
                       <div
                         key={item.id}
@@ -179,7 +220,7 @@ export function ConfirmationStep({
                         <div className="ml-4 flex-1">
                           <div className="flex justify-between">
                             <div>
-                              <p className="font-medium text-gray-800">
+                              <p className="font-medium text-gray-800 line-clamp-2">
                                 {item?.product?.name || "N/A"}
                               </p>
                               <p className="text-sm text-gray-500">

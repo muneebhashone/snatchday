@@ -27,13 +27,13 @@ const ProductSection = () => {
             </span>
           </h3>
 
-          <button className="text-gray-600 hover:text-primary font-medium flex items-center gap-2">
+          {/* <button className="text-gray-600 hover:text-primary font-medium flex items-center gap-2">
             <span>View All</span>
             <span className="text-primary">
               {" "}
               <ChevronRight className="w-4 h-4 ml-1" />
             </span>
-          </button>
+          </button> */}
         </div>
         {/* Products Grid */}
 

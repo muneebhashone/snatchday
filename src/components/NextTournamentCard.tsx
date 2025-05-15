@@ -95,12 +95,12 @@ const NextTournamentCard = ({
             Tournament ID :<span className="text-primary"> {tournamentId}</span>
           </h2>
         </div>
-        <div className="inline-block bg-primary text-white text-xs xl:text-sm px-2 sm:px-3 py-1 rounded-full ">
-          {name}
+        <div className="inline-block bg-primary text-white text-xs xl:text-sm px-2 sm:px-3 py-1 rounded-full line-clamp-1">
+          {title}
         </div>
 
         {/* Product Title */}
-        <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D]">
+        <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D] line-clamp-2">
           {name}
         </p>
 
@@ -178,7 +178,7 @@ const NextTournamentCard = ({
                   Participation fee:
                 </p>
                 <p className="text-card-foreground font-normal text-sm xl:text-normal">
-                  {fee} points / {fee}€
+                  {fee * 100} points / {fee}€
                 </p>
               </div>
             </div>
