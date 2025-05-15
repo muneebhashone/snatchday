@@ -169,6 +169,8 @@ import {
   getCompetitionParticipants,
   addToCartReward,
   removeFromCartReward,
+  GetTournamentRecentWinner,
+  GetCompetitionRecentWinner,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1515,10 +1517,24 @@ export const useAddToCartReward = () => {
 
 export const useRemoveFromCartReward = () => {
   return useMutation({
-    mutationFn: (productRewardId: string) => removeFromCartReward(productRewardId),
+    mutationFn: (productRewardId: string) =>
+      removeFromCartReward(productRewardId),
   });
 };
 
 //rewards api end
 
+export const useGetTournamentRecentWinner = () => {
+  return useQuery({
+    queryKey: ["tournamentRecentWinner"],
+    queryFn: () => GetTournamentRecentWinner(),
+  });
+};
+
+export const useGetCompetitionRecentWinner = () => {
+  return useQuery({
+    queryKey: ["competitionRecentWinner"],
+    queryFn: () => GetCompetitionRecentWinner(),
+  });
+};
 

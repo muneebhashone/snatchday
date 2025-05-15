@@ -215,7 +215,12 @@ const TournamentDetailHero = ({
                   <h3 className="underline underline-offset-8 decoration-gray-300 decoration-[3px] px-8 py-1 text-[21px] font-extrabold text-primary">
                     Already Saved:{" "}
                     {tournamentData?.data?.numberOfParticipants > 0
-                      ? (tournamentData?.data?.numberOfParticipants - 1) * 5
+                      ? tournamentData?.data?.priceReduction >
+                        tournamentData?.data?.participants?.length *
+                          (tournamentData?.data?.fee / 100)
+                        ? tournamentData?.data?.participants?.length *
+                          (tournamentData?.data?.fee / 100)
+                        : tournamentData?.data?.priceReduction
                       : 0}
                     €
                   </h3>
@@ -247,7 +252,7 @@ const TournamentDetailHero = ({
                     <p className="text-[18px] font-normal">
                       For each additional participant the price drops by{" "}
                       <span className="text-primary font-bold border-b-2 border-b-primary ">
-                        5.00€
+                        {(tournamentData?.data?.fee / 100).toFixed(2)}€
                       </span>{" "}
                     </p>
                   </div>

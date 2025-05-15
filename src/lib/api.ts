@@ -1310,9 +1310,19 @@ export const addToCartReward = async (productRewardId: string) => {
 
 export const removeFromCartReward = async (productRewardId: string) => {
   const response = await axiosInstance.delete(`/order/cart/reward`, {
-    data: { productRewardId }
+    data: { productRewardId },
   });
   return response.data;
 };
 
 //rewards api end
+
+export const GetTournamentRecentWinner = async () => {
+  const response = await axiosInstance.get("/tournament/recent-winners");
+  return response.data;
+};
+
+export const GetCompetitionRecentWinner = async () => {
+  const response = await axiosInstance.get("/competitions/recent/winners");
+  return response.data;
+};

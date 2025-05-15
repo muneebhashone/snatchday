@@ -42,6 +42,8 @@ interface NextTournamentCardProps {
   __v: number;
   _id?: string;
   gameImage: string;
+  priceReduction: number;
+  participants: any;
 }
 
 const NextTournamentCard = ({
@@ -59,6 +61,8 @@ const NextTournamentCard = ({
   end,
   tournamentId,
   gameImage,
+  priceReduction,
+  participants,
 }: NextTournamentCardProps) => {
   const countDown = calculateCountdown(start);
   const endDate = calculateCountdown(end);
@@ -162,7 +166,13 @@ const NextTournamentCard = ({
                   Current price:
                 </p>
                 <p className="text-primary text-xl font-bold">
-                  {startingPrice}€
+                  {(
+                    startingPrice -
+                    (priceReduction > participants?.length * (fee / 100)
+                      ? participants?.length * (fee / 100)
+                      : priceReduction)
+                  ).toFixed(2)}
+                  €
                 </p>
               </div>
               <p className="text-xs sm:text-sm text-card-foreground">

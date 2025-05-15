@@ -72,80 +72,88 @@ const Page = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {competitions?.data?.map((item: any) => (
-                  <TableRow key={item._id}>
-                    <TableCell>
-                      <div className="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden">
-                        {item.product?.images?.[0] ? (
-                          <Image
-                            src={item.product.images[0]}
-                            alt={item.product.name}
-                            width={64}
-                            height={64}
-                            className="object-cover w-full h-full"
-                          />
-                        ) : (
-                          <span className="text-xs text-gray-400">
-                            No Image
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium line-clamp-2 h-[60px] max-h-max max-w-[400px]">
-                      {item.product?.name || "-"}
-                    </TableCell>
-                    <TableCell>{item.price}</TableCell>
-                    <TableCell>{item.fee}</TableCell>
-                    <TableCell>
-                      {item.month
-                        ? monthNames[new Date(item.month).getMonth() + 1]
-                        : "-"}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs capitalize ${
-                          item.status === "active"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex gap-2 justify-end">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Link
-                                href={`/admin/competitions/edit/${item._id}`}
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Link>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Edit</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Link
-                                href={`/admin/competitions/participants/${item._id}`}
-                              >
-                                <Users className="h-4 w-4" />
-                              </Link>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>See Participants</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </div>
+                {competitions?.data.length > 0 ? (
+                  competitions?.data?.map((item: any) => (
+                    <TableRow key={item._id}>
+                      <TableCell>
+                        <div className="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-md overflow-hidden">
+                          {item.product?.images?.[0] ? (
+                            <Image
+                              src={item.product.images[0]}
+                              alt={item.product.name}
+                              width={64}
+                              height={64}
+                              className="object-cover w-full h-full"
+                            />
+                          ) : (
+                            <span className="text-xs text-gray-400">
+                              No Image
+                            </span>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium line-clamp-2 h-[60px] max-h-max max-w-[400px]">
+                        {item.product?.name || "-"}
+                      </TableCell>
+                      <TableCell>{item.price}</TableCell>
+                      <TableCell>{item.fee}</TableCell>
+                      <TableCell>
+                        {item.month
+                          ? monthNames[new Date(item.month).getMonth() + 1]
+                          : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs capitalize ${
+                            item.status === "active"
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {item.status}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 justify-end">
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Link
+                                  href={`/admin/competitions/edit/${item._id}`}
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Link>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Edit</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Link
+                                  href={`/admin/competitions/participants/${item._id}`}
+                                >
+                                  <Users className="h-4 w-4" />
+                                </Link>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>See Participants</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center">
+                      <p>No data found</p>
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
           )}

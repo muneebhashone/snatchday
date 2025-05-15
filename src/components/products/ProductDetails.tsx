@@ -207,7 +207,9 @@ const ProductDetails = ({
           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
         },
         onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Failed to add for compare");
+          toast.error(
+            error.response?.data?.message || "Failed to add for compare"
+          );
           console.error(error);
         },
       });
@@ -219,7 +221,9 @@ const ProductDetails = ({
           queryClient.invalidateQueries({ queryKey: ["compareProducts"] });
         },
         onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Failed to add for compare");
+          toast.error(
+            error.response?.data?.message || "Failed to add for compare"
+          );
           console.error(error);
         },
       });
@@ -251,7 +255,9 @@ const ProductDetails = ({
           refetch();
         },
         onError: (error: any) => {
-          toast.error(error.response?.data?.message || "Failed to remove from cart");
+          toast.error(
+            error.response?.data?.message || "Failed to remove from cart"
+          );
           console.error(error);
         },
       }
@@ -270,7 +276,9 @@ const ProductDetails = ({
         refetchWishlist();
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || "Failed to add to wishlist");
+        toast.error(
+          error.response?.data?.message || "Failed to add to wishlist"
+        );
         console.error(error);
       },
     });
@@ -658,7 +666,12 @@ const ProductDetails = ({
                 </DialogTrigger>
                 <RecommendProductModal setIsOpen={setIsOpen} />
               </Dialog>
-              <button className="text-foreground flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
+              <button
+                onClick={() =>
+                  (window.location.href = "/support/create-ticket")
+                }
+                className="text-foreground flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2"
+              >
                 <svg
                   width="18"
                   height="18"
@@ -675,7 +688,12 @@ const ProductDetails = ({
                 </svg>
                 Report a bug
               </button>
-              <button className="text-foreground flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
+              <button
+                onClick={() =>
+                  (window.location.href = "/support/create-ticket")
+                }
+                className="text-foreground flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2"
+              >
                 <svg
                   width="20"
                   height="20"

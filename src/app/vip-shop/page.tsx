@@ -9,9 +9,12 @@ import Testimonials from "@/components/landing-page/Testimonials";
 import RatingsSection from "@/components/landing-page/RatingsSection";
 import { useSocket } from "@/context/SocketContext";
 import { useUserContext } from "@/context/userContext";
+import { useGetMyProfile } from "@/hooks/api";
+import VIPShop from "@/components/VIPShop";
 const VipShopPage = () => {
   const { socket } = useSocket();
   const { user } = useUserContext();
+  const { data: myProfile } = useGetMyProfile();
   const userId = user?.user?._id;
   console.log(user, "user");
   useEffect(() => {
@@ -22,14 +25,20 @@ const VipShopPage = () => {
   return (
     <ClientLayout>
       <div>
-        <SecondaryHeroSection
-          title="VIP Shop"
-          rightimage={vipheroimage}
-          bg={vipbg}
-        />
-        <ExclusiveOffers />
-        <Testimonials />
-        <RatingsSection />
+        {myProfile?.data?.user?.group !== "VIP" ? (
+          <>
+            <SecondaryHeroSection
+              title="VIP Shop"
+              rightimage={vipheroimage}
+              bg={vipbg}
+            />
+            <ExclusiveOffers />
+            <Testimonials />
+            <RatingsSection />
+          </>
+        ) : (
+          <VIPShop />
+        )}
       </div>
     </ClientLayout>
   );

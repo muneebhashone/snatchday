@@ -603,3 +603,108 @@ export const winners = [
     winnerImage: winnerAvatar,
   },
 ];
+
+export interface VIPProduct {
+  _id: string;
+  name: string;
+  price: number;
+  calculatedPrice: number;
+  images: string[];
+  type: "SALE" | "NEW" | "REGULAR";
+  ratings: number;
+  stock: number;
+  categoryIds: string[];
+  discounts: {
+    customerGroup: string;
+    price: number;
+    away?: string;
+    until?: string;
+  }[];
+}
+
+export const vipProducts: VIPProduct[] = [
+  {
+    _id: "1",
+    name: "ASUS ROG Strix Gaming Laptop",
+    price: 1999.99,
+    calculatedPrice: 1999.99,
+    images: ["/images/laptop1.png"],
+    type: "SALE",
+    ratings: 4.5,
+    stock: 10,
+    categoryIds: ["gaming-laptops"],
+    discounts: [
+      {
+        customerGroup: "VIP",
+        price: 300,
+        until: new Date(Date.now() + 172800000).toISOString(), // 48 hours from now
+      },
+      {
+        customerGroup: "PREMIUM",
+        price: 200,
+        until: new Date(Date.now() + 86400000).toISOString(), // 24 hours from now
+      }
+    ]
+  },
+  {
+    _id: "2",
+    name: "Sony WH-1000XM5 Wireless Headphones",
+    price: 399.99,
+    calculatedPrice: 399.99,
+    images: ["/images/headphones1.png"],
+    type: "NEW",
+    ratings: 5,
+    stock: 15,
+    categoryIds: ["audio-headphones"],
+    discounts: [
+      {
+        customerGroup: "VIP",
+        price: 100,
+        until: new Date(Date.now() + 259200000).toISOString(), // 72 hours from now
+      }
+    ]
+  },
+  {
+    _id: "3",
+    name: "NVIDIA GeForce RTX 4080",
+    price: 1299.99,
+    calculatedPrice: 1299.99,
+    images: ["/images/gpu1.png"],
+    type: "SALE",
+    ratings: 4.8,
+    stock: 5,
+    categoryIds: ["graphics-cards"],
+    discounts: [
+      {
+        customerGroup: "VIP",
+        price: 200,
+        away: new Date(Date.now() - 86400000).toISOString(), // Started 24 hours ago
+        until: new Date(Date.now() + 432000000).toISOString(), // 5 days from now
+      },
+      {
+        customerGroup: "BASIC",
+        price: 100,
+        until: new Date(Date.now() + 172800000).toISOString(), // 48 hours from now
+      }
+    ]
+  },
+  {
+    _id: "4",
+    name: "Samsung 49\" Odyssey G9 Gaming Monitor",
+    price: 1499.99,
+    calculatedPrice: 1499.99,
+    images: ["/images/monitor1.png"],
+    type: "REGULAR",
+    ratings: 4.7,
+    stock: 8,
+    categoryIds: ["gaming-monitors"],
+    discounts: [
+      {
+        customerGroup: "VIP",
+        price: 250,
+        away: new Date(Date.now() - 172800000).toISOString(), // Started 48 hours ago
+        until: new Date(Date.now() + 604800000).toISOString(), // 7 days from now
+      }
+    ]
+  }
+];

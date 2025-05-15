@@ -60,39 +60,42 @@ const CompetitionNotification = ({
             <div className="max-h-[600px] overflow-y-auto space-y-4">
               {myprofile?.data?.notifications
                 ?.filter((item) => item.type === "competition")
-                .map((item: NotificationItem) => (
+                .map((item) => (
                   <div
                     key={item._id}
-                    className="flex gap-2 items-center justify-between border rounded-lg p-4 border-gray-200 pb-4"
+                    className="flex gap-2 items-start justify-between border rounded-lg p-4 border-gray-200"
                   >
-                    <div className="flex items-center gap-4 flex-1">
-                      {item?.data?.data?.competitionImage && (
+                    <div className="flex items-start gap-4 flex-1">
+                      {item?.data?.productImage && (
                         <Image
-                          src={item.data.data.competitionImage}
-                          alt="Competition"
+                          src={item?.data?.productImage}
+                          alt="Product"
                           width={80}
                           height={80}
-                          className="rounded-md"
+                          className="rounded-md object-cover"
                         />
                       )}
-                      <div className="flex-1">
-                        <p className="font-medium">
-                          {item?.data?.data?.competitionName}
+                      <div className="flex-1 space-y-2">
+                        <p className="font-medium text-lg">
+                          {item?.data?.productName}
                         </p>
                         <p className="text-sm text-gray-600">
                           {item?.data?.message}
                         </p>
-                        {item?.data?.data?.competitionId && (
+                        <p className="text-sm font-medium text-green-600">
+                          Reduced Price: €{item?.data?.reducedPrice}
+                        </p>
+                        <div className="flex gap-2 mt-2">
                           <Link
-                            href={`/competitions/${item.data.data.competitionId}`}
-                            className="text-primary hover:underline text-sm mt-2 block"
+                            href="/my-account/rewards"
+                            className="text-white bg-primary hover:bg-primary/90 px-4 py-2 rounded-md text-sm transition-colors"
                           >
-                            View Competition
+                            See Reward
                           </Link>
-                        )}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex flex-col items-center justify-end gap-2">
+                    <div className="flex flex-col items-center justify-start">
                       <CheckCheck
                         onClick={() => markNotificationRead(item._id)}
                         size={20}
@@ -119,4 +122,4 @@ const CompetitionNotification = ({
   );
 };
 
-export default CompetitionNotification; 
+export default CompetitionNotification;

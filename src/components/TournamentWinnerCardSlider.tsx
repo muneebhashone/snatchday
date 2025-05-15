@@ -12,10 +12,12 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 
 import maintrophysection from "@/app/images/winnerbg.png";
-import { winners } from "@/dummydata";
+import { useGetTournamentRecentWinner } from "@/hooks/api";
+import { formatCurrency } from "@/lib/utils";
 
 const TournamentWinnerCardSlider = () => {
-
+  const { data: recentWinner } = useGetTournamentRecentWinner();
+  const winners = recentWinner?.data;
 
   return (
     <div className="flex items-center justify-center relative xl:h-[718px] md:h-[450px] h-[350px] max-w-[1920px] mx-auto">
@@ -44,14 +46,14 @@ const TournamentWinnerCardSlider = () => {
         modules={[EffectFade, Navigation, Pagination, Autoplay]}
         className="w-full mySwiper"
       >
-        {winners.map((winner, index) => (
+        {winners?.map((winner, index) => (
           <SwiperSlide key={index}>
             <div className="py-0 lg:py-12 flex items-center">
               <div className="w-full max-w-7xl px-20 py-10 md:px-10 lg:px-16">
                 <div className="md:pl-8 lg:pl-32 py-4 md:py-6 lg:py-0">
                   <div className="flex flex-col items-center md:items-start justify-start md:gap-2">
                     <h3 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-[82px] font-extrabold text-white/90 mb-2">
-                      {winner.heading}
+                      {winner.title}
                     </h3>
                     <h3 className="text-xl sm:text-3xl md:text-3xl lg:text-5xl xl:text-[64px] font-extrabold text-white/90 mb-2 md:mb-4 lg:mb-6">
                       Tournament{" "}
@@ -62,26 +64,26 @@ const TournamentWinnerCardSlider = () => {
                   </div>
 
                   <p className="mt-4 text-xs sm:text-lg w-[68%] md:w-[62%] lg:text-xl xl:text-2xl text-white leading-1 mb-2 md:mb-4 lg:mb-6">
-                    {winner.title}
+                    {winner?.product}
                   </p>
 
                   <div className="flex flex-col items-start">
                     <p className="text-xl lg:text-4xl xl:text-[44px] font-bold text-white mb-4 lg:mb-6 xl:mb-10">
-                      {winner.price}€
+                      {formatCurrency(winner?.price)}
                     </p>
 
                     <div className="flex items-center gap-3 lg:gap-7">
                       <div className="xl:w-28 lg:w-20 w-16 xl:h-28 lg:h-20 h-16 rounded-full overflow-hidden border-8 lg:border-[12px] xl:border-[16px] border-[#FF6B3D] shadow-[0px_1px_24px_#FF6B3D]">
                         <Image
-                          src={winner.winnerImage}
-                          alt={winner.winnerName}
+                          src={winner?.image}
+                          alt={winner?.name}
                           width={100}
                           height={100}
                           className="lg:w-full lg:h-full w-14 h-14 object-cover"
                         />
                       </div>
                       <span className="text-white text-xl lg:text-2xl font-extrabold">
-                        {winner.winnerName}
+                        {winner?.firstName} {winner?.lastName}
                       </span>
                     </div>
                   </div>
