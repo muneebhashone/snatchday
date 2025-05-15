@@ -109,7 +109,7 @@ const TournamentsTable = () => {
                         Highest Score:{" "}
                         {tournament?.results?.find(
                           (result) => result?.user === user?.user?.user?._id
-                        ).score || ""}
+                        )?.score || ""}
                       </div>
                     </div>
                   </TableCell>

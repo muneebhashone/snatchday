@@ -226,6 +226,12 @@ const Header = () => {
     });
   };
 
+  const currentMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  ).toLocaleString("default", { month: "long" });
+
   return (
     <header className="w-full fixed top-0 left-0 right-0 z-50 bg-background shadow-sm">
       {/* Notification Dialog */}
@@ -474,7 +480,7 @@ const Header = () => {
               className="hidden lg:flex items-center justify-between"
               key={items.id}
             >
-              {items.name === "Gewinnspiel im Januar" ? (
+              {items.name === `Gewinnspiel in ${currentMonth}` ? (
                 <Dialog>
                   <DialogTrigger asChild>
                     <button
@@ -667,7 +673,7 @@ const Header = () => {
           >
             <ShoppingCart className="h-6 w-6" />
             <span className="absolute -top-4 left-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {cartData?.data ? cartData?.data?.cart?.length : 0}
+              {cartData?.data ? cartData?.data?.cart?.length + cartData?.data?.rewardCart?.length : 0}
             </span>
           </button>
           <div className="text-sm text-foreground text-start">

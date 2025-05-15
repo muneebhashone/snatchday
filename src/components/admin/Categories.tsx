@@ -148,7 +148,7 @@ const Categories = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button className="bg-primary hover:bg-primary/90">
+                  <Button className="bg-transparent border-none hover:bg-transparent">
                     <CreateCategoryDialog />
                   </Button>
                 </TooltipTrigger>

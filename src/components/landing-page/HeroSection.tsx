@@ -354,7 +354,7 @@ const HeroSection = () => {
                         {/* Product Title */}
                         <motion.p
                           variants={staggerItemVariants}
-                          className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6"
+                          className="text-lg xl:text-6xl font-extrabold text-[#2F190D] mt-6 line-clamp-2"
                         >
                           {tournament?.name}
                         </motion.p>
@@ -367,7 +367,7 @@ const HeroSection = () => {
                           <div className="flex items-center justify-start gap-2 w-max">
                             <div className="w-12 xl:w-24 h-12 xl:h-24 bg-[#FFFFFF] rounded-full flex items-center justify-center drop-shadow-lg">
                               <Image
-                                className=""
+                                className="object-contain w-14 h-14"
                                 src={tournament?.game?.image}
                                 alt="Game Icon"
                                 width={70}

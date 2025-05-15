@@ -12,7 +12,12 @@ import { Delete, Edit, Eye, Loader } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
 
 interface OrderResponse {
@@ -50,7 +55,12 @@ export function OrdersListTable({
   onPageChange: (page: number) => void;
 }) {
   const skip = 10;
-  const { data: customers, isLoading } = useGetOrders((page - 1) * skip, status, date, user) as { data: OrderResponse | undefined; isLoading: boolean };
+  const { data: customers, isLoading } = useGetOrders(
+    (page - 1) * skip,
+    status,
+    date,
+    user
+  ) as { data: OrderResponse | undefined; isLoading: boolean };
 
   const totalItems = customers?.data?.total || 0;
   const currentPage = page;
@@ -82,20 +92,30 @@ export function OrdersListTable({
             <TableBody>
               {customers?.data?.orders?.map((order) => (
                 <TableRow key={order.orderNumber}>
-                  <TableCell className="font-medium">{order.orderNumber}</TableCell>
+                  <TableCell className="font-medium">
+                    {order.orderNumber}
+                  </TableCell>
                   <TableCell>{order.billingDetails.firstName}</TableCell>
                   <TableCell>
-                    <span className={`px-2 py-1 rounded-full text-xs capitalize ${
-                      order.status === "completed" 
-                        ? "bg-green-100 text-green-800"
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs capitalize ${
+                        order.status === "completed"
+                          ? "bg-green-100 text-green-800"
+                          : order.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {order.status === "paid"
+                        ? "Pending"
                         : order.status === "pending"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}>
-                      {order.status}
+                        ? "Payment Pending"
+                        : order.status}
                     </span>
                   </TableCell>
-                  <TableCell>{formatCurrency(order.cartObject.total)}</TableCell>
+                  <TableCell>
+                    {formatCurrency(order.cartObject.total)}
+                  </TableCell>
                   <TableCell>{order.createdAt.split("T")[0]}</TableCell>
                   <TableCell>{order.updatedAt?.split("T")[0]}</TableCell>
                   <TableCell className="text-right">
@@ -122,7 +142,8 @@ export function OrdersListTable({
 
         <div className="flex items-center justify-between py-4">
           <p className="text-sm text-gray-500">
-            Showing {(currentPage - 1) * skip + 1} to {Math.min(currentPage * skip, totalItems)} of {totalItems} entries
+            Showing {(currentPage - 1) * skip + 1} to{" "}
+            {Math.min(currentPage * skip, totalItems)} of {totalItems} entries
           </p>
           <DynamicPagination
             totalItems={totalItems}

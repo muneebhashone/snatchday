@@ -16,8 +16,7 @@ export function CreateCategoryDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          variant="ghost"
-          className="bg-primary text-white hover:bg-primary transition-colors"
+          className="bg-primary text-white "
         >
           Add Category
         </Button>

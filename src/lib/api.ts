@@ -23,6 +23,7 @@ import {
   FaqFormData,
   TutorialFormData,
   points,
+  BannerFormData,
 } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { IRecommendProduct } from "@/components/RecommendProductModal";
@@ -1213,13 +1214,16 @@ export const createCompetition = async (data: CompetitionFormData) => {
   return response.data;
 };
 
-export const updateCompetition = async (id: string, data: CompetitionFormData) => {
+export const updateCompetition = async (
+  id: string,
+  data: CompetitionFormData
+) => {
   const response = await axiosInstance.put(`/competitions/${id}`, data);
   return response.data;
 };
 
 export const getCompetitions = async (params?: {
- month?: string;
+  month?: string;
   status?: string;
 }) => {
   const response = await axiosInstance.get("/competitions", { params });
@@ -1231,17 +1235,84 @@ export const getCompetitionById = async (id: string) => {
   return response.data;
 };
 
-export const productAnalytics = async (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+export const productAnalytics = async (params?: {
+  timeFilter?: string;
+  limit?: number;
+  offset?: number;
+}) => {
   const response = await axiosInstance.get("/product/analytics/product", {
     params,
   });
   return response.data;
 };
 
+//competitions api paticipation start
 
+export const participantInCompetition = async (
+  id: string,
+  data: { answer: string }
+) => {
+  const response = await axiosInstance.post(
+    `/competitions/${id}/participate`,
+    data
+  );
+  return response.data;
+};
 
+export const getCompetitionParticipants = async (id: string) => {
+  const response = await axiosInstance.get(`/competitions/${id}/participants`);
+  return response.data;
+};
 
+//competitions api paticipation end
 
+//banner api start
 
+export const getBanners = async () => {
+  const response = await axiosInstance.get("/web-settings/banner");
+  return response.data;
+};
 
+export const getBannerById = async (id: string) => {
+  const response = await axiosInstance.get(`/web-settings/banner/${id}`);
+  return response.data;
+};
 
+export const CreateBanner = async (data: BannerFormData) => {
+  const response = await axiosInstance.post("/web-settings/banner", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const UpdateBanner = async (id: string, data: BannerFormData) => {
+  const response = await axiosInstance.put(`/web-settings/banner/${id}`, data);
+  return response.data;
+};
+
+export const DeleteBanner = async (id: string) => {
+  const response = await axiosInstance.delete(`/web-settings/banner/${id}`);
+  return response.data;
+};
+
+//banner api end
+
+//rewards api start
+
+export const addToCartReward = async (productRewardId: string) => {
+  const response = await axiosInstance.post("/order/cart/reward", {
+    productRewardId,
+  });
+  return response.data;
+};
+
+export const removeFromCartReward = async (productRewardId: string) => {
+  const response = await axiosInstance.delete(`/order/cart/reward`, {
+    data: { productRewardId }
+  });
+  return response.data;
+};
+
+//rewards api end

@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
+import { useUserContext } from "@/context/userContext";
 
 interface DuelCardsProps {
   gameId: string;
@@ -47,6 +48,8 @@ const DuelCards = ({
   const [formValues, setFormValues] = useState<z.infer<
     typeof duelFormSchema
   > | null>(null);
+  const { user } = useUserContext();
+  console.log(user, "user");
 
   const duelFormSchema = z
     .object({
@@ -230,11 +233,16 @@ const DuelCards = ({
         title="Confirm Duel Creation"
         description={`Are you sure you want to create a duel with stake ${
           formValues?.stake
-        } + fee ${getPoints?.data?.duelFee} total ${
-          formValues?.points_type === "snap" ? "snap" : "discount"
-        } points ${
-          Number(formValues?.stake) + Number(getPoints?.data?.duelFee)
-        } for ${formValues?.rounds} round(s)?`}
+        } ${
+          user?.user?.group !== "VIP" ?
+          `+ fee ${getPoints?.data?.duelFee} total ${
+            formValues?.points_type === "snap" ? "snap" : "discount"
+          } points ${
+            Number(formValues?.stake) + Number(getPoints?.data?.duelFee)
+          } for ${formValues?.rounds} round(s)?`:`${
+            formValues?.points_type === "snap" ? "snap points" : "discount points"
+          }`
+        } `}
         confirmText="Create Duel"
         cancelText="Cancel"
         isLoading={isPending}

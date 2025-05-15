@@ -471,6 +471,10 @@ export interface NotificationData {
   duelGame?: string;
   duelGameImage?: string;
   createdAt?: string;
+  competitionId?: string;
+  competitionName?: string;
+  competitionStatus?: string;
+  competitionImage?: string;
 }
 
 // For the notification item
@@ -481,4 +485,13 @@ export interface NotificationItem {
     message: string;
     data: NotificationData;
   };
+}
+
+export interface BannerFormData {
+  image: File;
+  title: string;
+  content: string;
+  date?: string;
+  link?: string;
+  logoImage?: File;
 }

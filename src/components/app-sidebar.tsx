@@ -36,6 +36,8 @@ import {
   Book,
   DollarSign,
   BarChart,
+  Notebook,
+  ListCheckIcon,
 } from "lucide-react";
 import {
   Collapsible,
@@ -168,14 +170,30 @@ const navItems = [
     icon: <AnnouncementIcon />,
   },
   {
+    title: "Web Settings",
+    icon: <Settings className="h-4 w-4" />,
+    subItems: [
+      {
+        title: "Content",
+        url: "/admin/web-settings",
+        icon: <ListCheckIcon className="h-4 w-4" />,
+      },
+      {
+        title: "Banner",
+        url: "/admin/banner-settings",
+        icon: <Notebook className="h-4 w-4" />,
+      },
+      {
+        title: "Points",
+        url: "/admin/points",
+        icon: <Plus className="h-4 w-4" />,
+      },
+    ],
+  },
+  {
     title: "Support",
     icon: <SupportIcon />,
     subItems: [
-      {
-        title: "Web Settings",
-        url: "/admin/web-settings",
-        icon: <Settings className="h-4 w-4" />,
-      },
       {
         title: "Tickets",
         url: "/admin/tickets",
@@ -195,11 +213,6 @@ const navItems = [
         title: "Tutorials",
         url: "/admin/tutorial",
         icon: <Book className="h-4 w-4" />,
-      },
-      {
-        title: "Points",
-        url: "/admin/points",
-        icon: <Plus className="h-4 w-4" />,
       },
     ],
   },

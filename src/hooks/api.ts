@@ -160,6 +160,15 @@ import {
   getCompetitions,
   updateCompetition,
   productAnalytics,
+  participantInCompetition,
+  CreateBanner,
+  getBanners,
+  UpdateBanner,
+  DeleteBanner,
+  getBannerById,
+  getCompetitionParticipants,
+  addToCartReward,
+  removeFromCartReward,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -169,6 +178,7 @@ import {
 } from "@/types/admin";
 
 import {
+  BannerFormData,
   CategoryFormData,
   CheckoutTypes,
   FaqFormData,
@@ -940,9 +950,11 @@ export const UseITScope = () => {
 // IT Scope hook end
 
 export const useGetAddresses = () => {
+  const { user } = useUserContext();
   return useQuery({
     queryKey: ["addresses"],
     queryFn: getAddresses,
+    enabled: !!user,
   });
 };
 export const useCreateAddress = () => {
@@ -1432,10 +1444,81 @@ export const useGetCompetitionById = (id: string) => {
   });
 };
 
-export const useProductAnalytics = (params?: { timeFilter?: string; limit?: number; offset?: number }) => {
+export const useGetCompetitionParticipants = (id: string) => {
+  return useQuery({
+    queryKey: ["competitionParticipants", id],
+    queryFn: () => getCompetitionParticipants(id),
+  });
+};
+export const useProductAnalytics = (params?: {
+  timeFilter?: string;
+  limit?: number;
+  offset?: number;
+}) => {
   return useQuery({
     queryKey: ["productAnalytics", params],
     queryFn: () => productAnalytics(params),
   });
 };
+
+export const useParticipantInCompetition = (id: string) => {
+  return useMutation({
+    mutationFn: (data: { answer: string }) =>
+      participantInCompetition(id, data),
+  });
+};
+
+//banner api start
+
+export const useGetBanners = () => {
+  return useQuery({
+    queryKey: ["banners"],
+    queryFn: () => getBanners(),
+  });
+};
+
+export const useGetBannerById = (id: string) => {
+  return useQuery({
+    queryKey: ["banner", id],
+    queryFn: () => getBannerById(id),
+    enabled: Boolean(id),
+  });
+};
+
+export const useCreateBanner = () => {
+  return useMutation({
+    mutationFn: (data: BannerFormData) => CreateBanner(data),
+  });
+};
+
+export const useUpdateBanner = () => {
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: BannerFormData }) =>
+      UpdateBanner(id, data),
+  });
+};
+
+export const useDeleteBanner = () => {
+  return useMutation({
+    mutationFn: (id: string) => DeleteBanner(id),
+  });
+};
+
+//banner api end
+
+//rewards api start
+export const useAddToCartReward = () => {
+  return useMutation({
+    mutationFn: (productRewardId: string) => addToCartReward(productRewardId),
+  });
+};
+
+export const useRemoveFromCartReward = () => {
+  return useMutation({
+    mutationFn: (productRewardId: string) => removeFromCartReward(productRewardId),
+  });
+};
+
+//rewards api end
+
 

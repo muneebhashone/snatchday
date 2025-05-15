@@ -86,9 +86,9 @@ const RecommendProductModal = ({
     });
   };
   return (
-    <DialogContent className="sm:max-w-[625px] p-0">
+    <DialogContent className="sm:max-w-[625px] p-0 rounded-t-3xl">
       <DialogHeader>
-        <DialogTitle className="bg-primary p-5 rounded-t-3xl flex items-center justify-center gap-3 text-white">
+        <DialogTitle className="bg-primary p-5 rounded-t-md flex items-center justify-center gap-3 text-white">
           Recommend Product To Your Friend
           <div className="p-2 rounded-full bg-white">
             <Image src={recommend} alt="recommend" width={30} height={30} />
@@ -118,7 +118,7 @@ const RecommendProductModal = ({
                 <FormItem className="mb-5">
                   <FormLabel>Email:</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder="email...." {...field} />
+                    <Input disabled={true} type="email" placeholder="email...." {...field} />
                   </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>

@@ -27,6 +27,12 @@ import { DownloadIcon, FastDeliveryIcon, HandIcon, ShieldIcon } from "./componen
 import winnerAvatar from "@/app/images/avatarimage.svg";
 
 
+const currentMonthName = new Date(
+  new Date().getFullYear(),
+  new Date().getMonth(),
+  1
+).toLocaleString("default", { month: "long" });
+
 export type ICatogory = {
   id: number,
   name: string,
@@ -133,7 +139,7 @@ export const menu = [
   },
   {
     id: 5,
-    name: "Gewinnspiel im Januar",
+    name: `Gewinnspiel in ${currentMonthName}`,
     link: "/gewinnspiel-im-januar",
   },
   {

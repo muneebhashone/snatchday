@@ -1,5 +1,6 @@
 "use client";
 import ClientLayout from "@/components/landing-page/ClientLayout";
+import { useUserContext } from "@/context/userContext";
 import {
   useGetDuelGameById,
   useGetTournamentById,
@@ -12,6 +13,7 @@ import React, { useEffect } from "react";
 import { toast } from "sonner";
 
 const Page = () => {
+  const { user } = useUserContext();
   const router = useRouter();
   const { id } = useParams();
   console.log(id, "id");
@@ -23,21 +25,30 @@ const Page = () => {
     score: 140,
     time: 10,
   };
+  const userResubmissions = tournamentGame?.data?.results?.filter(
+    (participant) => participant.user._id === user?.user?._id
+  ).length;
+  // console.log(hasParticipated, "hasParticipated");
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      postTournamentScore(dummyDataWin, {
-        onSuccess: () => {
-          toast.success("Score submitted successfully");
-          router.push(`/tournament/${id}`);
-        },
-        onError: (error) => {
-          console.log(error, "error");
-        },
-      });
-    }, 10000);
-    return () => clearTimeout(timer);
-  }, [tournamentGame]);
+    if (userResubmissions < tournamentGame?.data?.resubmissions) {
+      const timer = setTimeout(() => {
+        postTournamentScore(dummyDataWin, {
+          onSuccess: () => {
+            toast.success("Score submitted successfully");
+            router.push(`/tournament/${id}`);
+          },
+          onError: (error) => {
+            console.log(error, "error");
+          },
+        });
+      }, 10000);
+      return () => clearTimeout(timer);
+    } else {
+      window.location.href = "/";
+      toast.error("You have already participated in this tournament");
+    }
+  }, [tournamentGame, userResubmissions]);
   return (
     <ClientLayout>
       <div className="mt-44 mb-56">

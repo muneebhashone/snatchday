@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import { NotificationItem } from "@/types";
-import Image from "next/image";
 import { CheckCheck } from "lucide-react";
-import { markAsRead } from "@/lib/api";
-import { useMarkAsRead, useRenewSnapSubscription } from "@/hooks/api";
-import { formatDate } from "@/lib/utils";
+import { useMarkAsRead } from "@/hooks/api";
 import { Button } from "./ui/button";
-import Link from "next/link";
 import { toast } from "sonner";
 import { IError } from "@/app/admin/games/create/page";
+import Link from "next/link";
+import Image from "next/image";
 
-const SubscriptionNotificationDialog = ({
+const CompetitionNotification = ({
   isNotificationDialogOpen,
   setIsNotificationDialogOpen,
   myprofile,
@@ -23,50 +21,14 @@ const SubscriptionNotificationDialog = ({
   myprofile: any;
   refetch: () => void;
 }) => {
-  // const { data: myprofile } = useGetMyProfile();
-  const { mutate: renewSubscription } = useRenewSnapSubscription();
   const [notificationReadID, setNotificationReadID] = useState<string>("");
-  const [showNotification, setShowNotification] = useState<string[]>([]);
   const { mutate: markAsRead } = useMarkAsRead(notificationReadID);
-  const handleNotificationClick = (id: string) => {
-    setNotificationReadID(id);
-    markAsRead(undefined, {
-      onSuccess: () => {
-        setShowNotification((prev) => prev.filter((item) => item !== id));
-        // Also update the notifications in myprofile data
-        if (myprofile?.data?.notifications) {
-          const updatedNotifications = myprofile.data.notifications.filter(
-            (item) => item._id !== id
-          );
-          // Update the myprofile data
-          myprofile.data.notifications = updatedNotifications;
-        }
-      },
-    });
-  };
 
-  const handleRenewal = (id: string, notificationId: string) => {
-    renewSubscription(
-      { packageId: id },
-      {
-        onSuccess: () => {
-          toast.success("Subscription renewed successfully");
-          setNotificationReadID(notificationId);
-          refetch();
-        },
-        onError: (error) => {
-          toast.error(error.message);
-        },
-      }
-    );
-  };
-
-  const nmarkNotificationRead = (id: string) => {
+  const markNotificationRead = (id: string) => {
     setNotificationReadID(id);
     markAsRead(undefined, {
       onSuccess: () => {
         toast.success("Notification marked as read");
-        setShowNotification((prev) => prev.filter((item) => item !== id));
         refetch();
       },
       onError: (error) => {
@@ -77,6 +39,7 @@ const SubscriptionNotificationDialog = ({
       },
     });
   };
+
   return (
     <div>
       <Dialog
@@ -92,33 +55,46 @@ const SubscriptionNotificationDialog = ({
             className="flex flex-col gap-4"
           >
             <h2 className="text-lg font-bold text-primary mb-2">
-              Subscription Notifications
+              Competition Notifications
             </h2>
             <div className="max-h-[600px] overflow-y-auto space-y-4">
               {myprofile?.data?.notifications
-                ?.filter((item) => item.type === "subscription")
+                ?.filter((item) => item.type === "competition")
                 .map((item: NotificationItem) => (
                   <div
                     key={item._id}
                     className="flex gap-2 items-center justify-between border rounded-lg p-4 border-gray-200 pb-4"
                   >
-                    <p>{item?.data?.message}</p>
-                    <div className="flex flex-col items-center justify-end gap-2 mt-3 ">
-                      {item?.data?.status === "expired" && (
-                        <Button
-                          onClick={() => {
-                            handleRenewal(
-                              item?.data?.subscription?.package._id,
-                              item?._id
-                            );
-                          }}
-                        >
-                          Renewal
-                        </Button>
+                    <div className="flex items-center gap-4 flex-1">
+                      {item?.data?.data?.competitionImage && (
+                        <Image
+                          src={item.data.data.competitionImage}
+                          alt="Competition"
+                          width={80}
+                          height={80}
+                          className="rounded-md"
+                        />
                       )}
-
+                      <div className="flex-1">
+                        <p className="font-medium">
+                          {item?.data?.data?.competitionName}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {item?.data?.message}
+                        </p>
+                        {item?.data?.data?.competitionId && (
+                          <Link
+                            href={`/competitions/${item.data.data.competitionId}`}
+                            className="text-primary hover:underline text-sm mt-2 block"
+                          >
+                            View Competition
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center justify-end gap-2">
                       <CheckCheck
-                        onClick={() => nmarkNotificationRead(item._id)}
+                        onClick={() => markNotificationRead(item._id)}
                         size={20}
                         className="w-5 h-5 hover:text-primary cursor-pointer"
                       />
@@ -126,13 +102,13 @@ const SubscriptionNotificationDialog = ({
                   </div>
                 ))}
               {(!myprofile?.data?.notifications?.filter(
-                (item) => item.type === "subscription"
+                (item) => item.type === "competition"
               ) ||
                 myprofile.data.notifications.filter(
-                  (item) => item.type === "subscription"
+                  (item) => item.type === "competition"
                 ).length === 0) && (
                 <div className="text-center text-gray-500 py-4">
-                  No subscription notifications
+                  No competition notifications
                 </div>
               )}
             </div>
@@ -143,4 +119,4 @@ const SubscriptionNotificationDialog = ({
   );
 };
 
-export default SubscriptionNotificationDialog;
+export default CompetitionNotification; 

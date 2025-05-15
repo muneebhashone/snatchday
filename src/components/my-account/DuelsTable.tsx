@@ -4,6 +4,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { DualRangeSlider } from "@/components/tournaments/dualSlider";
 import { Button } from "@/components/ui/button";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface Duel {
   id: string;
@@ -51,17 +53,18 @@ const DuelsTable = () => {
   const [search, setSearch] = useState<string | undefined>(undefined);
   const [priceRange, setPriceRange] = useState<number[]>([0, 1000000]);
   const itemsPerPage = 10;
+  const debouncedSearch = useDebounce(search, 500);
 
   const { data } = useGetDuels({
     status: status,
-    search: search,
+    search: debouncedSearch,
     priceRange: priceRange ? `[${priceRange.join(",")}]` : undefined,
     limit: itemsPerPage,
     offset: (currentPage - 1) * itemsPerPage,
   });
   const duel = data?.data?.duels;
   const totalPages = Math.ceil((data?.data?.total || 0) / itemsPerPage);
-  const user = useUserContext();
+  const { user } = useUserContext();
   const userID = user?.user?._id;
 
   const handlePriceRangeChange = (value: number[]) => {
@@ -86,7 +89,7 @@ const DuelsTable = () => {
       <div className="flex gap-4 mb-6 items-end">
         <div className="flex-1">
           <Input
-            placeholder="Search duels..."
+            placeholder="Search..."
             value={search || ""}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -102,6 +105,7 @@ const DuelsTable = () => {
             <SelectItem value="lost">Lost</SelectItem>
             <SelectItem value="draw">Draw</SelectItem>
             <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
           </SelectContent>
         </Select>
 
@@ -169,15 +173,26 @@ const DuelsTable = () => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  {duel?.player2 && duel?.player2?.image ? (
-                    <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                      <Image
-                        src={duel?.player2?.image}
-                        alt="Opponent"
-                        width={48}
-                        height={48}
-                        className="object-cover"
-                      />
+                  {duel?.player2 ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
+                        <Image
+                          src={
+                            userID === duel?.player2?._id
+                              ? duel?.player1?.image
+                              : duel?.player2?.image
+                          }
+                          alt="Opponent"
+                          width={48}
+                          height={48}
+                          className="object-cover"
+                        />
+                      </div>
+                      <p className="text-sm text-foreground font-bold">
+                        {userID === duel?.player2?._id
+                          ? duel?.player1?.username
+                          : duel?.player2?.username}
+                      </p>
                     </div>
                   ) : duel?.player2 && !duel?.player2?.image ? (
                     <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
@@ -227,12 +242,18 @@ const DuelsTable = () => {
                       <p className="capitalize w-max px-2 bg-green-500 rounded-full text-white font-bold text-sm">
                         You Won
                       </p>
-                    ) : (userID === duel?.player1?._id &&
-                        !duel?.player1Score?.score &&
-                        !duel?.player1Score?.time) ||
-                      (userID === duel?.player2?._id &&
-                        !duel?.player2Score?.score &&
-                        !duel?.player2Score?.time) ? (
+                    ) : userID === duel?.player1?._id &&
+                      !duel?.player1Score?.score &&
+                      !duel?.player1Score?.time &&
+                      duel?.status !== "cancelled" ? (
+                      <p className="capitalize w-max px-2 bg-gray-300 text-white rounded-full text-sm font-bold">
+                        you haven&apos;t played yet
+                      </p>
+                    ) : duel?.player2 &&
+                      duel?.status !== "cancelled" &&
+                      userID === duel?.player2?._id &&
+                      !duel?.player2Score?.score &&
+                      !duel?.player2Score?.time ? (
                       <p className="capitalize w-max px-2 bg-gray-300 text-white rounded-full text-sm font-bold">
                         you haven&apos;t played yet
                       </p>
@@ -250,15 +271,29 @@ const DuelsTable = () => {
               </TableRow>
             ))}
           </TableBody>
+          {!data?.data?.total ? (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">
+                  <p>No Duels Found</p>
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          ) : (
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">
+                  <DynamicPagination
+                    totalItems={data?.data?.total || 0}
+                    itemsPerPage={itemsPerPage}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                  />
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          )}
         </Table>
-        <div className="p-4 border-t">
-          <DynamicPagination
-            totalItems={data?.data?.total || 0}
-            itemsPerPage={itemsPerPage}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
-        </div>
       </div>
     </div>
   );

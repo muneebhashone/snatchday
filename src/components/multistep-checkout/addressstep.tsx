@@ -685,7 +685,7 @@ const AddressStep = ({
   const [addressId, setAddressId] = useState<string | null>(null);
   const router = useRouter();
 
-  const {
+ const {
     data: addressesData,
     isLoading: isLoadingAddresses,
     refetch: refetchAddresses,
