@@ -20,14 +20,32 @@ const modulesBase = {
     ["clean"],
   ],
 };
+const modulesBase2 = {
+  toolbar: [
+    [{ font: [] }, { size: [] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ align: [] }],
+  ],
+};
 
 interface RichTextEditorProps {
   onChange: (content: string) => void;
   value: string;
+  isRichText?: boolean;
 }
 
-const RichTextEditor: React.FC<RichTextEditorProps> = ({ onChange, value }) => {
-  const [modules, setModules] = useState<any>(modulesBase);
+const RichTextEditor: React.FC<RichTextEditorProps> = ({
+  onChange,
+  value,
+  isRichText = false,
+}) => {
+  const [modules, setModules] = useState<any>(
+    isRichText ? modulesBase2 : modulesBase
+  );
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -41,32 +59,36 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ onChange, value }) => {
         console.error("Error registering imageUploader module:", error);
       }
 
-      setModules({
-        ...modulesBase,
-        imageUploader: {
-          upload: (file: File) => {
-            return new Promise((resolve, reject) => {
-              const formData = new FormData();
-              formData.append("images", file);
-              fetch(
-                "https://test-node-vercel-production.up.railway.app/newsletter/images",
-                {
-                  method: "POST",
-                  body: formData,
-                }
-              )
-                .then((res) => res.json())
-                .then((result) => {
-                  resolve(result.data.images[0]);
-                })
-                .catch((err) => {
-                  reject("Upload failed");
-                  console.error("Upload error:", err);
-                });
-            });
+      if (!isRichText) {
+        setModules({
+          ...modulesBase,
+          imageUploader: {
+            upload: (file: File) => {
+              return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append("images", file);
+                fetch(
+                  "https://test-node-vercel-production.up.railway.app/newsletter/images",
+                  {
+                    method: "POST",
+                    body: formData,
+                  }
+                )
+                  .then((res) => res.json())
+                  .then((result) => {
+                    resolve(result.data.images[0]);
+                  })
+                  .catch((err) => {
+                    reject("Upload failed");
+                    console.error("Upload error:", err);
+                  });
+              });
+            },
           },
-        },
-      });
+        });
+      } else {
+        setModules({ ...modulesBase2 });
+      }
 
       setMounted(true);
     };
