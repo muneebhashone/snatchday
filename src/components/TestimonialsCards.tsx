@@ -75,7 +75,7 @@ const TestimonialsCards = () => {
       {features.map((feature, index) => (
         <motion.div
           key={index}
-          className="bg-white rounded-2xl shadow-sm cursor-pointer py-3 px-8"
+          className="bg-white rounded-2xl shadow-sm py-3 px-8"
           variants={cardVariants}
           whileHover="hover"
         >

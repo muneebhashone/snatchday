@@ -1310,9 +1310,33 @@ export const addToCartReward = async (productRewardId: string) => {
 
 export const removeFromCartReward = async (productRewardId: string) => {
   const response = await axiosInstance.delete(`/order/cart/reward`, {
-    data: { productRewardId }
+    data: { productRewardId },
   });
   return response.data;
 };
 
 //rewards api end
+
+export const GetTournamentRecentWinner = async () => {
+  const response = await axiosInstance.get("/tournament/recent-winners");
+  return response.data;
+};
+
+export const GetCompetitionRecentWinner = async () => {
+  const response = await axiosInstance.get("/competitions/recent/winners");
+  return response.data;
+};
+
+export const GetVIPProducts = async (params?: {
+  price?: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+}) => {
+  const response = await axiosInstance.get("/product/vip/shop", { params });
+  return response.data;
+};

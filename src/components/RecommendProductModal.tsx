@@ -25,6 +25,7 @@ import { useParams } from "next/navigation";
 import { useRecommendProduct } from "@/hooks/api";
 import { toast } from "sonner";
 import { Loader2Icon } from "lucide-react";
+import { useUserContext } from "@/context/userContext";
 
 const formSchema = z.object({
   name: z.string().nonempty("*name i required*"),
@@ -51,6 +52,7 @@ const RecommendProductModal = ({
 }) => {
   const params = useParams();
   const { isPending, mutate: RecommendProduct } = useRecommendProduct();
+  const { user: userData } = useUserContext();
   const form = useForm<IForm>({
     resolver: zodResolver(formSchema),
     defaultValues: user
@@ -80,7 +82,9 @@ const RecommendProductModal = ({
         form.reset();
       },
       onError: (error: any) => {
-        toast.error(error.response?.data?.message || "failed to recommend the product");
+        toast.error(
+          error.response?.data?.message || "failed to recommend the product"
+        );
         console.log(error);
       },
     });
@@ -118,7 +122,12 @@ const RecommendProductModal = ({
                 <FormItem className="mb-5">
                   <FormLabel>Email:</FormLabel>
                   <FormControl>
-                    <Input disabled={true} type="email" placeholder="email...." {...field} />
+                    <Input
+                      disabled={userData?.user ? true : false}
+                      type="email"
+                      placeholder="email...."
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>

@@ -36,7 +36,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon, Check, ChevronsUpDown, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname, useParams } from "next/navigation";
 import { TimePickerDemo } from "../ui/TimePicker1";
 import { toast } from "sonner";
@@ -48,6 +48,18 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
+// Ant Design imports
+import { Select as AntdSelect, Spin, SelectProps } from "antd";
+
+// Define product interface
+interface Product {
+  _id: string;
+  name: string;
+  title: string;
+  price: number;
+  images: string[];
+  [key: string]: any; // Allow other properties
+}
 
 const formSchema = z
   .object({
@@ -146,12 +158,85 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
   console.log(pathname.split("/")[4], "pathname");
   const { mutate: createTournament, isPending } = useCreateTournament();
   const { data: getProducts } = useGetProducts({ limit: `100000` });
-  const products = getProducts?.data?.products || [];
+  const products = getProducts?.data?.products || [] as Product[];
+
+  // For Ant Design Product Select
+  const [productOptions, setProductOptions] = useState<{ value: string; label: string }[]>([]);
+  const [productSearch, setProductSearch] = useState("");
 
   const product = getProducts?.data?.products?.find(
-    (product: any) => product._id === productId
-  );
-  const productImage = product?.images[0];
+    (product: Product) => product._id === productId
+  ) as Product | undefined;
+  const productImage = product?.images?.[0];
+
+  // Map products to options for Ant Design Select
+  useEffect(() => {
+    if (products && products.length > 0) {
+      const uniqueProducts = Array.from(
+        new Map(products.map((p: Product) => [p._id, p])).values()
+      );
+      
+      let newOptions = uniqueProducts.map((p: Product) => ({ value: p._id, label: p.name }));
+      
+      // If we have a productId, ensure it's in the options
+      if (productId) {
+        const selectedProduct = products.find(p => p._id === productId);
+        if (selectedProduct && !newOptions.some(opt => opt.value === productId)) {
+          newOptions = [
+            { value: selectedProduct._id, label: selectedProduct.name },
+            ...newOptions
+          ];
+        }
+      }
+      
+      setProductOptions(newOptions);
+    }
+  }, [products, productId]);
+
+  // Handle product selection
+  const handleProductSelect = (productId: string | undefined) => {
+    if (!productId) {
+      // Handle clearing the selection
+      form.setValue("name", "", { shouldValidate: true });
+      form.setValue("title", "", { shouldValidate: true });
+      form.setValue("startingPrice", 0, { shouldValidate: true });
+      form.setValue("image", "", { shouldValidate: true });
+      setValue("");
+      form.setValue("article", "", { shouldValidate: true });
+      return;
+    }
+    
+    const selectedProduct = products.find((p: Product) => p._id === productId);
+    if (selectedProduct) {
+      // Clear any existing errors before setting new values
+      form.clearErrors();
+      
+      // Use shouldValidate option to trigger validation immediately
+      form.setValue("name", selectedProduct.name, { shouldValidate: true });
+      form.setValue("title", selectedProduct.title, { shouldValidate: true });
+      form.setValue("startingPrice", selectedProduct.price, { shouldValidate: true });
+      form.setValue("image", selectedProduct.images?.[0] || "", { shouldValidate: true });
+      setValue(productId);
+      form.setValue("article", productId, { shouldValidate: true }); // Ensure the article field is also updated
+      
+      // Check title
+      setTimeout(() => {
+        // Ensure title has a value after setting
+        const currentTitle = form.getValues("title");
+        if (!currentTitle || currentTitle.trim() === "") {
+          form.setError("title", { 
+            type: "manual", 
+            message: "Title is required" 
+          });
+        }
+      }, 100);
+    }
+  };
+
+  // Product search handler
+  const handleProductSearch = (value: string) => {
+    setProductSearch(value);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -187,10 +272,37 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
       form.setValue("article", product._id);
       form.setValue("startingPrice", product.price);
       form.setValue("image", product.images[0] || "");
+      setValue(product._id);
     }
   }, [product, form]);
 
   const onSubmit = async (values) => {
+    // Check title field explicitly
+    const titleValue = form.getValues("title");
+    
+    if (!titleValue || titleValue.trim() === "") {
+      form.setError("title", { 
+        type: "manual", 
+        message: "Title is required" 
+      });
+      toast.error("Title is required. Please enter a title.");
+      
+      // Try to focus the title field
+      const titleInput = document.querySelector('input[name="title"]') as HTMLInputElement;
+      if (titleInput) {
+        titleInput.focus();
+      }
+      
+      return;
+    }
+    
+    // Validate form before submission
+    const isValid = await form.trigger();
+    if (!isValid) {
+      toast.error("Please correct the form errors before submission.");
+      return;
+    }
+    
     const pro = params.id ? params.id : value;
     try {
       createTournament(
@@ -224,92 +336,39 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
     <FormField
       control={form.control}
       name="article"
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <FormItem>
           <FormLabel className="flex items-center gap-1">
             Article
             <span className="text-red-500">*</span>
           </FormLabel>
-
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button className="w-[200px] justify-between hover:bg-primary">
-                {field.value
-                  ? products.find(
-                      (product: any) => product.name === field.value
-                    )?.name || "Select a product"
-                  : "Select a product"}
-                <ChevronsUpDown className="opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-              <Command>
-                <CommandInput placeholder="Search product..." className="h-9" />
-                <CommandList>
-                  <CommandEmpty>No product found.</CommandEmpty>
-                  <CommandGroup>
-                    {products.map((product: any) => (
-                      <CommandItem
-                        key={product._id}
-                        value={product.title}
-                        onSelect={(currentValue) => {
-                          field.onChange(currentValue);
-                          const selectedProduct = products.find(
-                            (p: any) => p.name === currentValue
-                          );
-                          console.log(selectedProduct, "selectedProduct");
-                          if (selectedProduct) {
-                            form.setValue("name", selectedProduct.name);
-                            form.setValue("title", selectedProduct.title);
-                            form.setValue(
-                              "startingPrice",
-                              selectedProduct.price
-                            );
-                            form.setValue(
-                              "image",
-                              selectedProduct.images[0] || ""
-                            );
-                            setValue(selectedProduct._id);
-                          }
-                          setOpen(false);
-                        }}
-                      >
-                        <div className="flex items-center gap-2">
-                          {product.images[0] && (
-                            <div className="relative w-8 h-8 rounded overflow-hidden">
-                              <Image
-                                src={product.images[0]}
-                                alt={product.name}
-                                fill
-                                className="object-cover"
-                              />
-                            </div>
-                          )}
-                          <span className="w-full line-clamp-3 text-xs">
-                            {product.name}
-                          </span>
-                        </div>
-                        <Check
-                          className={cn(
-                            "ml-auto",
-                            field.value === product._id
-                              ? "opacity-100"
-                              : "opacity-0"
-                          )}
-                        />
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <FormControl>
+            <div className="w-full">
+              <AntdSelect
+                showSearch
+                placeholder="Select a product"
+                value={value || undefined}
+                onChange={handleProductSelect}
+                onSearch={handleProductSearch}
+                filterOption={false}
+                options={productOptions}
+                style={{ width: "100%", height: "40px" }}
+                allowClear
+                dropdownStyle={{ zIndex: 9999 }}
+                status={fieldState.error ? "error" : ""}
+              />
+            </div>
+          </FormControl>
           <FormDescription className="text-xs text-primary">
             <span className="text-black">*</span> if you select an article then
             the starting price and product name will be automatically filled{" "}
             <span className="text-black">*</span>
           </FormDescription>
-          <FormMessage />
+          {fieldState.error && (
+            <div className="text-red-500 text-sm mt-1">
+              {fieldState.error.message}
+            </div>
+          )}
         </FormItem>
       )}
     />
@@ -335,7 +394,16 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
       <Form {...form}>
         <form
           id="tournament-form"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit, (errors) => {
+            console.error("Form errors:", errors);
+            if(errors.title) {
+              toast.error("Title is required. Please select an article or enter a title manually.");
+            } else if(errors.article) {
+              toast.error("Article selection is required.");
+            } else {
+              toast.error("Please fix form errors before submitting.");
+            }
+          })}
           className="space-y-6"
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -367,16 +435,31 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                 <FormField
                   control={form.control}
                   name="title"
-                  render={({ field }) => (
+                  render={({ field, fieldState }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-1">
                         Title
                         <span className="text-red-500">*</span>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="Tournament title" {...field} />
+                        <Input 
+                          placeholder="Tournament title" 
+                          {...field} 
+                          className={fieldState.error ? "border-red-500" : ""}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            // Clear error if value is not empty
+                            if (e.target.value && e.target.value.trim() !== "") {
+                              form.clearErrors("title");
+                            }
+                          }}
+                        />
                       </FormControl>
-                      <FormMessage />
+                      {fieldState.error && (
+                        <div className="text-red-500 text-sm mt-1">
+                          {fieldState.error.message}
+                        </div>
+                      )}
                     </FormItem>
                   )}
                 />

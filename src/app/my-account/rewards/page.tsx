@@ -20,6 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
 
 const Page = () => {
   const { data: myProfile } = useGetMyProfile();
@@ -72,7 +73,9 @@ const Page = () => {
                           </p>
                         </div>
                       </TableCell>
-                      <TableCell>{product?.product?.price}</TableCell>
+                      <TableCell>
+                        {formatCurrency(product?.product?.price)}
+                      </TableCell>
                       <TableCell>{product?.quantity}</TableCell>
                       <TableCell>
                         <span className="px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">

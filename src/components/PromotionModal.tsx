@@ -30,7 +30,11 @@ interface TimeLeft {
 
 export function PromotionModal() {
   const currentMonth = (new Date().getMonth() + 1).toString();
-  const { data: competition, isLoading } = useGetCompetitions({
+  const {
+    data: competition,
+    isLoading,
+    refetch,
+  } = useGetCompetitions({
     month: currentMonth,
     status: "active",
   });
@@ -48,6 +52,7 @@ export function PromotionModal() {
     minutes: 0,
     seconds: 0,
   });
+  const { user } = useUserContext();
 
   const currentMonthName = new Date(
     new Date().getFullYear(),
@@ -126,6 +131,7 @@ export function PromotionModal() {
             setAnswer("");
             setAcceptTerms("");
             closeButtonRef.current?.click();
+            refetch();
           },
           onError: (error) => {
             toast.error(
@@ -146,7 +152,10 @@ export function PromotionModal() {
   return (
     <div className="">
       <DialogContent className="max-w-[1504px] max-h-[90vh] p-0 border-none flex flex-col items-center gap-0">
-        <DialogClose ref={closeButtonRef} className="p-5 absolute z-50 bg-white rounded-full -right-5 -top-5">
+        <DialogClose
+          ref={closeButtonRef}
+          className="p-5 absolute z-50 bg-white rounded-full -right-5 -top-5"
+        >
           <X />
         </DialogClose>
         <DialogHeader
@@ -162,131 +171,148 @@ export function PromotionModal() {
             </h1>
             <p className="text-white text-xs sm:text-sm lg:text-[24px] font-normal bg-[#D9AEE7] bg-opacity-10  py-4 px-14 rounded-full">
               Participation costs{" "}
-              <span className="text-primary font-bold">{`${
-                competitionData?.fee / snapPointsRatio
-              }€ / ${competitionData?.fee}`}</span>{" "}
+              <span className="text-primary font-bold">
+                {`${competitionData?.fee / snapPointsRatio || 0} € / ${
+                  competitionData?.fee || 0
+                }`}
+              </span>{" "}
               {/* competitionData?.fee
               }€ / ${competitionData?.fee * snapPointsRatio}`}</span>{" "} */}
               snap points
             </p>
           </DialogTitle>
         </DialogHeader>
-        <div className="w-full overflow-hidden ">
-          <div className="grid grid-cols-1 sm:grid-cols-2 pb-2 sm:pb-16 mx-auto gap-4">
-            {/* Left side section */}
-            <div className="sm:w-max flex flex-col justify-between items-center py-16 border-r pr-10 pl-20 ">
-              <Image
-                className="xl:w-[580px] lg:w-[420px] md:w-[320px] sm:w-[250px] w-[180px] h-[350px] object-contain"
-                src={competitionData?.product?.images[0]}
-                width={580}
-                height={350}
-                alt="PromationModal"
-              />
-              <div className="flex items-center justify-between gap-1 md:gap-4 relative z-10 mt-10">
-                {time?.map((item) => (
-                  <div
-                    key={item.timer}
-                    className="text-center flex flex-col items-center text-xs lg:text-lg"
-                  >
-                    <div className="bg-opacity-50 text-md sm:w-max lg:text-4xl border px-2 lg:px-7 py-1 lg:py-2">
-                      <h1 className="font-light">{item.timer}</h1>
+        {competitionData ? (
+          <div className="w-full overflow-hidden ">
+            <div className="grid grid-cols-1 sm:grid-cols-2 pb-2 sm:pb-16 mx-auto gap-4">
+              {/* Left side section */}
+              <div className="sm:w-max flex flex-col justify-between items-center py-16 border-r pr-10 pl-20 ">
+                <Image
+                  className="xl:w-[580px] lg:w-[420px] md:w-[320px] sm:w-[250px] w-[180px] h-[350px] object-contain"
+                  src={competitionData?.product?.images[0]}
+                  width={580}
+                  height={350}
+                  alt="PromationModal"
+                />
+                <div className="flex items-center justify-between gap-1 md:gap-4 relative z-10 mt-10">
+                  {time?.map((item) => (
+                    <div
+                      key={item.timer}
+                      className="text-center flex flex-col items-center text-xs lg:text-lg"
+                    >
+                      <div className="bg-opacity-50 text-md sm:w-max lg:text-4xl border px-2 lg:px-7 py-1 lg:py-2">
+                        <h1 className="font-light">{item.timer}</h1>
+                      </div>
+                      <p className="text-sm">{item.timerText}</p>
                     </div>
-                    <p className="text-sm">{item.timerText}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* Right side content */}
-            <div className="flex flex-col gap-3 md:gap-5 sm:items-start items-center pt-10 pr-16">
-              <div className="flex flex-col gap-4 sm:items-start justify-start">
-                <p className="text-lg">This month you can get the product</p>
-                <h1 className="text-[#1C1B1D] text-lg sm:text-3xl md:text-5xl font-extrabold line-clamp-2 capitalize">
-                  {competitionData?.product?.name}
-                </h1>
-                <p className="md:text-lg text-sm">
-                  The winner will be drawn on the 5th of each month at 6 p.m.
-                  You can find further information in the terms and conditions.
-                  The closing date for entries is 5:55 p.m.
-                </p>
-              </div>
-              <div className="flex flex-col gap-4 sm:w-max">
-                <p className="font-bold text-lg md:text-xl">
-                  {competitionData?.question}
-                </p>
-                <RadioGroup
-                  className="flex justify-between"
-                  defaultValue="i"
-                  onValueChange={(value) => setAnswer(value)}
-                >
-                  <div className="flex items-center space-x-3">
-                    <RadioGroupItem
-                      className="focus-visible:ring-transparent "
-                      value={competitionData?.wrongAnswer}
-                      id="r2"
-                    />
-                    <Label
-                      className="font-bold capitalize text-lg"
-                      htmlFor="r2"
-                    >
-                      {competitionData?.wrongAnswer}
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <RadioGroupItem
-                      value={competitionData?.rightAnswer}
-                      id="r1"
-                    />
-                    <Label
-                      className="font-bold capitalize text-lg"
-                      htmlFor="r1"
-                    >
-                      {competitionData?.rightAnswer}
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              <div className="flex flex-col gap-4 md:gap-5">
-                <RadioGroup
-                  className="flex justify-between"
-                  defaultValue="i"
-                  onValueChange={(value) => setAcceptTerms(value)}
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem
-                      className="h-7 w-7 focus-visible:ring-transparent"
-                      value="accept"
-                      id="r2"
-                    />
-                    <Label className="text-lg font-normal" htmlFor="r2">
-                      I accept the conditions of participation.
-                    </Label>
-                  </div>
-                </RadioGroup>
-                <div className="flex gap-2">
-                  <button
-                    disabled={isPending}
-                    onClick={handleParticipate}
-                    className="md:text-xl text-xs h-[60px] w-[270px] rounded-full gradient-primary text-white"
-                  >
-                    {isPending ? "Participating..." : "Participate For A Fee"}
-                  </button>
+                  ))}
                 </div>
-                <p className="text-lg">
-                  Participation fee{" "}
-                  <span className="font-semibold">
-                    {/* {competitionData?.fee * snapPointsRatio} */}
-                    {competitionData?.fee}
-                  </span>{" "}
-                  snap points /{" "}
-                  <span className="font-semibold">
-                    {/* {competitionData?.fee}€ */}
-                    {competitionData?.fee / snapPointsRatio}€
-                  </span>
-                </p>
+              </div>
+              {/* Right side content */}
+              <div className="flex flex-col gap-3 md:gap-5 sm:items-start items-center pt-10 pr-16">
+                <div className="flex flex-col gap-4 sm:items-start justify-start">
+                  <p className="text-lg">This month you can get the product</p>
+                  <h1 className="text-[#1C1B1D] text-lg sm:text-3xl md:text-5xl font-extrabold line-clamp-2 capitalize">
+                    {competitionData?.product?.name}
+                  </h1>
+                  <p className="md:text-lg text-sm">
+                    The winner will be drawn on the 5th of each month at 6 p.m.
+                    You can find further information in the terms and
+                    conditions. The closing date for entries is 5:55 p.m.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-4 sm:w-max">
+                  <p className="font-bold text-lg md:text-xl">
+                    {competitionData?.question}
+                  </p>
+                  <RadioGroup
+                    className="flex justify-between"
+                    defaultValue="i"
+                    onValueChange={(value) => setAnswer(value)}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem
+                        className="focus-visible:ring-transparent "
+                        value={competitionData?.wrongAnswer}
+                        id="r2"
+                      />
+                      <Label
+                        className="font-bold capitalize text-lg"
+                        htmlFor="r2"
+                      >
+                        {competitionData?.wrongAnswer}
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem
+                        value={competitionData?.rightAnswer}
+                        id="r1"
+                      />
+                      <Label
+                        className="font-bold capitalize text-lg"
+                        htmlFor="r1"
+                      >
+                        {competitionData?.rightAnswer}
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                <div className="flex flex-col gap-4 md:gap-5">
+                  <RadioGroup
+                    className="flex justify-between"
+                    defaultValue="i"
+                    onValueChange={(value) => setAcceptTerms(value)}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        className="h-7 w-7 focus-visible:ring-transparent"
+                        value="accept"
+                        id="r2"
+                      />
+                      <Label className="text-lg font-normal" htmlFor="r2">
+                        I accept the conditions of participation.
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                  <div className="flex gap-2">
+                    <button
+                      disabled={isPending}
+                      onClick={handleParticipate}
+                      className="md:text-xl text-xs h-[60px] w-max rounded-full gradient-primary text-white px-5"
+                    >
+                      {competition?.data[0]?.participants?.some(
+                        (participant: any) =>
+                          participant.user === user?.user?._id
+                      )
+                        ? "You have already participated"
+                        : isPending
+                        ? "Participating..."
+                        : "Participate For A Fee"}
+                    </button>
+                  </div>
+                  <p className="text-lg">
+                    Participation fee{" "}
+                    <span className="font-semibold">
+                      {/* {competitionData?.fee * snapPointsRatio} */}
+                      {competitionData?.fee}
+                    </span>{" "}
+                    snap points /{" "}
+                    <span className="font-semibold">
+                      {/* {competitionData?.fee}€ */}
+                      {competitionData?.fee / snapPointsRatio}€
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="w-full h-[300px] overflow-hidden flex items-center justify-center">
+            <p className="text-2xl font-bold">
+              No active competition for this month
+            </p>
+          </div>
+        )}
       </DialogContent>
     </div>
   );

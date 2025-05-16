@@ -367,57 +367,58 @@ const OrderDetails = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {orderDetails?.data?.cartObject?.cart?.map((item) => {
-                        console.log(item, "item");
-                        console.log(orderDetails, "orderDetails");
-                        return (
-                          <tr
-                            key={item.id}
-                            className="hover:bg-orange-50 transition-colors duration-150"
-                          >
-                            <td className="p-4">
-                              <div className="flex items-center space-x-3">
-                                <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                                  <Image
-                                    src={item?.product?.images[0]}
-                                    alt={item?.product?.name}
-                                    width={50}
-                                    height={50}
-                                    className="w-14 h-14 object-contain"
-                                  />
+                      {orderDetails?.data?.cartObject?.rewardCart?.map(
+                        (item) => {
+                          console.log(item, "item");
+                          console.log(orderDetails, "orderDetails");
+                          return (
+                            <tr
+                              key={item.id}
+                              className="hover:bg-orange-50 transition-colors duration-150"
+                            >
+                              <td className="p-4">
+                                <div className="flex items-center space-x-3">
+                                  <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 min-w-[80px] max-w-[80px] flex items-center justify-center">
+                                    <Image
+                                      src={item?.product?.images[0]}
+                                      alt={item?.product?.name}
+                                      width={50}
+                                      height={50}
+                                      className="w-14 h-14 object-contain"
+                                    />
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-gray-900 line-clamp-2">
+                                      {item?.product?.name}
+                                    </span>
+                                    {item?.product?.sku && (
+                                      <div className="text-xs text-gray-500 mt-1">
+                                        SKU: {item?.product?.sku}
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                                <div>
-                                  <span className="font-medium text-gray-900">
-                                    {item?.product?.name}
-                                  </span>
-                                  {item?.product?.sku && (
-                                    <div className="text-xs text-gray-500 mt-1">
-                                      SKU: {item?.product?.sku}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-800">
-                                {item?.quantity || 0}
-                              </span>
-                            </td>
-                            <td className="p-4 text-center">{`${item?.unitPrice?.toFixed(
-                              2
-                            )}€`}</td>
-                            <td className="p-4 text-center font-medium text-gray-900">{`${item?.totalPrice?.toFixed(
-                              2
-                            )}€`}</td>
-                            <td className="p-4 text-center text-sm text-gray-600">
-                              {formatDate(
-                                item?.product?.createdAt || "",
-                                "dd/MM/yyyy"
-                              )}
-                            </td>
-                            {(orderDetails?.data?.status === "completed" ||
-                              orderDetails?.data?.status === "returned" ||
-                              orderDetails?.data?.status === "refunded") && (
+                              </td>
+                              <td className="p-4 text-center">
+                                <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-800">
+                                  {item?.quantity || 0}
+                                </span>
+                              </td>
+                              <td className="p-4 text-center">{`${item?.unitPrice?.toFixed(
+                                2
+                              )}€`}</td>
+                              <td className="p-4 text-center font-medium text-gray-900">{`${item?.totalPrice?.toFixed(
+                                2
+                              )}€`}</td>
+                              <td className="p-4 text-center text-sm text-gray-600">
+                                {formatDate(
+                                  item?.product?.createdAt || "",
+                                  "dd/MM/yyyy"
+                                )}
+                              </td>
+                              {(orderDetails?.data?.status === "completed" ||
+                                orderDetails?.data?.status === "returned" ||
+                                orderDetails?.data?.status === "refunded") && (
                                 <td className="p-4">
                                   <div className="flex gap-2 justify-center items-center">
                                     {returnedProducts?.some(
@@ -440,10 +441,10 @@ const OrderDetails = () => {
                                     ) : (
                                       (orderDetails?.data?.status ===
                                         "completed" ||
-                                      orderDetails?.data?.status ===
-                                        "returned" ||
-                                      orderDetails?.data?.status ===
-                                        "refunded") && (
+                                        orderDetails?.data?.status ===
+                                          "returned" ||
+                                        orderDetails?.data?.status ===
+                                          "refunded") && (
                                         <Tooltip>
                                           <TooltipTrigger asChild>
                                             <button
@@ -519,10 +520,10 @@ const OrderDetails = () => {
                                     ) : (
                                       (orderDetails?.data?.status ===
                                         "completed" ||
-                                      orderDetails?.data?.status ===
-                                        "returned" ||
-                                      orderDetails?.data?.status ===
-                                        "refunded") && (
+                                        orderDetails?.data?.status ===
+                                          "returned" ||
+                                        orderDetails?.data?.status ===
+                                          "refunded") && (
                                         <ReviewModal
                                           orderId={id as string}
                                           product={item.product._id}
@@ -534,6 +535,177 @@ const OrderDetails = () => {
                                   </div>
                                 </td>
                               )}
+                            </tr>
+                          );
+                        }
+                      )}
+                      {orderDetails?.data?.cartObject?.cart?.map((item) => {
+                        console.log(item, "item");
+                        console.log(orderDetails, "orderDetails");
+                        return (
+                          <tr
+                            key={item.id}
+                            className="hover:bg-orange-50 transition-colors duration-150"
+                          >
+                            <td className="p-4">
+                              <div className="flex items-center space-x-3">
+                                <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 min-w-[80px] max-w-[80px] flex items-center justify-center">
+                                  <Image
+                                    src={item?.product?.images[0]}
+                                    alt={item?.product?.name}
+                                    width={50}
+                                    height={50}
+                                    className="w-14 h-14 object-contain"
+                                  />
+                                </div>
+                                <div>
+                                  <span className="font-medium text-gray-900 line-clamp-2">
+                                    {item?.product?.name}
+                                  </span>
+                                  {item?.product?.sku && (
+                                    <div className="text-xs text-gray-500 mt-1">
+                                      SKU: {item?.product?.sku}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
+                            <td className="p-4 text-center">
+                              <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-800">
+                                {item?.quantity || 0}
+                              </span>
+                            </td>
+                            <td className="p-4 text-center">{`${item?.unitPrice?.toFixed(
+                              2
+                            )}€`}</td>
+                            <td className="p-4 text-center font-medium text-gray-900">{`${item?.totalPrice?.toFixed(
+                              2
+                            )}€`}</td>
+                            <td className="p-4 text-center text-sm text-gray-600">
+                              {formatDate(
+                                item?.product?.createdAt || "",
+                                "dd/MM/yyyy"
+                              )}
+                            </td>
+                            {(orderDetails?.data?.status === "completed" ||
+                              orderDetails?.data?.status === "returned" ||
+                              orderDetails?.data?.status === "refunded") && (
+                              <td className="p-4">
+                                <div className="flex gap-2 justify-center items-center">
+                                  {returnedProducts?.some(
+                                    (product) =>
+                                      product.productId === item.product._id
+                                  ) ? (
+                                    <Link
+                                      href={
+                                        (returnedProducts?.find(
+                                          (product) =>
+                                            product.productId ===
+                                            item.product._id
+                                        )?.link as string) || "#"
+                                      }
+                                      className="flex items-center gap-1 text-gray-500 border p-2 rounded-md hover:bg-gray-50 transition-all duration-200 text-xs"
+                                    >
+                                      <Eye size={15} />
+                                      Returned
+                                    </Link>
+                                  ) : (
+                                    (orderDetails?.data?.status ===
+                                      "completed" ||
+                                      orderDetails?.data?.status ===
+                                        "returned" ||
+                                      orderDetails?.data?.status ===
+                                        "refunded") && (
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <button
+                                            className="bg-orange-500 hover:bg-orange-600 transition-all duration-200 shadow-sm cursor-pointer text-white p-2 rounded-md"
+                                            onClick={() =>
+                                              handleReturnClick(
+                                                item.product._id,
+                                                item.quantity
+                                              )
+                                            }
+                                          >
+                                            <Undo2 className="w-4 h-4" />
+                                          </button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                          <p>Return Product</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    )
+                                  )}
+                                  {reviewedProducts?.some(
+                                    (product) =>
+                                      product.productId === item.product._id
+                                  ) ? (
+                                    <HoverPopover
+                                      className="flex gap-2 items-center bg-white hover:bg-gray-50 border border-gray-200 transition-all duration-200 p-2 rounded-md text-sm cursor-default"
+                                      content={
+                                        <div className="space-y-3">
+                                          <h4 className="font-semibold text-gray-900 text-lg">
+                                            Your Review
+                                          </h4>
+                                          <div className="space-y-3">
+                                            <div>
+                                              <span className="font-medium text-gray-700 block mb-1">
+                                                Rating:
+                                              </span>
+                                              <div className="flex items-center gap-2">
+                                                {getRatingStars(
+                                                  findReviewInfo(
+                                                    item.product._id
+                                                  )?.rating
+                                                )}
+                                                <span className="text-sm text-gray-600">
+                                                  (
+                                                  {findReviewInfo(
+                                                    item.product._id
+                                                  )?.rating || "N/A"}
+                                                  /5)
+                                                </span>
+                                              </div>
+                                            </div>
+                                            <div>
+                                              <span className="font-medium text-gray-700 block mb-1">
+                                                Comment:
+                                              </span>
+                                              <p className="text-gray-700 bg-orange-50 p-3 rounded-md italic border-l-2 border-orange-300">
+                                                "
+                                                {findReviewInfo(
+                                                  item.product._id
+                                                )?.review || "No comment"}
+                                                "
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      }
+                                    >
+                                      <CheckCheckIcon className="w-4 h-4 text-green-500" />
+                                      <span className="text-xs text-gray-600">
+                                        Reviewed
+                                      </span>
+                                    </HoverPopover>
+                                  ) : (
+                                    (orderDetails?.data?.status ===
+                                      "completed" ||
+                                      orderDetails?.data?.status ===
+                                        "returned" ||
+                                      orderDetails?.data?.status ===
+                                        "refunded") && (
+                                      <ReviewModal
+                                        orderId={id as string}
+                                        product={item.product._id}
+                                        userName={user?.user?.name}
+                                        refetch={refetch}
+                                      />
+                                    )
+                                  )}
+                                </div>
+                              </td>
+                            )}
                           </tr>
                         );
                       })}
@@ -572,13 +744,6 @@ const OrderDetails = () => {
                       </div>
 
                       <div className="flex justify-between items-center py-3">
-                        <span className="text-gray-600">
-                          DE Shipping (Weight 0.00kg):
-                        </span>
-                        <span>N/A</span>
-                      </div>
-
-                      <div className="flex justify-between items-center py-3">
                         <span className="text-gray-600">VAT:</span>
                         <span>{`${orderDetails?.data?.cartObject?.vat}%`}</span>
                       </div>
@@ -600,8 +765,9 @@ const OrderDetails = () => {
                       </div>
 
                       <div className="flex justify-between items-center py-3">
-                        <span className="text-gray-600">Recharge credit:</span>
-                        <span>N/A</span>
+                        <span className="text-gray-600">Voucher Discount:</span>
+                        <span>{`${(orderDetails?.data?.cartObject?.voucherDiscount).toFixed(2)}€` ||
+                            "0€"}</span>
                       </div>
 
                       <div className="flex justify-between items-center pt-4">

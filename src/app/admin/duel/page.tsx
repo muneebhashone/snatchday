@@ -29,8 +29,6 @@ import { useDebounce } from "@/hooks/useDebounce";
 
 const DUEL_STATUSES = [
   { value: "pending", label: "Pending" },
-  { value: "waiting-for-opponent", label: "Waiting for Opponent" },
-  { value: "in-progress", label: "In Progress" },
   { value: "completed", label: "Completed" },
   { value: "cancelled", label: "Cancelled" },
 ];
@@ -93,7 +91,6 @@ const DuelPage = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={undefined}>All Statuses</SelectItem>
                 {DUEL_STATUSES.map((status) => (
                   <SelectItem key={status.value} value={status.value}>
                     {status.label}

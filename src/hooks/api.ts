@@ -169,6 +169,9 @@ import {
   getCompetitionParticipants,
   addToCartReward,
   removeFromCartReward,
+  GetTournamentRecentWinner,
+  GetCompetitionRecentWinner,
+  GetVIPProducts,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1515,10 +1518,40 @@ export const useAddToCartReward = () => {
 
 export const useRemoveFromCartReward = () => {
   return useMutation({
-    mutationFn: (productRewardId: string) => removeFromCartReward(productRewardId),
+    mutationFn: (productRewardId: string) =>
+      removeFromCartReward(productRewardId),
   });
 };
 
 //rewards api end
 
+export const useGetTournamentRecentWinner = () => {
+  return useQuery({
+    queryKey: ["tournamentRecentWinner"],
+    queryFn: () => GetTournamentRecentWinner(),
+  });
+};
+
+export const useGetCompetitionRecentWinner = () => {
+  return useQuery({
+    queryKey: ["competitionRecentWinner"],
+    queryFn: () => GetCompetitionRecentWinner(),
+  });
+};
+
+export const useGetVIPProducts = (params?: {
+  price?: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+}) => {
+  return useQuery({
+    queryKey: ["vipProducts", params],
+    queryFn: () => GetVIPProducts(params),
+  });
+};
 

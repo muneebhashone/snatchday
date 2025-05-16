@@ -31,6 +31,7 @@ import {
 import { Select as AntdSelect, Spin } from "antd";
 import type { SelectProps } from "antd";
 import Link from "next/link";
+import { Loader } from "lucide-react";
 
 const formSchema = z.object({
   product: z.string().min(1, "Product is required"),
@@ -67,8 +68,9 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
     isLoading,
     refetch,
   } = useGetInfiniteProducts({ limit: "100", name: search });
-  const { mutate: createCompetition } = useCreateCompetition();
-  const { mutate: updateCompetition } = useUpdateCompetition();
+  const { mutate: createCompetition, isPending: creating } =
+    useCreateCompetition();
+  const { mutate: updateCompetition, isPending } = useUpdateCompetition();
   const { data: competition } = useGetCompetitionById(id);
   const competitionData = competition?.data;
 
@@ -244,7 +246,9 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
           <div className="bg-white rounded-md p-4 flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <h1 className="text-xl font-bold">Product Details</h1>
-              <p className="text-sm italic text-gray-500">Enter the competition product information</p>
+              <p className="text-sm italic text-gray-500">
+                Enter the competition product information
+              </p>
             </div>
             <hr className="border-t border-gray-200" />
             <FormField
@@ -323,7 +327,9 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
           <div className="bg-white rounded-md p-4 flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <h1 className="text-xl font-bold">Competition Settings</h1>
-              <p className="text-sm italic text-gray-500">Configure competition parameters</p>
+              <p className="text-sm italic text-gray-500">
+                Configure competition parameters
+              </p>
             </div>
             <hr className="border-t border-gray-200" />
             <FormField
@@ -333,7 +339,14 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -346,7 +359,15 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
                 <FormItem>
                   <FormLabel>Fee</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input
+                      type="number"
+                      onKeyDown={(e) => {
+                        if (e.key === "-") {
+                          e.preventDefault();
+                        }
+                      }}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -413,7 +434,13 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
             </Button>
           </Link>
           <Button type="submit" className="w-max">
-            {mode === "edit" ? "Update Competition" : "Create Competition"}
+            {isPending || creating ? (
+              <Loader className="animate-spin" />
+            ) : mode === "edit" ? (
+              "Update Competition"
+            ) : (
+              "Create Competition"
+            )}
           </Button>
         </div>
       </form>

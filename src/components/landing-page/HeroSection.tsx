@@ -416,7 +416,15 @@ const HeroSection = () => {
                                   Current price:
                                 </p>
                                 <p className="text-2xl font-medium text-primary">
-                                  {tournament.startingPrice}€
+                                  {tournament.startingPrice -
+                                    (tournament.priceReduction >
+                                    tournament.participants?.length *
+                                      (tournament.fee / 100)
+                                      ? tournament.participants?.length *
+                                        (tournament.fee / 100)
+                                      : tournament.priceReduction
+                                    ).toFixed(2)}
+                                  €
                                 </p>
                               </div>
                               <p className="text-xs sm:text-lg mt-4 text-card-foreground">

@@ -14,6 +14,7 @@ interface DynamicPaginationProps {
   currentPage: number;
   onPageChange: (page: number) => void;
   maxVisiblePages?: number;
+  isVIP?: boolean;
 }
 
 export function DynamicPagination({
@@ -22,6 +23,7 @@ export function DynamicPagination({
   currentPage,
   onPageChange,
   maxVisiblePages = 5,
+  isVIP = false,
 }: DynamicPaginationProps) {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const startItem = (currentPage - 1) * itemsPerPage + 1;
@@ -102,7 +104,9 @@ export function DynamicPagination({
             onClick={() => typeof pageNum === "number" && onPageChange(pageNum)}
             className={`px-3 py-1 rounded-full ${
               currentPage === pageNum
-                ? "bg-primary text-white"
+                ? isVIP
+                  ? "bg-[#b97f18] text-white"
+                  : "bg-primary text-white"
                 : pageNum === "..."
                 ? "text-gray-600"
                 : "text-gray-600 hover:bg-gray-100"

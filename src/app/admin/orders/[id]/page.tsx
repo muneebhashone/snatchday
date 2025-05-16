@@ -109,7 +109,7 @@ const Page = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                {order?.data?.cartObject?.rewardCart.map((item) => (
+                {order?.data?.cartObject?.rewardCart?.map((item) => (
                     <TableRow
                       key={item.product._id}
                       className="hover:bg-transparent"

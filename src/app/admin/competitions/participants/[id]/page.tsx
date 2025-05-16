@@ -59,49 +59,63 @@ const Page = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data?.data.map((participant) => (
-                      <TableRow
-                        key={participant._id}
-                        className="hover:bg-muted/50 transition-colors"
-                      >
-                        <TableCell className="font-medium">
-                          {participant.user.name}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {participant.user.email}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className={`${
-                              participant.user.group === "VIP"
-                                ? "bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200"
-                                : "hover:bg-muted/60"
-                            } cursor-default transition-colors`}
-                          >
-                            {participant.user.group}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{participant.answer}</TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {format(new Date(participant.participatedAt), "PPp")}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              participant.winner ? "success" : "secondary"
-                            }
-                            className={`${
-                              participant.winner
-                                ? "bg-green-100 text-green-700 border-green-300 hover:bg-green-200"
-                                : "hover:bg-muted/60"
-                            } cursor-default transition-all duration-200 transform hover:scale-105`}
-                          >
-                            {participant.winner ? "🏆 Winner" : "No"}
-                          </Badge>
+                    {data?.data?.length > 0 ? (
+                      data?.data.map((participant) => (
+                        <TableRow
+                          key={participant._id}
+                          className="hover:bg-muted/50 transition-colors"
+                        >
+                          <TableCell className="font-medium">
+                            {participant.user.name}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {participant.user.email}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant="outline"
+                              className={`${
+                                participant.user.group === "VIP"
+                                  ? "bg-amber-100 text-amber-700 border-amber-300 hover:bg-amber-200"
+                                  : "hover:bg-muted/60"
+                              } cursor-default transition-colors`}
+                            >
+                              {participant.user.group}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{participant.answer}</TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {format(
+                              new Date(participant.participatedAt),
+                              "PPp"
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                participant.winner ? "success" : "secondary"
+                              }
+                              className={`${
+                                participant.winner
+                                  ? "bg-green-100 text-green-700 border-green-300 hover:bg-green-200"
+                                  : "hover:bg-muted/60"
+                              } cursor-default transition-all duration-200 transform hover:scale-105`}
+                            >
+                              {participant.winner ? "🏆 Winner" : "No"}
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={6}
+                          className="text-muted-foreground text-center"
+                        >
+                          No participants found
                         </TableCell>
                       </TableRow>
-                    ))}
+                    )}
                   </TableBody>
                 </Table>
               </div>

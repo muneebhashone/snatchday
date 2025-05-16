@@ -45,12 +45,26 @@ import { toast } from "sonner";
 import ReturnDetailsPage from "@/components/admin/ReturnDetails";
 
 // Define form schema
-const formSchema = z.object({
-  status: z.string(),
-  customerInformed: z.boolean().default(false),
-  remarks: z.string().optional(),
-  //   fileUpload: z.instanceof(File).optional(),
-});
+const formSchema = z
+  .object({
+    status: z.string(),
+    customerInformed: z.boolean().default(false),
+    remarks: z.string().optional(),
+    refundAmountInSnapPoints: z.string().optional(),
+    //   fileUpload: z.instanceof(File).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.status === "complete") {
+        return Number(data.refundAmountInSnapPoints) > 0;
+      }
+      return true;
+    },
+    {
+      message: "Refund amount is required",
+      path: ["refundAmountInSnapPoints"],
+    }
+  );
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -80,6 +94,7 @@ export default function ReturnHistory() {
       customerInformed: data.customerInformed,
       remarks: data.remarks,
       date: new Date().toLocaleDateString(),
+      refundAmountInSnapPoints: data.refundAmountInSnapPoints,
     };
     console.log(updateData, "updateData");
     await updateReturnMutation(
@@ -147,7 +162,7 @@ export default function ReturnHistory() {
 
         <div className="p-4">
           <h3 className="text-lg font-medium mb-6 flex items-center text-primary">
-            <span>+</span> Return history
+            <span>+ </span> Return history
           </h3>
 
           <Form {...form}>
@@ -183,6 +198,39 @@ export default function ReturnHistory() {
                           </Select>
                         </FormControl>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {/* Refund amount */}
+                  <FormField
+                    control={form.control}
+                    name="refundAmountInSnapPoints"
+                    render={({ field }) => (
+                      <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4 border-t pt-4">
+                        <FormLabel className="text-right pr-4 font-medium">
+                          Refund amount
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            onChange={(e) => {
+                              // Prevent negative values and minus sign
+                              if (
+                                e.target.value === "-" ||
+                                Number(e.target.value) < 0
+                              ) {
+                                e.preventDefault();
+                                return;
+                              }
+                              field.onChange(e);
+                            }}
+                            type="number"
+                            {...field}
+                            placeholder="Enter refund amount"
+                          />
+                        </FormControl>
+                        <div className="w-full text-center">
+                          <FormMessage />
+                        </div>
                       </FormItem>
                     )}
                   />

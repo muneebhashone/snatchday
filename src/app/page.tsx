@@ -14,7 +14,7 @@ import TournamentWinner from "@/components/landing-page/TournamentWinner";
 import { useGetReviews } from "@/hooks/api";
 import { useUserContext } from "@/context/userContext";
 import { useSocket } from "@/context/SocketContext";
-
+import CompetitionWinner from "@/components/CompetitionWinner";
 export default function Home() {
   const { scrollYProgress } = useScroll();
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
@@ -143,6 +143,15 @@ export default function Home() {
           transition={{ duration: 0.8 }}
         >
           <DuelArena />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
+          <CompetitionWinner />
         </motion.div>
 
         <motion.div

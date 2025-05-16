@@ -53,7 +53,7 @@ const OrdersTable = () => {
               Order No.
             </TableHead>
             <TableHead className="text-primary font-bold">Date</TableHead>
-            <TableHead className="text-primary font-bold">Article</TableHead>
+            <TableHead className="text-primary font-bold">Products</TableHead>
             <TableHead className="text-primary font-bold text-center">
               Number
             </TableHead>
@@ -90,8 +90,15 @@ const OrdersTable = () => {
                 </TableCell>
                 <TableCell className="">
                   <ul className="p-0 m-0">
-                    {order?.cartObject?.cart?.map((item) => (
-                      <li key={item?.product?.id}>{item?.product?.name}</li>
+                    {order?.cartObject?.rewardCart?.map((item, index) => (
+                      <li className="line-clamp-1" key={index}>
+                        {item?.product?.name}
+                      </li>
+                    )) || "N/A"}
+                    {order?.cartObject?.cart?.map((item, index) => (
+                      <li className="line-clamp-1" key={index}>
+                        {item?.product?.name}
+                      </li>
                     )) || "N/A"}
                   </ul>
                 </TableCell>

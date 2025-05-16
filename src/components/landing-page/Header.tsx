@@ -59,8 +59,8 @@ import {
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import SubscriptionNotificationDialog from "../SubscriptionNotificationDialog";
-import { useSocket } from "@/context/SocketContext";
 import { useUserContext } from "@/context/userContext";
+import CompetitionNotification from "../CompetitionNotification";
 const Header = () => {
   const {
     data: myprofile,
@@ -75,13 +75,13 @@ const Header = () => {
     useMarkAsRead(notificationReadID);
   const { data: cartData } = useGetCart();
   const { data: wishlist } = useGetWishList();
-  const { socket } = useSocket();
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const [isSubscriptionDialogOpen, setIsSubscriptionDialogOpen] =
     useState(false);
+  const [isCompetitionDialogOpen, setIsCompetitionDialogOpen] = useState(false);
 
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 1000);
@@ -102,16 +102,6 @@ const Header = () => {
 
   const [isNotificationDialogOpen, setIsNotificationDialogOpen] =
     useState(false);
-
-  useEffect(() => {
-    console.log(socket, "socket");
-    socket?.on("duel", (data) => {
-      console.log(data, "socket data");
-    });
-    socket?.on("reconnect", (data) => {
-      console.log(user, "user");
-    });
-  }, [socket]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -205,6 +195,14 @@ const Header = () => {
       );
       if (subscriptionNotifications.length > 0) {
         setIsSubscriptionDialogOpen(true);
+      }
+    }
+    if (myprofile?.data?.notifications?.length > 0) {
+      const competitionNotifications = myprofile.data.notifications.filter(
+        (item) => item.type === "competition"
+      );
+      if (competitionNotifications.length > 0) {
+        setIsCompetitionDialogOpen(true);
       }
     }
   }, [myprofile?.data?.notifications]);
@@ -342,6 +340,12 @@ const Header = () => {
       <SubscriptionNotificationDialog
         isNotificationDialogOpen={isSubscriptionDialogOpen}
         setIsNotificationDialogOpen={setIsSubscriptionDialogOpen}
+        myprofile={myprofile}
+        refetch={refetch}
+      />
+      <CompetitionNotification
+        isNotificationDialogOpen={isCompetitionDialogOpen}
+        setIsNotificationDialogOpen={setIsCompetitionDialogOpen}
         myprofile={myprofile}
         refetch={refetch}
       />
@@ -673,7 +677,10 @@ const Header = () => {
           >
             <ShoppingCart className="h-6 w-6" />
             <span className="absolute -top-4 left-2 bg-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-              {cartData?.data ? cartData?.data?.cart?.length + cartData?.data?.rewardCart?.length : 0}
+              {cartData?.data
+                ? cartData?.data?.cart?.length +
+                  cartData?.data?.rewardCart?.length
+                : 0}
             </span>
           </button>
           <div className="text-sm text-foreground text-start">
