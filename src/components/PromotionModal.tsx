@@ -172,7 +172,7 @@ export function PromotionModal() {
             <p className="text-white text-xs sm:text-sm lg:text-[24px] font-normal bg-[#D9AEE7] bg-opacity-10  py-4 px-14 rounded-full">
               Participation costs{" "}
               <span className="text-primary font-bold">
-                {`${competitionData?.fee || 0 / snapPointsRatio || 0} € / ${
+                {`${competitionData?.fee / snapPointsRatio || 0} € / ${
                   competitionData?.fee || 0
                 }`}
               </span>{" "}
@@ -278,7 +278,7 @@ export function PromotionModal() {
                     <button
                       disabled={isPending}
                       onClick={handleParticipate}
-                      className="md:text-xl text-xs h-[60px] w-[270px] rounded-full gradient-primary text-white"
+                      className="md:text-xl text-xs h-[60px] w-max rounded-full gradient-primary text-white px-5"
                     >
                       {competition?.data[0]?.participants?.some(
                         (participant: any) =>

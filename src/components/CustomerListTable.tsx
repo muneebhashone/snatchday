@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import { formatCurrency } from "@/lib/utils";
 
 interface CustomerResponse {
   data: {
@@ -135,7 +136,7 @@ export function CustomeListTable({
                     </span>
                   </TableCell>
                   <TableCell className="text-gray-500">
-                    {customer?.spendings || "N/A"}
+                    {formatCurrency(customer?.spendings) || "N/A"}
                   </TableCell>
                   <TableCell className="text-gray-500">
                     {customer.createdAt.split("T")[0]}

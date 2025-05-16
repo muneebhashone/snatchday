@@ -239,7 +239,7 @@ const AllTournaments = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="true">VIP</SelectItem>
-                <SelectItem value="false">Regular</SelectItem>
+                <SelectItem value="false">BASIC</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -381,22 +381,24 @@ const AllTournaments = () => {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <div>
-                                <EditTournamentDialog
-                                  products={products}
-                                  tournament={tournament}
-                                />
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Edit tournament details</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                      <div className="flex gap-2 justify-end">
+                        {tournament.status !== "cancelled" && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div>
+                                  <EditTournamentDialog
+                                    products={products}
+                                    tournament={tournament}
+                                  />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Edit tournament details</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
 
                         <TooltipProvider>
                           <Tooltip>

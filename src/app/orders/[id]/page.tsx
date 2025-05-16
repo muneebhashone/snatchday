@@ -744,13 +744,6 @@ const OrderDetails = () => {
                       </div>
 
                       <div className="flex justify-between items-center py-3">
-                        <span className="text-gray-600">
-                          DE Shipping (Weight 0.00kg):
-                        </span>
-                        <span>N/A</span>
-                      </div>
-
-                      <div className="flex justify-between items-center py-3">
                         <span className="text-gray-600">VAT:</span>
                         <span>{`${orderDetails?.data?.cartObject?.vat}%`}</span>
                       </div>
@@ -772,8 +765,9 @@ const OrderDetails = () => {
                       </div>
 
                       <div className="flex justify-between items-center py-3">
-                        <span className="text-gray-600">Recharge credit:</span>
-                        <span>N/A</span>
+                        <span className="text-gray-600">Voucher Discount:</span>
+                        <span>{`${(orderDetails?.data?.cartObject?.voucherDiscount).toFixed(2)}€` ||
+                            "0€"}</span>
                       </div>
 
                       <div className="flex justify-between items-center pt-4">

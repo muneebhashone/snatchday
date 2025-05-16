@@ -117,9 +117,6 @@ const CustomerOrdersDataList = ({
                     >
                       <LucideEye className="h-4 w-4" />
                     </Link>
-                    <button className="p-2 rounded-md ">
-                      <ReceiptEuroIcon className="h-4 w-4" />
-                    </button>
                   </div>
                 </TableCell>
               </TableRow>

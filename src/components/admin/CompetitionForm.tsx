@@ -31,6 +31,7 @@ import {
 import { Select as AntdSelect, Spin } from "antd";
 import type { SelectProps } from "antd";
 import Link from "next/link";
+import { Loader } from "lucide-react";
 
 const formSchema = z.object({
   product: z.string().min(1, "Product is required"),
@@ -67,8 +68,9 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
     isLoading,
     refetch,
   } = useGetInfiniteProducts({ limit: "100", name: search });
-  const { mutate: createCompetition } = useCreateCompetition();
-  const { mutate: updateCompetition } = useUpdateCompetition();
+  const { mutate: createCompetition, isPending: creating } =
+    useCreateCompetition();
+  const { mutate: updateCompetition, isPending } = useUpdateCompetition();
   const { data: competition } = useGetCompetitionById(id);
   const competitionData = competition?.data;
 
@@ -432,7 +434,13 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
             </Button>
           </Link>
           <Button type="submit" className="w-max">
-            {mode === "edit" ? "Update Competition" : "Create Competition"}
+            {isPending || creating ? (
+              <Loader className="animate-spin" />
+            ) : mode === "edit" ? (
+              "Update Competition"
+            ) : (
+              "Create Competition"
+            )}
           </Button>
         </div>
       </form>

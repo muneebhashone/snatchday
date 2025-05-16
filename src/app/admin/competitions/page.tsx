@@ -72,7 +72,7 @@ const Page = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {competitions?.data.length > 0 ? (
+                {competitions?.data?.length > 0 ? (
                   competitions?.data?.map((item: any) => (
                     <TableRow key={item._id}>
                       <TableCell>
@@ -93,24 +93,24 @@ const Page = () => {
                         </div>
                       </TableCell>
                       <TableCell className="font-medium line-clamp-2 h-[60px] max-h-max max-w-[400px]">
-                        {item.product?.name || "-"}
+                        {item?.product?.name || "-"}
                       </TableCell>
-                      <TableCell>{item.price}</TableCell>
-                      <TableCell>{item.fee}</TableCell>
+                      <TableCell>{item?.price}</TableCell>
+                      <TableCell>{item?.fee}</TableCell>
                       <TableCell>
-                        {item.month
-                          ? monthNames[new Date(item.month).getMonth() + 1]
+                        {item?.month
+                          ? monthNames[new Date(item?.month).getMonth() + 1]
                           : "-"}
                       </TableCell>
                       <TableCell>
                         <span
                           className={`px-2 py-1 rounded-full text-xs capitalize ${
-                            item.status === "active"
+                            item?.status === "active"
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
                           }`}
                         >
-                          {item.status}
+                          {item?.status}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
@@ -133,7 +133,7 @@ const Page = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Link
-                                  href={`/admin/competitions/participants/${item._id}`}
+                                  href={`/admin/competitions/participants/${item?._id}`}
                                 >
                                   <Users className="h-4 w-4" />
                                 </Link>
