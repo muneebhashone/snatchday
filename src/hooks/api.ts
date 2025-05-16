@@ -171,6 +171,7 @@ import {
   removeFromCartReward,
   GetTournamentRecentWinner,
   GetCompetitionRecentWinner,
+  GetVIPProducts,
 } from "../lib/api";
 import {
   TournamentFormData,
@@ -1535,6 +1536,22 @@ export const useGetCompetitionRecentWinner = () => {
   return useQuery({
     queryKey: ["competitionRecentWinner"],
     queryFn: () => GetCompetitionRecentWinner(),
+  });
+};
+
+export const useGetVIPProducts = (params?: {
+  price?: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+}) => {
+  return useQuery({
+    queryKey: ["vipProducts", params],
+    queryFn: () => GetVIPProducts(params),
   });
 };
 

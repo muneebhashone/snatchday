@@ -1326,3 +1326,17 @@ export const GetCompetitionRecentWinner = async () => {
   const response = await axiosInstance.get("/competitions/recent/winners");
   return response.data;
 };
+
+export const GetVIPProducts = async (params?: {
+  price?: string;
+  limit?: string;
+  offset?: string;
+  sort_attr?: string;
+  sort?: string;
+  name?: string;
+  category?: string;
+  type?: string;
+}) => {
+  const response = await axiosInstance.get("/product/vip/shop", { params });
+  return response.data;
+};

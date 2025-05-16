@@ -11,6 +11,7 @@ import { useSocket } from "@/context/SocketContext";
 import { useUserContext } from "@/context/userContext";
 import { useGetMyProfile } from "@/hooks/api";
 import VIPShop from "@/components/VIPShop";
+import { Loader } from "lucide-react";
 const VipShopPage = () => {
   const { socket } = useSocket();
   const { user } = useUserContext();
@@ -25,7 +26,7 @@ const VipShopPage = () => {
   return (
     <ClientLayout>
       <div>
-        {myProfile?.data?.user?.group !== "VIP" ? (
+        {myProfile?.data?.user?.group === "BASIC" ? (
           <>
             <SecondaryHeroSection
               title="VIP Shop"
@@ -36,8 +37,12 @@ const VipShopPage = () => {
             <Testimonials />
             <RatingsSection />
           </>
-        ) : (
+        ) : myProfile?.data?.user?.group === "VIP" ? (
           <VIPShop />
+        ) : (
+          <div className="flex justify-center items-center h-screen">
+            <Loader className="animate-spin text-primary h-10 w-10" />
+          </div>
         )}
       </div>
     </ClientLayout>
