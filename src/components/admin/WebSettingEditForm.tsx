@@ -127,8 +127,6 @@ useEffect(() => {
       [{ 'script': 'sub'}, { 'script': 'super' }],
       [{ 'indent': '-1'}, { 'indent': '+1' }],
       [{ 'color': [] }, { 'background': [] }],
-      ['link', 'image'],
-      ['clean']
     ],
   };
 

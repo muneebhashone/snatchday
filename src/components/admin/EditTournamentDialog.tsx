@@ -92,40 +92,45 @@ import { Select as AntdSelect, Spin, SelectProps } from "antd";
 //   vip: z.boolean(),
 //   resubmissions: z.coerce.number().min(0, "Resubmissions must be positive"),
 // });
-const formSchema = z.object({
-  id: z.string().nonempty("ID is required"),
-  name: z.string().nonempty("Name is required"),
-  title: z.string().nonempty("Title is required"),
-  textForBanner: z.string().nonempty("Banner text is required"),
-  metaTitle: z.string().nonempty("Meta title is required"),
-  metaDescription: z.string().nonempty("Meta description is required"),
-  metaKeywords: z.string().nonempty("Meta keywords is required"),
-  article: z.string().nonempty("Article is required"),
-  startingPrice: z.coerce.number().min(1, "Starting price must be positive"),
-  priceReduction: z.coerce.number().min(1, "Price reduction must be positive"),
-  numberOfPieces: z.coerce
-    .number()
-    .min(1, "Number of pieces must be at least 1"),
-  game: z.string().nonempty("Game is required"),
-  start: z.string().nonempty("Start date is required"),
-  end: z.string().nonempty("End date is required"),
-  length: z.coerce.number().min(1, "Length must be at least 1"),
-  fee: z.coerce.number().min(1, "Fee must be positive"),
-  numberOfParticipants: z.coerce
-    .number()
-    .min(1, "Number of participants must be at least 1"),
-  vip: z.boolean(),
-  resubmissions: z.coerce.number().min(1, "Resubmissions must be positive"),
-}).refine(
-  (data) => {
-    if (!data.startingPrice || !data.priceReduction) return true;
-    return data.priceReduction <= data.startingPrice;
-  },
-  {
-    message: "Price reduction cannot be greater than starting price",
-    path: ["priceReduction"],
-  }
-);
+const formSchema = z
+  .object({
+    id: z.string().nonempty("ID is required"),
+    name: z.string().nonempty("Name is required"),
+    title: z.string().nonempty("Title is required"),
+    textForBanner: z.string().nonempty("Banner text is required"),
+    metaTitle: z.string().nonempty("Meta title is required"),
+    metaDescription: z.string().nonempty("Meta description is required"),
+    metaKeywords: z.string().nonempty("Meta keywords is required"),
+    article: z.string().nonempty("Article is required"),
+    startingPrice: z.coerce.number().min(1, "Starting price must be positive"),
+    priceReduction: z.coerce
+      .number()
+      .min(1, "Price reduction must be positive"),
+    numberOfPieces: z.coerce
+      .number()
+      .min(1, "Number of pieces must be at least 1"),
+    game: z.string().nonempty("Game is required"),
+    start: z.string().nonempty("Start date is required"),
+    end: z.string().nonempty("End date is required"),
+    length: z.coerce.number().min(1, "Length must be at least 1"),
+    fee: z.coerce.number().min(1, "Fee must be positive"),
+    numberOfParticipants: z.coerce
+      .number()
+      .min(1, "Number of participants must be at least 1"),
+    image: z.string().nonempty("Image is required"),
+    vip: z.boolean(),
+    resubmissions: z.coerce.number().min(1, "Resubmissions must be positive"),
+  })
+  .refine(
+    (data) => {
+      if (!data.startingPrice || !data.priceReduction) return true;
+      return data.priceReduction <= data.startingPrice;
+    },
+    {
+      message: "Price reduction cannot be greater than starting price",
+      path: ["priceReduction"],
+    }
+  );
 
 // Define product interface
 interface Product {
@@ -185,7 +190,9 @@ export function EditTournamentDialog({
   )?.name;
 
   // For Ant Design Product Select
-  const [productOptions, setProductOptions] = useState<{ value: string; label: string }[]>([]);
+  const [productOptions, setProductOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [productSearch, setProductSearch] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -198,20 +205,29 @@ export function EditTournamentDialog({
       const uniqueProducts = Array.from(
         new Map(products.map((p: Product) => [p._id, p])).values()
       );
-      
-      let newOptions = uniqueProducts.map((p: Product) => ({ value: p._id, label: p.name }));
-      
+
+      let newOptions = uniqueProducts.map((p: Product) => ({
+        value: p._id,
+        label: p.name,
+        image: p.images[0],
+      }));
+
       // If we have a tournament with article ID, ensure it's in the options
       if (tournament && tournament.article) {
-        const selectedProduct = products.find(pro => pro._id === tournament.article);
-        if (selectedProduct && !newOptions.some(opt => opt.value === tournament.article)) {
+        const selectedProduct = products.find(
+          (pro) => pro._id === tournament.article
+        );
+        if (
+          selectedProduct &&
+          !newOptions.some((opt) => opt.value === tournament.article)
+        ) {
           newOptions = [
-            { value: selectedProduct._id, label: selectedProduct.name },
-            ...newOptions
+            { value: selectedProduct._id, label: selectedProduct.name, image: selectedProduct.images[0] },
+            ...newOptions,
           ];
         }
       }
-      
+
       setProductOptions(newOptions);
     }
   }, [products, tournament]);
@@ -225,29 +241,34 @@ export function EditTournamentDialog({
       form.setValue("startingPrice", 0);
       setValue(undefined);
       form.setValue("article", "");
+      form.setValue("image", "");
       return;
     }
-    
+
     const selectedProduct = products.find((p: Product) => p._id === productId);
     if (selectedProduct) {
       // Force reset validation state completely
       form.reset(form.getValues());
-      
+
       // First set the article field and the component state
       form.setValue("article", productId);
       setValue(productId);
-      
+
       // Then set all other fields that come from the product
       if (selectedProduct.name) {
         form.setValue("name", selectedProduct.name);
       }
-      
+
+      if (selectedProduct.images) {
+        form.setValue("image", selectedProduct.images[0]);
+      }
+
       if (selectedProduct.title) {
         form.setValue("title", selectedProduct.title);
-        
+
         // Explicitly tell form this field has been touched and is valid
         form.clearErrors("title");
-        
+
         // Directly update the form state internals to consider title "touched" and valid
         const titleField = form.getFieldState("title");
         if (titleField) {
@@ -256,11 +277,11 @@ export function EditTournamentDialog({
           form.formState.touchedFields.title = true;
         }
       }
-      
+
       if (selectedProduct.price) {
         form.setValue("startingPrice", selectedProduct.price);
       }
-      
+
       // Force re-validation of the entire form if needed
       setTimeout(() => {
         form.trigger();
@@ -270,6 +291,7 @@ export function EditTournamentDialog({
 
   // Product search handler
   const handleProductSearch = (value: string) => {
+    console.log(value);
     setProductSearch(value);
   };
 
@@ -279,33 +301,37 @@ export function EditTournamentDialog({
       // First clear all form state
       form.reset();
       form.clearErrors();
-      
+
       // Then set the values from tournament
       setTimeout(() => {
-        form.reset({
-          id: tournament._id,
-          name: tournament?.name,
-          title: tournament?.title,
-          textForBanner: tournament?.textForBanner,
-          metaTitle: tournament?.metaTitle,
-          metaDescription: tournament?.metaDescription,
-          metaKeywords: tournament?.metaKeywords,
-          article: tournament?.article,
-          startingPrice: tournament?.startingPrice,
-          priceReduction: tournament?.priceReduction,
-          numberOfPieces: tournament?.numberOfPieces,
-          game: tournament?.game?._id,
-          start: tournament?.start,
-          end: tournament?.end,
-          length: tournament?.length,
-          fee: tournament?.fee,
-          numberOfParticipants: tournament?.numberOfParticipants,
-          vip: tournament?.vip,
-          resubmissions: tournament?.resubmissions,
-        }, {
-          keepDefaultValues: false,
-        });
-        
+        form.reset(
+          {
+            id: tournament._id,
+            name: tournament?.name,
+            title: tournament?.title,
+            image: tournament?.image,
+            textForBanner: tournament?.textForBanner,
+            metaTitle: tournament?.metaTitle,
+            metaDescription: tournament?.metaDescription,
+            metaKeywords: tournament?.metaKeywords,
+            article: tournament?.article,
+            startingPrice: tournament?.startingPrice,
+            priceReduction: tournament?.priceReduction,
+            numberOfPieces: tournament?.numberOfPieces,
+            game: tournament?.game?._id,
+            start: tournament?.start,
+            end: tournament?.end,
+            length: tournament?.length,
+            fee: tournament?.fee,
+            numberOfParticipants: tournament?.numberOfParticipants,
+            vip: tournament?.vip,
+            resubmissions: tournament?.resubmissions,
+          },
+          {
+            keepDefaultValues: false,
+          }
+        );
+
         // Set the initial value for Ant Design select
         setValue(tournament?.article);
       }, 100);
@@ -315,23 +341,25 @@ export function EditTournamentDialog({
   async function onSubmit(values: any) {
     // Check title field
     const titleValue = form.getValues("title");
-    
+
     if (!titleValue || titleValue.trim() === "") {
-      form.setError("title", { 
-        type: "manual", 
-        message: "Title is required" 
+      form.setError("title", {
+        type: "manual",
+        message: "Title is required",
       });
       toast.error("Title is required. Please enter a title.");
-      
+
       // Try to focus the title field
-      const titleInput = document.querySelector('input[name="title"]') as HTMLInputElement;
+      const titleInput = document.querySelector(
+        'input[name="title"]'
+      ) as HTMLInputElement;
       if (titleInput) {
         titleInput.focus();
       }
-      
+
       return;
     }
-    
+
     try {
       manageTournament(
         { data: { ...values, article: value } },
@@ -342,7 +370,9 @@ export function EditTournamentDialog({
             setOpen(false);
           },
           onError: (error: any) => {
-            toast.error(error.response?.data?.message || "Failed to update tournament");
+            toast.error(
+              error.response?.data?.message || "Failed to update tournament"
+            );
             console.error(error);
           },
         }
@@ -365,28 +395,34 @@ export function EditTournamentDialog({
           <DialogTitle>Edit Tournament</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form 
+          <form
             onSubmit={form.handleSubmit(onSubmit, (errors) => {
               console.error("Form errors:", errors);
-              if(errors.title) {
-                toast.error("Title is required. Please select an article or enter a title manually.");
+              if (errors.title) {
+                toast.error(
+                  "Title is required. Please select an article or enter a title manually."
+                );
               } else {
                 toast.error("Please fix form errors before submitting.");
               }
-            })} 
+            })}
             className="space-y-8"
           >
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Tournament Information Section */}
               <div className="bg-white rounded-lg border p-6 col-span-2">
-                <h2 className="text-lg font-semibold mb-6">Tournament Information</h2>
+                <h2 className="text-lg font-semibold mb-6">
+                  Tournament Information
+                </h2>
                 <div className="space-y-6">
                   <FormField
                     control={form.control}
                     name="article"
                     render={({ field, fieldState }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-1">Article *</FormLabel>
+                        <FormLabel className="flex items-center gap-1">
+                          Article *
+                        </FormLabel>
                         <FormControl>
                           <div className="w-full">
                             <AntdSelect
@@ -395,7 +431,11 @@ export function EditTournamentDialog({
                               value={value || undefined}
                               onChange={handleProductSelect}
                               onSearch={handleProductSearch}
-                              filterOption={false}
+                              filterOption={(input, option) =>
+                                (option?.label ?? "")
+                                  .toLowerCase()
+                                  .includes(input.toLowerCase())
+                              }
                               options={productOptions}
                               style={{ width: "100%", height: "40px" }}
                               allowClear
@@ -434,13 +474,20 @@ export function EditTournamentDialog({
                       <FormItem>
                         <FormLabel>Title *</FormLabel>
                         <FormControl>
-                          <Input 
-                            {...field} 
-                            className={(form.formState.errors.title ? "border-red-500" : "")}
+                          <Input
+                            {...field}
+                            className={
+                              form.formState.errors.title
+                                ? "border-red-500"
+                                : ""
+                            }
                             onChange={(e) => {
                               field.onChange(e);
                               // Clear error if value is not empty
-                              if (e.target.value && e.target.value.trim() !== "") {
+                              if (
+                                e.target.value &&
+                                e.target.value.trim() !== ""
+                              ) {
                                 form.clearErrors("title");
                               }
                             }}
@@ -475,7 +522,10 @@ export function EditTournamentDialog({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Game *</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select game" />
@@ -498,7 +548,9 @@ export function EditTournamentDialog({
 
               {/* Tournament Settings Section */}
               <div className="bg-white rounded-lg border p-6">
-                <h2 className="text-lg font-semibold mb-6">Tournament Settings</h2>
+                <h2 className="text-lg font-semibold mb-6">
+                  Tournament Settings
+                </h2>
                 <div className="space-y-6">
                   <FormField
                     control={form.control}
@@ -527,7 +579,7 @@ export function EditTournamentDialog({
                     control={form.control}
                     name="priceReduction"
                     render={({ field }) => {
-                      const startingPrice = form.watch('startingPrice');
+                      const startingPrice = form.watch("startingPrice");
                       return (
                         <FormItem>
                           <FormLabel>Price Reduction *</FormLabel>
@@ -540,14 +592,19 @@ export function EditTournamentDialog({
                                   e.preventDefault();
                                 }
                               }}
-                              className={field.value > startingPrice ? "border-destructive" : ""}
+                              className={
+                                field.value > startingPrice
+                                  ? "border-destructive"
+                                  : ""
+                              }
                             />
                           </FormControl>
                           <FormMessage />
                           {field.value > startingPrice && (
                             <p className="text-destructive text-sm mt-1 flex items-center gap-1">
                               <AlertCircle className="h-3 w-3" />
-                              Price reduction cannot be greater than starting price ({startingPrice})
+                              Price reduction cannot be greater than starting
+                              price ({startingPrice})
                             </p>
                           )}
                         </FormItem>
@@ -605,7 +662,9 @@ export function EditTournamentDialog({
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Tournament Schedule Section */}
               <div className="bg-white rounded-lg border p-6">
-                <h2 className="text-lg font-semibold mb-6">Tournament Schedule</h2>
+                <h2 className="text-lg font-semibold mb-6">
+                  Tournament Schedule
+                </h2>
                 <div className="space-y-6">
                   <FormField
                     control={form.control}
@@ -632,11 +691,18 @@ export function EditTournamentDialog({
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0 z-[100]" align="start">
+                          <PopoverContent
+                            className="w-auto p-0 z-[100]"
+                            align="start"
+                          >
                             <Calendar
                               mode="single"
-                              selected={field.value ? new Date(field.value) : undefined}
-                              onSelect={(date) => field.onChange(date?.toISOString())}
+                              selected={
+                                field.value ? new Date(field.value) : undefined
+                              }
+                              onSelect={(date) =>
+                                field.onChange(date?.toISOString())
+                              }
                               disabled={(date) => {
                                 if (form.getValues("end")) {
                                   return (
@@ -698,7 +764,9 @@ export function EditTournamentDialog({
 
               {/* Tournament Options Section */}
               <div className="bg-white rounded-lg border p-6">
-                <h2 className="text-lg font-semibold mb-6">Tournament Options</h2>
+                <h2 className="text-lg font-semibold mb-6">
+                  Tournament Options
+                </h2>
                 <div className="space-y-6">
                   <FormField
                     control={form.control}
@@ -750,7 +818,9 @@ export function EditTournamentDialog({
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-base">VIP Tournament</FormLabel>
+                          <FormLabel className="text-base">
+                            VIP Tournament
+                          </FormLabel>
                           <FormDescription>
                             Mark this tournament as VIP for special access
                           </FormDescription>

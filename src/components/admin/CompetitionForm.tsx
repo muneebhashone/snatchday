@@ -385,18 +385,26 @@ export const CompetitionForm: React.FC<CompetitionFormProps> = ({
                         <SelectValue placeholder="Select month" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="1">January</SelectItem>
-                        <SelectItem value="2">February</SelectItem>
-                        <SelectItem value="3">March</SelectItem>
-                        <SelectItem value="4">April</SelectItem>
-                        <SelectItem value="5">May</SelectItem>
-                        <SelectItem value="6">June</SelectItem>
-                        <SelectItem value="7">July</SelectItem>
-                        <SelectItem value="8">August</SelectItem>
-                        <SelectItem value="9">September</SelectItem>
-                        <SelectItem value="10">October</SelectItem>
-                        <SelectItem value="11">November</SelectItem>
-                        <SelectItem value="12">December</SelectItem>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((monthNum) => {
+                          const isDisabled = mode === "edit" && 
+                            competitionData?.month && 
+                            monthNum < parseInt(form.getValues("month"));
+                          
+                          const monthNames = [
+                            "January", "February", "March", "April", "May", "June",
+                            "July", "August", "September", "October", "November", "December"
+                          ];
+                          
+                          return (
+                            <SelectItem 
+                              key={monthNum} 
+                              value={monthNum.toString()}
+                              disabled={isDisabled}
+                            >
+                              {monthNames[monthNum - 1]}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </FormControl>

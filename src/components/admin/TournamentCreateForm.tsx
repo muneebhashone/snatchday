@@ -350,7 +350,9 @@ const TournamentCreateForm = ({ productId }: { productId?: string }) => {
                 value={value || undefined}
                 onChange={handleProductSelect}
                 onSearch={handleProductSearch}
-                filterOption={false}
+                filterOption={(input, option) =>
+                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                }
                 options={productOptions}
                 style={{ width: "100%", height: "40px" }}
                 allowClear
