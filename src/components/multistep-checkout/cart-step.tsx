@@ -68,6 +68,7 @@ interface CartStepProps {
 export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
   const { setIsCheckout } = useCheckoutContext();
   const { data: cart, isLoading, refetch } = useGetCart();
+  console.log(cart, "cart");
   const { user } = useUserContext();
   const queryClient = useQueryClient();
 
@@ -75,7 +76,11 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
 
   const { mutateAsync: updateCart, isPending } = useUpdateCart();
   const { data: points, isLoading: isPointsLoading } = useGetPoints();
-  const { data: myprofile, isLoading: isMyProfileLoading, refetch: refetchMyProfile } = useGetMyProfile();
+  const {
+    data: myprofile,
+    isLoading: isMyProfileLoading,
+    refetch: refetchMyProfile,
+  } = useGetMyProfile();
   const { mutateAsync: checkout, isPending: isCheckoutPending } = useCheckout();
   const { setCartData } = useCart();
   const { data: cartItems } = useGetCart();
@@ -685,8 +690,9 @@ export function CartStep({ onNextStep, setCheckoutResponse }: CartStepProps) {
                       isCheckoutPending ||
                       !cart ||
                       !cart.data ||
-                      !cart.data.cart ||
-                      cart.data.cart.length === 0
+                      (!cart.data.cart && cart?.data?.rewardCart) ||
+                      (cart.data.cart.length === 0 &&
+                        cart?.data?.rewardCart.length === 0)
                     }
                     className="bg-[#F37835] text-lg text-white px-5 py-2 rounded-md hover:bg-[#FF9900]"
                   >

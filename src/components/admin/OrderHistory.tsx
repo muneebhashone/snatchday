@@ -6,7 +6,14 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { MessageCircle, Upload, Info, ChevronDown, Loader } from "lucide-react";
+import {
+  MessageCircle,
+  Upload,
+  Info,
+  ChevronDown,
+  Loader,
+  Trash2,
+} from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -36,6 +43,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "../ui/input";
+import {
+  Dialog,
+  DialogHeader,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+  DialogFooter,
+} from "../ui/dialog";
 import { useGetOrderById, usePatchOrder } from "@/hooks/api";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
@@ -54,14 +69,13 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export default function OrderHistory() {
-  //   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [open, setOpen] = useState(false);
+  const [formValues, setFormValues] = useState<FormValues | null>(null);
   const params = useParams();
-  const paramsId = params.id;
+  const paramsId = params.id as string;
   const { data: order } = useGetOrderById(paramsId);
   const { mutate: updateOrder, isPending } = usePatchOrder(paramsId);
   const queryClient = useQueryClient();
-
-  console.log(order?.data.createdAt, "ajgj");
 
   // Initialize form
   const form = useForm<FormValues>({
@@ -73,10 +87,16 @@ export default function OrderHistory() {
     },
   });
 
-  function onSubmit(data) {
-    console.log("Form submitted:", data);
+  const handleSubmit = (data: FormValues) => {
+    setFormValues(data);
+    setOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (!formValues) return;
+
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
+    Object.entries(formValues).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value.toString());
       }
@@ -87,12 +107,15 @@ export default function OrderHistory() {
         toast.success("Order updated successfully");
         queryClient.invalidateQueries({ queryKey: ["order"] });
         form.reset({ status: "", customerInformed: false, remarks: "" });
+        setOpen(false);
+        setFormValues(null);
       },
       onError: (error: any) => {
         toast.error(error.response?.data?.message || "Failed to update order");
+        setOpen(false);
       },
     });
-  }
+  };
 
   return (
     <div className="mt-6">
@@ -156,7 +179,7 @@ export default function OrderHistory() {
             <h3 className="text-lg font-semibold mb-4">Update Order Status</h3>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(handleSubmit)}
                 className="space-y-4"
               >
                 <FormField
@@ -170,6 +193,11 @@ export default function OrderHistory() {
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={
+                          order?.data.status === "completed" ||
+                          order?.data.status === "cancelled" ||
+                          order?.data.status === "refunded"
+                        }
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
@@ -227,16 +255,45 @@ export default function OrderHistory() {
                 />
 
                 <div className="flex justify-end">
-                  <Button
-                    type="submit"
-                    disabled={isPending}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    {isPending ? (
-                      <Loader className="w-4 h-4 animate-spin mr-2" />
-                    ) : null}
-                    Update Status
-                  </Button>
+                  <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        {isPending ? (
+                          <Loader className="w-4 h-4 animate-spin mr-2" />
+                        ) : null}
+                        Update Status
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>
+                          Are you sure you want to update this order?
+                        </DialogTitle>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={handleConfirm}
+                          disabled={isPending}
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          {isPending ? (
+                            <Loader className="w-4 h-4 animate-spin mr-2" />
+                          ) : null}
+                          Confirm Update
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </form>
             </Form>

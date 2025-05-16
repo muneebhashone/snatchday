@@ -266,10 +266,10 @@ const Page = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5 text-gray-400" />
                   <span className="text-sm text-gray-600">12 Orders</span>
-                </div>
+                </div> */}
                 <div className="mt-4">
                   <h3 className="text-sm font-medium mb-2">Contact info</h3>
                   <div className="space-y-1">
