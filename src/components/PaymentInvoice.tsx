@@ -8,84 +8,84 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import LOGOURL from "../app/images/logo.png";
-import { formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 const styles = StyleSheet.create({
   // Page-level styling
-  page: { 
-    padding: 40, 
-    fontFamily: 'Helvetica', 
-    backgroundColor: '#FFFFFF' 
+  page: {
+    padding: 40,
+    fontFamily: "Helvetica",
+    backgroundColor: "#FFFFFF",
   },
-  
+
   // Header Styling
-  header: { 
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    alignItems: "center", 
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 30,
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0'
+    borderBottomColor: "#E0E0E0",
   },
-  logo: { 
-    width: 150, 
-    height: 60 
+  logo: {
+    width: 150,
+    height: 60,
   },
-  invoiceTitle: { 
-    fontSize: 22, 
-    fontWeight: 'extrabold', 
-    color: '#333333' 
+  invoiceTitle: {
+    fontSize: 22,
+    fontWeight: "extrabold",
+    color: "#333333",
   },
 
   // Section Styling
-  section: { 
-    marginBottom: 20, 
+  section: {
+    marginBottom: 20,
     padding: 15,
-    backgroundColor: '#F9F9F9',
-    borderRadius: 5
+    backgroundColor: "#F9F9F9",
+    borderRadius: 5,
   },
-  sectionTitle: { 
-    fontSize: 16, 
-    fontWeight: 'bold', 
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
     marginBottom: 10,
-    color: '#2C3E50',
+    color: "#2C3E50",
     borderBottomWidth: 1,
-    borderBottomColor: '#BDC3C7',
-    paddingBottom: 5
+    borderBottomColor: "#BDC3C7",
+    paddingBottom: 5,
   },
-  detailText: { 
-    fontSize: 11, 
-    color: '#34495E',
-    marginBottom: 5 
+  detailText: {
+    fontSize: 11,
+    color: "#34495E",
+    marginBottom: 5,
   },
-  boldLabel: { 
-    fontWeight: 'bold', 
-    color: '#2980B9' 
+  boldLabel: {
+    fontWeight: "bold",
+    color: "#2980B9",
   },
 
   // Totals Styling
-  totalsSection: { 
-    marginTop: 20, 
-    alignSelf: 'flex-end', 
-    width: '50%',
-    backgroundColor: '#F1F8FF',
+  totalsSection: {
+    marginTop: 20,
+    alignSelf: "flex-end",
+    width: "50%",
+    backgroundColor: "#F1F8FF",
     padding: 15,
-    borderRadius: 5
+    borderRadius: 5,
   },
-  totalText: { 
-    fontSize: 12, 
-    marginBottom: 5, 
-    flexDirection: 'row', 
-    justifyContent: 'space-between' 
+  totalText: {
+    fontSize: 12,
+    marginBottom: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  totalLabel: { 
-    fontWeight: 'bold', 
-    color: '#2C3E50' 
+  totalLabel: {
+    fontWeight: "bold",
+    color: "#2C3E50",
   },
-  totalValue: { 
-    color: '#2980B9' 
-  }
+  totalValue: {
+    color: "#2980B9",
+  },
 });
 
 interface PaymentInvoiceProps {
@@ -126,7 +126,7 @@ const PaymentInvoice: React.FC<PaymentInvoiceProps> = ({ paymentDetails }) => {
           </Text>
           <Text style={styles.detailText}>
             <Text style={styles.boldLabel}>Transaction Type: </Text>
-            {paymentDetails.occurrence || "withdrawal"}
+            {paymentDetails.occurance || "withdrawal"}
           </Text>
           <Text style={styles.detailText}>
             <Text style={styles.boldLabel}>Status: </Text>
@@ -157,10 +157,22 @@ const PaymentInvoice: React.FC<PaymentInvoiceProps> = ({ paymentDetails }) => {
 
         {/* Totals Section */}
         <View style={styles.totalsSection}>
-          <View style={[styles.totalText, { borderTopWidth: 1, borderTopColor: '#2980B9', paddingTop: 5 }]}>
-            <Text style={[styles.totalLabel, { fontSize: 14 }]}>Total Amount:</Text>
-            <Text style={[styles.totalValue, { fontSize: 14, fontWeight: 'bold' }]}>
-              {paymentDetails.amount} €
+          <View
+            style={[
+              styles.totalText,
+              { borderTopWidth: 1, borderTopColor: "#2980B9", paddingTop: 5 },
+            ]}
+          >
+            <Text style={[styles.totalLabel, { fontSize: 14 }]}>
+              Total Amount:
+            </Text>
+            <Text
+              style={[
+                styles.totalValue,
+                { fontSize: 14, fontWeight: "bold", marginLeft: 10 },
+              ]}
+            >
+              {formatCurrency(paymentDetails.amount)}
             </Text>
           </View>
         </View>
