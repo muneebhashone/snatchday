@@ -28,6 +28,7 @@ const Page = () => {
   const { data: getCart, refetch: refetchCart } = useGetCart();
   // const { mutate: removeFromCartReward } = useRemoveFromCartReward();
   const wonProducts = myProfile?.data?.rewards;
+  console.log(wonProducts, "wonProducts");
   const handleAddToCartReward = (productRewardId: string) => {
     addToCartReward(productRewardId, {
       onSuccess: () => {
@@ -83,23 +84,29 @@ const Page = () => {
                         </span>
                       </TableCell>
                       <TableCell>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                onClick={() =>
-                                  handleAddToCartReward(product?._id)
-                                }
-                                variant="outline"
-                              >
-                                <BaggageClaim className="w-4 h-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Claim Reward</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                        {!product?.claimed ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  onClick={() =>
+                                    handleAddToCartReward(product?._id)
+                                  }
+                                  variant="outline"
+                                >
+                                  <BaggageClaim className="w-4 h-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Claim Reward</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : (
+                          <span className="px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                            Claimed
+                          </span>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
