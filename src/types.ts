@@ -118,6 +118,7 @@ export interface Product {
   ];
   calculatedPrice?: number;
   ratings?: number;
+  description;
 }
 
 export interface ProductsData {
