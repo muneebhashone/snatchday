@@ -69,13 +69,13 @@ const SectionCenter = ({
       </div>
       <div className="container max-w-[1440px] mx-auto px-12 relative z-10">
         <h2 className="text-3xl lg:text-4xl font-extrabold my-5 text-center">
-          {title}
+          {title}{" "}
           <span className="bg-[#FF6B3D] text-white px-4 py-1 rounded-lg ml-2">
             {titlebg}
           </span>
         </h2>
 
-        <p className="text-center text-2xl text-card-foreground mt-10">
+        <p className="text-center sm:text-lg md:text-xl lg:text-2xl text-card-foreground mt-10">
           {description}
         </p>
       </div>

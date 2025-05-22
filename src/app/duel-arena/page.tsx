@@ -31,14 +31,14 @@ const DuelArenaPage = () => {
   const displayProducts = currentOffers?.data.products;
   return (
     <ClientLayout>
-      <main>
+      <main className="overflow-hidden">
         <SecondaryHeroSection title="Duelling" bg={duellingimage} />
         <SectionCenter
           title="How To Play"
           titlebg="Duel Arena"
           description="You can have exciting duels in the duel arena. To start or accept a duel, you need 25 snap points, which is worth 25 cents. There are no additional fees. VIP members are exempt from this fee (see VIP membership). A duel consists of two players. The person who starts the duel determines the stake of the snap or discount points, the game selection and the number of rounds. You can choose up to 5 rounds, with your points, attempts and the time of all rounds being added together. Read More"
         />
-        <div className="gradient-primary text-3xl text-center py-16">
+        <div className="gradient-primary text-xl lg:text-2xl xl:text-3xl text-center py-16">
           <div className="max-w-[1440px] mx-auto">
             <p className="text-white">
               Create a duel with a game you have the most experience with and
@@ -50,7 +50,7 @@ const DuelArenaPage = () => {
           </div>
         </div>
         <div className="pt-20 text-center shadow-lg pb-10">
-          <h2 className="text-4xl font-bold">
+          <h2 className="text-2xl lg:text-3xl xl:text-4xl font-bold">
             Your{" "}
             <span className="bg-primary text-white px-6 py-1 rounded-lg">
               Duel History

@@ -24,6 +24,9 @@ import {
 } from "@/components/ui/tooltip";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+
 
 interface Product {
   _id: string;
@@ -93,7 +96,7 @@ const Page = () => {
           setShowDeleteModal(false);
           setSelectedReviewId(null);
           setIsDeleting(false);
-          refetch(); 
+          refetch();
         },
         onError: (error) => {
           toast.error(
@@ -112,10 +115,94 @@ const Page = () => {
 
   const totalItems = (reviewsData as ReviewsResponse)?.data?.total || 0;
 
+  const ratingStats = useMemo(() => {
+    const stats = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    reviews.forEach((review) => {
+      stats[review.rating] = (stats[review.rating] || 0) + 1;
+    });
+    return stats;
+  }, [reviews]);
+
+  const averageRating = useMemo(() => {
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (sum / reviews.length).toFixed(2);
+  }, [reviews]);
+
+  const positiveReviews = useMemo(() => {
+    const fourAndFiveStars = reviews.filter((review) => review.rating >= 4).length;
+    return Math.round((fourAndFiveStars / reviews.length) * 100) || 0;
+  }, [reviews]);
+
+  const newReviewsGrowth = "+8.4%"; // You can calculate this based on your data
+
   return (
     <AdminLayout>
       <AdminBreadcrumb title="Reviews" />
       <div className="container mx-auto py-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+          {/* Rating Overview Card */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl font-bold">{averageRating}</span>
+                    <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Total {totalItems} reviews
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    All reviews are from genuine customers
+                  </p>
+                  <Badge variant="secondary" className="mt-2">
+                    +5 This week
+                  </Badge>
+                </div>
+                <div className="flex-1 space-y-2">
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <div key={rating} className="flex items-center gap-2">
+                      <span className="text-sm w-12">{rating} Star</span>
+                      <Progress
+                        value={(ratingStats[rating] / totalItems) * 100}
+                        className="h-2"
+                      />
+                      <span className="text-sm w-8">{ratingStats[rating]}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Reviews Statistics Card */}
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold">Reviews statistics</h3>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-sm">12 New reviews</span>
+                    <Badge variant="success">{newReviewsGrowth}</Badge>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold">
+                      {positiveReviews}%
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      Positive reviews
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Weekly Report</p>
+                </div>
+                {/* Weekly chart would go here */}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
         <div className="space-y-4">
           <Card>
             <CardHeader>

@@ -15,7 +15,7 @@ import fot3 from "@/app/images/fot3.svg";
 import fot4 from "@/app/images/fot4.svg";
 import fot5 from "@/app/images/fot5.svg";
 import fot6 from "@/app/images/fot6.svg";
-import { FooterSvg1, FooterSvg2, FooterSvg4, FooterSvg3 } from "../icons/icon";
+import { FooterSvg1, FooterSvg2, FooterSvg4, FooterSvg3, XIcon } from "../icons/icon";
 import CollectPointsModal from "../my-account/CollectPointsModal";
 import { Button } from "../ui/button";
 
@@ -50,9 +50,17 @@ const Footer = () => {
       { label: "Points System", href: "#" },
     ],
     socialMedia: [
-      { icon: <Facebook />, label: "Facebook", href: "https://www.facebook.com/" },
-      { icon: <Instagram />, label: "Instagram", href: "https://www.instagram.com/" },
-      { icon: <X />, label: "X", href: "https://x.com/" },
+      {
+        icon: <Facebook />,
+        label: "Facebook",
+        href: "https://www.facebook.com/",
+      },
+      {
+        icon: <Instagram />,
+        label: "Instagram",
+        href: "https://www.instagram.com/",
+      },
+      { icon: <XIcon />, label: "Twitter", href: "https://twitter.com/" },
     ],
     deliveryServices: [
       { image: dhl, alt: "DHL" },
@@ -128,10 +136,12 @@ const Footer = () => {
 
               {/* Pursue Section */}
               <div className="col-span-1">
-                <p className="font-bold text-white text-lg mb-4">Pursue</p>
-                <ul className="space-y-3">
+                <p className="font-bold text-white text-lg mb-2 md:mb-4">
+                  Pursue
+                </p>
+                <ul className="space-y-1 md:space-y-3">
                   {footerLinks.pursue.map((link, index) => (
-                    <li key={index} className="text-lg text-white">
+                    <li key={index} className="text-sm md:text-lg text-white">
                       <Link href={link.href} className="hover:underline">
                         {link.label}
                       </Link>
@@ -142,12 +152,12 @@ const Footer = () => {
 
               {/* Service Center Section */}
               <div className="col-span-1">
-                <p className="font-bold text-white text-lg mb-4">
+                <p className="font-bold text-white text-lg mb-2 md:mb-4">
                   Service Center
                 </p>
-                <ul className="space-y-3">
+                <ul className="space-y-1 md:space-y-3">
                   {footerLinks.serviceCenter.map((link, index) => (
-                    <li key={index} className="text-lg text-white">
+                    <li key={index} className="text-sm md:text-lg text-white">
                       <Link href={link.href} className="hover:underline">
                         {link.label}
                       </Link>
@@ -158,10 +168,12 @@ const Footer = () => {
 
               {/* Info Center Section */}
               <div className="col-span-1">
-                <p className="font-bold text-white text-lg mb-4">Info Center</p>
-                <ul className="space-y-3">
+                <p className="font-bold text-white text-lg mb-2 md:mb-4">
+                  Info Center
+                </p>
+                <ul className="space-y-1 md:space-y-3">
                   {footerLinks.infoCenter.map((link, index) => (
-                    <li key={index} className="text-lg text-white">
+                    <li key={index} className="text-sm md:text-lg text-white">
                       {link.label === "Points System" ? (
                         <CollectPointsModal
                           customTrigger={
@@ -185,25 +197,25 @@ const Footer = () => {
 
               {/* Social Media & Delivery Section */}
               <div className="col-span-1">
-                <p className="font-bold text-white text-lg mb-4">
+                <p className="font-bold text-white text-lg mb-2 md:mb-4">
                   Social Media
                 </p>
-                <ul className="space-y-4">
+                <ul className="space-y-1 md:space-y-3 flex sm:flex-col sm:items-start items-center sm:gap-0 gap-2">
                   {footerLinks.socialMedia.map((social, index) => (
-                    <li key={index} className="text-lg text-white">
+                    <li key={index} className="text-sm md:text-lg text-white">
                       <Link
                         href={social.href}
                         className="hover:underline flex items-center gap-2"
                       >
                         {social.icon}
-                        {social.label}
+                        <span className="hidden sm:block">{social.label}</span>
                       </Link>
                     </li>
                   ))}
                 </ul>
 
                 <div className="mt-8">
-                  <p className="font-bold mb-4 text-white text-lg">
+                  <p className="font-bold mb-2 md:mb-4 text-white text-lg">
                     Our Delivery Services
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -232,12 +244,12 @@ const Footer = () => {
       {/* Bottom Footer */}
       <div className="bg-[#333333] text-white py-4 text-center">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-          <div className="text-start">
+          <div className="text-sm md:text-base text-start">
             © 2017-2025{" "}
-            <Link href="/" className="hover:underline text-primary">
+            <Link href="/" className="text-sm md:text-base hover:underline text-primary">
               Snatch Day GmbH
             </Link>
-            <p>
+            <p className="text-xs sm:text-sm md:text-base">
               All rights reserved. Snatch Day is a registered trademark and
               protected by copyright.
             </p>

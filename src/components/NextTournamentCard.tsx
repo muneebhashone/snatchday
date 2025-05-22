@@ -12,6 +12,7 @@ import { calculateCountdown } from "@/lib/utils";
 import { start } from "repl";
 import CountdownDisplay from "./CountdownProps";
 import { ShareTournamentModal } from "./ShareTournamentModal";
+import { useUserContext } from "@/context/userContext";
 interface NextTournamentCardProps {
   id?: string;
   // article: string;
@@ -64,6 +65,7 @@ const NextTournamentCard = ({
   priceReduction,
   participants,
 }: NextTournamentCardProps) => {
+  const { user } = useUserContext();
   const countDown = calculateCountdown(start);
   const endDate = calculateCountdown(end);
   const [isShareModalOpen, setShareModalOpen] = useState(false);
@@ -103,19 +105,21 @@ const NextTournamentCard = ({
           {title}
         </div>
 
-        {/* Product Title */}
-        <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D] line-clamp-2">
-          {name}
-        </p>
+        <div className="flex xl:flex-col xl:items-start items-center xl:gap-0 gap-3">
+          {/* Product Title */}
+          <p className="text-lg xl:text-2xl font-semibold mt-2 text-[#2F190D] line-clamp-2">
+            {name}
+          </p>
 
-        {/* Rating */}
-        <div className="flex items-center gap-1">
-          <div className="flex text-primary text-lg xl:text-2xl">
-            {/* {"★".repeat(rating)} */}
-            {"★".repeat(3)}
+          {/* Rating */}
+          <div className="xl:mt-0 mt-1 flex items-center gap-1">
+            <div className="flex text-primary text-lg xl:text-2xl">
+              {/* {"★".repeat(rating)} */}
+              {"★".repeat(3)}
+            </div>
+            {/* <span className="text-sm text-gray-500">({reviews})</span> */}
+            <span className="text-sm text-gray-500">({5})</span>
           </div>
-          {/* <span className="text-sm text-gray-500">({reviews})</span> */}
-          <span className="text-sm text-gray-500">({5})</span>
         </div>
 
         {/* Game Info */}
@@ -130,7 +134,7 @@ const NextTournamentCard = ({
                 width={40}
                 height={37}
               />
-              <Button className="flex items-center justify-center xl:hidden absolute top-3 right-3 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
+              <Button className="items-center justify-center hidden absolute top-3 right-3 w-10 xl:w-12 h-10 xl:h-12 bg-[#F5F5F5] hover:bg-gray-100 rounded-full">
                 <Heart className="w-4 xl:w-6 h-4 xl:h-6 text-[#A5A5A5] " />
               </Button>
             </div>

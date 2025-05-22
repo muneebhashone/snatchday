@@ -12,6 +12,7 @@ import { useGetTournaments } from "@/hooks/api";
 import { TournamentParams } from "@/lib/api";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Loader2 } from "lucide-react";
+import { useUserContext } from "@/context/userContext";
 
 const Page = () => {
   const [filters, setFilters] = useState<TournamentParams>({
@@ -118,30 +119,32 @@ const Page = () => {
   };
 
   const handleLiveChange = (live: boolean) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      status: live.toString()
+      status: live.toString(),
     }));
   };
 
-  const { data: nextTournament, isLoading } =useGetTournaments(debouncedFilters) ;
-  console.log(nextTournament,"nextTournament")
+  const { data: nextTournament, isLoading } =
+    useGetTournaments(debouncedFilters);
+  console.log(nextTournament, "nextTournament");
 
-    const tournaments = nextTournament?.data?.tournaments;
-    const totalCount =  nextTournament?.data?.total;
-    const totalPages = Math.ceil(totalCount / parseInt(filters.limit));
-    const currentPage = Math.floor(parseInt(filters.offset) / parseInt(filters.limit)) + 1;
-   
-    const handlePageChange = (page: number) => {
-      setFilters(prev => ({
-        ...prev,
-        offset: ((page - 1) * parseInt(filters.limit)).toString()
-      }));
-    };
+  const tournaments = nextTournament?.data?.tournaments;
+  const totalCount = nextTournament?.data?.total;
+  const totalPages = Math.ceil(totalCount / parseInt(filters.limit));
+  const currentPage =
+    Math.floor(parseInt(filters.offset) / parseInt(filters.limit)) + 1;
+
+  const handlePageChange = (page: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      offset: ((page - 1) * parseInt(filters.limit)).toString(),
+    }));
+  };
 
   return (
     <ClientLayout>
-      <div className="mt-10">
+      <div className="mt-10 overflow-hidden">
         <SecondaryHeroSection
           title="Next tournaments"
           rightimage={tournamenttrophy}
@@ -213,26 +216,27 @@ const Page = () => {
           ) : tournaments?.length === 0 ? (
             <p className="text-xl text-center">Tournaments not found</p>
           ) : (
-            
-            <div className="py-5  sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <div className="py-5 sm:py-10 md:py-20 rounded-3xl grid grid-cols-1 lg:grid-cols-2 gap-4">
               {tournaments?.map((tournament, index) => (
-                <NextTournamentCard
-                  key={index}
-                  {...tournament}
-                  game={tournament?.game.title}
-                  gameImage={tournament?.game?.image}
-                />
-              ))}
+                    <NextTournamentCard
+                      key={index}
+                      {...tournament}
+                      game={tournament?.game.title}
+                      gameImage={tournament?.game?.image}
+                    />
+                  ))}
             </div>
-            
-
-            
           )}
 
           {totalCount > 0 && (
             <div className="flex items-center justify-between px-4 py-4 border-t">
-              <div className="text-sm text-gray-500">
-                Showing {parseInt(filters.offset) + 1} to {Math.min(parseInt(filters.offset) + parseInt(filters.limit), totalCount)} of {totalCount} entries
+              <div className="hidden lg:block text-sm text-gray-500">
+                Showing {parseInt(filters.offset) + 1} to{" "}
+                {Math.min(
+                  parseInt(filters.offset) + parseInt(filters.limit),
+                  totalCount
+                )}{" "}
+                of {totalCount} entries
               </div>
               <div className="flex items-center space-x-2">
                 <Button
@@ -243,16 +247,18 @@ const Page = () => {
                 >
                   Previous
                 </Button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </Button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(page)}
+                    >
+                      {page}
+                    </Button>
+                  )
+                )}
                 <Button
                   variant="outline"
                   size="sm"
@@ -266,7 +272,7 @@ const Page = () => {
           )}
         </div>
 
-        <div className="pb-60 pt-10">
+        <div className="pb-60 pt-10 px-10">
           <TrainingCenter />
         </div>
       </div>

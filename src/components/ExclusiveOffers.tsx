@@ -2,7 +2,7 @@ import React from "react";
 import ExclusiveCards from "./ExclusiveCards";
 import { BubblesIcon, BubblesIcon1 } from "./icons/icon";
 
-const ExclusiveOffers = () => {
+const ExclusiveOffers = ({ disabled }: { disabled?: boolean }) => {
   return (
     <section className="mt-3 py-12 md:py-20 relative">
       <div className="absolute inset-0 w-full h-full">
@@ -14,8 +14,6 @@ const ExclusiveOffers = () => {
         <BubblesIcon1 className="sm:block hidden absolute top-1/2 right-1/2" />
         <BubblesIcon className="sm:block hidden absolute bottom-1/2 left-1/2" />
         <BubblesIcon1 className="sm:block hidden absolute bottom-1/2 right-1/2" />
-
-
       </div>
 
       <div className="container mx-auto px-4">
@@ -33,7 +31,7 @@ const ExclusiveOffers = () => {
             aliquam laoreet etiam tempus amet.
           </p>
         </div>
-        <ExclusiveCards />
+        <ExclusiveCards disabled={disabled} />
       </div>
     </section>
   );

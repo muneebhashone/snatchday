@@ -19,7 +19,7 @@ const PrimaryHeading: React.FC<PrimaryHeadingProps> = ({
         {highlightText}
       </span>
 
-      <span className={`text-heading ml-3 ${textColor}`}>{remainingText}</span>
+      <span className={`text-[20px] xs:text-md text-heading ml-3 truncate ${textColor}`}>{remainingText}</span>
       <h1 className={`text-heading text-4xl lg:text-5xl xl:text-6xl 2xl:text-[84px] mt-3 ${textColor}`}>
         {remainingHeading}
       </h1>

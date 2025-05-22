@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -44,37 +44,55 @@ import { UpdateReturnTypes } from "@/types/admin";
 import { toast } from "sonner";
 import ReturnDetailsPage from "@/components/admin/ReturnDetails";
 
-// Define form schema
-const formSchema = z
-  .object({
-    status: z.string(),
-    customerInformed: z.boolean().default(false),
-    remarks: z.string().optional(),
-    refundAmountInSnapPoints: z.string().optional(),
-    //   fileUpload: z.instanceof(File).optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.status === "complete") {
-        return Number(data.refundAmountInSnapPoints) > 0;
-      }
-      return true;
-    },
-    {
-      message: "Refund amount is required",
-      path: ["refundAmountInSnapPoints"],
-    }
-  );
-
-type FormValues = z.infer<typeof formSchema>;
-
 export default function ReturnHistory() {
-  const { id } = useParams();
+  const [totalReturnPrice, setTotalREturnPrice] = useState<number>(0);
+  // Define form schema
+  const formSchema = z
+    .object({
+      status: z.string(),
+      customerInformed: z.boolean().default(false),
+      remarks: z.string().optional(),
+      refundAmountInSnapPoints: z.string().optional(),
+      //   fileUpload: z.instanceof(File).optional(),
+    })
+    .refine(
+      (data) => {
+        if (data.status === "complete") {
+          return Number(data.refundAmountInSnapPoints) > 0;
+        }
+        return true;
+      },
+      {
+        message: "Refund amount is required",
+        path: ["refundAmountInSnapPoints"],
+      }
+    )
+    .refine(
+      (data) => {
+        if (Number(data?.refundAmountInSnapPoints) > totalReturnPrice) {
+          return false;
+        }
+        return true;
+      },
+      {
+        message: "Refund amount cannot be more than the total purchase price",
+        path: ["refundAmountInSnapPoints"],
+      }
+    );
 
+  type FormValues = z.infer<typeof formSchema>;
+  const { id } = useParams();
   const { data: returnData, refetch } = useGetReturnById(id as string);
   const { mutate: updateReturnMutation, isPending } = useUpdateReturnHistory();
-
-  console.log(returnData, "returnData4");
+  useEffect(() => {
+    if (returnData) {
+      console.log(returnData, "returnData");
+      returnData?.data?.productsData?.map((data) => {
+        console.log(data?.product?.price, "data?.product?.price");
+        setTotalREturnPrice((prev) => prev + data?.product?.price);
+      });
+    }
+  }, [returnData, returnData?.data?.productData]);
 
   // Initialize form
   const form = useForm<FormValues>({
@@ -116,7 +134,7 @@ export default function ReturnHistory() {
   return (
     <AdminLayout>
       <ReturnDetailsPage />
-      <div className="mt-5 border bg-white">
+      <div className="mt-5 border bg-white mb-10">
         <div className="w-full bg-primary text-white p-2">
           <div className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5" />
@@ -160,135 +178,137 @@ export default function ReturnHistory() {
           )}
         </div>
 
-        <div className="p-4">
-          <h3 className="text-lg font-medium mb-6 flex items-center text-primary">
-            <span>+ </span> Return history
-          </h3>
+        {returnData?.data?.status !== "complete" && (
+          <div className="p-4">
+            <h3 className="text-lg font-medium mb-6 flex items-center text-primary">
+              <span>+ </span> Return history
+            </h3>
 
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <Card className="mb-6">
-                <CardContent className="p-4">
-                  {/* Order Status */}
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4">
-                        <FormLabel className="text-right pr-4 font-medium">
-                          Return status
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-full max-w-md">
-                              <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="waiting">
-                                Wating for Product{" "}
-                              </SelectItem>
-                              <SelectItem value="pending">Pending</SelectItem>
-                              <SelectItem value="complete">
-                                Completed
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Refund amount */}
-                  <FormField
-                    control={form.control}
-                    name="refundAmountInSnapPoints"
-                    render={({ field }) => (
-                      <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4 border-t pt-4">
-                        <FormLabel className="text-right pr-4 font-medium">
-                          Refund amount
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            onChange={(e) => {
-                              // Prevent negative values and minus sign
-                              if (
-                                e.target.value === "-" ||
-                                Number(e.target.value) < 0
-                              ) {
-                                e.preventDefault();
-                                return;
-                              }
-                              field.onChange(e);
-                            }}
-                            type="number"
-                            {...field}
-                            placeholder="Enter refund amount"
-                          />
-                        </FormControl>
-                        <div className="w-full text-center">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Card className="mb-6">
+                  <CardContent className="p-4">
+                    {/* Order Status */}
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4">
+                          <FormLabel className="text-right pr-4 font-medium">
+                            Return status
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <SelectTrigger className="w-full max-w-md">
+                                <SelectValue placeholder="Select status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="waiting">
+                                  Wating for Product{" "}
+                                </SelectItem>
+                                <SelectItem value="pending">Pending</SelectItem>
+                                <SelectItem value="complete">
+                                  Completed
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
                           <FormMessage />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  {/* Inform customer */}
-                  <FormField
-                    control={form.control}
-                    name="customerInformed"
-                    render={({ field }) => (
-                      <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4 border-t pt-4">
-                        <FormLabel className="text-right pr-4 font-medium">
-                          Inform customer
-                        </FormLabel>
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Refund amount */}
+                    <FormField
+                      control={form.control}
+                      name="refundAmountInSnapPoints"
+                      render={({ field }) => (
+                        <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4 border-t pt-4">
+                          <FormLabel className="text-right pr-4 font-medium">
+                            Refund amount
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              onChange={(e) => {
+                                // Prevent negative values and minus sign
+                                if (
+                                  e.target.value === "-" ||
+                                  Number(e.target.value) < 0
+                                ) {
+                                  e.preventDefault();
+                                  return;
+                                }
+                                field.onChange(e);
+                              }}
+                              type="number"
+                              {...field}
+                              placeholder="Enter refund amount"
+                            />
+                          </FormControl>
+                          <div className="w-full text-center">
+                            <FormMessage />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    {/* Inform customer */}
+                    <FormField
+                      control={form.control}
+                      name="customerInformed"
+                      render={({ field }) => (
+                        <FormItem className="grid grid-cols-[200px_1fr] items-center mb-4 border-t pt-4">
+                          <FormLabel className="text-right pr-4 font-medium">
+                            Inform customer
+                          </FormLabel>
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  {/* Comment */}
-                  <FormField
-                    control={form.control}
-                    name="remarks"
-                    render={({ field }) => (
-                      <FormItem className="grid grid-cols-[200px_1fr] items-start mb-4 border-t pt-4">
-                        <FormLabel className="text-right pr-4 pt-2 font-medium">
-                          comment
-                        </FormLabel>
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            className="min-h-[150px] w-full"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+                    {/* Comment */}
+                    <FormField
+                      control={form.control}
+                      name="remarks"
+                      render={({ field }) => (
+                        <FormItem className="grid grid-cols-[200px_1fr] items-start mb-4 border-t pt-4">
+                          <FormLabel className="text-right pr-4 pt-2 font-medium">
+                            comment
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              className="min-h-[150px] w-full"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
 
-              {/* Order Status Button */}
-              <div className="flex justify-end mt-8">
-                <Button
-                  type="submit"
-                  disabled={isPending}
-                  className="bg-primary capitalize hover:bg-primary/90"
-                >
-                  {isPending ? "updating..." : "update"}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </div>
+                {/* Order Status Button */}
+                <div className="flex justify-end mt-8">
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="bg-primary capitalize hover:bg-primary/90"
+                  >
+                    {isPending ? "updating..." : "update"}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );

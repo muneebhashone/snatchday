@@ -31,16 +31,16 @@ const SecondaryHeroSection = ({
           unoptimized
           className={
             title === "VIP Shop"
-              ? "w-full h-[560px] sm:h-[600px] xl:h-[680px] object-cover object-end"
+              ? "w-full h-[610px] sm:h-[600px] xl:h-[680px] object-cover object-end"
               : "w-full h-[350px] lg:h-[600px] xl:h-[600px] object-cover"
           }
         />
-        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center mt-9 sm:mt-6 pb-10">
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center mt-9 sm:mt-6 sm:pb-10">
           <div className="lg:container text-center sm:text-start mx-auto sm:px-10 lg:px-10 flex flex-col-reverse sm:grid sm:grid-cols-2 lg:text-start">
             <div className="content-center">
               {title === "VIP Shop" ? (
-                <div className="flex flex-col items-center sm:items-start justify-center">
-                  <h2 className="text-white text-2xl font-bold mb-2 sm:mb-8 mt-2 sm:mt-10">
+                <div className="flex flex-col items-center sm:items-start justify-center sm:mt-0 mt-8">
+                  <h2 className="hidden sm:block text-white text-2xl font-bold mb-2 sm:mb-8 mt-2 sm:mt-10">
                     VIP Shop
                   </h2>
                   <PrimaryHeading

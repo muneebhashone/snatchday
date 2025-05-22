@@ -41,15 +41,15 @@ const ProductSection = () => {
           opts={{
             align: "start",
           }}
-          className="w-full "
+          className="w-full mx-auto"
         >
-          <CarouselContent>
+          <CarouselContent className="">
             {products?.length > 0 && products !== null ? (
               products?.map((product, index) => {
                 return (
                   <CarouselItem
                     key={index}
-                    className="md:basis-1/2 lg:basis-1/4"
+                    className="sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 "
                   >
                     <div className="p-1">
                       <Card className="border-transparent">
@@ -67,8 +67,8 @@ const ProductSection = () => {
               </div>
             )}
           </CarouselContent>
-          <CarouselPrevious className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -left-24" />
-          <CarouselNext className="bg-primary p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -right-24" />
+          <CarouselPrevious className="bg-primary p-5 sm:p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -left-4 sm:-left-10 lg:-left-24" />
+          <CarouselNext className="bg-primary p-5 sm:p-10 text-xl hover:border-2 hover:border-primary hover:bg-primary -right-4 sm:-right-10 lg:-right-24" />
         </Carousel>
       </div>
     </section>

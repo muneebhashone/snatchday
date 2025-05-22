@@ -32,7 +32,7 @@ const PermotionalSection = () => {
           discount={true}
           links={iphoneBanner?.link}
         >
-          <div className="absolute top-8 sm:top-20 lg:top-8 right-[25%] sm:right-10">
+          <div className="absolute top-[10%]  right-[2%] xs:right-[18%] sm:right-10">
             {/* <div className="flex items-center justify-center text-center bg-white text-foreground w-20 md:w-28 h-20 md:h-28 rounded-full text-sm absolute bottom-0 -left-10">
               <h3 className="text-center text-md md:text-lg">
                 UP TO <h1 className="text-primary font-semibold text-[22px] md:text-[28px]">20%</h1>{" "}
@@ -40,7 +40,7 @@ const PermotionalSection = () => {
               </h3>
             </div> */}
             <Image
-              className="sm:h-[320px] lg:w-[300px] sm:w-[180px] lg:h-[470px] w-[120px] h-[220px]"
+              className="sm:h-[320px] lg:w-[300px] sm:w-[180px] lg:h-[470px] w-[120px] h-[190px] xs:w-[160px] xs:h-[220px] object-contain"
               src={iphoneBanner?.image}
               alt="banner"
               width={213}
@@ -68,7 +68,7 @@ const PermotionalSection = () => {
           discount={false}
           links={snatchDayBanner?.link}
         >
-          <div className="absolute -top-5 right-[20%] sm:top-16 sm:right-5 cursor-pointer">
+          <div className="absolute top-12 xs:-top-5 -right-[5%] xs:right-[15%] sm:top-16 sm:right-5 cursor-pointer">
             <Image
               className="sm:h-[350px] lg:h-[350px] sm:w-[240px] lg:w-[350px] w-[220px] h-[250px] object-contain"
               src={snatchDayBanner?.image}
@@ -91,8 +91,8 @@ const PermotionalSection = () => {
           discount={false}
           links={saleBanner?.link}
         >
-          <div className="absolute top-10 sm:top-0 right-[23%] sm:right-0 opacity-90">
-            <Image className="" src={saleBanner?.image || percentage.src} width={500} height={450} alt="banner" />
+          <div className="absolute -top-5 xs:-top-4 sm:top-0 -right-[5%] xs:right-[23%] sm:right-0 opacity-90">
+            <Image className="w-[250px] xs:w-[300px] sm:w-[350px] h-[350px] xs:h-[300px] object-contain" src={saleBanner?.image || percentage.src} width={500} height={450} alt="banner" />
           </div>
         </PromotionalBanners>
       </div>

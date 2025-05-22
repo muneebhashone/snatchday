@@ -41,22 +41,39 @@ const DuelHistory = () => {
         <table className="w-full border-collapse">
           <thead>
             <tr className="text-left border-b">
-              <th className="py-4 px-2">Duel game</th>
+              <th className="text-xs md:text-sm xl:text-md py-4 px-2">
+                Duel game
+              </th>
               {/* <th className="py-4 px-2 text-center">Countdown</th> */}
-              <th className="py-4 px-2">Duel Creator</th>
-              <th className="py-4 px-2">Opponent</th>
-              <th className="py-4 px-2 text-center">Round</th>
-              <th className="py-4 px-2 text-center">Stake</th>
-              <th className="py-4 px-2 text-center">Result</th>
-              <th className="py-4 px-2 text-center">Action</th>
+              <th className="text-xs md:text-sm xl:text-md py-4 px-2">
+                Duel Creator
+              </th>
+              <th className="text-xs md:text-sm xl:text-md py-4 px-2">
+                Opponent
+              </th>
+              <th className="text-xs md:text-sm xl:text-md py-4 px-2 text-center">
+                Round
+              </th>
+              <th className="text-xs md:text-sm xl:text-md py-4 px-2 text-center">
+                Stake
+              </th>
+              <th className="text-xs md:text-sm xl:text-md py-4 px-2 text-center">
+                Result
+              </th>
+              <th className="text-xs md:text-sm xl:text-md py-4 px-2 text-center">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
             {duels?.map((duel, index) => (
-              <tr key={duel.duelId} className="border-b hover:bg-gray-50">
-                <td className="py-4 px-2">
+              <tr
+                key={duel.duelId + index}
+                className="border-b hover:bg-gray-50"
+              >
+                <td className="text-xs md:text-sm xl:text-md py-4 px-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 relative">
+                    <div className="w-7 h-7 md:w-9 xl:w-12 md:h-9 xl:h-12  relative">
                       <Image
                         src={duel.game.logo || "/placeholder.png"}
                         alt={duel.game.title}
@@ -72,9 +89,9 @@ const DuelHistory = () => {
                     addSuffix: true,
                   })}
                 </td> */}
-                <td className="py-4 px-2">
+                <td className="py-4 px-2 text-xs md:text-sm xl:text-md">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 relative">
+                    <div className="w-6 h-6 md:w-8 xl:w-10 md:h-8 xl:h-10 relative">
                       <Image
                         src={duel?.player1?.image || userImage}
                         alt={duel?.player1?.username}
@@ -85,10 +102,10 @@ const DuelHistory = () => {
                     <span>{duel?.player1?.username}</span>
                   </div>
                 </td>
-                <td className="py-4 px-2">
+                <td className="py-4 px-2 text-xs md:text-sm xl:text-md">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-10 h-10 relative ${
+                      className={`w-6 h-6 md:w-8 xl:w-10 md:h-8 xl:h-10 relative ${
                         !duel.player2 && "hidden"
                       }`}
                     >
@@ -102,24 +119,26 @@ const DuelHistory = () => {
                     <span>{duel?.player2?.username || "No Opponent Yet"}</span>
                   </div>
                 </td>
-                <td className="py-4 px-2">{duel.rounds}</td>
-                <td className="py-4 px-2">
+                <td className="py-4 px-2 text-xs md:text-sm xl:text-md">
+                  {duel.rounds}
+                </td>
+                <td className="py-4 px-2 text-xs md:text-sm xl:text-md">
                   {duel.type === "snap"
                     ? `${duel.value} Snap Points`
                     : `${duel.value} Points`}
                 </td>
-                <td className="py-4 px-2 ">
+                <td className="py-4 px-2 text-xs md:text-sm xl:text-md">
                   <div className="flex justify-center items-center">
                     {duel?.winner && duel?.winner !== userID ? (
-                      <p className="capitalize w-max px-2 bg-red-500 rounded-full text-white font-bold text-sm">
+                      <p className="capitalize w-max px-2 bg-red-500 rounded-full text-white font-bold text-xs md:text-sm">
                         You Lose
                       </p>
                     ) : duel?.isDraw ? (
-                      <p className="capitalize w-max px-2 bg-primary rounded-full text-white font-bold text-sm">
+                      <p className="capitalize w-max px-2 bg-primary rounded-full text-white font-bold text-xs md:text-sm">
                         Draw
                       </p>
                     ) : duel?.winner && duel?.winner === userID ? (
-                      <p className="capitalize w-max px-2 bg-green-500 rounded-full text-white font-bold text-sm">
+                      <p className="capitalize w-max px-2 bg-green-500 rounded-full text-white font-bold text-xs md:text-sm">
                         You Won
                       </p>
                     ) : (userID === duel?.player1?._id &&
@@ -144,7 +163,7 @@ const DuelHistory = () => {
                     )}
                   </div>
                 </td>
-                <td className="py-4 px-2">
+                <td className="py-4 px-2 text-xs md:text-sm xl:text-md">
                   {userID === duel.player1._id &&
                   (!duel.player1Score.score || !duel.player1Score.time) ? (
                     <Button
@@ -155,8 +174,11 @@ const DuelHistory = () => {
                     </Button>
                   ) : userID === duel.player1?._id &&
                     (duel.player1Score.score || duel.player1Score.time) ? (
-                    <Button className="bg-[#F26E21] hover:bg-[#d85d12] text-white rounded-full px-6">
-                      <Link href={`/duel-arena/duel/${duel._id}`}>
+                    <Button className="bg-[#F26E21] hover:bg-[#d85d12] text-white rounded-full px-2 md:px-4 xl:px-6">
+                      <Link
+                        className="text-xs md:text-sm xl:text-md"
+                        href={`/duel-arena/duel/${duel._id}`}
+                      >
                         TO THE DUEL
                       </Link>
                     </Button>
@@ -165,7 +187,7 @@ const DuelHistory = () => {
                       <Link href={`/duel-arena/play/${duel._id}`}>JOIN</Link>
                     </Button>
                   ) : (
-                    <Button className="bg-[#F26E21] hover:bg-[#d85d12] text-white rounded-full px-6">
+                    <Button className="text-xs md:text-sm xl:text-md bg-[#F26E21] hover:bg-[#d85d12] text-white rounded-full px-2 md:px-4 xl:px-6">
                       <Link href={`/duel-arena/duel/${duel._id}`}>
                         TO THE DUEL
                       </Link>
@@ -176,7 +198,10 @@ const DuelHistory = () => {
             ))}
             {duelHistory?.data?.total < 1 ? (
               <tr>
-                <td colSpan={8} className="text-center">
+                <td
+                  colSpan={8}
+                  className="text-center text-xs md:text-sm xl:text-md"
+                >
                   No duels found
                 </td>
               </tr>

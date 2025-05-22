@@ -429,11 +429,13 @@ body {
 .swiper {
   width: 100%;
   height: 100%;
+  overflow: visible !important;
 }
 
 .swiper-slide {
   background-position: center;
   background-size: cover;
+  @apply overflow-x-clip !important;
 }
 .swiper-wrapper {
   transition-timing-function: linear !important;
@@ -442,14 +444,23 @@ body {
 
 .swiper-button-next,
 .swiper-button-prev {
-  width: 50px !important;
-  height: 50px !important;
+  /* width: 50px !important;
+  height: 50px !important; */
   /* background: rgba(255, 255, 255, 0.1); */
   background: white;
   border-radius: 50%;
   /* color: white !important; */
   color: rgb(184, 184, 184) !important;
   transition: all 0.3s ease;
+
+  @apply w-8 h-8 text-sm md:w-12 md:h-12 shadow-lg z-50 !important;
+}
+
+.swiper-button-next {
+  @apply -right-5 !important;
+}
+.swiper-button-prev {
+  @apply -left-5 !important;
 }
 
 .swiper-button-next:hover,
@@ -460,7 +471,7 @@ body {
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
-  font-size: 20px !important;
+  @apply text-[14px] md:text-[20px] !important;
 }
 
 .swiper-pagination-bullet {
@@ -484,4 +495,8 @@ body {
 
 .custom-scroll-new {
   @apply [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 [&::-webkit-scrollbar-track]:my-0;
+}
+
+.custom-scroll-for-navitems {
+  @apply [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-[7px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 [&::-webkit-scrollbar-track]:my-0;
 }

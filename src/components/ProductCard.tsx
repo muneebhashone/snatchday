@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import {
   Heart,
+  Loader,
   MinusCircle,
   MinusSquare,
   PlusCircle,
@@ -133,12 +134,7 @@ const ProductCard = ({
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-gray-200 hover:border-primary p-6 relative group hover:shadow-lg transition-all duration-300 min-w-full h-[450px]">
-      {/* VAT Badge */}
-      <div className="absolute right-0 top-0 bg-gray-100 rounded rounded-tr-3xl px-3 py-1">
-        <p className="text-sm text-gray-500">19%</p>
-        <p className="text-sm text-gray-500">VAT</p>
-      </div>
+    <div className="flex flex-col justify-between bg-white rounded-3xl border border-gray-200 hover:border-primary p-6 relative group hover:shadow-lg transition-all duration-300 min-w-full h-[450px] md:h-[500px]">
 
       {/* Product Image */}
       <div className="mb-6 pt-4">
@@ -149,7 +145,7 @@ const ProductCard = ({
               alt={name}
               width={300}
               height={200}
-              className="w-full h-[200px] object-contain group-hover:scale-105 transition-transform duration-300"
+              className="w-full h-[120px] sm:h-[180px] md:h-[200px] object-contain group-hover:scale-105 transition-transform duration-300"
             />
           </Link>
         )}
@@ -157,8 +153,8 @@ const ProductCard = ({
       {/* Product Info */}
       <div className="space-y-4">
         {/* Title */}
-        <div className="flex justify-between items-start gap-10">
-          <p className="text-xl text-card-foreground font-light line-clamp-2 overflow-hidden text-ellipsis">
+        <div className="flex justify-between items-start gap-5 sm:gap-10">
+          <p className="text-md sm:text-lg md:text-xl text-card-foreground font-light line-clamp-2 overflow-hidden text-ellipsis">
             {name}
           </p>
           <TooltipProvider>
@@ -198,15 +194,15 @@ const ProductCard = ({
             {/* <span className="text-sm text-gray-500">({rating || 4})</span> */}
             <span className="text-sm text-gray-500">({ratings || 0})</span>
           </div>
-          <div className="flex lg:flex-row flex-wrap items-center gap-2 justify-between overflow-hidden w-full ml-5">
+          <div className="flex lg:flex-row flex-wrap items-center justify-end overflow-hidden w-full ml-5">
             {discount > 0 ? (
-              <span className="text-2xl  text-gray-400 font-semibold line-through">
+              <span className="text-sm 2xl:text-2xl text-gray-400 font-semibold line-through">
                 {formatCurrency(calculatedPrice)}
               </span>
             ) : (
-              <span className="text-2xl  text-gray-400 font-semibold line-through"></span>
+              <span className="text-sm 2xl:text-2xl text-gray-400 font-semibold line-through"></span>
             )}
-            <span className="text-2xl font-semibold text-card-foreground">
+            <span className="text-sm 2xl:text-2xl font-semibold text-card-foreground ml-2">
               {discount
                 ? formatCurrency(calculatedPrice - discount)
                 : formatCurrency(calculatedPrice)}
@@ -258,7 +254,7 @@ const ProductCard = ({
                         disabled={isAddToCartPending}
                         className="gradient-primary text-white text-sm py-1 px-7 rounded-full hover:opacity-90 transition-opacity"
                       >
-                        {isAddToCartPending ? "adding..." : "Add to Cart"}
+                        {isAddToCartPending ? <Loader className="animate-spin"/> : "Add to Cart"}
                       </button>
                     )}
                   </div>

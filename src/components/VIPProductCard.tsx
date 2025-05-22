@@ -180,11 +180,11 @@ const ProductCard = ({
     };
   }, [discounts, user]);
   return (
-    <div className="flex flex-col md:flex-row bg-black text-white gap-40 px-40">
+    <div className="flex flex-col lg:flex-row bg-black text-white gap-5 md:gap-10 items-center lg:gap-40 xl:px-20 2xl:px-40 border-b-2 lg:border-b-0 border-b-[#b27315] pb-4 lg:pb-0">
       <div className="flex flex-col">
         {/* Product image with border */}
-        <div className="border-2 border-[#b27315] p-1 w-[340px] h-[340px] flex items-center justify-center bg-white mb-4 ">
-          <div className="relative w-[400px] h-[400px]">
+        <div className="border-4 md:border-2 border-[#b27315] p-3 md:p-1 w-max md:w-[340px] h-max md:h-[340px] flex items-center justify-center bg-white mb-4 ">
+          <div className="relative w-[200px] sm:w-[300px] lg:w-[400px] h-[200px] sm:h-[300px] lg:h-[400px]">
             {images?.length > 0 && (
               <Link href={`/product-listing/${_id}`}>
                 <Image
@@ -211,8 +211,8 @@ const ProductCard = ({
             return (
               <div className="border-2 border-[#9d6c2c] rounded p-1 inline-block">
                 <div className="flex">
-                  <div className="bg-gradient-to-b from-[#9d6c2c] to-[#edcb6b]/80 p-2 w-16 text-center">
-                    <div className="text-xl font-bold">{value}</div>
+                  <div className="bg-gradient-to-b from-[#9d6c2c] to-[#edcb6b]/80 p-1 lg:p-2 w-10 lg:w-16 text-center">
+                    <div className="sm:text-lg lg:text-xl sm:font-bold">{value}</div>
                     <div className="text-xs">{label}</div>
                   </div>
                 </div>
@@ -223,36 +223,36 @@ const ProductCard = ({
       </div>
 
       {/* Product details */}
-      <div className="flex-1 md:ml-8 mt-4 md:mt-0 h-full flex flex-col justify-between py-4">
+      <div className="flex-1 text-center lg:text-start md:ml-8 mt-4 md:mt-0 h-full flex flex-col justify-between lg:items-start items-center py-0 md:py-4">
         {/* Product title */}
-        <h2 className="text-2xl font-bold mb-2 text-white line-clamp-2">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-bold lg:mb-2 text-white line-clamp-2">
           {name}
         </h2>
 
         {/* Product subtitle */}
-        <p className="text-sm text-gray-400 mb-4 line-clamp-2">{description}</p>
+        <p className="text-xs sm:text-sm text-gray-400 mb-2 lg:mb-4 line-clamp-2">{description}</p>
 
         {/* Items left */}
-        <div className="flex items-center mb-4">
-          <p className="text-sm text-[#f2a10b]">Bestl dich, es sind nur noch</p>
-          <span className="inline-flex items-center justify-center bg-[#f2a10b] text-white rounded-full w-6 h-6 mx-2 text-xs font-bold">
+        <div className="flex items-center mb-1 lg:mb-4">
+          <p className="text-xs w-max  sm:text-sm text-[#f2a10b]">Bestl dich, es sind nur noch</p>
+          <span className="inline-flex items-center justify-center bg-[#f2a10b] text-white rounded-full  mx-1 w-6 h-6 sm:mx-2 text-xs sm:font-bold">
             {stock || "N/A"}
           </span>
-          <p className="text-sm text-[#f2a10b]">Stücke übrig!</p>
+          <p className="text-sm text-[#f2a10b] w-max ">Stücke übrig!</p>
         </div>
 
         {/* Price */}
-        <div className="mb-4">
-          <span className="text-4xl font-bold text-primary">
+        <div className="mb-1 lg:mb-4">
+          <span className="text-xl sm:text-2xl md:text-4xl font-bold text-primary">
             {formatCurrency(calculatedPrice - discount)}
           </span>
-          <span className="text-gray-400 line-through ml-2 text-xl">
+          <span className="text-gray-400 line-through ml-2 text-md sm:text-lg md:text-xl">
             {formatCurrency(calculatedPrice)}
           </span>
         </div>
 
         {/* Savings */}
-        <p className="uppercase font-bold mb-4">
+        <p className="uppercase font-bold mb-4 sm:text-base text-xs">
           VERPASSE NICHT DIE CHANCE {formatCurrency(discount)} ZU SPAREN!
         </p>
 

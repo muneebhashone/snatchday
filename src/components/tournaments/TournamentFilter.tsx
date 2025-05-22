@@ -60,17 +60,17 @@ const TournamentFilter = ({
   // console.log(Products,"alllll")
 
   const handleApplyFilters = () => {
-    if(period.from !== "" || period.until !== ""){
+    if (period.from !== "" || period.until !== "") {
       onPeriodChange(period.from, period.until);
-
-    } if (priceRange[0] !== 5 || priceRange[1] !== 10000) {
+    }
+    if (priceRange[0] !== 5 || priceRange[1] !== 10000) {
       onPriceChange(`[${priceRange[0]},${priceRange[1]}]`);
     }
-     if(participationFee[0] !== 5 || participationFee[1] !== 10000) {
+    if (participationFee[0] !== 5 || participationFee[1] !== 10000) {
       onFeeChange(`[${participationFee[0]},${participationFee[1]}]`);
     }
     if (game !== "") {
-        onGameChange(game);
+      onGameChange(game);
     }
     if (product !== "") {
       onProductChange(product);
@@ -87,7 +87,7 @@ const TournamentFilter = ({
 
   const handleClearFilters = () => {
     // Reset local state
-    
+
     setPriceRange([5, 10000]);
     setParticipationFee([5, 10000]);
     setPeriod({ from: "", until: "" });
@@ -96,7 +96,7 @@ const TournamentFilter = ({
     setVip("no");
     setCategory("");
     setLive(false);
-    
+
     setFilters({
       limit: "10",
       offset: "0",
@@ -127,18 +127,18 @@ const TournamentFilter = ({
   // Handle period change
   const handlePeriodChange = (from: string, until: string) => {
     // const today = new Date().toISOString().split('T')[0];
-    
+
     setPeriod((prev) => {
       // Validate from date
       // if (from) {
       //   from = from;
       // }
-      
+
       // Validate until date
       // if (until && from && until < from) {
       //   until = from;
       // }
-      
+
       return {
         from: from || prev.from,
         until: until || prev.until,
@@ -162,13 +162,13 @@ const TournamentFilter = ({
     setCategory(categoryId);
   };
 
-  const nextDate=()=>{
+  const nextDate = () => {
     const fromDate = new Date(period.from);
     const nextDayFromDate = new Date(fromDate);
     nextDayFromDate.setDate(fromDate.getDate() + 1);
-        const minUntilDate = nextDayFromDate.toISOString().split('T')[0];
+    const minUntilDate = nextDayFromDate.toISOString().split("T")[0];
     return minUntilDate;
-  }
+  };
 
   return (
     <div className="bg-[#F9F9F9] p-8 rounded-xl">
@@ -176,14 +176,15 @@ const TournamentFilter = ({
         {/* Period */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600 mb-2">Period</p>
-          <div className="grid grid-cols-2 gap-4">
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> */}
+          <div className="flex flex-wrap gap-4">
             <Input
               type="date"
               value={period.from}
               // min={new Date().toISOString().split('T')[0]}
               placeholder="from"
               onChange={(e) => handlePeriodChange(e.target.value, "")}
-              className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500"
+              className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500 min-w-[150px] max-w-[150px]"
             />
             <Input
               type="date"
@@ -191,7 +192,7 @@ const TournamentFilter = ({
               min={period.from && nextDate()}
               placeholder="until"
               onChange={(e) => handlePeriodChange("", e.target.value)}
-              className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500"
+              className="h-12 rounded-xl bg-white border border-gray-200 focus:outline-none focus:ring-0 focus:border-red-500 min-w-[150px] max-w-[150px]"
             />
           </div>
         </div>
@@ -203,7 +204,6 @@ const TournamentFilter = ({
             <DualRangeSlider
               label={(value) => value}
               value={priceRange}
-              
               onValueChange={setPriceRange}
               min={10}
               max={10000}
@@ -234,12 +234,15 @@ const TournamentFilter = ({
         {/* Products */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600 mb-2">Products</p>
-          <Select value={product} onValueChange={(value) => handleProductChange(value)}>
+          <Select
+            value={product}
+            onValueChange={(value) => handleProductChange(value)}
+          >
             <SelectTrigger className="h-12 rounded-xl bg-white border-gray-200 focus:border-primary">
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
             <SelectContent>
-              {isProductLoding ?(
+              {isProductLoding ? (
                 <SelectItem>....loading</SelectItem>
               ) : (
                 Products?.data?.products?.map((product) => (
@@ -295,16 +298,22 @@ const TournamentFilter = ({
         {/* Category */}
         <div className="space-y-2">
           <p className="text-sm text-gray-600 mb-2">Category</p>
-          <Select value={category} onValueChange={(value) => handleCategoryChange(value)}>
+          <Select
+            value={category}
+            onValueChange={(value) => handleCategoryChange(value)}
+          >
             <SelectTrigger className="h-12 rounded-xl bg-white border-gray-200 focus:border-primary">
               <SelectValue placeholder="Choose" />
             </SelectTrigger>
             <SelectContent>
-              {categories?.data?.categories?.slice().reverse().map((category) => (
-                <SelectItem key={category._id} value={category._id}>
-                  {category.name}
-                </SelectItem>
-              ))}
+              {categories?.data?.categories
+                ?.slice()
+                .reverse()
+                .map((category) => (
+                  <SelectItem key={category._id} value={category._id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>
@@ -325,22 +334,22 @@ const TournamentFilter = ({
 
         {/* Filter Button */}
         <div className="flex justify-between">
-        <div className="flex items-center my-4  justify-center md:justify-end gap-4">
-          {isAnyFilterActive() && (
+          <div className="flex items-center my-4  justify-center md:justify-end gap-4">
+            {isAnyFilterActive() && (
+              <Button
+                onClick={handleClearFilters}
+                className="text-gray-700 bg-white border border-gray-300 rounded-full px-10 sm:px-12 h-10 sm:h-12 text-base font-medium hover:bg-gray-50"
+              >
+                CLEAR
+              </Button>
+            )}
             <Button
-              onClick={handleClearFilters}
-              className="text-gray-700 bg-white border border-gray-300 rounded-full px-10 sm:px-12 h-10 sm:h-12 text-base font-medium hover:bg-gray-50"
+              onClick={handleApplyFilters}
+              className="gradient-primary text-white rounded-full px-10 sm:px-12 h-10 sm:h-12 text-base font-medium hover:opacity-90"
             >
-              CLEAR
+              FILTER
             </Button>
-          )}
-          <Button
-            onClick={handleApplyFilters}
-            className="gradient-primary text-white rounded-full px-10 sm:px-12 h-10 sm:h-12 text-base font-medium hover:opacity-90"
-          >
-            FILTER
-          </Button>
-        </div>
+          </div>
         </div>
       </div>
     </div>

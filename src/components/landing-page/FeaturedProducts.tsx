@@ -51,7 +51,7 @@ const FeaturedProducts = () => {
         } else {
           api.scrollTo(0);
         }
-      }, 2000);
+      }, 5000);
     };
 
     const stopAutoplay = () => {
@@ -86,7 +86,7 @@ const FeaturedProducts = () => {
   };
 
   return (
-    <section className="py-8 md:py-12 lg:py-16 bg-white">
+    <section className="py-8 md:py-12 lg:py-16 bg-white overflow-hidden">
       <div className="container max-w-[1920px] mx-auto">
         {/* Header Section */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center lg:px-8 justify-between gap-6 mb-8 lg:mb-10">
@@ -99,8 +99,8 @@ const FeaturedProducts = () => {
           </h3>
 
           {/* Tabs Section - Scrollable on mobile */}
-          <div className="w-full lg:w-auto overflow-x-auto pb-4 lg:pb-0">
-            <div className="flex items-center space-x-10 min-w-max border-b border-gray-200">
+          <div className="w-full lg:w-auto overflow-x-auto pb-4 lg:pb-0 custom-scroll-for-navitems">
+            <div className="flex items-center space-x-10 min-w-max border-b border-gray-200 px-2 md:px-0">
               {parentCategories?.map((tab, index) => {
                 // console.log(tab, "check tab");
                 return (
@@ -110,7 +110,7 @@ const FeaturedProducts = () => {
                       onClick={() => {
                         handleCategory(tab.name, tab._id);
                       }}
-                      className={`py-4 relative text-sm md:text-lg font-normal text-foreground whitespace-nowrap transition-colors
+                      className={` py-4 relative text-sm md:text-lg font-normal text-foreground whitespace-nowrap transition-colors
                     ${
                       activeTab === tab.name
                         ? "text-primary"
@@ -132,7 +132,7 @@ const FeaturedProducts = () => {
               })}
               <Link
                 href="/product-listing"
-                className="hidden lg:flex lg:text-lg text-foreground hover:text-primary font-normal items-center whitespace-nowrap"
+                className=" flex text-sm lg:text-lg text-foreground hover:text-primary font-normal items-center whitespace-nowrap"
               >
                 View All
                 <svg
@@ -154,7 +154,7 @@ const FeaturedProducts = () => {
         </div>
 
         {/* Product Carousel */}
-        <div className="px-0 md:px-6">
+        <div className="px-0 md:px-6 min-w-full ">
           {isLoading ? (
             <div className="flex items-center justify-center py-10">
               <Loader className="animate-spin" size={30} />
@@ -164,7 +164,7 @@ const FeaturedProducts = () => {
               <h1>Products not available</h1>
             </div>
           ) : (
-            <div ref={carouselRef} className="w-full ">
+            <div ref={carouselRef} className="min-w-full ">
               <Carousel
                 opts={{
                   align: "center",
@@ -173,13 +173,13 @@ const FeaturedProducts = () => {
                   slidesToScroll: 1,
                 }}
                 setApi={setApi}
-                className="max-w-[97%] mx-auto relative"
+                className="mx-auto relative "
               >
-                <CarouselContent className="mx-auto">
+                <CarouselContent className="w-full mx-auto">
                   {filterProducts?.data.products.map((product, index) => (
                     <CarouselItem
                       key={index}
-                      className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+                      className="basis-1/1 sm:basis-1/2 md:basis-1/3 xl:basis-1/4 2xl:basis-1/5 flex items-center gap-4 justify-center pl-0 mx-auto"
                     >
                       <div className="p-2">
                         <FeaturedProductsCard key={index} {...product} />
@@ -187,20 +187,20 @@ const FeaturedProducts = () => {
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                <CarouselPrevious className="w-20 h-20 bg-primary text-white hover:bg-primary -left-4 md:-left-8 border border-primary" />
-                <CarouselNext className="w-20 h-20 bg-primary text-white hover:bg-primary -right-4 md:-right-6 border border-primary" />
+                <CarouselPrevious className="hidden sm:flex w-14 lg:w-20 h-14 lg:h-20 bg-primary text-white hover:bg-primary left-2 md:-left-8 border border-primary" />
+                <CarouselNext className="hidden sm:flex w-14 lg:w-20 h-14 lg:h-20 bg-primary text-white hover:bg-primary right-2 md:-right-8 border border-primary" />
               </Carousel>
             </div>
           )}
         </div>
 
         {/* Mobile View All Link */}
-        <div className="flex lg:hidden justify-center mt-8">
+        <div className="flex justify-center mt-8">
           <Link
-            href="/all-products"
+            href={`/product-listing?category=${categoryId}`}
             className="text-[#FF6B3D] font-medium flex items-center"
           >
-            View All
+            View All Products
             <svg
               className="w-4 h-4 ml-1"
               viewBox="0 0 24 24"

@@ -89,36 +89,43 @@ const CurrentDuels = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-[80%] mx-auto">
+    <div className="space-y-6 lg:max-w-[90%] xl:max-w-[80%] mx-auto">
       {/* Filters Section */}
       <div className="p-6 rounded-lg shadow-sm ">
-        <div className="flex items-center justify-between gap-4 mt-10">
-          {/* Search */}
-          <div className="flex items-center gap-5 flex-1">
-            <label className="text-sm font-medium">Search</label>
-            <Input
-              placeholder="Search duels..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              className="w-[300px]"
-            />
-          </div>
-
-          {/* Price Range */}
-          <div className="flex items-center gap-5 flex-1">
-            <label className="text-sm font-medium">Price Range</label>
-            <div className="flex flex-col gap-2">
-              <DualRangeSlider
-                className="w-[400px]"
-                value={priceRange}
-                onValueChange={handlePriceRangeChange}
-                min={0}
-                max={10000}
-                step={50}
+        <h1 className="lg:hidden block font-bold mt-10">Apply Filters</h1>
+        <div className="flex flex-wrap items-center justify-center gap-4 mt-2 lg:mt-10 ">
+          <div className="flex lg:flex-row flex-col items-center justify-center gap-7 lg:gap-4">
+            {/* Search */}
+            <div className="flex items-center gap-5 flex-1 mx-auto">
+              <label className="xl:block hidden text-sm font-medium">
+                Search
+              </label>
+              <Input
+                placeholder="Search duels..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="w-[300px]"
               />
-              <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
-                <span>{priceRange[0]}€</span>
-                <span>{priceRange[1]}€</span>
+            </div>
+
+            {/* Price Range */}
+            <div className="flex items-center gap-5 flex-1">
+              <label className="text-sm w-max font-medium xl:block hidden ">
+                Price Range
+              </label>
+              <div className="flex flex-col gap-2">
+                <DualRangeSlider
+                  className="w-[300px] 2xl:w-[400px]"
+                  value={priceRange}
+                  onValueChange={handlePriceRangeChange}
+                  min={0}
+                  max={10000}
+                  step={50}
+                />
+                <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
+                  <span>{priceRange[0]}€</span>
+                  <span>{priceRange[1]}€</span>
+                </div>
               </div>
             </div>
           </div>

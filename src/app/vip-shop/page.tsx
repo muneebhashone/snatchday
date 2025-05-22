@@ -12,10 +12,11 @@ import { useUserContext } from "@/context/userContext";
 import { useGetMyProfile } from "@/hooks/api";
 import VIPShop from "@/components/VIPShop";
 import { Loader } from "lucide-react";
+import Login from "@/components/auth/Login";
 const VipShopPage = () => {
   const { socket } = useSocket();
   const { user } = useUserContext();
-  const { data: myProfile } = useGetMyProfile();
+  const { data: myProfile, isLoading } = useGetMyProfile();
   const userId = user?.user?._id;
   console.log(user, "user");
   useEffect(() => {
@@ -39,10 +40,26 @@ const VipShopPage = () => {
           </>
         ) : myProfile?.data?.user?.group === "VIP" ? (
           <VIPShop />
-        ) : (
-          <div className="flex justify-center items-center h-screen">
-            <Loader className="animate-spin text-primary h-10 w-10" />
+        ) : !myProfile ? (
+          <div>
+            <SecondaryHeroSection
+              title="VIP Shop"
+              rightimage={vipheroimage}
+              bg={vipbg}
+            />
+            <h1>You Need To Login First</h1>
+            <div>
+              <ExclusiveOffers disabled={true} />
+              <Testimonials />
+              <RatingsSection />
+            </div>
           </div>
+        ) : (
+          isLoading && (
+            <div className="flex justify-center items-center h-screen">
+              <Loader className="animate-spin text-primary h-10 w-10" />
+            </div>
+          )
         )}
       </div>
     </ClientLayout>

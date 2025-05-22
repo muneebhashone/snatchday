@@ -6,6 +6,7 @@ import crown from "@/app/images/crown.png";
 import { useGetSubscriptionPlan } from "@/hooks/api";
 import { Loader } from "lucide-react";
 import SubscriptionModal from "./SubscriptionModal";
+import Login from "./auth/Login";
 
 interface PricingFeature {
   text: string;
@@ -40,7 +41,7 @@ const formatInterval = (interval: string) => {
   }
 };
 
-const ExclusiveCards = () => {
+const ExclusiveCards = ({ disabled }: { disabled: false }) => {
   const [pkg, setPkg] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [packageId, setPackageId] = useState("");
@@ -64,7 +65,7 @@ const ExclusiveCards = () => {
   return (
     <div
       id="scroll-to-packages"
-      className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[1440px] mx-auto"
+      className="grid grid-cols-1 lg:grid-cols-3 gap-10 max-w-[500px] lg:max-w-[1440px] mx-auto"
     >
       {packages.map((pkg, index) => {
         // Determine if this card should be highlighted as popular (middle card)
@@ -195,23 +196,29 @@ const ExclusiveCards = () => {
 
             {/* CTA Button */}
             <div className="w-full flex items-center sm:justify-center">
-              <button
-                className={`w-max sm:w-[70%] lg:w-full min-h-[48px] lg:min-h-[68px] mt-5 lg:mt-8 px-14 py-4 lg:px-4 lg:py-3 rounded-full text-lg font-medium transition-colors
+              {!disabled ? (
+                <button
+                  className={`w-max sm:w-[70%] lg:w-full min-h-[48px] lg:min-h-[68px] mt-5 lg:mt-8 px-14 py-4 lg:px-4 lg:py-3 rounded-full text-lg font-medium transition-colors
                   ${
                     isPopular
                       ? "bg-white text-[#8D4CC4] hover:bg-gray-50"
                       : "gradient-primary text-white hover:opacity-90"
                   }
                 `}
-                onClick={() => {
-                  setIsOpen(true);
-                  setPackageId(pkg._id);
-                  setPackagePoints(pkg.price * 100);
-                  setPkg(pkg);
-                }}
-              >
-                Get started
-              </button>
+                  onClick={() => {
+                    setIsOpen(true);
+                    setPackageId(pkg._id);
+                    setPackagePoints(pkg.price * 100);
+                    setPkg(pkg);
+                  }}
+                >
+                  Get started
+                </button>
+              ) : (
+                <div className="mt-5">
+                  <Login replaceIcon="Login First" />
+                </div>
+              )}
             </div>
           </div>
         );

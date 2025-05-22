@@ -24,23 +24,23 @@ const PromotionalBanners = ({
   mainbg,
   children,
   time,
-  links
+  links,
 }: PromotionalBannersProps) => {
   return (
     <div
-      className={`${mainbg} w-[500px] grid rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-16 pl-2 sm:pl-0 lg:pl-10`}
+      className={`${mainbg} object-fill w-[600px] md:w-[500px] grid rounded-3xl relative overflow-hidden group hover:shadow-lg transition-shadow pt-5 sm:pt-16 pl-5 lg:pl-10`}
     >
       <div className="">
-        <div className="w-[90%] sm:max-w-[45%] lg:max-w-[35%] relative z-10">
-          <div className="flex sm:items-start items-center justify-center sm:flex-col gap-2 sm:gap-0">
+        <div className="w-[60%] xs:w-[40%] sm:max-w-[45%] lg:max-w-[35%] relative z-10">
+          <div className="flex sm:items-start items-start justify-start sm:flex-col gap-2 sm:gap-0">
             <div
-              className={`h-16 sm:h-20 w-16 sm:w-20 ${iconbg} rounded-full flex items-center justify-center`}
+              className={`h-14 sm:h-20 w-14 sm:w-20 ${iconbg} rounded-full flex items-center justify-center`}
             >
               <Image src={icon} alt="icon" width={24} height={24} />
             </div>
 
             <span
-              className={`w-max inline-flex items-center px-3 py-0 h-8 sm:h-auto rounded-full mt-3 text-sm ${iconbg} ${
+              className={`w-max inline-flex items-center px-3 sm:px-3 py-0 h-8 sm:h-auto rounded-full mt-3 text-xs sm:text-sm ${iconbg} ${
                 iconText === "70% OFF" ? "text-black" : "text-white"
               }`}
             >
@@ -61,11 +61,11 @@ const PromotionalBanners = ({
             <ArrowRightIcon className="w-4 h-4 ml-1" />
           </Link>
         </div>
-        <div className="flex items-center justify-center sm:justify-start gap-4 relative z-10 my-7">
+        <div className="flex items-center xs:justify-center xs:pl-0 pl-2 sm:justify-start gap-4 relative z-10 my-7">
           {time?.map((item, i) => {
             return (
               <div key={`${item.timer} + ${i}`} className="text-center">
-                <div className="text-3xl bg-[#CDB3FF] px-4 py-1">
+                <div className="text-xl xs:text-3xl bg-[#CDB3FF] px-4 py-1">
                   {item.timer}
                 </div>
 

@@ -42,6 +42,7 @@ interface LoginProps {
   addToCart?: boolean;
   smallAddtoCart?: boolean;
   useForTournament?: boolean;
+  replaceIcon?: string;
 }
 
 const Login = ({
@@ -49,6 +50,7 @@ const Login = ({
   addToCart = false,
   smallAddtoCart = false,
   useForTournament = false,
+  replaceIcon = "",
 }: LoginProps) => {
   // const router = useRouter();
   const [forgotOpen, setforgotOpen] = useState(false);
@@ -284,7 +286,7 @@ const Login = ({
     <>
       <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
         <DialogTrigger asChild>
-          <div className="cursor-pointer">
+          <div className="cursor-pointer ">
             {type === "TournamentRegister" ? (
               "Login"
             ) : type === "Register" ? (
@@ -293,7 +295,13 @@ const Login = ({
                 onClick={() => setIsRegisterOpen(true)}
               />
             ) : addToCart === false ? (
-              <User className="h-6 w-6" />
+              replaceIcon ? (
+                <span className="hover:text-lg text-md font-bold bg-white px-4 border-2 shadow-lg rounded-full mt-2">
+                  {replaceIcon}
+                </span>
+              ) : (
+                <User className="h-6 w-6" />
+              )
             ) : useForTournament ? (
               <Button className="hover:bg-primary ">Play</Button>
             ) : (

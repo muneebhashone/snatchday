@@ -21,7 +21,7 @@ const TournamentWinnerCardSlider = () => {
   console.log(winners, "winners");
 
   return (
-    <div className="relative xl:h-[400px] md:h-[350px] h-[300px] max-w-[1920px] mx-auto bg-gradient-to-bl from-primary to-gray-100 overflow-hidden">
+    <div className="relative xl:h-[400px] md:h-[400px] h-[600px] max-w-[1920px] mx-auto bg-gradient-to-bl from-primary to-gray-100 overflow-hidden">
       {/* Subtle background elements */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-purple-500/5"></div>
@@ -42,69 +42,73 @@ const TournamentWinnerCardSlider = () => {
       >
         {winners?.map((winner, index) => (
           <SwiperSlide key={index}>
-            <div className="h-full w-full flex items-center">
+            <div className="h-full w-full flex items-center justify-center">
               <div className="container mx-auto px-4">
-                <div className="flex items-center justify-center gap-8 w-full ml-36">
+                <div className="flex sm:flex-row flex-col items-center justify-center gap-8 w-full pr-0 lg:pr-0  lg:ml-14 xl:ml-36">
                   {/* Left Section - Winner Info */}
                   <div className="space-y-6">
-                    <div>
-                      <h3 className="text-4xl font-bold text-gray-900">
+                    <div className="sm:text-start text-center">
+                      <h3 className="text-3xl lg:text-4xl font-bold text-gray-900">
                         {new Date(winner?.month).toLocaleString("default", {
                           month: "long",
                         })}
                       </h3>
-                      <div className="flex items-center gap-3 mt-2">
-                        <h3 className="text-4xl font-bold text-gray-800">
+                      <div className="flex items-center justify-center sm:justify-start gap-1 lg:gap-3 mt-2 sm:text-start text-center">
+                        <h3 className=" text-2xl lg:text-4xl font-bold text-gray-800">
                           Competition
                         </h3>
-                        <div className="relative">
-                          <span className="relative bg-gradient-to-r from-primary to-purple-500 px-3 py-1 rounded-full text-xl font-medium text-white shadow-sm">
+                        <div className="relative sm:text-start text-center">
+                          <span className="relative bg-gradient-to-r from-primary to-purple-500 px-3 py-1 rounded-full text-lg lg:text-xl font-medium text-white shadow-sm">
                             Winner
                           </span>
                         </div>
                       </div>
                     </div>
-
-                    <div className="space-y-2">
-                      <div className="border-l-2 border-primary/30 pl-3">
-                        <p className="text-lg text-gray-600 line-clamp-2 w-[50%] font-bold">
-                          {winner?.product?.name}
-                        </p>
-                        <p className="text-3xl font-bold text-primary">
-                          <span className="text-gray-500">Winner Price:</span>{" "}
-                          {formatCurrency(winner?.price)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/20">
-                          <Image
-                            src={winner?.winner?.image}
-                            alt={winner?.winner?.name}
-                            width={48}
-                            height={48}
-                            className="w-full h-full object-cover"
-                          />
+                    <div className=" flex sm:flex-col sm:items-start items-center gap-8">
+                      <div className="space-y-2">
+                        <div className="border-l-2 border-primary/30 pl-3">
+                          <p className="text-lg text-gray-600 line-clamp-2 lg:w-[50%] font-bold w-max">
+                            {winner?.product?.name}
+                          </p>
+                          <p className="text-xl lg:text-3xl font-bold text-primary">
+                            <span className="text-gray-500">
+                              Winning Price:
+                            </span>{" "}
+                            {formatCurrency(winner?.price)}
+                          </p>
                         </div>
                       </div>
-                      <div>
-                        <span className="text-base font-semibold text-gray-900">
-                          {winner?.winner?.firstName} {winner?.winner?.lastName}
-                        </span>
-                        <p className="text-sm text-gray-500">
-                          Competiton Winner
-                        </p>
+
+                      <div className="flex sm:flex-row flex-col sm:text-start text-center items-center gap-3">
+                        <div className="relative">
+                          <div className="w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/20">
+                            <Image
+                              src={winner?.winner?.image}
+                              alt={winner?.winner?.name}
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <span className="text-base font-semibold text-gray-900">
+                            {winner?.winner?.firstName}{" "}
+                            {winner?.winner?.lastName}
+                          </span>
+                          <p className="text-sm text-gray-500">
+                            Competiton Winner
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Right Section - Product Display */}
                   <div className="relative max-w-sm mx-auto md:ml-auto ">
-                    <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden h-[380px]">
+                    <div className="relative bg-white rounded-2xl shadow-lg overflow-hidden h-max lg:h-[380px]">
                       {/* Product Image Section */}
-                      <div className="relative aspect-[3/2]">
+                      <div className="relative aspect-[4/2] lg:aspect-[3/2]">
                         <Image
                           src={winner?.product?.images[0]}
                           alt={winner?.product?.name}
@@ -125,11 +129,11 @@ const TournamentWinnerCardSlider = () => {
                       {/* Product Info Section */}
                       <div className="p-4 bg-white">
                         <div className="space-y-2">
-                          <h2 className="text-lg font-semibold text-gray-900">
+                          <h2 className="lg:text-lg font-semibold text-gray-900 line-clamp-1">
                             {winner?.product?.name}
                           </h2>
 
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-xs xs:text-sm text-gray-600 line-clamp-2">
                             {winner?.product?.description}
                           </p>
                         </div>

@@ -15,7 +15,7 @@ const RegisterSection = () => {
           <div className="w-[100%] lg:w-[55%] h-full xl:pl-20 2xl:pl-40 mb-10 2xl:mb-0 m-10 2xl:m-0">
             <PrimaryHeading
               highlightText="Discover"
-              remainingText="The New Way Of "
+              remainingText="The New Way Of"
               remainingHeading="Online Shopping"
             />
             <p className="text-card-foreground text-[18px] sm:text-[21px] lg:text-[18px] 2xl:text-[23px] mt-8 lg:mt-6 mx-auto lg:mx-0">
@@ -33,7 +33,7 @@ const RegisterSection = () => {
           </div>
 
           {/* Right Content - Image */}
-          <div className="w-[100%] lg:w-[45%] h-full">
+          <div className="w-[100%] lg:w-[45%] h-full xs:mt-0 -mt-20">
             <Image
               src={registersectionimage}
               alt="Register section image"

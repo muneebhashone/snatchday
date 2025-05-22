@@ -23,6 +23,12 @@ import Login from "@/components/auth/Login";
 import { ShareTournamentModal } from "@/components/ShareTournamentModal";
 import heroImage from "@/app/images/updateTournamentimage.jpg";
 import Link from "next/link";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 const TournamentDetailHero = ({
   tournamentData,
@@ -40,7 +46,7 @@ const TournamentDetailHero = ({
   const { data: product, isLoading: productLoading } = useGetProductById(
     tournamentData?.data?.article?._id || ""
   );
-
+  console.log(tournamentData, "tournamte");
   const [selectedImage, setSelectedImage] = useState(0);
   const { user } = useUserContext();
   console.log(hasParticipated, "hasParticipated");
@@ -308,8 +314,31 @@ const TournamentDetailHero = ({
                                 className=""
                               />
 
-                              {user ? (
-                                <span> Register</span>
+                              {user &&
+                              user?.user?.group !== "VIP" &&
+                              tournamentData?.data?.vip ? (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <button
+                                        onClick={() =>
+                                          (window.location.href = "/vip-shop")
+                                        }
+                                      >
+                                        To The VIP
+                                      </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>
+                                        This tournament is only for VIP
+                                        memebers.
+                                      </p>
+                                      <p>Click & Visit our VIP shop.</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              ) : user ? (
+                                <span>Register</span>
                               ) : (
                                 <span onClick={openLoginModal}>
                                   {" "}
@@ -335,6 +364,13 @@ const TournamentDetailHero = ({
                   <ShareArrowIcon />
                 </div>
               </div>
+              {user &&
+                user?.user?.group !== "VIP" &&
+                tournamentData?.data?.vip && (
+                  <div className="text-green-500 italic">
+                    * this tournament is only for VIP memebers *
+                  </div>
+                )}
             </div>
             {/* {/ right side /} */}
             <div className="col-span-3 ml-10">

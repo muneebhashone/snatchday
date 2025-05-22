@@ -175,7 +175,7 @@ export const howToEnterSteps = [
     image: image2,
   },
   {
-    subTitle: "participate in tournament",
+    subTitle: "participate in competition",
     description:
       "Answer the question with the correct answer to be entered in the competition.",
     number: "03",

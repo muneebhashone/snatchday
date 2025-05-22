@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { DynamicPagination } from "@/components/ui/dynamic-pagination";
+import Link from "next/link";
 
 const Page = () => {
   const { mutate: deleteGame } = useDeleteGame();
@@ -55,7 +56,7 @@ const Page = () => {
   return (
     <AdminLayout>
       <div className="p-4">
-      <AdminBreadcrumb title="Games" />
+        <AdminBreadcrumb title="Games" />
       </div>
       {isLoading ? (
         <div className="flex items-center justify-center h-44">
@@ -63,7 +64,12 @@ const Page = () => {
         </div>
       ) : (
         <div className="p-4 space-y-4 bg-white rounded-md">
-          <h1 className="text-2xl font-bold mb-10">Games</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold mb-10">Games</h1>
+            <Link href='/admin/games/create'>
+              <Button>Create Game</Button>
+            </Link>
+          </div>
           <div className="border rounded-md">
             <Table>
               <TableHeader>

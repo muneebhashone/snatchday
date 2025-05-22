@@ -47,7 +47,7 @@ export default function Home() {
 
   return (
     <ClientLayout>
-      <main>
+      <main className="overflow-hidden">
         {/* Progress bar */}
         <motion.div
           className="fixed top-0 left-0 right-0 h-1 bg-primary z-50"
@@ -57,12 +57,12 @@ export default function Home() {
         {/* Scroll indicator */}
         {showScrollIndicator && (
           <motion.div
-            className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50"
+            className="fixed bottom-10 left-1/3 sm:left-1/2 transform -translate-x-1/2 z-50 "
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1, duration: 0.5 }}
           >
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center ">
               <p className="text-sm text-gray-600 mb-2">Scroll to explore</p>
               <motion.div
                 className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center"

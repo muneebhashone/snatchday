@@ -288,9 +288,9 @@ const HeroSection = () => {
 
             return (
               <SwiperSlide key={index}>
-                <div className="mt-20 grid grid-cols-1 lg:grid-cols-7 items-center">
+                <div className="md:mt-20 flex flex-col-reverse md:grid grid-cols-1 md:grid-cols-7 lg:items-center lg:justify-start justify-center">
                   {/* Left Content */}
-                  <div className="col-span-4">
+                  <div className="col-span-4 mb-5">
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={key}
@@ -466,11 +466,11 @@ const HeroSection = () => {
 
                   {/* Right Content - Product Image with Animation */}
                   <div className="col-span-3 relative">
-                    <div className="w-full">
+                    <div className="lg:w-full lg:h-full md:h-[300px] md:w-[300px] lg:mt-0 md:mt-10 sm:mt-2 mt-12 mx-auto">
                       <Image
                         src={imgbottom}
                         alt="Bottom Image"
-                        className="w-full h-auto"
+                        className="lg:w-full lg:h-auto"
                         priority
                       />
                     </div>
@@ -488,7 +488,7 @@ const HeroSection = () => {
                           alt={tournament.alt}
                           width={525}
                           height={500}
-                          className="w-full h-full object-contain"
+                          className="lg:w-full lg:h-full object-contain mx-auto md:w-[200px] md:h-[200px]"
                           priority
                           unoptimized
                         />

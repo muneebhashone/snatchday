@@ -10,7 +10,7 @@ import { DynamicPagination } from "./ui/dynamic-pagination";
 const VIPShop = () => {
   const [offset, setOffset] = useState(0);
   const { data: VIPProducts, isLoading } = useGetVIPProducts({
-    limit: "10",
+    limit: "1000",
     offset: offset.toString(),
   });
 
@@ -40,10 +40,10 @@ const VIPShop = () => {
         </div>
 
         {/* Main Headings */}
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-3 text-white">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-3 text-white">
           EXKLUSIVE ANGEBOTE FÜR VIP-MITGLIEDER
         </h1>
-        <p className="text-3xl text-center mb-12">
+        <p className="text-xl md:text-2xl lg:text-3xl text-center mb-12">
           Nutze deine Chance auf ein ganz besonderes Schnäppchen
         </p>
 
@@ -60,7 +60,7 @@ const VIPShop = () => {
                   <VIPProductCard key={product._id} {...product} />
                 ))}
               </div>
-              <div className="flex justify-between items-center px-10 mt-10 mb-10">
+              {/* <div className="flex justify-between items-center px-10 mt-10 mb-10">
                 <p className="text-sm text-gray-500">
                   {offset + 1} - {offset + limit} of {total}
                 </p>
@@ -71,7 +71,7 @@ const VIPShop = () => {
                   onPageChange={handlePageChange}
                   isVIP={true}
                 />
-              </div>
+              </div> */}
             </div>
           ) : (
             <div className="text-center text-2xl">

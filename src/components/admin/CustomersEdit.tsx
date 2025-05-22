@@ -272,7 +272,7 @@ export function CustomerdEdit() {
 
           {/* Main Content */}
           <div className="col-span-9">
-            <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-3 gap-6 mb-6">
               <Card>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4 mb-4">
@@ -291,7 +291,7 @@ export function CustomerdEdit() {
                         >
                           {customerData?.isActive ? "Active" : "Inactive"}
                         </span>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs text-gray-500">
                           Last Updated:{" "}
                           {customerData?.updatedAt
                             ? formatDate(customerData.updatedAt)
@@ -316,6 +316,24 @@ export function CustomerdEdit() {
                       </p>
                       <p className="text-xs text-gray-500">
                         Last login IP address
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="p-2 bg-green-100 rounded-full">
+                      <CircleDollarSign className="text-green-600" size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">Spendings</h3>
+                      <p className="text-sm font-medium">
+                        {formatCurrency(customerData?.spendings) || "N/A"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Total customer spendings
                       </p>
                     </div>
                   </div>
